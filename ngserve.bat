@@ -1,0 +1,1 @@
+ng serve --base-href=/app/

@@ -1,0 +1,42 @@
+@import '../../styles.scss';
+
+footer {
+  font-family: 'Roboto', sans-serif; /* Aplicando a fonte Roboto */
+  font-size: small;
+  font-weight: bold;
+  color: $primary-color-dark;
+  text-align: center;
+  padding: 10px;
+  margin: 10px;
+  
+  // position: fixed;
+  // bottom: 5px;
+  // width: 100%;
+  // z-index: 1000;
+}
+  
+section {
+  text-align: center;
+  padding: 20px;
+  padding-top: 0px;
+  margin: 0;
+}
+
+/* Seção de Redes Sociais */
+.social-section {
+  text-align: center;
+  padding: 10px;
+  padding-top: 0;
+  margin-bottom: 40px;
+
+  a {
+    margin: 0 10px;
+    display: inline-block;
+
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
+

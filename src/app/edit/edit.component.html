@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="header">
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
+    </div>
+    <h1 class="title">Editar Registro</h1>
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
+    </div>
+  </div>
+
+  <div class="record-header">
+    {{ registro?.nome }}
+  </div>
+
+  <div class="record-details">
+    <div class="detail-container">
+      <div class="detail-label">Nome</div>
+      <input type="text" [(ngModel)]="registro.nome" class="detail-value">
+    </div>
+    <div class="detail-container">
+      <div class="detail-label">Sexo</div>
+      <select [(ngModel)]="registro.sexo" class="detail-value">
+        <option value="Masculino">Masculino</option>
+        <option value="Feminino">Feminino</option>
+      </select>
+    </div>
+    <div class="detail-container">
+      <div class="detail-label">Nascimento</div>
+      <input type="text" [(ngModel)]="registro.nascimento" class="detail-value">
+    </div>
+    <div class="detail-container">
+      <div class="detail-label">CPF</div>
+      <input type="text" [(ngModel)]="registro.cpf" class="detail-value">
+    </div>
+    <div class="detail-container">
+      <div class="detail-label">Telefone</div>
+      <input type="text" [(ngModel)]="registro.telefone" class="detail-value">
+    </div>
+  </div>
+</div>
