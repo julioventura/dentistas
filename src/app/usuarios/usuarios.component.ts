@@ -7,7 +7,7 @@ import { Usuario } from './usuario.model';  // Agora a interface Usuario está c
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
-  styleUrls: ['./usuarios.component.scss'],
+  styleUrls: ['../registros/registros.component.scss'],
 })
 export class UsuariosComponent implements OnInit {
   usuarios: Usuario[] = [];

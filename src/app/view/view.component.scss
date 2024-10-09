@@ -1,16 +1,11 @@
 @import '../../styles.scss';
 
-// Estilo Geral
-.container {
-  padding: 20px;
-}
 
 // Header com título e botões de ação
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
 
   .title {
     font-size: 24px;
@@ -25,18 +20,15 @@
 .record-header {
   background-color: $primary-color;
   color: $white;
-  padding: 4pt;
   font-size: small;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 1em;
+  margin-bottom: 10px;
   margin-left: 0;
   margin-right: 0;
   border: 0;
   border-radius: 8px;
-
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 4px;
 
   h2 {
     margin: 0;

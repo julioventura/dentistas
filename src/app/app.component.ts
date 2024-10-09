@@ -12,7 +12,8 @@ import { FooterComponent } from './footer/footer.component';  // Importando o Fo
 export class AppComponent {
   showMenu = true;
 
-  constructor(private router: Router) {  // Injeção do serviço Router
+  constructor(private router: Router) {  
+    // Injeção do serviço Router
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {  // Verifica se o evento é do tipo NavigationEnd
         // Exibir o menu em todas as páginas, exceto as de login e redefinição de senha
@@ -21,4 +22,5 @@ export class AppComponent {
       }
     });
   }
+
 }

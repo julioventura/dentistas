@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';  // Substitua Auth por AngularFireAuth
+import { AngularFireAuth } from '@angular/fire/compat/auth';  // Usando AngularFireAuth
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { ChatbotComponent } from "../chatbot/chatbot.component";  // Importe o ChatbotComponent (presumindo que você esteja usando no template)
-import { MenuComponent } from '../menu/menu.component';  // Importando o MenuComponent (presumindo que você esteja usando no template)
 
 @Component({
   selector: 'app-home',
@@ -17,10 +15,10 @@ export class HomeComponent implements OnInit {
     private auth: AngularFireAuth,  // Usando AngularFireAuth
     private router: Router,
     private userService: UserService
-  ) {}
+  ) { }
 
   ngOnInit() {
-    // Exemplo de uso do AngularFireAuth para obter o usuário logado
+    // Uso do AngularFireAuth para obter o usuário logado
     this.auth.user.subscribe(user => {
       if (user) {
         this.nome = this.capitalize(user.displayName || user.email || 'Usuário');
@@ -31,12 +29,13 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    // Acesse os dados do usuário diretamente no serviço
-    const userData = this.userService.getUser();
-    if (userData) {
-      console.log(userData);
-      this.nome = this.capitalize(userData.nome || userData.email);
-    }
+    // Acessa os dados do usuário diretamente no serviço
+    this.userService.getUser().subscribe(userData => {
+      if (userData) {
+        console.log(userData);
+        this.nome = this.capitalize(userData.displayName || userData.email || 'Usuário');
+      }
+    });
   }
 
   // Função para capitalizar a primeira letra de cada palavra

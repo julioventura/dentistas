@@ -21,7 +21,7 @@
       <div class="detail-value">{{ registro?.nome }}</div>
       <div class="detail-id" style="text-align: right;">{{ registro?.codigo }}</div>
     </div>
-  
+
     <div class="detail-container">
       <div class="detail-label">Sexo</div>
       <div class="detail-value">{{ registro?.sexo }}</div>
@@ -42,6 +42,11 @@
 </div>
 
 <!-- Mostrar mensagem de carregamento caso o registro ainda não esteja definido -->
-<div *ngIf="!registro">
+<div *ngIf="!registro && !isLoading">
+  <p>Registro não encontrado ou erro ao carregar os dados.</p>
+  <button (click)="voltar()">Voltar</button>
+</div>
+
+<div *ngIf="isLoading">
   Carregando os detalhes do registro...
 </div>

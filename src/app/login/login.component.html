@@ -1,42 +1,29 @@
 <div class="login-container">
   <h2>Login</h2>
   <form (ngSubmit)="onLogin()" #loginForm="ngForm">
-      <div class="form-group">
-          <label for="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            [(ngModel)]="email"
-            required
-            #emailInput="ngModel"
-            class="form-control"
-          />
-          <div *ngIf="emailInput.invalid && emailInput.touched" class="error-message">
-              O email é obrigatório.
-          </div>
-      </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" id="email" name="email" [(ngModel)]="email" required #emailInput="ngModel" />
+      <mat-error *ngIf="emailInput.invalid && emailInput.touched">
+        O email é obrigatório.
+      </mat-error>
+    </mat-form-field>
 
-      <div class="form-group password-container">
-          <label for="password">Senha:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            [(ngModel)]="password"
-            required
-            #passwordInput="ngModel"
-            class="form-control"
-          />
-          <span id="togglePassword" class="password-toggle" (click)="togglePassword()">
-              <i class="fas fa-eye" id="password-icon"></i>
-          </span>
-          <div *ngIf="passwordInput.invalid && passwordInput.touched" class="error-message">
-              A senha é obrigatória.
-          </div>
-      </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Senha</mat-label>
+      <input matInput [type]="hidePassword ? 'password' : 'text'" id="password" name="password" [(ngModel)]="password"
+        required #passwordInput="ngModel" />
+      <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="passwordInput.invalid && passwordInput.touched">
+        A senha é obrigatória.
+      </mat-error>
+    </mat-form-field>
 
-      <button type="submit" [disabled]="loginForm.invalid" class="btn-primary-login">Entrar</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
+      Entrar
+    </button>
   </form>
 
   <a routerLink="/reset-password" class="forgot-password-link">Esqueci minha senha</a>

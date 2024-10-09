@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Auth, sendPasswordResetEmail } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth'; // Altere para AngularFireAuth
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';  // Importando FormsModule
 
@@ -11,10 +11,10 @@ import { FormsModule } from '@angular/forms';  // Importando FormsModule
 export class ResetPasswordComponent {
   email: string = '';
 
-  constructor(private auth: Auth, private router: Router) {}
+  constructor(private afAuth: AngularFireAuth, private router: Router) { } // Usando AngularFireAuth aqui
 
   onSubmit() {
-    sendPasswordResetEmail(this.auth, this.email)
+    this.afAuth.sendPasswordResetEmail(this.email) // Altere para afAuth.sendPasswordResetEmail
       .then(() => {
         alert('Um email para redefinição de senha foi enviado.');
         this.router.navigate(['/login']);

@@ -1,97 +1,116 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavegacaoService } from '../shared/navegacao.service';
-import { FirestoreService } from '../shared/firestore.service';  // Agora a interface Paciente está corretamente exportada
-import { Paciente } from './paciente.model';  // Agora a interface Paciente está corretamente exportada
+import { FirestoreService } from '../shared/firestore.service';
+import { Registro } from '../registros/registro.model';
+import { AngularFireAuth } from '@angular/fire/compat/auth'; // Usar AngularFireAuth
+import { UserService } from '../shared/user.service'; // Serviço de usuário para pegar o ID
+import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
 
 @Component({
   selector: 'app-pacientes',
-  templateUrl: './pacientes.component.html',
-  styleUrls: ['./pacientes.component.scss'],
+  templateUrl: '../registros/registros.component.html',
+  styleUrls: ['../registros/registros.component.scss'],
 })
 export class PacientesComponent implements OnInit {
-  pacientes: Paciente[] = [];
-  totalPacientes = 0; // Atualizado para ser dinâmico com Firestore
+  registros: Registro[] = [];
+  totalRegistros = 0;
   page = 1;
   pageSize = 10;
   totalPages = 0;
   pages: number[] = [];
+  userId: string | null = null; // ID do usuário logado
+  titulo_da_pagina: string = 'Pacientes';
 
   constructor(
-    private router: Router, 
-    private navegacaoService: NavegacaoService, 
-    private firestoreService: FirestoreService<Paciente>  // Injeta o FirestoreService
-  ) {}
+    private router: Router,
+    private navegacaoService: NavegacaoService,
+    private firestoreService: FirestoreService<Registro>,
+    private afAuth: AngularFireAuth,  // Usando AngularFireAuth para autenticação
+    private userService: UserService // Injeta o serviço de usuário
+  ) { }
 
   ngOnInit() {
-    this.loadPacientes();
+    this.afAuth.authState.subscribe(user => {
+      if (user && user.uid) {
+        this.userId = user.uid; // Define o ID do usuário logado
+        this.loadRegistros(); // Carrega os registros do usuário
+      }
+    });
   }
 
-  loadPacientes() {
-    // Carrega os pacientes do Firestore
-    this.firestoreService.getRegistros('pacientes').subscribe((pacientes: Paciente[]) => {
-      this.pacientes = pacientes;
-      this.totalPacientes = this.pacientes.length;
-      this.totalPages = Math.ceil(this.totalPacientes / this.pageSize);
-      this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-    });
+  loadRegistros() {
+    if (!this.userId) return; // Verifica se o userId está disponível
+
+    // Carrega os registros da subcoleção específica do usuário
+    this.firestoreService
+      .getRegistros(`users/${this.userId}/pacientes`)
+      .subscribe((registros: Registro[]) => {
+        this.registros = registros;
+        this.totalRegistros = this.registros.length;
+        this.totalPages = Math.ceil(this.totalRegistros / this.pageSize);
+        this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+      });
   }
 
   setPage(page: number) {
     this.page = page;
-    this.loadPacientes(); // Recarrega os pacientes com a nova página
+    this.loadRegistros();
   }
 
-  // Método para ir para a página home
   goHome() {
     this.router.navigate(['/home']);
   }
 
-  // Método para voltar para a página anterior
   voltar() {
-    this.navegacaoService.goBack();  // Chama o método do serviço para voltar
+    this.navegacaoService.goBack();
   }
 
   previousPage() {
     if (this.page > 1) {
       this.page--;
-      this.loadPacientes();
+      this.loadRegistros();
     }
   }
 
   nextPage() {
     if (this.page < this.totalPages) {
       this.page++;
-      this.loadPacientes();
+      this.loadRegistros();
     }
   }
 
-  // Método para navegar para a ficha do paciente
   verFicha(id: string) {
-    console.log("Navegando para a ficha do paciente com ID:", id);  // Verifica o valor de 'id'
-    this.router.navigate(['/view/pacientes', id]);  // Navega para o componente view, passando a coleção 'pacientes' e o ID
+    console.log('Navegando para a ficha do registro com ID:', id);
+    this.router.navigate(['/view/pacientes', id]);
   }
 
   adicionar() {
-    this.firestoreService.gerarProximoCodigo('pacientes').then(novoCodigo => {
-      const novoPaciente: Paciente = {
-        id: this.firestoreService.createId(),  // Gera um novo ID automaticamente
-        codigo: novoCodigo,  // Usa o código gerado automaticamente
-        nome: '',
-        sexo: '',
-        cpf: '',
-        telefone: '',
-        nascimento: ''
-      };
+    if (!this.userId) return; // Verifica se o userId está disponível
 
-      // Adiciona o novo paciente ao Firestore
-      this.firestoreService.addRegistro('pacientes', novoPaciente).then(() => {
-        // Após adicionar, redireciona para a página de edição com o ID do novo paciente
-        this.router.navigate(['/edit/pacientes', novoPaciente.id]);
-      }).catch(error => {
-        console.error('Erro ao adicionar novo paciente:', error);
-        alert('Erro ao adicionar novo paciente.');
+    this.firestoreService
+      .gerarProximoCodigo(`users/${this.userId}/pacientes`)
+      .then((novoCodigo) => {
+        const novoRegistro: Registro = {
+          id: this.firestoreService.createId(),
+          codigo: novoCodigo,
+          nome: '',
+          sexo: '',
+          cpf: '',
+          telefone: '',
+          nascimento: '',
+        };
+
+        // Adiciona o novo registro à subcoleção do usuário logado
+        this.firestoreService
+          .addRegistro(`users/${this.userId}/pacientes`, novoRegistro)
+          .then(() => {
+            this.router.navigate(['/edit/pacientes', novoRegistro.id]);
+          })
+          .catch((error) => {
+            console.error('Erro ao adicionar novo registro:', error);
+            alert('Erro ao adicionar novo registro.');
+          });
       });
-    });
   }
 }

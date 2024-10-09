@@ -5,77 +5,12 @@ $input-border-color: #bbb;
 $input-focus-color: rgba(33, 150, 243, 0.5);
 $bot-message-bg: #cdeffd;
 $user-message-bg: rgb(189, 248, 189);
-$container-bg: #fff;
-$container-shadow: rgba(0, 0, 0, 0.2);
-$footer-shadow: rgba(0, 0, 0, 0.3);
-
-// Estilo Geral
-body, html {
-  height: 100%;
-  font-family: 'Roboto', sans-serif;
-  background-color: $white-color;
-  margin: 0;
-  padding: 0;
-  color: $text-color;
-}
-
-h1, h2, h3 {
-  color: $primary-color;
-}
-
-h1 {
-  font-size: 2rem;
-  margin: 0.5rem 0;
-}
-
-h2 {
-  font-size: 1.4rem;
-}
-
-h3 {
-  font-size: 1rem;
-  font-weight: bolder;
-  text-align: center;
-}
 
 
-.main-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.content-container {
-  flex: 1;
-  padding: 1rem;
-  overflow: auto;
-}
-
-// Cabeçalho
-header {
-  text-align: center;
-  padding: 1rem 0;
-  margin-top: 1rem;
-  background-color: $primary-color;
-  color: $white-color;
-  box-shadow: 0px 0px 12px 1px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  border-radius: 8px 8px 0px 0px;
-}
-
-// Container principal
 .container {
-  max-width: $max-width;
-  padding: 1.5rem;
-  background-color: $container-bg;
-  border-radius: 8px;
-  box-shadow: $box-shadow;
-  margin: 0px;
-}
-
-.form-group {
-  position: relative;
-  margin-bottom: 1.5rem;
+  margin-right: 0px;
+  // width: 90%;
+  padding: 1rem;
 }
 
 // Estilo de inputs e textarea
@@ -92,7 +27,7 @@ textarea {
   font-style: italic;
   transition: border-color 0.8s;
   box-sizing: border-box;
-  background-color: $secondary-color-light;
+  background-color: $primary-color-light;
   color: $secondary-color;
 
   &:focus {
@@ -102,19 +37,6 @@ textarea {
   }
 }
 
-// Container para a senha
-.password-container {
-  position: relative;
-
-  .password-toggle {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #bbb;
-  }
-}
 
 // Estilo de botões
 button {
@@ -122,20 +44,6 @@ button {
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.8s, transform 0.8s;
-
-  &.btn-primary-login {
-    width: 100%;
-    padding: 12px;
-    margin-top: 20px;
-    background-color: $secondary-color;
-    color: $white-color;
-    border: none;
-
-    &:disabled {
-      background-color: #bbb;
-      cursor: not-allowed;
-    }
-  }
 
   &.btn-primary {
     width: auto;
@@ -145,25 +53,13 @@ button {
     padding-bottom: 4px;
     margin-top: 15px;
     margin-right: 10px;
-    background-color: $secondary-color;
+    background-color: $primary-color;
     color: #ffffff;
     border: none;
     height: 30px;
 
     &:hover {
-      background-color: darken($secondary-color, 15%);
-    }
-  }
-
-  &.btn-logout {
-    background-color: $error-color;
-    color: $white-color;
-    border: none;
-    padding: 10px;
-    height: 40px;
-
-    &:hover {
-      background-color: $hover-error-color;
+      background-color: darken($secondary-color, 0%);
     }
   }
 }
@@ -174,12 +70,12 @@ button {
   max-height: 60vh;
   overflow-y: auto;
   margin-bottom: 1rem;
-  padding: 1em;
   display: flex;
   flex-direction: column;
   font-size: 0.9rem;
   color: $primary-color;
   font-weight: bold;
+  padding: 0.5em;
 
   .user-message {
     background-color: $user-message-bg;
@@ -201,40 +97,11 @@ button {
   }
 }
 
-// Estilo de rodapé
-footer {
-  font-size: 0.875rem;
-  text-align: center;
-  padding: 1rem 0;
-  background-color: $primary-color;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 800px;
-  color: $white-color;
-  box-shadow: 0 4px 12px 0px $footer-shadow;
-  width: 100%;
-  border-radius: 0px 0px 8px 8px;
-}
 
 // Responsividade
 @media (max-width: 800px) {
   .chat-input-container {
     flex-direction: column;
     align-items: flex-start;
-  }
-}
-
-@media (max-width: 1000px) {
-  .container {
-    width: 90%;
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 2rem;
-  }
-
-  h2 {
-    font-size: 1.25rem;
   }
 }

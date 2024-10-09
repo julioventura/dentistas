@@ -10,17 +10,13 @@ body {
   background-color: $background-cinza;
 }
 
-// Estilos gerais do container
-.container {
-  padding: 20px;
-}
 
 // Header com título e botões
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 20px;
+  padding-bottom: 5px;
   font-family: $font-family;
 
   .title {
@@ -58,11 +54,11 @@ body {
 
   input {
     width: 100%;
-    max-width: 400px;
-    padding: 10px;
+    max-width: 300px;
+    padding: 4px 10px;
     border: 2px solid $primary-color;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     color: $primary-color;
 
     &:focus {
@@ -80,7 +76,7 @@ body {
   table {
     width: 100%;
     border-collapse: collapse;
-    border: $primary-color 1px solid;
+    border: $white 1px solid;
     border-radius: 10px;
     background-color: $background-cinza;
 
@@ -90,7 +86,10 @@ body {
       text-align: left;
 
       th {
-        padding: 12px;
+        padding: 0 10px;
+        height: 1.7rem;
+        font-size: 12px;
+        font-weight: bold;
       }
     }
 
@@ -104,15 +103,16 @@ body {
         }
 
         &:hover {
-          background-color: lighten($primary-color, 40%);
+         background-color: lighten($primary-color, 40%);
         }
       }
 
       td {
-        padding: 12px;
-        border-bottom: 1px solid $primary-color-light;
+        padding: 4px 10px;
+        border-bottom: 3px solid $white;
         color: $primary-color;
-        font-weight: bold;
+        font-weight: 500;
+        font-size: 12px;
       }
     }
   }
@@ -128,15 +128,17 @@ body {
   color: $white;
   background-color: $primary-color;
   border-radius: 0 0 10px 10px;
+  height: 1.7rem;
 
 
   button {
     background-color: $primary-color;
     color: $white;
     border: none;
-    padding: 10px;
+    padding: 6px 10px;
     border-radius: 5px;
     cursor: pointer;
+    height: 1.7rem;
 
     &:hover {
       background-color: $primary-hover;
