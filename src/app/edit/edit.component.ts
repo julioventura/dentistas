@@ -15,6 +15,7 @@ export class EditComponent implements OnInit {
   registro: any = {}; // O registro começa vazio para evitar problemas de inicialização
   isNew = false; // Identifica se é um novo registro ou edição de um existente
   userId: string | null = null; // Armazena o ID do usuário logado
+  id: string | null = null; // Armazena o ID do registro
 
   constructor(
     private route: ActivatedRoute,
@@ -32,10 +33,10 @@ export class EditComponent implements OnInit {
         this.userId = user.uid; // Define o ID do usuário logado
 
         this.collection = this.route.snapshot.paramMap.get('collection')!;
-        const id = this.route.snapshot.paramMap.get('id');
+        this.id = this.route.snapshot.paramMap.get('id');
 
-        if (id) {
-          this.loadRegistro(id);
+        if (this.id) {
+          this.loadRegistro(this.id);
         } else {
           this.isNew = true;
           this.gerarNovoRegistro(); // Se não houver id, cria um novo registro
@@ -48,7 +49,7 @@ export class EditComponent implements OnInit {
     if (!this.userId) return; // Verifica se o userId está disponível
 
     // Gera um novo código e id para o registro na subcoleção do usuário logado
-    this.firestoreService.gerarProximoCodigo(`users/${this.userId}/pacientes`).then(novoCodigo => {
+    this.firestoreService.gerarProximoCodigo(`users/${this.userId}/${this.collection}`).then(novoCodigo => {
       const id = this.firestoreService.createId(); // Gera o ID único no momento da criação
       this.registro = {
         id, // O ID gerado será usado para operações no Firestore
@@ -61,7 +62,7 @@ export class EditComponent implements OnInit {
       };
 
       // Adiciona o registro recém-criado à subcoleção do usuário logado
-      this.firestoreService.addRegistro(`users/${this.userId}/pacientes`, this.registro).then(() => {
+      this.firestoreService.addRegistro(`users/${this.userId}/${this.collection}`, this.registro).then(() => {
         console.log('Novo registro criado com sucesso:', this.registro);
       }).catch(error => {
         console.error('Erro ao criar o novo registro:', error);
@@ -73,13 +74,14 @@ export class EditComponent implements OnInit {
     if (!this.userId) return; // Verifica se o userId está disponível
 
     // Carrega o registro da subcoleção do usuário logado usando o id
-    this.firestoreService.getRegistros(`users/${this.userId}/pacientes`).subscribe(registros => {
-      this.registro = registros.find((registro: any) => registro.id === id);
-
-      if (this.registro) {
+    this.firestoreService
+    .getRegistroById(`users/${this.userId}/${this.collection}`, id).subscribe(registro => {
+      if (registro) {
+        this.registro = registro;
         console.log('Registro carregado:', this.registro);
       } else {
         console.error('Registro não encontrado com o ID:', id);
+        this.router.navigate([`/${this.collection}`]); // Redireciona se não encontrar o registro
       }
 
       // Inicializa campos vazios com valores padrão
@@ -101,9 +103,9 @@ export class EditComponent implements OnInit {
       console.log('Salvando registro:', this.registro);
 
       // Usa o ID gerado pelo Firestore para atualizar o registro na subcoleção do usuário logado
-      this.firestoreService.updateRegistro(`users/${this.userId}/pacientes`, this.registro.id, this.registro)
+      this.firestoreService.updateRegistro(`users/${this.userId}/${this.collection}`, this.registro.id, this.registro)
         .then(() => {
-          this.router.navigate([`/view/pacientes`, this.registro.id]);
+          this.router.navigate([`/view/${this.collection}`, this.registro.id]);
         })
         .catch(error => {
           console.error('Erro ao salvar o registro:', error);

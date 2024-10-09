@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { FirestoreService } from '../shared/firestore.service';
 import { Registro } from '../registros/registro.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Usar AngularFireAuth
 import { UserService } from '../shared/user.service'; // Serviço de usuário para pegar o ID
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-pacientes',
@@ -13,6 +15,7 @@ import firebase from 'firebase/compat/app'; // Importa firebase para usar fireba
   styleUrls: ['../registros/registros.component.scss'],
 })
 export class PacientesComponent implements OnInit {
+  collection!: string;
   registros: Registro[] = [];
   totalRegistros = 0;
   page = 1;
@@ -20,9 +23,10 @@ export class PacientesComponent implements OnInit {
   totalPages = 0;
   pages: number[] = [];
   userId: string | null = null; // ID do usuário logado
-  titulo_da_pagina: string = 'Pacientes';
+  titulo_da_pagina: string = '';
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private navegacaoService: NavegacaoService,
     private firestoreService: FirestoreService<Registro>,
@@ -31,6 +35,17 @@ export class PacientesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // Pega a coleção da URL (ex: 'pacientes', 'usuarios')
+    this.collection = this.route.snapshot.paramMap.get('collection')!;
+    console.log("Registros de " + this.collection);
+    // Verifica se a coleção foi definida corretamente
+    if (this.collection) {
+      this.titulo_da_pagina = this.collection.charAt(0).toUpperCase() + this.collection.slice(1).toLowerCase();
+    } else {
+      console.error('Erro: A coleção não foi definida corretamente.');
+      this.titulo_da_pagina = 'Coleção não definida'; // Mensagem de fallback
+    }
+
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid; // Define o ID do usuário logado
@@ -40,6 +55,7 @@ export class PacientesComponent implements OnInit {
   }
 
   loadRegistros() {
+  
     if (!this.userId) return; // Verifica se o userId está disponível
 
     // Carrega os registros da subcoleção específica do usuário
@@ -50,6 +66,8 @@ export class PacientesComponent implements OnInit {
         this.totalRegistros = this.registros.length;
         this.totalPages = Math.ceil(this.totalRegistros / this.pageSize);
         this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+        console.log("this.registros");
+        console.log(this.registros);
       });
   }
 
@@ -82,14 +100,14 @@ export class PacientesComponent implements OnInit {
 
   verFicha(id: string) {
     console.log('Navegando para a ficha do registro com ID:', id);
-    this.router.navigate(['/view/pacientes', id]);
+    this.router.navigate(['/view/${this.collection}', id]);
   }
 
   adicionar() {
     if (!this.userId) return; // Verifica se o userId está disponível
 
     this.firestoreService
-      .gerarProximoCodigo(`users/${this.userId}/pacientes`)
+      .gerarProximoCodigo(`users/${this.userId}/${this.collection}`)
       .then((novoCodigo) => {
         const novoRegistro: Registro = {
           id: this.firestoreService.createId(),
@@ -103,9 +121,9 @@ export class PacientesComponent implements OnInit {
 
         // Adiciona o novo registro à subcoleção do usuário logado
         this.firestoreService
-          .addRegistro(`users/${this.userId}/pacientes`, novoRegistro)
+          .addRegistro(`users/${this.userId}/${this.collection}`, novoRegistro)
           .then(() => {
-            this.router.navigate(['/edit/pacientes', novoRegistro.id]);
+            this.router.navigate(['/edit/${this.collection}', novoRegistro.id]);
           })
           .catch((error) => {
             console.error('Erro ao adicionar novo registro:', error);

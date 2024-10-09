@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { FirestoreService } from '../shared/firestore.service';
-import { Registro } from './registro.model';
+import { Registro } from '../registros/registro.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Usar AngularFireAuth
 import { UserService } from '../shared/user.service'; // Serviço de usuário para pegar o ID
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
@@ -10,11 +10,11 @@ import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 @Component({
-  selector: 'app-registros',
-  templateUrl: './registros.component.html',
-  styleUrls: ['./registros.component.scss']
+  selector: 'app-pacientes',
+  templateUrl: '../registros/registros.component.html',
+  styleUrls: ['../registros/registros.component.scss'],
 })
-export class RegistrosComponent implements OnInit {
+export class PacientesComponent implements OnInit {
   collection!: string;
   registros: Registro[] = [];
   totalRegistros = 0;
@@ -23,47 +23,32 @@ export class RegistrosComponent implements OnInit {
   totalPages = 0;
   pages: number[] = [];
   userId: string | null = null; // ID do usuário logado
-  titulo_da_pagina: string = '';
+  titulo_da_pagina: string = 'Pacientes';
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private navegacaoService: NavegacaoService,
     private firestoreService: FirestoreService<Registro>,
     private afAuth: AngularFireAuth,  // Usando AngularFireAuth para autenticação
     private userService: UserService // Injeta o serviço de usuário
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
-    // Pega a coleção da URL (ex: 'pacientes', 'usuarios')
-    this.collection = this.route.snapshot.paramMap.get('collection')!;
-    console.log("Registros de " + this.collection);
-    // Verifica se a coleção foi definida corretamente
-    if (this.collection) {
-      this.titulo_da_pagina = this.collection.charAt(0).toUpperCase() + this.collection.slice(1).toLowerCase();
-    } else {
-      console.error('Erro: A coleção não foi definida corretamente.');
-      this.titulo_da_pagina = 'Coleção não definida'; // Mensagem de fallback
-    }
-
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid; // Define o ID do usuário logado
-        console.log("this.userId = " + user.uid);
         this.loadRegistros(); // Carrega os registros do usuário
       }
     });
   }
 
+
   loadRegistros() {
     if (!this.userId) return; // Verifica se o userId está disponível
 
-    let x = "users/" + this.userId + "/" + this.collection;
-    console.log(x);
     // Carrega os registros da subcoleção específica do usuário
     this.firestoreService
-      .getRegistros(x)
+      .getRegistros(`users/${this.userId}/${this.collection}`)
       .subscribe((registros: Registro[]) => {
         this.registros = registros;
         this.totalRegistros = this.registros.length;
@@ -74,6 +59,7 @@ export class RegistrosComponent implements OnInit {
       });
   }
 
+ 
   setPage(page: number) {
     this.page = page;
     this.loadRegistros();
@@ -103,14 +89,14 @@ export class RegistrosComponent implements OnInit {
 
   verFicha(id: string) {
     console.log('Navegando para a ficha do registro com ID:', id);
-    this.router.navigate(["/view/"+this.collection, id]);
+    this.router.navigate(['/view/pacientes', id]);
   }
 
   adicionar() {
     if (!this.userId) return; // Verifica se o userId está disponível
 
     this.firestoreService
-      .gerarProximoCodigo(`users/${this.userId}/${this.collection}`)
+      .gerarProximoCodigo(`users/${this.userId}/pacientes`)
       .then((novoCodigo) => {
         const novoRegistro: Registro = {
           id: this.firestoreService.createId(),
@@ -124,9 +110,9 @@ export class RegistrosComponent implements OnInit {
 
         // Adiciona o novo registro à subcoleção do usuário logado
         this.firestoreService
-          .addRegistro(`users/${this.userId}/${this.collection}`, novoRegistro)
+          .addRegistro(`users/${this.userId}/pacientes`, novoRegistro)
           .then(() => {
-            this.router.navigate(['/edit/${this.collection}', novoRegistro.id]);
+            this.router.navigate(['/edit/pacientes', novoRegistro.id]);
           })
           .catch((error) => {
             console.error('Erro ao adicionar novo registro:', error);

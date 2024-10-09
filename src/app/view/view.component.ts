@@ -16,7 +16,7 @@ export class ViewComponent implements OnInit {
   registro: any = null; // O registro começa como null para verificar posteriormente
   id!: string;
   isLoading = true; // Variável para exibir o carregamento
-  titulo: string = '';
+  titulo_da_pagina: string = '';
   userId: string | null = null; // Armazena o ID do usuário logado
 
   constructor(
@@ -29,27 +29,59 @@ export class ViewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Pega a coleção da URL (ex: 'pacientes', 'usuarios')
+    // Pega a coleção da URL (ex: 'pacientes', 'alunos')
     this.collection = this.route.snapshot.paramMap.get('collection')!;
     this.id = this.route.snapshot.paramMap.get('id')!;
+    console.log("Registros de ");
+    console.log(this.collection);
+    
+    // Verifica se a coleção foi definida corretamente
+    if (this.collection) {
+      this.titulo_da_pagina = this.collection.charAt(0).toUpperCase() + this.collection.slice(1).toLowerCase();
+    } else {
+      console.error('Erro: A coleção não foi definida corretamente.');
+      this.titulo_da_pagina = 'Coleção não definida'; // Mensagem de fallback
+    }
 
     // Verifica se o usuário está logado e pega o ID do usuário
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid; // Define o ID do usuário logado
 
+        // Titulo da página
         if (this.id && this.collection) {
-          this.titulo = this.collection
-            .replace(/s$/, '')
-            .replace(/^\w/, (c) => c.toUpperCase()); // Título do view é o nome da collection, no singular e capitalizado
-          if (this.titulo == 'Usuario') {
-            this.titulo = 'Usuário';
-          }
-          console.log('Título = ' + this.titulo);
-          this.loadRegistro(this.id);
+          this.titulo_da_pagina = this.titulo_view(this.collection);
+          console.log('Título = ' + this.titulo_da_pagina);
         }
+        this.loadRegistro(this.id);
       }
     });
+  }
+
+  titulo_view(collection: string) {
+    // Titulo da página
+
+    switch (this.collection) {
+      case 'usuarios':
+        return 'Usuário';
+        break;
+      case 'professores':
+        return 'Professor';
+        break;
+      case 'alunos':
+        return 'Aluno';
+        break;
+      case 'pacientes':
+        return 'Paciente';
+        break;
+      case 'colaboradores':
+        return 'Colaborador';
+        break;
+      default:
+        return 'Registro';
+        break;
+    }
+
   }
 
   loadRegistro(id: string) {
@@ -57,7 +89,7 @@ export class ViewComponent implements OnInit {
 
     // Busca o registro dentro da subcoleção do usuário logado
     this.firestoreService
-      .getRegistros(`users/${this.userId}/pacientes`)
+      .getRegistros(`users/${this.userId}/${this.collection}`)
       .subscribe(
         (registros) => {
           this.registro = registros.find((registro: any) => registro.id === id);
@@ -77,7 +109,10 @@ export class ViewComponent implements OnInit {
   }
 
   voltar() {
-    this.router.navigate([`/${this.collection}`]); // Redireciona para o componente da coleção correspondente
+    console.log("voltar()");
+    console.log(this.collection);
+    // this.router.navigate(["/" + this.collection]); // Redireciona para o componente da coleção correspondente
+    this.router.navigate([`/registros/${this.collection}`]); // Redireciona para o componente da coleção correspondente
   }
 
   editarRegistro() {
@@ -87,7 +122,7 @@ export class ViewComponent implements OnInit {
   deletarRegistro() {
     if (confirm('Você tem certeza que deseja excluir este registro?')) {
       this.firestoreService
-        .deleteRegistro(`users/${this.userId}/pacientes`, this.id)
+        .deleteRegistro(`users/${this.userId}/${this.collection}`, this.id)
         .then(() => {
           this.router.navigate([`/${this.collection}`]); // Redireciona para a página de listagem após exclusão
         })
