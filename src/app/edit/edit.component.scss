@@ -2,7 +2,7 @@
 
 // Estilo Geral
 .container {
-  background-color: #ffdada;
+  background-color: #f9eaea;
 }
 
 // Header com título e botões de ação
@@ -15,7 +15,7 @@
   .title {
     font-size: 24px;
     font-weight: bold;
-    color: #ff0000;
+    color: $red-dark;
     text-align: center;
     flex-grow: 1;
   }
@@ -23,7 +23,7 @@
 
 // Linha com o nome do paciente
 .record-header {
-  background-color: #ff0000;
+  background-color: $red-dark;
   color: $white;
   font-size: small;
   font-weight: bold;
@@ -45,19 +45,20 @@
 }
 
 // Estilos dos detalhes do paciente
-.record-details {
+.record-details,
+.dynamic-form-container {
   background-color: $white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: $box-shadow;
-  border: 1px solid $primary-color-light;
+  border: 1px solid $red-light;
 
   .detail-container {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid $primary-color-light;
+    border-bottom: 1px solid $red-light;
 
     &:last-child {
       border-bottom: none;
@@ -65,34 +66,36 @@
 
     .detail-label {
       width: 200px;
-      font-weight: bold;
-      color: $primary-color;
+      font-weight: 500;
+      color: $red_dark;
       font-size: 14px;
       text-align: left;
     }
 
     .detail-value {
-      color: $text-color-dark;
+      color: $red-dark;
       font-size: 16px;
       font-weight: bold;
       text-align: left;
       width: 100%;
       padding: 8px;
-      border: 1px solid $primary-color-light;
+      border: 1px solid $red-light;
       border-radius: 5px;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 8px;
-      border: 1px solid $primary-color-light;
+      border: 1px solid $red-light;
       border-radius: 5px;
       font-size: 14px;
     }
 
-    input:focus, select:focus {
-      outline: none;
-      border-color: $primary-hover;
+    input:focus,
+    select:focus {
+      outline: 1px;
+      border-color: $red-dark;
     }
   }
 }

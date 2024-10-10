@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Importado aqui
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // ReactiveFormsModule adicionado aqui
 import { RouterModule } from '@angular/router';
 
 // Firebase e Firestore
@@ -55,6 +55,7 @@ import { MatIconModule } from '@angular/material/icon';
     BrowserModule,
     BrowserAnimationsModule, // Adicionado aqui
     FormsModule,
+    ReactiveFormsModule, // ReactiveFormsModule adicionado aqui
     RouterModule.forRoot([
       { path: '', component: HomeComponent },
       { path: 'login', component: LoginComponent },

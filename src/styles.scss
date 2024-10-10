@@ -8,23 +8,25 @@ $white: #ffffff;
 $white-color: #ffffff;
 $gray: #bdbdbd;
 $light-grey: #eee;
-
-// $primary-color: #2196F3;
-// $primary-color: #3579A4;
+$red: #ff0000;
+$red-dark: #a80000;
+$red-light: #ffdfdf;
 $primary-color: #2A7AC3;
 $primary-color-light: #ddf5ff;
 $primary-color-dark: #153d75;
+
 /* Definindo uma versão mais escura */
 $primary-hover: $primary-color-dark;
 $secondary-color: #0d9113;
 $secondary-color-light: #ddffde;
 $secondary-color-dark: #105d14;
+
 /* Definindo uma versão mais escura do secondary-color */
 $text-color: $primary-color;
 $text-color-dark: $primary-color-dark;
 $text-color-claro: white;
 $error-color: #f44336;
-$hover-error-color: #a9001c;
+$hover-error-color: #a80000;
 $input-border-color: #bbb;
 $input-focus-color: rgba(33, 150, 243, 0.5);
 $background-color: white;

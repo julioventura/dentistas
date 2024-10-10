@@ -5,7 +5,7 @@ import { FirestoreService } from '../shared/firestore.service';
 import { Registro } from './registro.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Usar AngularFireAuth
 import { UserService } from '../shared/user.service'; // Serviço de usuário para pegar o ID
-import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
+import { FormBuilder, FormGroup } from '@angular/forms'; // Reactive Forms
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
@@ -25,23 +25,31 @@ export class RegistrosComponent implements OnInit {
   userId: string | null = null; // ID do usuário logado
   titulo_da_pagina: string = '';
 
+  // Adiciona o formGroup
+  registroForm!: FormGroup;
+
+  // Definindo os campos dinâmicos
+  campos: { nome: string, tipo: string, label: string }[] = [];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private navegacaoService: NavegacaoService,
     private firestoreService: FirestoreService<Registro>,
     private afAuth: AngularFireAuth,  // Usando AngularFireAuth para autenticação
-    private userService: UserService // Injeta o serviço de usuário
-  ) {
-  }
+    private userService: UserService, // Injeta o serviço de usuário
+    private fb: FormBuilder // Injeta o FormBuilder
+  ) { }
 
   ngOnInit() {
     // Pega a coleção da URL (ex: 'pacientes', 'usuarios')
     this.collection = this.route.snapshot.paramMap.get('collection')!;
     console.log("Registros de " + this.collection);
+
     // Verifica se a coleção foi definida corretamente
     if (this.collection) {
       this.titulo_da_pagina = this.collection.charAt(0).toUpperCase() + this.collection.slice(1).toLowerCase();
+      this.definirCampos(); // Define os campos dinâmicos com base na coleção
     } else {
       console.error('Erro: A coleção não foi definida corretamente.');
       this.titulo_da_pagina = 'Coleção não definida'; // Mensagem de fallback
@@ -52,8 +60,34 @@ export class RegistrosComponent implements OnInit {
         this.userId = user.uid; // Define o ID do usuário logado
         console.log("this.userId = " + user.uid);
         this.loadRegistros(); // Carrega os registros do usuário
+        this.createForm(); // Cria o formulário dinâmico
       }
     });
+  }
+
+  definirCampos() {
+    if (this.collection === 'pacientes') {
+      this.campos = [
+        { nome: 'nome', tipo: 'text', label: 'Nome' },
+        { nome: 'cpf', tipo: 'text', label: 'CPF' },
+        { nome: 'telefone', tipo: 'text', label: 'Telefone' },
+        { nome: 'sexo', tipo: 'text', label: 'Sexo' },
+        { nome: 'nascimento', tipo: 'date', label: 'Data de Nascimento' }
+      ];
+    } else if (this.collection === 'alunos') {
+      this.campos = [
+        { nome: 'nome', tipo: 'text', label: 'Nome do Aluno' },
+        { nome: 'cpf', tipo: 'text', label: 'CPF do Aluno' },
+        { nome: 'telefone', tipo: 'text', label: 'Telefone do Aluno' },
+        { nome: 'curso', tipo: 'text', label: 'Curso' },
+        { nome: 'nascimento', tipo: 'date', label: 'Data de Nascimento' }
+      ];
+    } else {
+      this.campos = [
+        { nome: 'nome', tipo: 'text', label: 'Nome' },
+        { nome: 'cpf', tipo: 'text', label: 'CPF' }
+      ];
+    }
   }
 
   loadRegistros() {
@@ -72,6 +106,15 @@ export class RegistrosComponent implements OnInit {
         console.log("this.registros");
         console.log(this.registros);
       });
+  }
+
+  createForm() {
+    let formGroup: any = {};
+    this.campos.forEach(campo => {
+      formGroup[campo.nome] = [''];
+    });
+
+    this.registroForm = this.fb.group(formGroup);
   }
 
   setPage(page: number) {
@@ -103,7 +146,7 @@ export class RegistrosComponent implements OnInit {
 
   verFicha(id: string) {
     console.log('Navegando para a ficha do registro com ID:', id);
-    this.router.navigate(["/view/"+this.collection, id]);
+    this.router.navigate(["/view/" + this.collection, id]);
   }
 
   adicionar() {
@@ -126,7 +169,7 @@ export class RegistrosComponent implements OnInit {
         this.firestoreService
           .addRegistro(`users/${this.userId}/${this.collection}`, novoRegistro)
           .then(() => {
-            this.router.navigate(['/edit/${this.collection}', novoRegistro.id]);
+            this.router.navigate([`/edit/${this.collection}`, novoRegistro.id]);
           })
           .catch((error) => {
             console.error('Erro ao adicionar novo registro:', error);
@@ -134,4 +177,28 @@ export class RegistrosComponent implements OnInit {
           });
       });
   }
+
+  onSubmit() {
+    if (this.registroForm.valid) {
+      const registroData = this.registroForm.value; // Obtém os dados do formulário
+
+      if (this.userId && this.collection) {
+        // Atualiza ou cria um novo registro na subcoleção com os dados do formulário
+        const registroId = this.firestoreService.createId();
+        this.firestoreService.addRegistro(`users/${this.userId}/${this.collection}`, { id: registroId, ...registroData })
+          .then(() => {
+            console.log('Registro salvo com sucesso:', registroData);
+            alert('Registro salvo com sucesso!');
+            this.loadRegistros(); // Recarrega a lista de registros
+          })
+          .catch(error => {
+            console.error('Erro ao salvar o registro:', error);
+            alert('Erro ao salvar o registro.');
+          });
+      }
+    } else {
+      alert('Formulário inválido. Por favor, verifique os campos.');
+    }
+  }
+
 }

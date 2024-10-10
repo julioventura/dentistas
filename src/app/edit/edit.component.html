@@ -13,29 +13,13 @@
     {{ registro?.nome }}
   </div>
 
-  <div class="record-details">
-    <div class="detail-container">
-      <div class="detail-label">Nome</div>
-      <input type="text" [(ngModel)]="registro.nome" class="detail-value">
-    </div>
-    <div class="detail-container">
-      <div class="detail-label">Sexo</div>
-      <select [(ngModel)]="registro.sexo" class="detail-value">
-        <option value="Masculino">Masculino</option>
-        <option value="Feminino">Feminino</option>
-      </select>
-    </div>
-    <div class="detail-container">
-      <div class="detail-label">Nascimento</div>
-      <input type="string" [(ngModel)]="registro.nascimento" class="detail-value">
-    </div>
-    <div class="detail-container">
-      <div class="detail-label">CPF</div>
-      <input type="text" [(ngModel)]="registro.cpf" class="detail-value">
-    </div>
-    <div class="detail-container">
-      <div class="detail-label">Telefone</div>
-      <input type="text" [(ngModel)]="registro.telefone" class="detail-value">
-    </div>
+  <!-- Formulário Dinâmico -->
+  <div class="dynamic-form-container" *ngIf="registroForm">
+    <form [formGroup]="registroForm" class="record-details">
+      <div *ngFor="let campo of campos" class="detail-container">
+        <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+        <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
+      </div>
+    </form>
   </div>
 </div>

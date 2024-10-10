@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
-import { UserService } from '../shared/user.service'; // Importa o serviço de usuário
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms'; // Adiciona FormControl
 import { AngularFireAuth } from '@angular/fire/compat/auth';  // Importa a autenticação para capturar o usuário logado
 
 @Component({
@@ -15,40 +15,51 @@ export class EditComponent implements OnInit {
   registro: any = {}; // O registro começa vazio para evitar problemas de inicialização
   isNew = false; // Identifica se é um novo registro ou edição de um existente
   userId: string | null = null; // Armazena o ID do usuário logado
-  id: string | null = null; // Armazena o ID do registro
+
+  // Formulário dinâmico
+  registroForm!: FormGroup; // Adiciona o FormGroup para o formulário dinâmico
+  campos: any[] = [
+    { nome: 'nome', tipo: 'text', label: 'Nome' },
+    { nome: 'sexo', tipo: 'text', label: 'Sexo' },
+    { nome: 'nascimento', tipo: 'text', label: 'Nascimento' },
+    { nome: 'cpf', tipo: 'text', label: 'CPF' },
+    { nome: 'telefone', tipo: 'text', label: 'Telefone' }
+  ];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private firestoreService: FirestoreService<any>, // Serviço genérico
     private navegacaoService: NavegacaoService,
-    private userService: UserService, // Serviço de usuário
-    private afAuth: AngularFireAuth // Serviço de autenticação
+    private afAuth: AngularFireAuth, // Serviço de autenticação
+    private fb: FormBuilder // FormBuilder para o formulário dinâmico
   ) { }
 
   ngOnInit() {
-    // Verifica se o usuário está logado e pega o ID do usuário
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid; // Define o ID do usuário logado
 
+        // Captura o nome da coleção da rota
         this.collection = this.route.snapshot.paramMap.get('collection')!;
-        this.id = this.route.snapshot.paramMap.get('id');
+        const id = this.route.snapshot.paramMap.get('id');
 
-        if (this.id) {
-          this.loadRegistro(this.id);
+        if (id) {
+          this.loadRegistro(id);
         } else {
           this.isNew = true;
           this.gerarNovoRegistro(); // Se não houver id, cria um novo registro
         }
+
+        // Inicializa o formulário dinâmico
+        this.createForm();
       }
     });
   }
 
   gerarNovoRegistro() {
-    if (!this.userId) return; // Verifica se o userId está disponível
+    if (!this.userId || !this.collection) return; // Verifica se o userId e a collection estão disponíveis
 
-    // Gera um novo código e id para o registro na subcoleção do usuário logado
     this.firestoreService.gerarProximoCodigo(`users/${this.userId}/${this.collection}`).then(novoCodigo => {
       const id = this.firestoreService.createId(); // Gera o ID único no momento da criação
       this.registro = {
@@ -71,39 +82,47 @@ export class EditComponent implements OnInit {
   }
 
   loadRegistro(id: string) {
-    if (!this.userId) return; // Verifica se o userId está disponível
+    if (!this.userId || !this.collection) return; // Verifica se o userId e a collection estão disponíveis
 
-    // Carrega o registro da subcoleção do usuário logado usando o id
-    this.firestoreService
-    .getRegistroById(`users/${this.userId}/${this.collection}`, id).subscribe(registro => {
+    this.firestoreService.getRegistroById(`users/${this.userId}/${this.collection}`, id).subscribe(registro => {
       if (registro) {
         this.registro = registro;
         console.log('Registro carregado:', this.registro);
+
+        // Adiciona campos ao formulário dinamicamente se não estiverem presentes
+        Object.keys(this.registro).forEach(key => {
+          if (!this.registroForm.contains(key)) {
+            this.registroForm.addControl(key, new FormControl(''));
+          }
+        });
+
+        // Atualiza o formulário com os dados do registro
+        this.registroForm.patchValue(this.registro);
       } else {
         console.error('Registro não encontrado com o ID:', id);
+        alert(`Registro não encontrado com o ID: ${id}`);
         this.router.navigate([`/${this.collection}`]); // Redireciona se não encontrar o registro
       }
-
-      // Inicializa campos vazios com valores padrão
-      this.registro = this.registro || { id };
-      this.registro.nome = this.registro.nome || '';
-      this.registro.sexo = this.registro.sexo || 'Masculino'; // Valor padrão para sexo
-      this.registro.nascimento = this.registro.nascimento || '';
-      this.registro.cpf = this.registro.cpf || '';
-      this.registro.telefone = this.registro.telefone || '';
     });
   }
 
-  voltar() {
-    this.navegacaoService.goBack();
+  createForm() {
+    // Cria o formulário com os campos esperados
+    this.registroForm = this.fb.group({
+      nome: [''],
+      sexo: [''],
+      nascimento: [''],
+      cpf: [''],
+      telefone: ['']
+    });
   }
 
   salvar() {
-    if (this.registro && this.registro.id && this.userId) {
-      console.log('Salvando registro:', this.registro);
+    if (this.registroForm.valid && this.userId) {
+      const registroAtualizado = { ...this.registro, ...this.registroForm.value }; // Atualiza o registro com os dados do formulário
+      console.log('Salvando registro:', registroAtualizado);
 
-      // Usa o ID gerado pelo Firestore para atualizar o registro na subcoleção do usuário logado
-      this.firestoreService.updateRegistro(`users/${this.userId}/${this.collection}`, this.registro.id, this.registro)
+      this.firestoreService.updateRegistro(`users/${this.userId}/${this.collection}`, this.registro.id, registroAtualizado)
         .then(() => {
           this.router.navigate([`/view/${this.collection}`, this.registro.id]);
         })
@@ -115,5 +134,9 @@ export class EditComponent implements OnInit {
       console.error('Registro inválido ou sem ID:', this.registro);
       alert('Registro inválido ou sem ID. Não é possível salvar.');
     }
+  }
+
+  voltar() {
+    this.navegacaoService.goBack();
   }
 }

@@ -47,7 +47,8 @@ export class FirestoreService<T extends { id?: string }> {
         let novoCodigo = '001'; // Começa com '001' se for o primeiro
 
         if (registros && registros.length > 0) {
-          const codigos = registros.map((r: any) => r.codigo.split('-')[0]);
+          // Verifica se 'codigo' existe antes de tentar fazer o 'split'
+          const codigos = registros.map((r: any) => r.codigo ? r.codigo.split('-')[0] : '001');
           const ultimoCodigo = Math.max(...codigos.map(c => parseInt(c, 10)));
           const proximoCodigo = (ultimoCodigo + 1).toString().padStart(3, '0');
           novoCodigo = proximoCodigo;
