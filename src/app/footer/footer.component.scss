@@ -15,6 +15,11 @@ footer {
   // z-index: 1000;
 }
   
+#usuario_logado {
+  font-size: smaller;
+  font-weight: 500;
+}
+
 section {
   text-align: center;
   padding: 20px;
@@ -25,8 +30,7 @@ section {
 /* Seção de Redes Sociais */
 .social-section {
   text-align: center;
-  padding: 10px;
-  padding-top: 0;
+  padding: 0px;
 
   a {
     margin: 0 10px;

@@ -12,8 +12,6 @@ import { environment } from '../environments/environment';
 
 // Componentes da aplicação
 import { AppComponent } from './app.component';
-import { PacientesComponent } from './pacientes/pacientes.component';
-import { UsuariosComponent } from './usuarios/usuarios.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { ChatbotComponent } from './chatbot/chatbot.component';
@@ -41,8 +39,6 @@ import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [
     AppComponent,
-    PacientesComponent,
-    UsuariosComponent,
     HomeComponent,
     LoginComponent,
     ChatbotComponent,
@@ -61,8 +57,6 @@ import { MatIconModule } from '@angular/material/icon';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent },
-      { path: 'pacientes', component: PacientesComponent },
-      { path: 'usuarios', component: UsuariosComponent },
       { path: 'login', component: LoginComponent },
       { path: 'chatbot', component: ChatbotComponent },
       { path: 'menu', component: MenuComponent },

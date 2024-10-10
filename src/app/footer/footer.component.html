@@ -1,8 +1,4 @@
 <footer>
-  <!-- Exibe informações do usuário logado, se disponível -->
-  <div *ngIf="user">
-    <p>Logado como: {{ user.displayName || 'Usuário' }} ({{ user.email }})</p>
-  </div>
 
   <!-- Seção de Redes Sociais -->
   <section class="social-section">
@@ -25,11 +21,15 @@
     </a>
 
     <a href="./config" target="_blank">
-      <img src="https://dentistas.com.br/assets/config_red.png" alt="Configuração" width="40" (click)="go('config')" />
+      <img src="https://dentistas.com.br/assets/config_red.png" alt="Configuração" width="40" />
     </a>
 
   </section>
 
-  &copy; 2024&nbsp; Dentistas.com.br &nbsp;4.0
+  <!-- Exibe informações do usuário logado, se disponível -->
+  <div id="usuario_logado" *ngIf="user">
+    &copy; 2024&nbsp; Dentistas.com.br &nbsp;4.0 - {{ user.displayName || 'Usuário' }} ({{ user.email }})
+  </div>
+
 
 </footer>

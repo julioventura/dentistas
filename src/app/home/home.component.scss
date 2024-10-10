@@ -1,73 +1,26 @@
 @import '../../styles.scss';
 
-/* Seção de Ícones (Novo Estilo) */
-.icon-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  /* Grid com 8 colunas para telas largas */
-  // gap: 10px;
-  /* Espaçamento entre os itens */
-  // padding: 20px;
-  justify-items: center;
-  text-align: center;
-  margin: 5px;
-
-  .icon-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    width: 60px;
-
-    img {
-      width: 55px;
-      height: 55px;
-    }
-
-    p {
-      margin-top: 1px;
-      margin-bottom: 6px;
-      font-weight: 500;
-      color: $primary-color;
-      font-size: 9px;
-    }
-  }
-}
-
-
 /* Estilos já existentes */
 section {
   text-align: center;
-  // background: white;
-  // padding: 20px;
-  // padding-top: 0px;
-  // margin: 0 10px 0 0;
 }
 
-.main {
-  padding: 10px;
-  font-family: "Roboto", sans-serif;
-  box-sizing: border-box;
-}
 
 .container {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 10px;
-  /* Espaço horizontal e vertical entre as colunas */
+  // gap: 10px;
   padding: 20px;
-  padding-top: 20px;
-  padding-bottom: 12px;
-  // border: 1px solid $light-grey;
+  margin: 10px;
+  margin-bottom: 0px;
 }
-
 
 .column {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  // gap: 10px;
 }
 
 .column-left,
@@ -84,9 +37,42 @@ section {
   padding: 0px;
 }
 
-.column-left {
-  width: 200px;
+// .column-left {
+//   width: 200px;
+// }
+
+
+/* Seção de Ícones (Novo Estilo) */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  justify-items: center;
+  text-align: center;
+  justify-content: space-between;
+
+  .icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    width: 70px;
+
+    img {
+      margin-right: 8px;
+      width: 55px;
+      height: 55px;
+    }
+
+    p {
+      margin-top: 1px;
+      // margin-bottom: 6px;
+      font-weight: 500;
+      color: $primary-color;
+      font-size: 8px;
+    }
+  }
 }
+
 
 
 /* Seção de Chatbots */
@@ -94,21 +80,21 @@ section {
   background: white;
   margin: 0px;
   border-radius: 10px;
-  padding: 0 1rem;
-  padding-bottom: 0px;
+  padding: 1rem 1rem;
   font-size: medium;
   font-weight: 500;
   color: $primary-color;
+  // width: 100%;
 
   .pills-section {
-    margin-bottom: 10px;
+    background-color: unset;
   }
 
   .pill-group {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    justify-content: center;
+    // justify-content: center;
 
     .pill {
       display: block;
@@ -134,8 +120,9 @@ section {
 .services-section {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+
   flex-wrap: wrap;
-  padding: 10px 0.5em 0 0.5em;
 }
 
 
@@ -154,9 +141,9 @@ section {
     .pill-group {
       gap: 10px;
 
-      .pill {
-        padding: 8px 15px;
-      }
+      // .pill {
+      // padding: 8px 15px;
+      // }
     }
   }
 }

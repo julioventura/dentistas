@@ -74,8 +74,8 @@ export class ViewComponent implements OnInit {
       case 'pacientes':
         return 'Paciente';
         break;
-      case 'colaboradores':
-        return 'Colaborador';
+      case 'equipe':
+        return 'Equipe';
         break;
       default:
         return 'Registro';

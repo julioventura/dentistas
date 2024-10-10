@@ -11,81 +11,60 @@
   <!-- Coluna 1: Conteúdo principal -->
   <div class="column column-left">
 
-    <!-- Novo container para os ícones -->
-    <section class="services-section icon-grid">
+    <div id="Services" class="container">
 
-      <div class="icon-item" (click)="go('registros/pacientes')">
-        <img src="https://dentistas.com.br/assets/pacientes.png" alt="Pacientes">
-        <p>PACIENTES</p>
-      </div>
+      <section class="services-section icon-grid">
 
-      <div class="icon-item" (click)="go('registros/alunos')">
-        <img src="https://dentistas.com.br/assets/alunos.png" alt="Alunos">
-        <p>ALUNOS</p>
-      </div>
+        <div class="icon-item" (click)="go('registros/pacientes')">
+          <img src="https://dentistas.com.br/assets/pacientes.png" alt="Pacientes">
+          <p>PACIENTES</p>
+        </div>
 
-      <div class="icon-item" (click)="go('registros/professores')">
-        <img src="https://dentistas.com.br/assets/professores.png" alt="Professores">
-        <p>PROFESSORES</p>
-      </div>
+        <div class="icon-item" (click)="go('registros/alunos')">
+          <img src="https://dentistas.com.br/assets/alunos.png" alt="Alunos">
+          <p>ALUNOS</p>
+        </div>
 
-      <div class="icon-item" (click)="go('registros/colaboradores')">
-        <img src="https://dentistas.com.br/assets/equipe.png" alt="Colaboradores">
-        <p>COLABORADORES</p>
-      </div>
+        <div class="icon-item" (click)="go('registros/professores')">
+          <img src="https://dentistas.com.br/assets/professores.png" alt="Professores">
+          <p>PROFESSORES</p>
+        </div>
 
-      <!-- <div class="icon-item" (click)="go('indicador')">
-        <img src="https://dentistas.com.br/assets/indicador.png" alt="Indicador">
-        <p>INDICADOR</p>
-      </div> -->
+        <div class="icon-item" (click)="go('registros/dentistas')">
+          <img src="https://dentistas.com.br/assets/equipe.png" alt="Dentistas">
+          <p>DENTISTAS</p>
+        </div>
 
-      <!-- <div class="icon-item" (click)="go('home')">
-        <img src="https://dentistas.com.br/assets/mail.png" alt="Serviços">
-        <p>SERVIÇOS</p>
-      </div> -->
-<!-- 
-      <div class="icon-item" (click)="go('home')">
-        <img src="https://dentistas.com.br/assets/impressos.png?v=2" alt="Configuração">
-        <p>IMPRESSOS</p>
-      </div> -->
-<!-- 
-            <div class="icon-item" (click)="go('home')">
-              <img src="https://dentistas.com.br/assets/perfil.png" alt="Configuração">
-              <p>PERFIL</p>
-            </div> -->
+        <div class="icon-item" (click)="go('registros/equipe')">
+          <img src="https://dentistas.com.br/assets/equipe.png" alt="Equipe">
+          <p>EQUIPE</p>
+        </div>
 
-      <!-- <div class="icon-item" (click)="go('home')">
-            <img src="https://dentistas.com.br/assets/impressos.png" alt="Configuração">
-            <p>CHATBOT INTELIGENTE</p>
-          </div>
-         -->
+        <!-- <div class="icon-item" (click)="go('registros/usuarios')">
+          <img src="https://dentistas.com.br/assets/usuarios.png" alt="Usuários">
+          <p>USUÁRIOS</p>
+        </div> -->
+      </section>
 
-    </section>
+    </div>
 
-        <section class="chatbots-section">
-          Chatbots de I. A.<br>
-                </section>
-        <section class="chatbots-section">
+    <div id="Midia" class="container">
 
-          <section class="pills-section">
-            <div class="pill-group">
-        
-              <a class="pill" href="https://dentistas.com.br/tutfop" target="_blank" rel="noopener">
-                <span>Para dentistas</span>
-              </a>
-        
-              <a class="pill" href="https://dentistas.com.br/tutfop" target="_blank" rel="noopener">
-                <span>Para alunos</span>
-              </a>
-        
-              <a class="pill" href="https://dentistas.com.br/tutfop" target="_blank" rel="noopener">
-                <span>Para professores</span>
-              </a>
-        
-            </div>
-          </section>
-          </section>
+      <section class="services-section icon-grid">
 
+        <div class="icon-item">
+          <img src="https://dentistas.com.br/assets/cursos.png" alt="Dicas de I.A.">
+          <p>DICAS DE I.A.</p>
+        </div>
+
+        <div class="icon-item">
+          <img src="https://dentistas.com.br/assets/sala.png" alt="Curso de I.A.">
+          <p>CURSO DE I.A.</p>
+        </div>
+
+      </section>
+
+    </div>
 
   </div>
 
@@ -94,61 +73,30 @@
 
     <app-chatbot></app-chatbot>
 
+    <div class="box">
+      <section class="chatbots-section">
+
+        <section class="pills-section">
+          <div class="pill-group">
+
+            <a class="pill" href="https://dentistas.com.br/tutfop" target="_blank" rel="noopener">
+              <span>Consultores de I.A. para dentistas</span>
+            </a>
+
+            <a class="pill" href="https://dentistas.com.br/tutfop" target="_blank" rel="noopener">
+              <span>Assistentes com I.A. para professores</span>
+            </a>
+
+            <a class="pill" href="https://dentistas.com.br/tutfop" target="_blank" rel="noopener">
+              <span>Tutores de I.A. para alunos</span>
+            </a>
+
+          </div>
+        </section>
+
+      </section>
+    </div>
+
   </div>
+
 </div>
-
-
-<!-- <div class="icon-item" (click)="go('usuarios')">
-                                  <img src="https://dentistas.com.br/assets/usuarios.png" alt="Usuários">
-                                  <p>USUÁRIOS</p>
-                                </div> -->
-
-<!-- <div class="icon-item" (click)="go('equipe')">
-                                  <img src="https://dentistas.com.br/assets/equipe.png" alt="Equipe">
-                                  <p>EQUIPE</p>
-                                </div> -->
-
-<!-- <div class="icon-item" (click)="go('indicador')">
-                                  <img src="https://dentistas.com.br/assets/fornecedores.png" alt="Dentais">
-                                  <p>DENTAIS</p>
-                                </div> -->
-
-<!-- <div class="icon-item" (click)="go('fornecedores')">
-                                  <img src="https://dentistas.com.br/assets/fornecedores.png" alt="Fornecedores">
-                                  <p>FORNECEDORES</p>
-                                </div> -->
-
-<!-- <div class="icon-item" (click)="go('usuarios')">
-                                  <img src="https://dentistas.com.br/assets/historico.png" alt="Usuários">
-                                  <p>HISTÓRICO</p>
-                                </div> -->
-
-<!-- <div class="icon-item" (click)="go('perfil')">
-                                  <img src="https://dentistas.com.br/assets/perfil.png" alt="Meu Perfil">
-                                  <p>PERFIL</p>
-                                </div> -->
-
-<!-- <div class="icon-item" (click)="go('home')">
-                                <img src="https://dentistas.com.br/assets/mail.png" alt="Configuração">
-                                <p>REVISÕES</p>
-                              </div> -->
-
-<!-- <div class="icon-item" (click)="go('home')">
-                                <img src="https://dentistas.com.br/assets/mail.png" alt="Configuração">
-                                <p>REATIVAÇÕES</p>
-                              </div> -->
-
-<!-- <div class="icon-item" (click)="go('home')">
-                                <img src="https://dentistas.com.br/assets/impressos.png" alt="Configuração">
-                                <p>RECIBOS</p>
-                              </div> -->
-
-<!-- <div class="icon-item" (click)="go('home')">
-                                <img src="https://dentistas.com.br/assets/impressos.png" alt="Configuração">
-                                <p>ATESTADOS</p>
-                              </div> -->
-
-<!-- <div class="icon-item" (click)="go('usuarios')">
-                                <img src="https://dentistas.com.br/assets/usuarios.png" alt="Usuários">
-                                <p>USUÁRIOS</p>
-                              </div> -->
