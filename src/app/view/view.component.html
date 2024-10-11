@@ -2,9 +2,8 @@
   <div class="header">
     <div class="actions">
       <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
-      <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
     </div>
-    <h1 class="title">{{titulo_da_pagina}}</h1>
+    <h1 class="title">{{ titulo_da_pagina }}</h1>
     <div class="actions">
       <img src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editarRegistro()">
       <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao" (click)="deletarRegistro()">
@@ -16,32 +15,13 @@
   </div>
 
   <div class="record-details">
-    <div class="detail-container" style="display: flex; justify-content: space-between;">
-      <div class="detail-label">Nome</div>
-      <div class="detail-value">{{ registro?.nome }}</div>
-      <div class="detail-id" style="text-align: right;">{{ registro?.codigo }}</div>
-    </div>
-
-    <div class="detail-container">
-      <div class="detail-label">Sexo</div>
-      <div class="detail-value">{{ registro?.sexo }}</div>
-    </div>
-    <div class="detail-container">
-      <div class="detail-label">Nascimento</div>
-      <div class="detail-value">{{ registro?.nascimento }}</div>
-    </div>
-    <div class="detail-container">
-      <div class="detail-label">CPF</div>
-      <div class="detail-value">{{ registro?.cpf }}</div>
-    </div>
-    <div class="detail-container">
-      <div class="detail-label">Telefone</div>
-      <div class="detail-value">{{ registro?.telefone }}</div>
+    <div *ngFor="let campo of campos" class="detail-container">
+      <div class="detail-label">{{ campo.label }}</div>
+      <div class="detail-value">{{ registro[campo.nome] }}</div>
     </div>
   </div>
 </div>
 
-<!-- Mostrar mensagem de carregamento caso o registro ainda não esteja definido -->
 <div *ngIf="!registro && !isLoading">
   <p>Registro não encontrado ou erro ao carregar os dados.</p>
   <button (click)="voltar()">Voltar</button>

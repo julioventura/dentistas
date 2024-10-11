@@ -4,7 +4,7 @@ import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { UserService } from '../shared/user.service'; // Importa o serviço de usuário
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Importa a autenticação para capturar o usuário logado
-import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
+import { CamposService } from '../shared/campos.service'; // Serviço de campos
 
 @Component({
   selector: 'app-view',
@@ -18,6 +18,7 @@ export class ViewComponent implements OnInit {
   isLoading = true; // Variável para exibir o carregamento
   titulo_da_pagina: string = '';
   userId: string | null = null; // Armazena o ID do usuário logado
+  campos: any[] = []; // Campos da coleção
 
   constructor(
     private route: ActivatedRoute,
@@ -25,7 +26,8 @@ export class ViewComponent implements OnInit {
     private firestoreService: FirestoreService<any>, // Serviço genérico
     private navegacaoService: NavegacaoService,
     private userService: UserService, // Serviço de usuário
-    private afAuth: AngularFireAuth // Serviço de autenticação
+    private afAuth: AngularFireAuth, // Serviço de autenticação
+    private camposService: CamposService // Serviço de campos
   ) { }
 
   ngOnInit() {
@@ -34,10 +36,11 @@ export class ViewComponent implements OnInit {
     this.id = this.route.snapshot.paramMap.get('id')!;
     console.log("Registros de ");
     console.log(this.collection);
-    
+
     // Verifica se a coleção foi definida corretamente
     if (this.collection) {
       this.titulo_da_pagina = this.collection.charAt(0).toUpperCase() + this.collection.slice(1).toLowerCase();
+      this.carregarCampos(); // Carrega os campos da coleção selecionada
     } else {
       console.error('Erro: A coleção não foi definida corretamente.');
       this.titulo_da_pagina = 'Coleção não definida'; // Mensagem de fallback
@@ -48,70 +51,65 @@ export class ViewComponent implements OnInit {
       if (user && user.uid) {
         this.userId = user.uid; // Define o ID do usuário logado
 
-        // Titulo da página
         if (this.id && this.collection) {
           this.titulo_da_pagina = this.titulo_view(this.collection);
           console.log('Título = ' + this.titulo_da_pagina);
+          this.loadRegistro(this.id); // Carrega o registro após definir os campos
         }
-        this.loadRegistro(this.id);
       }
+    });
+  }
+
+  carregarCampos() {
+    // Se inscreve no Observable retornado pelo serviço e atribui os campos ao array
+    this.camposService.getFormularios(this.collection).subscribe((campos: any[]) => {
+      this.campos = campos || []; // Inicializa com um array vazio se não houver campos
     });
   }
 
   titulo_view(collection: string) {
     // Titulo da página
-
     switch (this.collection) {
       case 'usuarios':
         return 'Usuário';
-        break;
       case 'professores':
         return 'Professor';
-        break;
       case 'alunos':
         return 'Aluno';
-        break;
       case 'pacientes':
         return 'Paciente';
-        break;
       case 'equipe':
         return 'Equipe';
-        break;
       default:
         return 'Registro';
-        break;
     }
-
   }
 
   loadRegistro(id: string) {
     if (!this.userId) return; // Verifica se o userId está disponível
 
     // Busca o registro dentro da subcoleção do usuário logado
-    this.firestoreService
-      .getRegistros(`users/${this.userId}/${this.collection}`)
-      .subscribe(
-        (registros) => {
-          this.registro = registros.find((registro: any) => registro.id === id);
-          this.isLoading = false; // Desativa o modo de carregamento após receber os dados
+    this.firestoreService.getRegistroById(`users/${this.userId}/${this.collection}`, id).subscribe(
+      (registro) => {
+        this.registro = registro;
+        this.isLoading = false; // Desativa o modo de carregamento após receber os dados
 
-          if (!this.registro) {
-            console.error(`Registro com ID ${id} não encontrado na coleção ${this.collection}`);
-            this.router.navigate([`/${this.collection}`]); // Redireciona para a página de listagem
-          }
-        },
-        (error) => {
-          this.isLoading = false;
-          console.error('Erro ao carregar registro:', error);
-          this.router.navigate([`/${this.collection}`]); // Redireciona em caso de erro
+        if (!this.registro) {
+          console.error(`Registro com ID ${id} não encontrado na coleção ${this.collection}`);
+          this.router.navigate([`/${this.collection}`]); // Redireciona para a página de listagem
         }
-      );
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('Erro ao carregar registro:', error);
+        this.router.navigate([`/${this.collection}`]); // Redireciona em caso de erro
+      }
+    );
   }
 
   voltar() {
     console.log("voltar()");
     console.log(this.collection);
-    // this.router.navigate(["/" + this.collection]); // Redireciona para o componente da coleção correspondente
     this.router.navigate([`/registros/${this.collection}`]); // Redireciona para o componente da coleção correspondente
   }
 
@@ -121,8 +119,7 @@ export class ViewComponent implements OnInit {
 
   deletarRegistro() {
     if (confirm('Você tem certeza que deseja excluir este registro?')) {
-      this.firestoreService
-        .deleteRegistro(`users/${this.userId}/${this.collection}`, this.id)
+      this.firestoreService.deleteRegistro(`users/${this.userId}/${this.collection}`, this.id)
         .then(() => {
           this.router.navigate([`/${this.collection}`]); // Redireciona para a página de listagem após exclusão
         })

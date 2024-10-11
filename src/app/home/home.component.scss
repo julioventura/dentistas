@@ -5,41 +5,38 @@ section {
   text-align: center;
 }
 
-
 .container {
+  max-width: 800px;
+  /* Limita a largura máxima a 800px */
+  margin: 0 auto;
+  /* Centraliza o container horizontalmente */
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  // gap: 10px;
   padding: 20px;
-  margin: 10px;
-  margin-bottom: 0px;
+  gap: 10px;
+  /* Adiciona espaçamento entre os containers */
+}
+
+.largo {
+  width: auto;
 }
 
 .column {
   flex: 1;
   display: flex;
   flex-direction: column;
-  // gap: 10px;
+  gap: 0px;
+  /* Adiciona espaçamento entre os itens da coluna */
 }
 
 .column-left,
 .column-right {
-  background-color: $white-color;
-  padding: 10px;
-  box-shadow: $box-shadow;
-  border-radius: 8px;
-  width: auto;
-  /* Ambas as colunas ocupam 48% da largura da tela */
-  min-width: 200px;
-  /* Garante que as colunas tenham uma largura mínima */
-  box-shadow: none;
-  padding: 0px;
+  background-color: #ffffff;
+  width: 100%;
+  min-width: 300px;
+  // margin: 0px;
 }
-
-// .column-left {
-//   width: 200px;
-// }
 
 
 /* Seção de Ícones (Novo Estilo) */
@@ -55,17 +52,14 @@ section {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    width: 70px;
+    width: 90px;
 
     img {
-      margin-right: 8px;
-      width: 55px;
-      height: 55px;
+      width: 70px;
+      height: 70px;
     }
 
     p {
-      margin-top: 1px;
-      // margin-bottom: 6px;
       font-weight: 500;
       color: $primary-color;
       font-size: 8px;
@@ -73,18 +67,14 @@ section {
   }
 }
 
-
-
 /* Seção de Chatbots */
 .chatbots-section {
   background: white;
-  margin: 0px;
   border-radius: 10px;
   padding: 1rem 1rem;
   font-size: medium;
   font-weight: 500;
   color: $primary-color;
-  // width: 100%;
 
   .pills-section {
     background-color: unset;
@@ -94,11 +84,10 @@ section {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    // justify-content: center;
 
     .pill {
       display: block;
-      padding: 1px;
+      // padding: 1px;
       background-color: $primary-color;
       color: white;
       font-size: 10px;
@@ -106,7 +95,7 @@ section {
       border-radius: 8px;
       font-weight: 500;
       text-decoration: none;
-      transition: background-color 2s;
+      transition: background-color 0.6s;
 
       &:hover {
         background-color: $primary-color-dark;
@@ -115,17 +104,15 @@ section {
   }
 }
 
-
 /* Seção de Serviços */
 .services-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   flex-wrap: wrap;
+  // gap: 10px;
+  /* Adiciona espaçamento entre os serviços */
 }
-
-
 
 /* Ajuste responsivo */
 @media screen and (max-width: 549px) {
@@ -133,17 +120,11 @@ section {
   .column-left,
   .column-right {
     width: 100%;
-    /* Colunas ocupam 100% da largura da tela em telas menores */
   }
 
   .chatbots-section {
-
     .pill-group {
       gap: 10px;
-
-      // .pill {
-      // padding: 8px 15px;
-      // }
     }
   }
 }
@@ -152,9 +133,10 @@ section {
 @media screen and (min-width: 550px) {
   .container {
     flex-direction: row;
+    // flex-direction: column;
+    width: 100%;
   }
 }
-
 
 /* Estilos para o container do cabeçalho */
 #header {
@@ -164,11 +146,11 @@ section {
   max-height: 50px;
   width: 100%;
   margin-top: 0px;
-  border: 1px solid $light-grey;
-  box-shadow: 0px 0px 6px $shadow-color;
+  /* border: 1px solid #eee; */
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4);
   border-radius: 10px;
-  padding-left: 20px;
-  padding-right: 20px;
+  /* padding-left: 20px; */
+  /* padding-right: 20px; */
   text-align: center;
 }
 
@@ -177,21 +159,4 @@ section {
   max-width: 40%;
   max-height: 47px;
   margin-right: 10px;
-}
-
-
-/* Material */
-.login-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-mat-form-field {
-  width: 100%;
-}
-
-button {
-  width: 100%;
-  margin-top: 20px;
 }

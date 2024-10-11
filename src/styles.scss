@@ -9,19 +9,18 @@ $white-color: #ffffff;
 $gray: #bdbdbd;
 $light-grey: #eee;
 $red: #ff0000;
+$red-color: #a80000;
 $red-dark: #a80000;
 $red-light: #ffdfdf;
 $primary-color: #2A7AC3;
 $primary-color-light: #ddf5ff;
 $primary-color-dark: #153d75;
 
-/* Definindo uma versão mais escura */
 $primary-hover: $primary-color-dark;
 $secondary-color: #0d9113;
 $secondary-color-light: #ddffde;
 $secondary-color-dark: #105d14;
 
-/* Definindo uma versão mais escura do secondary-color */
 $text-color: $primary-color;
 $text-color-dark: $primary-color-dark;
 $text-color-claro: white;
@@ -34,11 +33,9 @@ $background-cinza: #e6e6e6;
 $shadow-color: rgba(0, 0, 0, 0.4);
 $box-shadow: 0px 0px 6px $shadow-color;
 
-// Variáveis para TR
 $tr_even_rows: #E9F1FB;
 $tr_odd_rows: #D6E6FC;
 
-// Outras variáveis globais
 $font-family: "Roboto", sans-serif;
 $font-size: 11px;
 $max-width: 800px;
@@ -72,11 +69,13 @@ h3 {
 .box {
     border-radius: 10px;
     box-shadow: 0px 0px 6px $shadow-color;
+    // margin-top: 10px;
 }
 
 .container {
     max-width: 800px;
-    margin: 10px auto;
+    margin: 0 auto;
+    /* Centraliza o container */
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0px 0px 6px $shadow-color;
@@ -99,6 +98,5 @@ body {
 }
 
 body {
-    margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }

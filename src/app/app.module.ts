@@ -23,6 +23,7 @@ import { ViewComponent } from './view/view.component';
 import { ConfigComponent } from './shared/config/config.component';
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component';
 import { RegistrosComponent } from './registros/registros.component'; // Novo componente Registros
+import { FormulariosComponent } from './formularios/formularios.component';
 
 // Serviços
 import { FirestoreService } from './shared/firestore.service';
@@ -49,13 +50,14 @@ import { MatIconModule } from '@angular/material/icon';
     ViewComponent,
     ConfigComponent,
     SignupDialogComponent,
-    RegistrosComponent // Declaração do novo componente Registros
+    RegistrosComponent,
+    FormulariosComponent
   ],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule, // Adicionado aqui
+    BrowserAnimationsModule, 
     FormsModule,
-    ReactiveFormsModule, // ReactiveFormsModule adicionado aqui
+    ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent },
       { path: 'login', component: LoginComponent },
@@ -65,7 +67,8 @@ import { MatIconModule } from '@angular/material/icon';
       { path: 'view/:collection/:id', component: ViewComponent },
       { path: 'edit/:collection/:id', component: EditComponent },
       { path: 'config', component: ConfigComponent },
-      { path: 'registros/:collection', component: RegistrosComponent }, // Rota para o componente Registros
+      { path: 'registros/:collection', component: RegistrosComponent },
+      { path: 'formularios', component: FormulariosComponent },
       { path: '**', redirectTo: '' }
     ]),
     AngularFireModule.initializeApp(environment.firebaseConfig),

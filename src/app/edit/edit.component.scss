@@ -51,7 +51,6 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: $box-shadow;
-  border: 1px solid $red-light;
 
   .detail-container {
     display: flex;
@@ -79,7 +78,7 @@
       text-align: left;
       width: 100%;
       padding: 8px;
-      border: 1px solid $red-light;
+      border: 1px solid $red-dark;
       border-radius: 5px;
     }
 
@@ -98,6 +97,10 @@
       border-color: $red-dark;
     }
   }
+}
+
+.record-details {
+  box-shadow: box-shadow;
 }
 
 // Botões de ação do formulário

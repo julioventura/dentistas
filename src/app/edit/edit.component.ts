@@ -4,6 +4,7 @@ import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms'; // Adiciona FormControl
 import { AngularFireAuth } from '@angular/fire/compat/auth';  // Importa a autenticação para capturar o usuário logado
+import { CamposService } from '../shared/campos.service'; // Importa o serviço de campos
 
 @Component({
   selector: 'app-edit',
@@ -17,14 +18,8 @@ export class EditComponent implements OnInit {
   userId: string | null = null; // Armazena o ID do usuário logado
 
   // Formulário dinâmico
-  registroForm!: FormGroup; // Adiciona o FormGroup para o formulário dinâmico
-  campos: any[] = [
-    { nome: 'nome', tipo: 'text', label: 'Nome' },
-    { nome: 'sexo', tipo: 'text', label: 'Sexo' },
-    { nome: 'nascimento', tipo: 'text', label: 'Nascimento' },
-    { nome: 'cpf', tipo: 'text', label: 'CPF' },
-    { nome: 'telefone', tipo: 'text', label: 'Telefone' }
-  ];
+  registroForm!: FormGroup; // FormGroup para o formulário dinâmico
+  campos: any[] = []; // Campos serão definidos dinamicamente com base na coleção
 
   constructor(
     private route: ActivatedRoute,
@@ -32,7 +27,8 @@ export class EditComponent implements OnInit {
     private firestoreService: FirestoreService<any>, // Serviço genérico
     private navegacaoService: NavegacaoService,
     private afAuth: AngularFireAuth, // Serviço de autenticação
-    private fb: FormBuilder // FormBuilder para o formulário dinâmico
+    private fb: FormBuilder, // FormBuilder para o formulário dinâmico
+    private camposService: CamposService // Serviço de campos
   ) { }
 
   ngOnInit() {
@@ -43,6 +39,9 @@ export class EditComponent implements OnInit {
         // Captura o nome da coleção da rota
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         const id = this.route.snapshot.paramMap.get('id');
+
+        // Define os campos do formulário com base na coleção
+        this.carregarCampos(); // Método ajustado para carregar campos do Firestore
 
         if (id) {
           this.loadRegistro(id);
@@ -57,6 +56,14 @@ export class EditComponent implements OnInit {
     });
   }
 
+  carregarCampos() {
+    // Se inscreve no Observable retornado pelo serviço e atribui os campos ao array
+    this.camposService.getFormularios(this.collection).subscribe((campos: any[]) => {
+      this.campos = campos || []; // Inicializa com um array vazio se não houver campos
+      this.createForm(); // Recria o formulário após carregar os campos
+    });
+  }
+
   gerarNovoRegistro() {
     if (!this.userId || !this.collection) return; // Verifica se o userId e a collection estão disponíveis
 
@@ -65,11 +72,7 @@ export class EditComponent implements OnInit {
       this.registro = {
         id, // O ID gerado será usado para operações no Firestore
         codigo: novoCodigo,
-        nome: '',
-        sexo: 'Masculino', // Valor padrão
-        nascimento: '',
-        cpf: '',
-        telefone: ''
+        ...this.campos.reduce((acc, campo) => ({ ...acc, [campo.nome]: '' }), {})
       };
 
       // Adiciona o registro recém-criado à subcoleção do usuário logado
@@ -108,13 +111,11 @@ export class EditComponent implements OnInit {
 
   createForm() {
     // Cria o formulário com os campos esperados
-    this.registroForm = this.fb.group({
-      nome: [''],
-      sexo: [''],
-      nascimento: [''],
-      cpf: [''],
-      telefone: ['']
-    });
+    const formControls = this.campos.reduce((acc, campo) => {
+      acc[campo.nome] = new FormControl('');
+      return acc;
+    }, {});
+    this.registroForm = this.fb.group(formControls);
   }
 
   salvar() {
