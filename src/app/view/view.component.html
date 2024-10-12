@@ -17,16 +17,18 @@
   <div class="record-details">
     <div *ngFor="let campo of campos" class="detail-container">
       <div class="detail-label">{{ campo.label }}</div>
-      <div class="detail-value">{{ registro[campo.nome] }}</div>
+
+      <!-- Exibir o valor normalmente -->
+      <div class="detail-value" *ngIf="campo.tipo !== 'image' && campo.tipo !== 'file' && campo.tipo !== 'url'">{{
+        registro[campo.nome] }}</div>
+
+      <!-- Exibir link se for uma URL -->
+      <a *ngIf="campo.tipo === 'url' && registro[campo.nome]" [href]="registro[campo.nome]" target="_blank">{{
+        registro[campo.nome] }}</a>
+
+      <!-- Exibir imagem se for tipo 'image' e URL for válida -->
+      <img *ngIf="isImageUrl(registro[campo.nome])" [src]="registro[campo.nome]" alt="Imagem do Registro"
+        style="max-width: 100px; margin-left: 10px;">
     </div>
   </div>
-</div>
-
-<div *ngIf="!registro && !isLoading">
-  <p>Registro não encontrado ou erro ao carregar os dados.</p>
-  <button (click)="voltar()">Voltar</button>
-</div>
-
-<div *ngIf="isLoading">
-  Carregando os detalhes do registro...
 </div>

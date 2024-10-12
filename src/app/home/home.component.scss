@@ -18,10 +18,6 @@ section {
   /* Adiciona espaçamento entre os containers */
 }
 
-.largo {
-  width: auto;
-}
-
 .column {
   flex: 1;
   display: flex;
@@ -52,11 +48,11 @@ section {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    width: 90px;
+    width: 110px;
 
     img {
-      width: 70px;
-      height: 70px;
+      width: 65px;
+      height: 65px;
     }
 
     p {
@@ -84,6 +80,7 @@ section {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    margin-bottom: 20px;
 
     .pill {
       display: block;
@@ -134,7 +131,7 @@ section {
   .container {
     flex-direction: row;
     // flex-direction: column;
-    width: 100%;
+    // width: 100%;
   }
 }
 
@@ -159,4 +156,8 @@ section {
   max-width: 40%;
   max-height: 47px;
   margin-right: 10px;
+}
+
+.IAOdonto {
+  margin-bottom: 10px;
 }

@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireStorage } from '@angular/fire/compat/storage'; // Importa o serviço de Storage
 import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService<T extends { id?: string }> {
-  constructor(private firestore: AngularFirestore) { }
+  constructor(private firestore: AngularFirestore, private storage: AngularFireStorage) { }
 
   // CREATE: Adicionar um novo registro à subcoleção do usuário
   addRegistro(collectionPath: string, registro: T): Promise<void> {
@@ -47,7 +49,6 @@ export class FirestoreService<T extends { id?: string }> {
         let novoCodigo = '001'; // Começa com '001' se for o primeiro
 
         if (registros && registros.length > 0) {
-          // Verifica se 'codigo' existe antes de tentar fazer o 'split'
           const codigos = registros.map((r: any) => r.codigo ? r.codigo.split('-')[0] : '001');
           const ultimoCodigo = Math.max(...codigos.map(c => parseInt(c, 10)));
           const proximoCodigo = (ultimoCodigo + 1).toString().padStart(3, '0');
@@ -65,5 +66,28 @@ export class FirestoreService<T extends { id?: string }> {
   // Função para calcular o dígito verificador
   calcularDigitoVerificador(codigo: string): number {
     return codigo.split('').reduce((acc, num) => acc + parseInt(num, 10), 0) % 10;
+  }
+
+  // Método para fazer upload de arquivos no Firebase Storage
+  uploadFile(path: string, file: File): Observable<string> {
+    const filePath = `${path}/${file.name}`; // Define o caminho no Firebase Storage
+    const fileRef = this.storage.ref(filePath);
+    const task = this.storage.upload(filePath, file);
+
+    return new Observable<string>(observer => {
+      task.snapshotChanges().pipe(
+        finalize(() => {
+          fileRef.getDownloadURL().subscribe(url => {
+            observer.next(url); // Retorna a URL do arquivo após o upload
+            observer.complete();
+          });
+        })
+      ).subscribe();
+    });
+  }
+
+  // Método para deletar um arquivo do Firebase Storage
+  deleteFile(fileUrl: string): Promise<void> {
+    return this.storage.refFromURL(fileUrl).delete().toPromise();
   }
 }

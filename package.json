@@ -22,7 +22,8 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
     "chart.js": "^4.4.4",
-    "firebase": "^10.14.0",
+    "firebase": "^10.14.1",
+    "firebase-admin": "^12.6.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.10"

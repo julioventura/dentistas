@@ -11,9 +11,7 @@ export class CamposService {
   // Configurações padrão para todas as coleções
   public camposPadrao: any[] = [
     { nome: 'nome', tipo: 'text', label: 'Nome' },
-    { nome: 'id', tipo: 'text', label: 'ID' },
     { nome: 'codigo', tipo: 'text', label: 'Código' },
-    { nome: 'cpf', tipo: 'text', label: 'CPF' },
     { nome: 'sexo', tipo: 'text', label: 'Sexo' },
     { nome: 'nascimento', tipo: 'text', label: 'Nascimento' },
     { nome: 'whatsapp', tipo: 'text', label: 'WhatsApp' },
@@ -21,7 +19,9 @@ export class CamposService {
     { nome: 'endereço', tipo: 'text', label: 'Endereço' },
     { nome: 'bairro', tipo: 'text', label: 'Bairro' },
     { nome: 'cidade', tipo: 'text', label: 'Cidade' },
-    { nome: 'estado', tipo: 'text', label: 'Estado' }
+    { nome: 'estado', tipo: 'text', label: 'Estado' },
+    { nome: 'cpf', tipo: 'text', label: 'CPF' },
+    { nome: 'id', tipo: 'text', label: 'ID' },
   ];
 
   constructor(private firestore: AngularFirestore) { }
