@@ -1,0 +1,44 @@
+<div class="container">
+  <div class="header">
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
+    </div>
+    <h1 class="title">Editar Registro</h1>
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
+    </div>
+  </div>
+
+  <div class="record-header">
+    {{ registro?.nome }}
+  </div>
+
+  <!-- Formulário Dinâmico -->
+  <div class="dynamic-form-container" *ngIf="registroForm">
+    <form [formGroup]="registroForm" class="record-details">
+      <div *ngFor="let campo of campos" class="detail-container">
+        <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+
+        <!-- Input para tipos normais -->
+        <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+          *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url'">
+
+        <!-- Input para URL -->
+        <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+          *ngIf="campo.tipo === 'url'" placeholder="Cole aqui o link do arquivo">
+
+        <!-- Input de Upload de Arquivo para imagens e arquivos -->
+        <input type="file" (change)="onFileSelected($event, campo.nome)"
+          *ngIf="campo.tipo === 'file' || campo.tipo === 'image'">
+
+        <!-- Mostrar imagem carregada se for um URL de imagem válida -->
+        <img *ngIf="isImageUrl(registro[campo.nome])" [src]="registro[campo.nome]" alt="Uploaded Image"
+          style="max-width: 100px; margin-top: 10px;">
+
+        <!-- Mostrar link para arquivo -->
+        <a *ngIf="campo.tipo === 'file' && registro[campo.nome] && !isImageUrl(registro[campo.nome])"
+          [href]="registro[campo.nome]" target="_blank">Ver Arquivo</a>
+      </div>
+    </form>
+  </div>
+</div>
