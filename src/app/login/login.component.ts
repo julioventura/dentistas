@@ -44,7 +44,7 @@ export class LoginComponent {
         if (user) {
           console.log("Usuário autenticado com sucesso:", user.email);
           this.userService.loginSuccess(user);
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
         } else {
           console.error('Erro: usuário retornado é null.');
         }
@@ -98,7 +98,7 @@ export class LoginComponent {
           user.updateProfile({ displayName: name }).then(() => {
             console.log("Perfil do usuário atualizado com o nome:", name);
             this.userService.loginSuccess(user); // Atualiza os dados no serviço de usuário
-            this.router.navigate(['/home']); // Redireciona para a página inicial
+            this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
           }).catch(error => {
             console.error('Erro ao atualizar o perfil do usuário:', error);
             alert('Erro ao atualizar o perfil. Por favor, tente novamente.');

@@ -8,7 +8,10 @@ import { finalize } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class FirestoreService<T extends { id?: string }> {
-  constructor(private firestore: AngularFirestore, private storage: AngularFireStorage) { }
+  constructor(
+    private firestore: AngularFirestore,
+    private storage: AngularFireStorage
+  ) { }
 
   // CREATE: Adicionar um novo registro à subcoleção do usuário
   addRegistro(collectionPath: string, registro: T): Promise<void> {
@@ -22,12 +25,17 @@ export class FirestoreService<T extends { id?: string }> {
     return this.firestore.collection<T>(collectionPath).valueChanges({ idField: 'id' });
   }
 
-  // READ: Buscar registro por ID na subcoleção do usuário
-  getRegistroById(collectionPath: string, id: string): Observable<T | undefined> {
-    return this.firestore.collection<T>(collectionPath).doc(id).valueChanges();
+  // READ: Buscar registro por ID (usado para perfis pessoais, baseado no UID)
+  getRegistroById(collectionPath: string, id: string): Observable<any | undefined> {
+    return this.firestore.collection<any>(collectionPath).doc(id).valueChanges();
   }
 
-  // UPDATE: Atualizar um registro existente na subcoleção do usuário
+  // READ: Buscar registro por username na subcoleção do usuário (para o perfil público)
+  getRegistroByUsername(collectionPath: string, username: string): Observable<any | undefined> {
+    return this.firestore.collection<any>(collectionPath, ref => ref.where('username', '==', username)).valueChanges();
+  }
+
+  // UPDATE: Atualizar um registro existente (usado para salvar os dados do perfil do usuário)
   updateRegistro(collectionPath: string, id: string, registro: Partial<T>): Promise<void> {
     return this.firestore.collection(collectionPath).doc(id).update(registro);
   }
@@ -37,7 +45,7 @@ export class FirestoreService<T extends { id?: string }> {
     return this.firestore.collection(collectionPath).doc(id).delete();
   }
 
-  // Método para criar um ID único
+  // Método para criar um ID único (caso seja necessário)
   createId(): string {
     return this.firestore.createId();
   }

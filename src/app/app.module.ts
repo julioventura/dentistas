@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Importado aqui
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // ReactiveFormsModule adicionado aqui
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 // Firebase e Firestore
@@ -22,15 +22,21 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ViewComponent } from './view/view.component';
 import { ConfigComponent } from './shared/config/config.component';
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component';
-import { RegistrosComponent } from './registros/registros.component'; // Novo componente Registros
+import { RegistrosComponent } from './registros/registros.component';
 import { FormulariosComponent } from './formularios/formularios.component';
+
+// Componentes adicionais
+import { PerfilComponent } from './perfil/perfil.component'; // Importando o componente Perfil
 
 // Serviços
 import { FirestoreService } from './shared/firestore.service';
 import { ConfigService } from './shared/config.service';
 import { UserService } from './shared/user.service';
 
-// Importações do Angular Material
+// Guard
+import { AuthGuard } from './shared/auth.guard'; // AuthGuard
+
+// Angular Material
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -51,15 +57,17 @@ import { MatIconModule } from '@angular/material/icon';
     ConfigComponent,
     SignupDialogComponent,
     RegistrosComponent,
-    FormulariosComponent
+    FormulariosComponent,
+    PerfilComponent  // Declarando o componente Perfil
   ],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule, 
+    BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent },
+      { path: '', component: HomeComponent }, // Página inicial padrão
+      { path: 'home', component: HomeComponent }, // Página inicial padrão
       { path: 'login', component: LoginComponent },
       { path: 'chatbot', component: ChatbotComponent },
       { path: 'menu', component: MenuComponent },
@@ -69,7 +77,11 @@ import { MatIconModule } from '@angular/material/icon';
       { path: 'config', component: ConfigComponent },
       { path: 'registros/:collection', component: RegistrosComponent },
       { path: 'formularios', component: FormulariosComponent },
-      { path: '**', redirectTo: '' }
+      { path: 'perfil', component: PerfilComponent }, // Rota para a página de perfil
+
+      // Rota para a homepage dos usuários, baseada no username
+      { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule) },
+      { path: '**', redirectTo: '' } // Redireciona para a página inicial em caso de rota inválida
     ]),
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
@@ -80,7 +92,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatIconModule
   ],
-  providers: [FirestoreService, ConfigService, UserService],
+  providers: [FirestoreService, ConfigService, UserService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

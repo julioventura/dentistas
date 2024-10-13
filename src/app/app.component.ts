@@ -1,26 +1,29 @@
-import { Component } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';  // Adicionar essas importações
-import { CommonModule } from '@angular/common';  // Adicionar o CommonModule para o uso de *ngIf
-import { RouterOutlet } from '@angular/router';
-import { FooterComponent } from './footer/footer.component';  // Importando o FooterComponent
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router'; // Importamos Router e ActivatedRoute
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']  
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  showMenu = true;
+export class AppComponent implements OnInit {
+  showFooter = true; // Variável que controla a exibição do menu
 
-  constructor(private router: Router) {  
-    // Injeção do serviço Router
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {  // Verifica se o evento é do tipo NavigationEnd
-        // Exibir o menu em todas as páginas, exceto as de login e redefinição de senha
-        const noMenuRoutes = ['/login', '/reset-password'];
-        this.showMenu = !noMenuRoutes.includes(event.url);  // Controla menu e rodapé
-      }
-    });
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    // Detecta mudanças na rota
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd)) // Filtra apenas as mudanças de rota
+      .subscribe(() => {
+        // Verifica se o caminho atual é para o componente Homepage
+        const currentRoute = this.activatedRoute.firstChild?.snapshot.routeConfig?.path;
+        if (currentRoute && currentRoute.includes(':username')) {
+          this.showFooter = false; // Se a rota for para o Homepage, ocultamos o menu
+        } else {
+          this.showFooter = true; // Para outras rotas, mostramos o menu
+        }
+      });
   }
-
 }
