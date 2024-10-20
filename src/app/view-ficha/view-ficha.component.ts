@@ -26,7 +26,7 @@ export class ViewFichaComponent implements OnInit {
   camposIniciais: any[] = []; // Armazena os campos ao carregar a página
   isLoading = true;   // Indicador de carregamento  
   titulo_da_pagina: string = '';
-  pacienteNome: string = '';
+  collectionNome: string = '';
 
 
   constructor(
@@ -54,7 +54,7 @@ export class ViewFichaComponent implements OnInit {
         this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
         this.titulo_da_pagina = "Ficha de " + this.util.capitalizar(this.subCollection);
         this.carregarCampos();
-        this.loadPacienteNome();
+        this.loadCollectionNome();
 
         console.log('Collection:', this.collection);
         console.log('ID:', this.id);
@@ -90,21 +90,21 @@ export class ViewFichaComponent implements OnInit {
   }
 
 
-  loadPacienteNome() {
-    const pacientePath = `users/${this.userId}/${this.collection}`;
-    console.log('Caminho para o paciente:', pacientePath);
-    console.log('Id do paciente:', this.id);
+  loadCollectionNome() {
+    const collectionPath = `users/${this.userId}/${this.collection}`;
+    console.log('Caminho para o collection:', collectionPath);
+    console.log('Id do collection:', this.id);
 
-    this.firestoreService.getRegistroById(pacientePath, this.id).subscribe(paciente => {
-      if (paciente && paciente.nome) {
-        this.pacienteNome = paciente.nome;
-        console.log('Nome do paciente carregado:', this.pacienteNome);
+    this.firestoreService.getRegistroById(collectionPath, this.id).subscribe(collection => {
+      if (collection && collection.nome) {
+        this.collectionNome = collection.nome;
+        console.log('Nome do collection carregado:', this.collectionNome);
         this.titulo_da_pagina = "Fichas de " + this.util.capitalizar(this.subCollection);
       } else {
-        console.error('Paciente não encontrado ou sem nome.');
+        console.error('Collection não encontrado ou sem nome.');
       }
     }, error => {
-      console.error('Erro ao carregar o paciente:', error);
+      console.error('Erro ao carregar o collection:', error);
     });
   }
 

@@ -19,10 +19,11 @@ export class EditFichaComponent implements OnInit {
   registro: any = {};
   id!: string;
   fichaId: string | null = null; // Pode ser null se não houver fichaId
+  ficha: any;
   isLoading = true;
   userId!: string;
   titulo_da_pagina: string = '';
-  pacienteNome: string = '';
+  collectionNome: string = '';
 
   fichaForm!: FormGroup;
   campos: any[] = [];
@@ -42,98 +43,78 @@ export class EditFichaComponent implements OnInit {
 
   ngOnInit(): void {
     this.afAuth.authState.subscribe((user) => {
-      if (user && user.uid) {
+      if (!user || !user.uid) {
+        console.error('Usuário não autenticado.');
+        this.util.goHome();
+      }
+      else {
         this.userId = user.uid; // Garantindo que userId seja inicializado corretamente
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.id = this.route.snapshot.paramMap.get('id')!;
         this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
 
+        this.titulo_da_pagina = "Editar " + this.util.capitalizar(this.subCollection);
+
+        console.log('userId:', this.userId); // Garantir que o userId seja exibido corretamente
         console.log('Collection:', this.collection);
         console.log('ID:', this.id);
         console.log('subCollection:', this.subCollection);
-        console.log('userId:', this.userId); // Garantir que o userId seja exibido corretamente
+        console.log('fichaId:', this.fichaId); // Garantir que o fichaId seja exibido corretamente
 
-        this.titulo_da_pagina = "Editar " + this.util.capitalizar(this.subCollection);
-
-        this.carregarCampos();
-
-        this.loadPacienteNome();
-
-        if (this.fichaId) {
-          // Carregar detalhes de uma ficha específica
-          console.log('fichaId:', this.fichaId);
-          this.loadFicha();
+        if (!this.fichaId) {
+          console.error('Ficha não identificada.');
+          this.voltar();
         }
-      } else {
-        console.error('Usuário não autenticado.');
+        this.carregarCampos();
+        this.createForm();
+        this.loadFicha();
+        this.loadCollectionNome();
       }
     });
-
-    // Inicializa o formulário reativo
-    this.fichaForm = this.fb.group({
-      nome: ['', Validators.required], // Campo 'nome' com validação
-      descricao: [''],
-      valor: [''],
-      data: [''] 
-    });
-
-    console.log('Formulário inicializado.');
-
-    // Captura os parâmetros da rota
-    this.collection = this.route.snapshot.paramMap.get('collection')!;
-    this.id = this.route.snapshot.paramMap.get('id')!;
-    this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
-    this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
-
-    console.log('edit-ficha:');
-    console.log('Collection:', this.collection);
-    console.log('ID:', this.id);
-    console.log('subCollection:', this.subCollection);
-    console.log('fichaId:', this.fichaId);
-
-    // this.createForm();
+    console.log('Formulário de edição de ficha inicializado.');
   }
 
+
+  createForm() {
+    console.log('createForm()');
+    // Inicializa o formulário reativo
+    this.fichaForm = this.fb.group({
+      nome: ['', Validators.required],  // Apenas o campo nome é obrigatório
+      descricao: [''],
+      valor: [''],
+      data: ['']
+    });
+  }
 
 
   carregarCampos() {
     this.CamposFichaService.getCamposFicha(this.collection).subscribe((campos: any[]) => {
       this.campos = campos || [];
-      this.createForm();
     });
   }
 
 
 
-  loadPacienteNome() {
-    const pacientePath = `users/${this.userId}/${this.collection}`;
-    console.log('Caminho para o paciente:', pacientePath);
-    console.log('Id do paciente:', this.id);
+  loadCollectionNome() {
+    const collectionPath = `users/${this.userId}/${this.collection}`;
+    console.log('Caminho para o collection:', collectionPath);
+    console.log('Id do collection:', this.id);
 
-    this.firestoreService.getRegistroById(pacientePath, this.id).subscribe(paciente => {
-      if (paciente && paciente.nome) {
-        this.pacienteNome = paciente.nome;
-        console.log('Nome do paciente carregado:', this.pacienteNome);
+    this.firestoreService.getRegistroById(collectionPath, this.id).subscribe(collection => {
+      if (collection && collection.nome) {
+        this.collectionNome = collection.nome;
+        console.log('Nome do collection carregado:', this.collectionNome);
         this.titulo_da_pagina = "Fichas de " + this.util.capitalizar(this.subCollection);
       } else {
-        console.error('Paciente não encontrado ou sem nome.');
+        console.error('Collection não encontrado ou sem nome.');
       }
     }, error => {
-      console.error('Erro ao carregar o paciente:', error);
+      console.error('Erro ao carregar o collection:', error);
     });
   }
 
 
-
-  createForm() {
-    this.fichaForm = this.fb.group({
-      nome: ['', Validators.required],
-      descricao: ['', Validators.required],
-      valor: [''], // Caso 'valor' seja opcional
-      data: ['', Validators.required]
-    });
-  }
 
 
   loadFicha() {
@@ -141,38 +122,28 @@ export class EditFichaComponent implements OnInit {
     console.log('subCollection: ' + this.subCollection);
     console.log('fichaId: ' + this.fichaId);
 
-    if (this.subCollection && this.fichaId) {
+    if (!this.subCollection || !this.fichaId) {
+      console.error('subCollection ou fichaId não definidos corretamente.');
+    }
+    else {
       // const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens/${this.fichaId}`;
       const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
-
       console.log('Caminho para carregar ficha:', fichaPath);
 
       // Carrega a ficha para edição
       this.firestoreService.getRegistroById(fichaPath, this.fichaId).subscribe(ficha => {
-        console.log('Ficha carregada para edição:', ficha);
-
         if (ficha) {
-
-          // Atualize o formulário com os dados da ficha
-          // this.fichaForm.patchValue({
-          //   nome: ficha.nome || '', // Garantir que os campos correspondam ao objeto ficha
-          //   descricao: ficha.descricao || '',
-          //   valor: ficha.valor || '',
-          //   data: ficha.data || ''
-          // });
+          this.ficha = ficha;
           this.fichaForm.patchValue(ficha); // Preenche o formulário com os dados da ficha
-          
-          this.isLoading = false;
-          console.log('Ficha para edição (ficha):', ficha);
-
+          console.log('Ficha carregada:', this.ficha);
         } else {
           console.error('Ficha não encontrada no caminho:', fichaPath);
+          this.voltar();
         }
+        this.isLoading = false;  // ☺Desativa o indicador de carregamento
       }, error => {
         console.error('Erro ao carregar ficha para edição:', error);
       });
-    } else {
-      console.error('subCollection, fichaId ou userId não definidos corretamente.');
     }
   }
 
@@ -184,7 +155,7 @@ export class EditFichaComponent implements OnInit {
     }
   }
 
- 
+
 
   salvar() {
     if (this.fichaForm.valid) {
@@ -213,7 +184,7 @@ export class EditFichaComponent implements OnInit {
         });
       }
     } else {
-      console.error('Formulário inválido, não foi possível salvar.');
+      console.error('Formulário inválido. Verifique os campos obrigatórios.');
       console.log('Estado atual do formulário:', this.fichaForm.status);
       console.log('Erros no formulário:', this.fichaForm.errors);
     }
