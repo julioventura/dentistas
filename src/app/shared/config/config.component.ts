@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfigService } from '../config.service';  // Importando o ConfigService
-import { NavegacaoService } from '../../shared/navegacao.service';
+import { NavegacaoService } from '../navegacao.service';
 import { Router } from '@angular/router';
+import { UtilService } from '../util.service';
 
 @Component({
   selector: 'app-config',
@@ -16,7 +17,8 @@ export class ConfigComponent implements OnInit {
   constructor(
     private configService: ConfigService,
     private router: Router,
-    private navegacaoService: NavegacaoService
+    private navegacaoService: NavegacaoService,
+    public util: UtilService
   ) { }
 
   ngOnInit(): void {
@@ -32,10 +34,6 @@ export class ConfigComponent implements OnInit {
     this.navegacaoService.goBack();  // Chama o método do serviço para voltar
   }
 
-  // Método para ir para a página home
-  goHome() {
-    this.router.navigate(['/home']);
-  }
 
   editar() {
 

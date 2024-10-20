@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -51,5 +52,27 @@ export class UserService {
   // Método para chamar após o login bem-sucedido
   loginSuccess(user: firebase.User) {
     this.createUserInFirestore(user); // Cria um documento na coleção 'usuarios/dentistascombr' para o usuário
+  }
+
+  // NOVO MÉTODO: Validação de username
+  isValidUsername(username: string | null): Observable<boolean> {
+    if (!username) {
+      return new Observable(observer => {
+        observer.next(false);
+        observer.complete();
+      });
+    }
+
+    // Verifica no Firestore se o username existe
+    return this.firestore.collection('usuarios')
+      .doc('dentistascombr')
+      .collection('users', ref => ref.where('username', '==', username))
+      .get()
+      .pipe(
+        map(snapshot => {
+          // Verifica se o snapshot tem documentos, ou seja, se o username existe
+          return !snapshot.empty;
+        })
+      );
   }
 }

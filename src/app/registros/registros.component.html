@@ -1,41 +1,47 @@
 <div class="container">
   <!-- Header -->
   <div class="header">
-    <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="goHome()">
+    <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="util.goHome()">
     <h1 class="title">{{ titulo_da_pagina }}</h1>
     <img src="https://dentistas.com.br/assets/novo.png" class="navegacao" (click)="adicionar()">
   </div>
 
-  <!-- Barra de pesquisa -->
-  <div class="search-bar">
-    <input type="text" placeholder="Buscar registro..." />
+
+  <!-- Exibir mensagem de carregamento enquanto os dados estão sendo buscados -->
+  <div *ngIf="isLoading" class="aviso">
+    <p>Carregando...</p>
+  </div>
+
+  <div *ngIf="!isLoading && registros.length === 0" class="aviso">
+    <p>Nenhuma ficha encontrada.</p>
   </div>
 
 
   <!-- Tabela de registros -->
-  <div class="registros-table">
+  <!-- Barra de pesquisa -->
+  <div *ngIf="registros.length > 0" class="search-bar">
+    <input type="text" placeholder="Buscar registro..." />
+  </div>
+
+  <div *ngIf="!isLoading && registros.length > 0" class="registros-table">
     <table>
       <thead>
         <tr>
           <th>Nome</th>
-          <th>CPF</th>
-          <th>Telefone</th>
-          <th>Codigo</th>
+          <th class="right">Codigo</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let registro of registros" (click)="verFicha(registro.id)" style="cursor: pointer;">
           <td>{{ registro.nome }}</td>
-          <td>{{ registro.cpf }}</td>
-          <td>{{ registro.telefone }}</td>
-          <td>{{ registro.codigo }}</td>
+          <td class="right">{{ registro.codigo }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <!-- Paginação -->
-  <div class="pagination">
+  <div *ngIf="!isLoading && registros.length > 0" class="pagination">
     <button (click)="previousPage()">Anterior</button>
     <span>Página {{ page }} de {{ totalPages }}</span>
     <button (click)="nextPage()">Próximo</button>

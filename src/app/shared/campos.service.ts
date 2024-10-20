@@ -6,6 +6,7 @@ import { switchMap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
+
 export class CamposService {
 
   // Configurações padrão para todas as coleções

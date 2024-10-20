@@ -14,26 +14,29 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
+import { PerfilComponent } from './perfil/perfil.component'; // Importando o componente Perfil
+import { HomepageIntroComponent } from './homepage-intro/homepage-intro.component'; // Importar o novo componente
 import { ChatbotComponent } from './chatbot/chatbot.component';
-import { EditComponent } from './edit/edit.component';
 import { FooterComponent } from './footer/footer.component';
 import { MenuComponent } from './menu/menu.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
-import { ViewComponent } from './view/view.component';
 import { ConfigComponent } from './shared/config/config.component';
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component';
 import { RegistrosComponent } from './registros/registros.component';
 import { FormulariosComponent } from './formularios/formularios.component';
-import { PerfilComponent } from './perfil/perfil.component'; // Importando o componente Perfil
-import { HomepageIntroComponent } from './homepage-intro/homepage-intro.component'; // Importar o novo componente
+import { ViewComponent } from './view/view.component';
+import { EditComponent } from './edit/edit.component';
+import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
+import { ViewFichaComponent } from './view-ficha/view-ficha.component';
+import { EditFichaComponent } from './edit-ficha/edit-ficha.component';
+import { ListFichasComponent } from './list-fichas/list-fichas.component';
 
 // Serviços
-import { FirestoreService } from './shared/firestore.service';
-import { ConfigService } from './shared/config.service';
-import { UserService } from './shared/user.service';
 
 // Guard
-import { AuthGuard } from './shared/auth.guard'; // AuthGuard
+import { AuthGuard } from './shared/guards/auth.guard';  // Atualizado com o novo caminho
+import { UsernameGuard } from './shared/guards/username.guard';  // Atualizado com o novo caminho
+
 
 // Angular Material
 import { MatDialogModule } from '@angular/material/dialog';
@@ -48,18 +51,21 @@ import { MatIconModule } from '@angular/material/icon';
     HomeComponent,
     LoginComponent,
     ChatbotComponent,
-    EditComponent,
     FooterComponent,
     MenuComponent,
     ResetPasswordComponent,
-    ViewComponent,
     ConfigComponent,
     SignupDialogComponent,
     RegistrosComponent,
     FormulariosComponent,
+    ViewComponent,
+    EditComponent,
     PerfilComponent,
-    HomepageIntroComponent
-
+    HomepageIntroComponent,
+    FichasComponent,
+    ViewFichaComponent,
+    EditFichaComponent,
+    ListFichasComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,27 +74,37 @@ import { MatIconModule } from '@angular/material/icon';
     ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent }, // Página inicial padrão
-      { path: 'home', component: HomeComponent }, // Página inicial padrão
+      { path: 'home', component: HomeComponent },
       { path: 'login', component: LoginComponent },
       { path: 'chatbot', component: ChatbotComponent },
       { path: 'menu', component: MenuComponent },
       { path: 'reset-password', component: ResetPasswordComponent },
-      { path: 'view/:collection/:id', component: ViewComponent },
-      { path: 'edit/:collection/:id', component: EditComponent },
       { path: 'config', component: ConfigComponent },
-      { path: 'registros/:collection', component: RegistrosComponent },
-      { path: 'formularios', component: FormulariosComponent },
       { path: 'perfil', component: PerfilComponent }, // Rota para a página de perfil
 
-      // Rota intermediária para o componente de introdução da homepage
-      { path: ':username/intro', component: HomepageIntroComponent },
+      // Rota para o componente formularios
+      { path: 'formularios', component: FormulariosComponent },
+      { path: 'registros/:collection', component: RegistrosComponent }, // lista os registros de uma coleção
+      { path: 'view/:collection/:id', component: ViewComponent },
+      { path: 'edit/:collection/:id', component: EditComponent },
 
-      // Rota para a homepage dos usuários, baseada no username
-      { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule) },
+      // Rota para o componente fichas
+      { path: 'fichas', component: FichasComponent },
+      { path: 'add-ficha/:collection/:id/ficha/:subCollection', component: EditFichaComponent },
       
+      { path: 'list-fichas/:collection/:id/ficha/:subcollection', component: ListFichasComponent },
+      { path: 'view-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: ViewFichaComponent },
+      { path: 'edit-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: EditFichaComponent },
+
+      // HOMEPAGES
+      { path: ':username/intro', component: HomepageIntroComponent },
+      { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
+
       // Redireciona para a página inicial em caso de rota inválida
-      { path: '**', redirectTo: '' } 
+      { path: '**', component: HomeComponent }
     ]),
+
+
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -98,7 +114,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatIconModule
   ],
-  providers: [FirestoreService, ConfigService, UserService, AuthGuard],
+  providers: [
+    AuthGuard
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

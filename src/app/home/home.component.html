@@ -14,17 +14,7 @@
 
     <section class="services-section icon-grid largo">
 
-      <div class="icon-item" (click)="go('perfil')">
-        <img src="https://dentistas.com.br/assets/perfil.png" alt="Seu Perfil">
-        <p>SEU PERFIL</p>
-      </div>
-
-      <div class="icon-item" *ngIf="username" (click)="go(username, true)">
-        <img src="https://dentistas.com.br/assets/global.png" alt="Sua Homepage">
-        <p>SUA HOMEPAGE</p>
-      </div>
-
-      <div class="icon-item" (click)="go('registros/pacientes')">
+       <div class="icon-item" (click)="go('registros/pacientes')">
         <img src="https://dentistas.com.br/assets/pacientes.png" alt="Pacientes">
         <p>PACIENTES</p>
       </div>
@@ -75,6 +65,16 @@
         <p>EMPRESAS</p>
       </div>
 
+          <div class="icon-item" (click)="go('perfil')">
+            <img src="https://dentistas.com.br/assets/perfil.png" alt="Seu Perfil">
+            <p>SEU PERFIL</p>
+          </div>
+          
+          <div class="icon-item" *ngIf="username" (click)="go(username, true)">
+            <img src="https://dentistas.com.br/assets/global.png" alt="Sua Homepage">
+            <p>SUA HOMEPAGE</p>
+          </div>
+          
     </section>
 
   </div>

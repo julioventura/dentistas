@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
-import { NavegacaoService } from '../shared/navegacao.service';
-import { UserService } from '../shared/user.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { CamposService } from '../shared/campos.service';
+import { UtilService } from '../shared/util.service';
 
 @Component({
   selector: 'app-view',
@@ -24,25 +23,30 @@ export class ViewComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private firestoreService: FirestoreService<any>,
-    private navegacaoService: NavegacaoService,
-    private userService: UserService,
     private afAuth: AngularFireAuth,
-    private camposService: CamposService
+    private camposService: CamposService,
+    public util: UtilService
+
   ) { }
 
   ngOnInit() {
+    // Pega a coleção da URL (ex: 'pacientes', 'usuarios')
     this.collection = this.route.snapshot.paramMap.get('collection')!;
-    this.id = this.route.snapshot.paramMap.get('id')!;
-    this.titulo_da_pagina = this.collection.charAt(0).toUpperCase() + this.collection.slice(1).toLowerCase();
-    this.carregarCampos();
 
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
+        this.id = this.route.snapshot.paramMap.get('id')!;
+        this.titulo_da_pagina = this.util.capitalizar(this.collection);
         this.userId = user.uid;
+        this.carregarCampos();
 
         if (this.id && this.collection) {
-          this.titulo_da_pagina = this.titulo_view(this.collection);
+          this.titulo_da_pagina = "Ficha de " + this.util.titulo_ajuste(this.collection);
           this.loadRegistro(this.id);
+        }
+        else {
+          // In case no user is authenticated, navigate to home
+          this.router.navigate(['/home']);
         }
       }
     });
@@ -54,57 +58,53 @@ export class ViewComponent implements OnInit {
     });
   }
 
-  titulo_view(collection: string) {
-    switch (this.collection) {
-      case 'usuarios':
-        return 'Usuário';
-      case 'professores':
-        return 'Professor';
-      case 'alunos':
-        return 'Aluno';
-      case 'pacientes':
-        return 'Paciente';
-      case 'equipe':
-        return 'Equipe';
-      default:
-        return 'Registro';
-    }
-  }
 
   loadRegistro(id: string) {
+    console.log("loadRegistro(" + id + ")");
+
     if (!this.userId) return;
 
-    this.firestoreService.getRegistroById(`users/${this.userId}/${this.collection}`, id).subscribe(
-      (registro) => {
+    const registroPath = `users/${this.userId}/${this.collection}`;
+    console.log("registroPath = " + registroPath);
+
+    this.firestoreService.getRegistroById(registroPath, id).subscribe(registro => {
+      if (registro) {
         this.registro = registro;
+        console.log('Registro carregado com sucesso:', this.registro);
         this.isLoading = false;
-
-        if (!this.registro) {
-          console.error(`Registro com ID ${id} não encontrado na coleção ${this.collection}`);
-          this.router.navigate([`/${this.collection}`]);
-        }
-      },
-      (error) => {
-        this.isLoading = false;
-        console.error('Erro ao carregar registro:', error);
-        this.router.navigate([`/${this.collection}`]);
+      } else {
+        console.error('Registro não encontrado.');
+        alert('Registro não encontrado!');
+        this.router.navigate(['/home']);
       }
-    );
+    }, (error) => {
+      console.error('Erro ao carregar o registro:', error);
+      this.router.navigate(['/home']);
+    });
   }
 
-  voltar() {
-    this.router.navigate([`/registros/${this.collection}`]);
+
+  verFichaDoMenu(subcollection: string) {
+    this.router.navigate([`/list-fichas/${this.collection}/${this.id}/ficha`, subcollection]);
   }
 
-  editarRegistro() {
+
+  editar() {
     this.router.navigate([`/edit/${this.collection}`, this.id]);
   }
 
-  deletarRegistro() {
+  excluir() {
+    console.log("excluir()");
+
+    const registroPath = `users/${this.userId}/${this.collection}`;
+    console.log("this.userId = " + this.userId);
+    console.log("registroPath = " + registroPath);
+    console.log("this.id = " + this.id);
+
     if (confirm('Você tem certeza que deseja excluir este registro?')) {
-      this.firestoreService.deleteRegistro(`users/${this.userId}/${this.collection}`, this.id)
+      this.firestoreService.deleteRegistro(registroPath, this.id)
         .then(() => {
-          this.router.navigate([`/${this.collection}`]);
+          this.router.navigate([`/registros/${this.collection}`]);
         })
         .catch((error) => {
           console.error('Erro ao excluir o registro:', error);
@@ -112,24 +112,9 @@ export class ViewComponent implements OnInit {
     }
   }
 
-  isValidUrl(url: string): boolean {
-    try {
-      new URL(url);
-      return true;
-    } catch (_) {
-      return false;
-    }
+  voltar() {
+    this.router.navigate([`/registros/${this.collection}`]);
   }
 
-  isImageUrl(url: string): boolean {
-    const imageExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-    try {
-      const parsedUrl = new URL(url);
-      const extension = parsedUrl.pathname.split('.').pop();
-      return imageExtensions.includes(extension!.toLowerCase());
-    } catch (e) {
-      return false;
-    }
-  }
 
 }

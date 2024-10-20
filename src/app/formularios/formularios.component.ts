@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { CamposService } from '../shared/campos.service';
 import { NavegacaoService } from '../shared/navegacao.service';
+import { CamposService } from '../shared/campos.service';
 
 @Component({
   selector: 'app-formularios',

@@ -7,6 +7,7 @@ import { finalize } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
+
 export class FirestoreService<T extends { id?: string }> {
   constructor(
     private firestore: AngularFirestore,
@@ -14,15 +15,27 @@ export class FirestoreService<T extends { id?: string }> {
   ) { }
 
   // CREATE: Adicionar um novo registro à subcoleção do usuário
+  // addRegistro(collectionPath: string, registro: T): Promise<void> {
+  //   const id = registro.id ? registro.id : this.createId();
+  //   const registroComId = { ...registro, id };
+  //   return this.firestore.collection(collectionPath).doc(id).set(registroComId);
+  // }
+  // CREATE: Adicionar um novo registro à subcoleção do usuário
   addRegistro(collectionPath: string, registro: T): Promise<void> {
-    const id = registro.id ? registro.id : this.createId();
-    const registroComId = { ...registro, id };
+    const id = registro.id ? registro.id : this.createId(); // Garante que o campo id seja preenchido
+    const registroComId = { ...registro, id }; // Insere o campo id
     return this.firestore.collection(collectionPath).doc(id).set(registroComId);
   }
+
 
   // READ: Buscar todos os registros da subcoleção do usuário
   getRegistros(collectionPath: string): Observable<T[]> {
     return this.firestore.collection<T>(collectionPath).valueChanges({ idField: 'id' });
+  }
+
+  // Método para obter uma coleção inteira
+  getColecao(collectionPath: string): Observable<T[]> {
+    return this.firestore.collection<T>(collectionPath).valueChanges();
   }
 
   // READ: Buscar registro por ID (usado para perfis pessoais, baseado no UID)
@@ -35,13 +48,32 @@ export class FirestoreService<T extends { id?: string }> {
     return this.firestore.collection<any>(collectionPath, ref => ref.where('username', '==', username)).valueChanges();
   }
 
+
   // UPDATE: Atualizar um registro existente (usado para salvar os dados do perfil do usuário)
   updateRegistro(collectionPath: string, id: string, registro: Partial<T>): Promise<void> {
-    return this.firestore.collection(collectionPath).doc(id).update(registro);
+    if (!id) {
+      console.error('Erro: ID do registro é indefinido. Não é possível atualizar.');
+      return Promise.reject(new Error('ID do registro é indefinido.'));
+    }
+
+    console.log(`Atualizando registro no caminho: ${collectionPath}, com ID: ${id}`);
+    console.log('Dados do registro a serem atualizados:', registro);
+
+    return this.firestore.collection(collectionPath).doc(id).update(registro)
+      .then(() => {
+        console.log('Registro atualizado com sucesso.');
+      })
+      .catch((error) => {
+        console.error('Erro ao atualizar o registro:', error);
+        throw new Error('Erro ao atualizar o registro: ' + error.message);
+      });
   }
+
+
 
   // DELETE: Deletar um registro pelo ID na subcoleção do usuário
   deleteRegistro(collectionPath: string, id: string): Promise<void> {
+    console.log("deleteRegistro(" + collectionPath + ', ' + id + ")" );
     return this.firestore.collection(collectionPath).doc(id).delete();
   }
 
@@ -98,4 +130,7 @@ export class FirestoreService<T extends { id?: string }> {
   deleteFile(fileUrl: string): Promise<void> {
     return this.storage.refFromURL(fileUrl).delete().toPromise();
   }
+
+
+
 }

@@ -5,7 +5,7 @@ import { NavegacaoService } from '../shared/navegacao.service';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { CamposService } from '../shared/campos.service';
-import { finalize } from 'rxjs/operators';
+import { UtilService } from '../shared/util.service';
 
 @Component({
   selector: 'app-edit',
@@ -21,6 +21,7 @@ export class EditComponent implements OnInit {
   registroForm!: FormGroup;
   campos: any[] = [];
   arquivos: { [key: string]: File } = {};
+  titulo_da_pagina: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -29,7 +30,8 @@ export class EditComponent implements OnInit {
     private navegacaoService: NavegacaoService,
     private afAuth: AngularFireAuth,
     private fb: FormBuilder,
-    private camposService: CamposService
+    private camposService: CamposService,
+    public util: UtilService
   ) { }
 
   ngOnInit() {
@@ -42,15 +44,24 @@ export class EditComponent implements OnInit {
 
         this.carregarCampos();
 
+        this.titulo_da_pagina = this.util.capitalizar(this.collection);
+
         if (id) {
           this.loadRegistro(id);
         } else {
           this.isNew = true;
-          this.gerarNovoRegistro();
+          this.gerarNovoRegistro();  // Gera um ID e cria um registro temporário
         }
-
-        this.createForm();
       }
+    });
+
+    // Inicializa o formulário
+    this.registroForm = this.fb.group({
+      nome: [''],
+      codigo: [''],
+      cpf: [''],
+      telefone: [''],
+      nascimento: ['']
     });
   }
 
@@ -72,55 +83,77 @@ export class EditComponent implements OnInit {
         ...this.campos.reduce((acc, campo) => ({ ...acc, [campo.nome]: '' }), {})
       };
 
-      this.firestoreService.addRegistro(`users/${this.userId}/${this.collection}`, this.registro).then(() => {
-        console.log('Novo registro criado com sucesso:', this.registro);
-      }).catch(error => {
-        console.error('Erro ao criar o novo registro:', error);
-      });
+      console.log('Novo registro gerado (temporário):', this.registro);
     });
   }
 
   loadRegistro(id: string) {
     if (!this.userId || !this.collection) return;
 
-    this.firestoreService.getRegistroById(`users/${this.userId}/${this.collection}`, id).subscribe(registro => {
-      if (registro) {
-        this.registro = registro;
-        console.log('Registro carregado:', this.registro);
+    const registroPath = `users/${this.userId}/${this.collection}`;
+    console.log('Tentando carregar o registro no caminho:', registroPath, 'com ID:', id);
 
-        Object.keys(this.registro).forEach(key => {
-          if (!this.registroForm.contains(key)) {
-            this.registroForm.addControl(key, new FormControl(''));
+    this.firestoreService.getRegistroById(registroPath, id).subscribe(
+      (registro) => {
+        if (registro) {
+          // Se o registro não tiver um campo 'id', atribuímos o ID manualmente
+          if (!registro.id) {
+            registro.id = id; // Atribui o id lido do caminho como id do registro
+            console.log('Registro não tinha ID, atribuído o id do caminho:', id);
+
+            // Atualiza o Firestore com o campo 'id' adicionado
+            this.firestoreService.updateRegistro(registroPath, id, { id });
           }
-        });
 
-        this.registroForm.patchValue(this.registro);
-      } else {
-        console.error('Registro não encontrado com o ID:', id);
-        alert(`Registro não encontrado com o ID: ${id}`);
-        this.router.navigate([`/${this.collection}`]);
+          this.registro = { ...registro, id };
+          console.log('Registro carregado:', this.registro);
+
+          Object.keys(this.registro).forEach(key => {
+            if (!this.registroForm.contains(key)) {
+              this.registroForm.addControl(key, new FormControl(''));
+            }
+          });
+
+          this.registroForm.patchValue(this.registro);
+        } else {
+          console.error('Registro não encontrado com o ID:', id);
+          alert(`Registro não encontrado com o ID: ${id}`);
+          this.router.navigate([`/${this.collection}`]);
+        }
+      },
+      (error) => {
+        console.error('Erro ao carregar o registro:', error);
+        alert('Erro ao carregar o registro.');
       }
-    });
+    );
   }
+
 
   createForm() {
     const formControls = this.campos.reduce((acc, campo) => {
       acc[campo.nome] = new FormControl('');
       return acc;
     }, {});
-    this.registroForm = this.fb.group(formControls);
-  }
 
-  onFileSelected(event: any, campoNome: string) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.arquivos[campoNome] = file;
-    }
+    this.registroForm = this.fb.group(formControls);
   }
 
   salvar() {
     if (this.registroForm.valid && this.userId) {
       const registroAtualizado = { ...this.registro, ...this.registroForm.value };
+
+      // Verifique se o ID está presente antes de salvar
+      if (!this.registro.id) {
+        console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
+        alert('Erro ao atualizar o registro. O ID está indefinido.');
+        return;
+      }
+
+      const registroPath = `users/${this.userId}/${this.collection}`;
+
+      console.log('Tentando salvar o registro:');
+      console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.registro.id);
+      console.log('Dados do registro a serem atualizados:', registroAtualizado);
 
       const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
         const file = this.arquivos[campoNome];
@@ -132,7 +165,7 @@ export class EditComponent implements OnInit {
       });
 
       Promise.all(uploadPromises).then(() => {
-        this.firestoreService.updateRegistro(`users/${this.userId}/${this.collection}`, this.registro.id, registroAtualizado)
+        this.firestoreService.updateRegistro(registroPath, this.registro.id, registroAtualizado)
           .then(() => {
             this.router.navigate([`/view/${this.collection}`, this.registro.id]);
           })
@@ -147,28 +180,8 @@ export class EditComponent implements OnInit {
     }
   }
 
+
   voltar() {
     this.navegacaoService.goBack();
   }
-
-  isValidUrl(url: string): boolean {
-    try {
-      new URL(url);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  isImageUrl(url: string): boolean {
-    const imageExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-    try {
-      const parsedUrl = new URL(url);
-      const extension = parsedUrl.pathname.split('.').pop();
-      return imageExtensions.includes(extension!.toLowerCase());
-    } catch (e) {
-      return false;
-    }
-  }
-
 }

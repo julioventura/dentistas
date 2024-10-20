@@ -6,8 +6,7 @@ import { Registro } from './registro.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Usar AngularFireAuth
 import { UserService } from '../shared/user.service'; // Serviço de usuário para pegar o ID
 import { FormBuilder, FormGroup } from '@angular/forms'; // Reactive Forms
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { UtilService } from '../shared/util.service';
 
 @Component({
   selector: 'app-registros',
@@ -23,6 +22,7 @@ export class RegistrosComponent implements OnInit {
   totalPages = 0;
   pages: number[] = [];
   userId: string | null = null; // ID do usuário logado
+  isLoading = true;   // Indicador de carregamento  
   titulo_da_pagina: string = '';
 
   // Adiciona o formGroup
@@ -38,7 +38,9 @@ export class RegistrosComponent implements OnInit {
     private firestoreService: FirestoreService<Registro>,
     private afAuth: AngularFireAuth,  // Usando AngularFireAuth para autenticação
     private userService: UserService, // Injeta o serviço de usuário
-    private fb: FormBuilder // Injeta o FormBuilder
+    private fb: FormBuilder, // Injeta o FormBuilder
+    public util: UtilService
+
   ) { }
 
   ngOnInit() {
@@ -48,7 +50,7 @@ export class RegistrosComponent implements OnInit {
 
     // Verifica se a coleção foi definida corretamente
     if (this.collection) {
-      this.titulo_da_pagina = this.collection.charAt(0).toUpperCase() + this.collection.slice(1).toLowerCase();
+      this.titulo_da_pagina = 'Lista de ' + this.util.capitalizar(this.collection);
       this.definirCampos(); // Define os campos dinâmicos com base na coleção
     } else {
       console.error('Erro: A coleção não foi definida corretamente.');
@@ -91,21 +93,33 @@ export class RegistrosComponent implements OnInit {
   }
 
   loadRegistros() {
-    if (!this.userId) return; // Verifica se o userId está disponível
 
-    let x = "users/" + this.userId + "/" + this.collection;
-    console.log(x);
-    // Carrega os registros da subcoleção específica do usuário
-    this.firestoreService
-      .getRegistros(x)
-      .subscribe((registros: Registro[]) => {
-        this.registros = registros;
-        this.totalRegistros = this.registros.length;
-        this.totalPages = Math.ceil(this.totalRegistros / this.pageSize);
-        this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-        console.log("this.registros");
-        console.log(this.registros);
-      });
+    if (this.userId && this.collection) {
+
+      const collectionPath = "users/" + this.userId + "/" + this.collection;
+      console.log(collectionPath);
+
+      // Carrega os registros da subcoleção específica do usuário
+      this.firestoreService
+        .getRegistros(collectionPath)
+        .subscribe((registros: Registro[]) => {
+          this.registros = registros;
+          this.totalRegistros = this.registros.length;
+          this.totalPages = Math.ceil(this.totalRegistros / this.pageSize);
+          this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+        });
+
+      this.isLoading = false;
+
+      if (this.registros.length === 0) {
+        console.log('Nenhuma ficha encontrada.');
+      } else {
+        console.log('Registros carregados:', this.registros);
+      }
+    }
+    else {
+      console.error('Erro: Variáveis necessárias não foram definidas corretamente.');
+    }
   }
 
   createForm() {
@@ -120,10 +134,6 @@ export class RegistrosComponent implements OnInit {
   setPage(page: number) {
     this.page = page;
     this.loadRegistros();
-  }
-
-  goHome() {
-    this.router.navigate(['/home']);
   }
 
   voltar() {
@@ -145,8 +155,11 @@ export class RegistrosComponent implements OnInit {
   }
 
   verFicha(id: string) {
-    console.log('Navegando para a ficha do registro com ID:', id);
-    this.router.navigate(["/view/" + this.collection, id]);
+    console.log( 'verFicha(' + id + ')' );
+    
+    const fichaPath = "view/" + this.collection;
+    console.log('fichaPath = ' + fichaPath);
+    this.router.navigate([fichaPath, id]);
   }
 
   adicionar() {

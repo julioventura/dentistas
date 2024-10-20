@@ -1,0 +1,73 @@
+<div class="container">
+  <div class="header">
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
+    </div>
+    <h1 class="title">{{ titulo_da_pagina }}</h1>
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
+    </div>
+  </div>
+
+  <div class="record-header">
+        {{ pacienteNome }}
+  </div>
+
+
+  <!-- Formulário Dinâmico -->
+  <div class="dynamic-form-container" *ngIf="fichaForm">
+    <form [formGroup]="fichaForm" class="record-details">
+      <div *ngFor="let campo of campos" class="detail-container">
+        <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+  
+        <!-- Input para tipos normais -->
+        <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+          *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url'">
+  
+        <!-- Input para URL -->
+        <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+          *ngIf="campo.tipo === 'url'" placeholder="Cole aqui o link do arquivo">
+  
+        <!-- Input de Upload de Arquivo para imagens e arquivos -->
+        <input type="file" (change)="onFileSelected($event, campo.nome)"
+          *ngIf="campo.tipo === 'file' || campo.tipo === 'image'">
+  
+        <!-- Mostrar imagem carregada se for um URL de imagem válida -->
+        <img *ngIf="util.isImageUrl(registro[campo.nome])" [src]="registro[campo.nome]" alt="Uploaded Image"
+          style="max-width: 100px; margin-top: 10px;">
+  
+        <!-- Mostrar link para arquivo -->
+        <a *ngIf="campo.tipo === 'file' && registro[campo.nome] && !util.isImageUrl(registro[campo.nome])"
+          [href]="registro[campo.nome]" target="_blank">Ver Arquivo</a>
+      </div>
+    </form>
+  </div>
+  </div>
+
+
+  <!-- Formulário Dinâmico -->
+<!-- <div class="container">
+  <form [formGroup]="fichaForm" (ngSubmit)="salvar()">
+    <div class="form-group">
+      <label for="nome">Nome</label>
+      <input type="text" id="nome" formControlName="nome" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" formControlName="descricao" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="valor">Valor</label>
+      <input type="number" id="valor" formControlName="valor" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label for="data">Data</label>
+      <input type="date" id="data" formControlName="data" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+  </form>
+</div> -->

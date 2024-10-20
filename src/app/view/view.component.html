@@ -1,34 +1,60 @@
 <div class="container" *ngIf="registro">
+
   <div class="header">
     <div class="actions">
       <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+      <img src="https://dentistas.com.br/assets/home.png" class="navegacao" (click)="util.goHome()">
     </div>
     <h1 class="title">{{ titulo_da_pagina }}</h1>
     <div class="actions">
-      <img src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editarRegistro()">
-      <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao" (click)="deletarRegistro()">
+      <img src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()">
+      <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao" (click)="excluir()">
     </div>
   </div>
 
   <div class="record-header">
-    {{ registro?.nome }}
+    <div *ngIf="registro?.nome">
+      {{ registro.nome }}
+    </div>
   </div>
 
+  <!-- Botões das fichas internas -->
+  <div class="menu">
+    <button class="menu-ficha" (click)="verFichaDoMenu('exames')">EXAMES</button>
+    <button class="menu-ficha" (click)="verFichaDoMenu('planos')">PLANOS</button>
+    <button class="menu-ficha" (click)="verFichaDoMenu('atendimentos')">ATENDIMENTOS</button>
+    <button class="menu-ficha" (click)="verFichaDoMenu('pagamentos')">PAGAMENTOS</button>
+  </div>
+  <div class="espacador_vertical_duplo">&nbsp;</div>
+
+
+  <!-- Detalhes -->
   <div class="record-details">
-    <div *ngFor="let campo of campos" class="detail-container">
-      <div class="detail-label">{{ campo.label }}</div>
 
-      <!-- Exibir o valor normalmente -->
-      <div class="detail-value" *ngIf="campo.tipo !== 'image' && campo.tipo !== 'file' && campo.tipo !== 'url'">{{
-        registro[campo.nome] }}</div>
+    <div *ngFor="let campo of campos">
 
-      <!-- Exibir link se for uma URL -->
-      <a *ngIf="campo.tipo === 'url' && registro[campo.nome]" [href]="registro[campo.nome]" target="_blank">{{
-        registro[campo.nome] }}</a>
+      <!-- Verifica se o campo está preenchido antes de exibir -->
+      <div *ngIf="registro[campo.nome] && registro[campo.nome].length > 1" class="detail-container">
 
-      <!-- Exibir imagem se for tipo 'image' e URL for válida -->
-      <img *ngIf="isImageUrl(registro[campo.nome])" [src]="registro[campo.nome]" alt="Imagem do Registro"
-        style="max-width: 100px; margin-left: 10px;">
+        <!-- Label do campo -->
+        <div class="detail-label">{{ campo.label }}</div>
+
+        <!-- Exibir o valor normalmente -->
+        <div class="detail-value" *ngIf="campo.tipo !== 'image' && campo.tipo !== 'file' && campo.tipo !== 'url'">
+          {{ registro[campo.nome] }}
+        </div>
+
+        <!-- NUVEM -->
+        <div *ngIf="campo.tipo === 'url' && (registro[campo.nome].length>10)" id='nuvem' class="url_container"
+          (click)="util.go_url(registro[campo.nome])">
+          {{ registro[campo.nome] }}
+        </div>
+
+        <!-- Exibir imagem se for tipo 'image' e URL for válida -->
+        <img *ngIf="util.isImageUrl(registro[campo.nome])" [src]="registro[campo.nome]" alt="Imagem do Registro"
+          style="max-width: 100px; margin-left: 10px;">
+
+      </div>
     </div>
   </div>
 </div>
