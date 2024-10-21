@@ -53,7 +53,7 @@ export class ViewComponent implements OnInit {
   }
 
   carregarCampos() {
-    this.camposService.getFormularios(this.collection).subscribe((campos: any[]) => {
+    this.camposService.getCamposRegistro(this.collection).subscribe((campos: any[]) => {
       this.campos = campos || [];
     });
   }

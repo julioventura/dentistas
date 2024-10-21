@@ -12,32 +12,46 @@
   </div>
 
   <div class="record-header">
-    {{ collectionNome }}
+    {{ subCollection }}
   </div>
 
+
+
   <!-- Detalhes -->
-  <div class="record-details">
-    <div *ngFor="let campo of campos">
-      <!-- Verifica se o campo está preenchido antes de exibir -->
-      <div *ngIf="registro?.[campo.nome]?.length > 1" class="detail-container">
-        <div class="detail-label">{{ campo.label }}</div>
+  <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
 
-        <!-- Exibir o valor normalmente (para campos que não sejam image, file ou url) -->
-        <div class="detail-value"
-          *ngIf="registro?.[campo.tipo] !== 'image' && registro?.[campo.tipo] !== 'file' && registro?.[campo.tipo] !== 'url'">
-          {{ registro?.[campo.nome] }}
-        </div>
-
-        <!-- NUVEM (somente para URLs com mais de 10 caracteres) -->
-        <div *ngIf="campo.tipo === 'url' && (registro?.[campo.nome]?.length > 10)" id='nuvem' class="url_container"
-          (click)="util.go_url(registro?.[campo.nome])">
-          {{ registro?.[campo.nome] }}
-        </div>
-
-        <!-- Exibir imagem se for tipo 'image' e URL for válida -->
-        <img *ngIf="util.isImageUrl(registro?.[campo.nome])" [src]="registro?.[campo.nome]" alt="Imagem do Registro"
-          style="max-width: 100px; margin-left: 10px;">
-      </div>
+    <div *ngIf="FormService.isLoading" class="aviso">
+      Carregando dados da ficha...
     </div>
+
+
+        <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details">
+          <div *ngFor="let campo of FormService.campos" class="detail-container">
+            <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+        
+            <!-- Input para tipos normais -->
+            <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+              *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url'">
+        
+            <!-- Input para URL -->
+            <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" *ngIf="campo.tipo === 'url'"
+              placeholder="Cole aqui o link do arquivo">
+        
+            <!-- Input de Upload de Arquivo para imagens e arquivos -->
+            <!-- <input type="file" (change)="onFileSelected($event, campo.nome)"
+              *ngIf="campo.tipo === 'file' || campo.tipo === 'image'"> -->
+        
+            <!-- Mostrar imagem carregada se for um URL de imagem válida -->
+            <!-- <img *ngIf="util.isImageUrl(registro[campo.nome])" [src]="registro[campo.nome]" alt="Uploaded Image"
+              style="max-width: 100px; margin-top: 10px;"> -->
+        
+            <!-- Mostrar link para arquivo -->
+            <!-- <a *ngIf="campo.tipo === 'file' && registro[campo.nome] && !util.isImageUrl(registro[campo.nome])"
+              [href]="registro[campo.nome]" target="_blank">Ver Arquivo</a> -->
+          </div>
+        </form>
+
+
+
   </div>
 </div>

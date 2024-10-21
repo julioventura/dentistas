@@ -1,23 +1,10 @@
 @import '../../styles.scss';
 
-// Estilo Geral
-.container {
-  background-color: #f9eaea;
-}
 
-// Header com título e botões de ação
+// Header com título 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-
   .title {
-    font-size: 24px;
-    font-weight: bold;
     color: $red-dark;
-    text-align: center;
-    flex-grow: 1;
   }
 }
 
@@ -25,69 +12,31 @@
 .record-header {
   background-color: $red-dark;
   color: $white;
-  font-size: small;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 1em;
-  margin-left: 0;
-  margin-right: 0;
-  border: 0;
-  border-radius: 8px;
-  padding: 4px;
-  margin-bottom: 20px;
-  min-height: 24px;
 
-  h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: bold;
-  }
 }
 
 // Estilos dos detalhes do paciente
 .record-details,
 .dynamic-form-container {
-  background-color: $white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: $box-shadow;
 
   .detail-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 10px;
     border-bottom: 1px solid $red-light;
 
-    &:last-child {
-      border-bottom: none;
-    }
 
     .detail-label {
-      width: 200px;
-      font-weight: 500;
       color: $red_dark;
-      font-size: 14px;
-      text-align: left;
+
     }
 
     .detail-value {
       color: $red-dark;
-      font-size: 16px;
-      font-weight: bold;
-      text-align: left;
-      width: 100%;
-      padding: 8px;
       border: 1px solid $red-dark;
-      border-radius: 5px;
     }
 
     input,
     select {
-      width: 100%;
-      padding: 8px;
+
       border: 1px solid $red-light;
-      border-radius: 5px;
       font-size: 14px;
     }
 
@@ -99,47 +48,17 @@
   }
 }
 
-.record-details {
-  box-shadow: box-shadow;
-}
 
 // Botões de ação do formulário
 .form-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
 
   .btn {
     background-color: $primary-color;
     color: $white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
 
     &:hover {
       background-color: $primary-hover;
     }
   }
 
-  .btn-secondary {
-    background-color: $gray;
-    color: $white;
-
-    &:hover {
-      background-color: darken($gray, 10%);
-    }
-  }
-}
-
-.image-preview {
-  margin-top: 10px;
-
-  img {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
-    width: 100px;
-  }
 }

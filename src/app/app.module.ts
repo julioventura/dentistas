@@ -23,7 +23,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ConfigComponent } from './shared/config/config.component';
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component';
 import { RegistrosComponent } from './registros/registros.component';
-import { FormulariosComponent } from './formularios/formularios.component';
+import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
 import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
@@ -57,7 +57,7 @@ import { MatIconModule } from '@angular/material/icon';
     ConfigComponent,
     SignupDialogComponent,
     RegistrosComponent,
-    FormulariosComponent,
+    CamposRegistroComponent,
     ViewComponent,
     EditComponent,
     PerfilComponent,
@@ -82,8 +82,8 @@ import { MatIconModule } from '@angular/material/icon';
       { path: 'config', component: ConfigComponent },
       { path: 'perfil', component: PerfilComponent }, // Rota para a página de perfil
 
-      // Rota para o componente formularios
-      { path: 'formularios', component: FormulariosComponent },
+      // Rota para o componente camposRegistro
+      { path: 'camposRegistro', component: CamposRegistroComponent },
       { path: 'registros/:collection', component: RegistrosComponent }, // lista os registros de uma coleção
       { path: 'view/:collection/:id', component: ViewComponent },
       { path: 'edit/:collection/:id', component: EditComponent },

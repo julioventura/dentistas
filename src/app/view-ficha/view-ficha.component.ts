@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
-import { NavegacaoService } from '../shared/navegacao.service';
-import { UserService } from '../shared/user.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { CamposFichaService } from '../shared/campos-ficha.service';
 import { UtilService } from '../shared/util.service';
+import { FormService } from '../shared/form.service';
 
 @Component({
   selector: 'app-view-ficha',
@@ -26,25 +25,23 @@ export class ViewFichaComponent implements OnInit {
   camposIniciais: any[] = []; // Armazena os campos ao carregar a página
   isLoading = true;   // Indicador de carregamento  
   titulo_da_pagina: string = '';
-  collectionNome: string = '';
-
+  view_ficha: boolean = true;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private firestore: AngularFirestore,
     private firestoreService: FirestoreService<any>,
-    private navegacaoService: NavegacaoService,
-    private userService: UserService,
     private afAuth: AngularFireAuth,
     private camposFichasService: CamposFichaService,
-    public util: UtilService
+    public util: UtilService,
+    public FormService: FormService,
 
   ) { }
 
   ngOnInit(): void {
     console.log('ngOnInit()');
-    
+
     this.afAuth.authState.subscribe((user) => {
       if (user && user.uid) {
         this.userId = user.uid;
@@ -53,81 +50,59 @@ export class ViewFichaComponent implements OnInit {
         this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
         this.titulo_da_pagina = "Ficha de " + this.util.capitalizar(this.subCollection);
-        this.carregarCampos();
-        this.loadCollectionNome();
 
+        console.log('userId:', this.userId); 
         console.log('Collection:', this.collection);
         console.log('ID:', this.id);
         console.log('subCollection:', this.subCollection);
+        console.log('fichaId:', this.fichaId); 
 
-        if (this.fichaId) {
-          // Carregar detalhes de uma ficha específica
-          console.log('fichaId:', this.fichaId);
-
-          this.loadFicha();
+        if (!this.fichaId) {
+          console.error('Ficha não identificada.');
+          this.voltar();
+        }
+        else {
+          this.FormService.loadFicha(this.userId, this.collection, this.id, this.subCollection, this.fichaId, this.view_ficha);
         }
       }
-    });
-  }
-
-
-
-  carregarCampos() {
-    console.log('carregarCampos()');
-
-    this.camposFichasService.getCamposFicha(this.subCollection).subscribe((campos: any[]) => {
-      this.campos = campos || [];
-      this.camposIniciais = JSON.parse(JSON.stringify(campos));
-
-      console.log('campos');
-      console.log(this.campos);
-      console.log('camposIniciais');
-      console.log(this.camposIniciais);
-
-    }, (error) => {
-      console.error(`Erro ao carregar campos da coleção ${this.subCollection}:`, error);
-    });  
-  }
-
-
-  loadCollectionNome() {
-    const collectionPath = `users/${this.userId}/${this.collection}`;
-    console.log('Caminho para o collection:', collectionPath);
-    console.log('Id do collection:', this.id);
-
-    this.firestoreService.getRegistroById(collectionPath, this.id).subscribe(collection => {
-      if (collection && collection.nome) {
-        this.collectionNome = collection.nome;
-        console.log('Nome do collection carregado:', this.collectionNome);
-        this.titulo_da_pagina = "Fichas de " + this.util.capitalizar(this.subCollection);
-      } else {
-        console.error('Collection não encontrado ou sem nome.');
+      else {
+        console.error('Usuário não autenticado.');
+        this.util.goHome();
       }
-    }, error => {
-      console.error('Erro ao carregar o collection:', error);
     });
+    console.log('Formulário de edição de ficha inicializado.');
   }
+
+
 
   loadFicha() {
     console.log('loadFicha()');
+
     console.log('Collection:', this.collection);
     console.log('ID:', this.id);
     console.log('subCollection:', this.subCollection);
     console.log('fichaId:', this.fichaId);
 
     if (this.subCollection && this.fichaId) {
-      const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
 
+      const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
       console.log('Caminho para ficha específica:', fichaPath);
 
       this.firestoreService.getRegistroById(fichaPath, this.fichaId).subscribe((ficha) => {
-        this.ficha = ficha;
-        this.registro = ficha;  // <-- Certifique-se de que registro está sendo preenchido
-        this.isLoading = false;
-        console.log('Ficha carregada com sucesso:', this.ficha);
+        if (ficha) {
+          this.registro = ficha;
+
+          this.isLoading = false;  // ☺Desativa o indicador de carregamento
+          console.log('Ficha carregada com sucesso:', ficha);
+        } else {
+          console.error('Ficha não encontrada no caminho:', fichaPath);
+          this.voltar();
+        }
       }, error => {
         console.error('Erro ao carregar a ficha:', error);
+        this.voltar();
       });
+
     } else {
       console.error('Erro: subCollection ou fichaId não definidos corretamente.');
     }

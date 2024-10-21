@@ -28,7 +28,7 @@ export class CamposService {
   constructor(private firestore: AngularFirestore) { }
 
   // Método para obter os campos de uma coleção específica do Firestore ou carregar os padrões
-  getFormularios(colecao: string): Observable<any[]> {
+  getCamposRegistro(colecao: string): Observable<any[]> {
     if (colecao === 'padrao') {
       return of([...this.camposPadrao]); // Retorna os campos padrão se a coleção for "padrao"
     } else {
@@ -45,7 +45,7 @@ export class CamposService {
   }
 
   // Método para salvar ou atualizar as configurações da coleção no Firestore
-  setFormularios(colecao: string, campos: any[]): Promise<void> {
+  setCamposRegistro(colecao: string, campos: any[]): Promise<void> {
     if (colecao === 'padrao') {
       this.camposPadrao = campos; // Atualiza os campos padrão localmente
       return Promise.resolve();

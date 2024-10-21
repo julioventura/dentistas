@@ -15,6 +15,8 @@ import { UtilService } from '../shared/util.service';
 export class EditComponent implements OnInit {
   collection!: string;
   registro: any = {};
+  isLoading = true;
+
   isNew = false;
   userId: string | null = null;
 
@@ -66,7 +68,7 @@ export class EditComponent implements OnInit {
   }
 
   carregarCampos() {
-    this.camposService.getFormularios(this.collection).subscribe((campos: any[]) => {
+    this.camposService.getCamposRegistro(this.collection).subscribe((campos: any[]) => {
       this.campos = campos || [];
       this.createForm();
     });
@@ -114,12 +116,13 @@ export class EditComponent implements OnInit {
             }
           });
 
-          this.registroForm.patchValue(this.registro);
+          this.registroForm.patchValue(this.registro); // Preenche o formulário com os dados do registro
         } else {
           console.error('Registro não encontrado com o ID:', id);
           alert(`Registro não encontrado com o ID: ${id}`);
           this.router.navigate([`/${this.collection}`]);
         }
+        this.isLoading = false;  // ☺Desativa o indicador de carregamento
       },
       (error) => {
         console.error('Erro ao carregar o registro:', error);

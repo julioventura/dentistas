@@ -10,14 +10,19 @@
   </div>
 
   <div class="record-header">
-        {{ collectionNome }}
+        {{ subCollection }}
   </div>
 
 
   <!-- Formulário Dinâmico -->
-  <div class="dynamic-form-container" *ngIf="fichaForm">
-    <form [formGroup]="fichaForm" class="record-details">
-      <div *ngFor="let campo of campos" class="detail-container">
+  <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
+
+    <div *ngIf="FormService.isLoading" class="aviso">
+      Carregando dados da ficha...
+    </div>
+
+    <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details">
+      <div *ngFor="let campo of FormService.campos" class="detail-container">
         <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
   
         <!-- Input para tipos normais -->
@@ -41,33 +46,6 @@
           [href]="registro[campo.nome]" target="_blank">Ver Arquivo</a>
       </div>
     </form>
+    
   </div>
   </div>
-
-
-  <!-- Formulário Dinâmico -->
-<!-- <div class="container">
-  <form [formGroup]="fichaForm" (ngSubmit)="salvar()">
-    <div class="form-group">
-      <label for="nome">Nome</label>
-      <input type="text" id="nome" formControlName="nome" class="form-control" />
-    </div>
-
-    <div class="form-group">
-      <label for="descricao">Descrição</label>
-      <textarea id="descricao" formControlName="descricao" class="form-control"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="valor">Valor</label>
-      <input type="number" id="valor" formControlName="valor" class="form-control" />
-    </div>
-
-    <div class="form-group">
-      <label for="data">Data</label>
-      <input type="date" id="data" formControlName="data" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Salvar</button>
-  </form>
-</div> -->

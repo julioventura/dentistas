@@ -221,6 +221,10 @@ export class UtilService {
     this.router.navigate(['/home']);
   }
 
+  go(route: string) {
+    this.router.navigate(['/' + route]);
+  }
+
   go_url(url: string) {
     window.open(url, '_blank'); // Abre em uma nova aba ou janela
   }
@@ -236,6 +240,8 @@ export class UtilService {
         return 'Aluno';
       case 'pacientes':
         return 'Paciente';
+      case 'proteticos':
+        return 'Protético';
       case 'equipe':
         return 'Equipe';
       default:
@@ -245,6 +251,10 @@ export class UtilService {
 
 
 
+  // Função para calcular o dígito verificador
+  calcularDigitoVerificador(codigo: string): number {
+    return codigo.split('').reduce((acc, num) => acc + parseInt(num, 10), 0) % 10;
+  }
 
 
 

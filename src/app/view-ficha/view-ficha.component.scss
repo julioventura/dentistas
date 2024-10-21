@@ -1,81 +1,10 @@
 @import '../../styles.scss';
 
-// Header com título e botões de ação
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    color: $primary-color;
-    text-align: center;
-    flex-grow: 1;
-  }
-}
-
-// Linha com o nome do paciente
-.record-header {
-  background-color: $primary-color;
-  color: $white;
-  font-size: small;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 10px;
-  margin-left: 0;
-  margin-right: 0;
-  border: 0;
-  border-radius: 8px;
-  padding: 4px;
-
-  h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: bold;
-  }
-}
-
-// Botões de navegação entre seções
-.section-buttons {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 10px;
-
-  .section-btn {
-    background-color: $primary-color;
-    border: 2pt solid #fff;
-    border-radius: 6pt;
-    padding-top: 5pt;
-    padding-bottom: 4pt;
-    color: $white;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-align: center;
-    font-size: 8pt;
-    font-weight: 700;
-  }
-
-  .section-btn:hover {
-    background-color: lighten($primary-color, 50%);
-  }
-}
-
-
-.btn-editar,
-.btn-adicionar {
-  background-color: #3579a4;
-  color: white;
-  border: 1px solid #fff;
-  border-radius: 6px;
-  padding: 10px 15px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 15px;
-}
-
-.btn-editar:hover,
-.btn-adicionar:hover {
-  background-color: #285d82;
+.record-details .detail-container input,
+.record-details .detail-container select {
+    // width: 100%;
+    // padding: 8px;
+    // border: 0px;
+    background: white;
+    // font-size: 12px;
 }

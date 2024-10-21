@@ -9,15 +9,18 @@
     </div>
   </div>
 
-  <div class="record-header">
-    <div *ngIf="registro?.nome">
+  <div *ngIf="registro?.nome" class="record-header">
        {{ registro.nome }}
-    </div>
   </div>
 
   <!-- Formulário Dinâmico -->
   <div class="dynamic-form-container" *ngIf="registroForm">
-    <form [formGroup]="registroForm" class="record-details">
+
+    <div *ngIf="isLoading" class="aviso">
+      Carregando dados do registro...
+    </div>
+
+    <form *ngIf="!isLoading" [formGroup]="registroForm" class="record-details">
       <div *ngFor="let campo of campos" class="detail-container">
         <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
 
