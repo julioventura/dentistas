@@ -30,14 +30,19 @@ export class ViewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Pega a coleção da URL (ex: 'pacientes', 'usuarios')
-    this.collection = this.route.snapshot.paramMap.get('collection')!;
-
+    console.log('ngOnInit()');
+   
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
+        this.userId = user.uid;
+        this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.id = this.route.snapshot.paramMap.get('id')!;
         this.titulo_da_pagina = this.util.capitalizar(this.collection);
-        this.userId = user.uid;
+
+        console.log('userId:', this.userId);
+        console.log('Collection:', this.collection);
+        console.log('ID:', this.id);
+
         this.carregarCampos();
 
         if (this.id && this.collection) {
@@ -49,7 +54,12 @@ export class ViewComponent implements OnInit {
           this.router.navigate(['/home']);
         }
       }
+      else {
+        console.error('Usuário não autenticado.');
+        this.util.goHome();
+      }
     });
+    console.log('Formulário de visualização inicializado.');
   }
 
   carregarCampos() {

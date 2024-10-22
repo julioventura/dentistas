@@ -33,7 +33,7 @@ export class ViewFichaComponent implements OnInit {
     private firestore: AngularFirestore,
     private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
-    private camposFichasService: CamposFichaService,
+    private camposFichaService: CamposFichaService,
     public util: UtilService,
     public FormService: FormService,
 
@@ -70,43 +70,9 @@ export class ViewFichaComponent implements OnInit {
         this.util.goHome();
       }
     });
-    console.log('Formulário de edição de ficha inicializado.');
+    console.log('Formulário de visualização inicializado.');
   }
 
-
-
-  loadFicha() {
-    console.log('loadFicha()');
-
-    console.log('Collection:', this.collection);
-    console.log('ID:', this.id);
-    console.log('subCollection:', this.subCollection);
-    console.log('fichaId:', this.fichaId);
-
-    if (this.subCollection && this.fichaId) {
-
-      const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
-      console.log('Caminho para ficha específica:', fichaPath);
-
-      this.firestoreService.getRegistroById(fichaPath, this.fichaId).subscribe((ficha) => {
-        if (ficha) {
-          this.registro = ficha;
-
-          this.isLoading = false;  // ☺Desativa o indicador de carregamento
-          console.log('Ficha carregada com sucesso:', ficha);
-        } else {
-          console.error('Ficha não encontrada no caminho:', fichaPath);
-          this.voltar();
-        }
-      }, error => {
-        console.error('Erro ao carregar a ficha:', error);
-        this.voltar();
-      });
-
-    } else {
-      console.error('Erro: subCollection ou fichaId não definidos corretamente.');
-    }
-  }
 
 
 

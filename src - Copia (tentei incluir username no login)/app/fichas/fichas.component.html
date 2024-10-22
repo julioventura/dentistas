@@ -1,0 +1,62 @@
+<div class="container">
+    <div class="header">
+        <div class="actions">
+            <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+        </div>
+        <h1 class="title">Gerenciar Fichas Internas</h1>
+        <div class="actions">
+            <img src="https://dentistas.com.br/assets/salvar.png" class="navegacao" (click)="salvar()">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <!-- Condicional para exibir o título de acordo com a presença ou ausência do fichaSelecionadaId -->
+            <h1 *ngIf="!fichaSelecionadaId">Lista de Fichas</h1>
+            <h1 *ngIf="fichaSelecionadaId">Detalhes da Ficha</h1>
+        </div>
+
+        <!-- Se não houver fichas, exibir uma mensagem -->
+        <div *ngIf="!isLoading && fichas.length === 0" class="no-records">
+            <h2>Nenhum registro no momento.</h2>
+        </div>
+
+        <!-- Listar todas as fichas se fichaSelecionadaId não estiver presente e fichas.length > 0 -->
+        <div *ngIf="!fichaSelecionadaId && fichas.length > 0">
+            <ul>
+                <!-- Loop para listar todas as fichas, usando a propriedade ficha.id para criar links -->
+                <li *ngFor="let ficha of fichas">
+                    <a [routerLink]="['/view-ficha', collection, id, 'ficha', ficha.id]">
+                        {{ ficha.nome }} - {{ ficha.data }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Mostrar os detalhes de uma ficha específica quando o fichaSelecionadaId for passado -->
+        <div *ngIf="fichaSelecionadaId && ficha">
+            <h2>{{ ficha.nome }}</h2>
+            <p>Descrição: {{ ficha.descricao }}</p>
+            <p>Data: {{ ficha.data }}</p>
+            <p>Valor: {{ ficha.valor }}</p>
+        </div>
+
+        <!-- Exibir mensagem de carregamento enquanto os dados estão sendo buscados -->
+        <div *ngIf="isLoading">Carregando...</div>
+
+        <!-- Botão de voltar -->
+        <div class="actions">
+            <button (click)="voltar()">Voltar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos para centralizar a mensagem quando não houver registros -->
+<style>
+    .no-records {
+        padding: 20px;
+        font-size: 1.2em;
+        text-align: center;
+        color: #666;
+    }
+</style>

@@ -1,0 +1,64 @@
+@import '../../styles.scss';
+
+
+// Header com título 
+.header {
+  .title {
+    color: $red-dark;
+  }
+}
+
+// Linha com o nome do paciente
+.record-header {
+  background-color: $red-dark;
+  color: $white;
+
+}
+
+// Estilos dos detalhes do paciente
+.record-details,
+.dynamic-form-container {
+
+  .detail-container {
+    border-bottom: 1px solid $red-light;
+
+
+    .detail-label {
+      color: $red_dark;
+
+    }
+
+    .detail-value {
+      color: $red-dark;
+      border: 1px solid $red-dark;
+    }
+
+    input,
+    select {
+
+      border: 1px solid $red-light;
+      font-size: 14px;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 1px;
+      border-color: $red-dark;
+    }
+  }
+}
+
+
+// Botões de ação do formulário
+.form-actions {
+
+  .btn {
+    background-color: $primary-color;
+    color: $white;
+
+    &:hover {
+      background-color: $primary-hover;
+    }
+  }
+
+}

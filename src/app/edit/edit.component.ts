@@ -116,7 +116,10 @@ export class EditComponent implements OnInit {
             }
           });
 
+          // ------------------------------
           this.registroForm.patchValue(this.registro); // Preenche o formulário com os dados do registro
+          // ------------------------------
+
         } else {
           console.error('Registro não encontrado com o ID:', id);
           alert(`Registro não encontrado com o ID: ${id}`);

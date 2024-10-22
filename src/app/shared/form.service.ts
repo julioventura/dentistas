@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireStorage } from '@angular/fire/compat/storage'; // Importa o serviço de Storage
 import { FirestoreService } from './firestore.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CamposFichaService } from './campos-ficha.service';
@@ -20,7 +19,6 @@ export class FormService {
 
     constructor(
         private firestore: AngularFirestore,
-        private storage: AngularFireStorage,
         private firestoreService: FirestoreService<any>,
         private fb: FormBuilder,
         private CamposFichaService: CamposFichaService,
@@ -31,7 +29,7 @@ export class FormService {
 
 
     carregarCampos(collection: string) {
-        this.CamposFichaService.getCamposFicha(collection).subscribe((campos: any[]) => {
+        this.CamposFichaService.getCamposRegistro(collection).subscribe((campos: any[]) => {
             this.campos = campos || [];
         });
     }
@@ -76,7 +74,9 @@ export class FormService {
 
                     this.registro = ficha;  // pro view-ficha
 
+                    // ------------------------------
                     this.fichaForm.patchValue(ficha); // Preenche o formulário - edit-ficha
+                    // ------------------------------
 
                     this.isLoading = false;  // Desativa o indicador de carregamento
                     console.log('isLoading == false');

@@ -1,14 +1,19 @@
-<div class="container" *ngIf="loggedInUser && !username">
+<!-- <div class="container" *ngIf="loggedInUser && !username"> -->
+<div class="container" *ngIf="!username">
     <div class="intro-container">
         <h1>Configuração da Homepage</h1>
         <p>
             Para configurar sua homepage profissional, acesse o componente "Perfil" e insira as informações necessárias.
         </p>
 
-        <!-- Botão para abrir a homepage pública -->
-        <button (click)="openHomepage()" class="open-homepage-btn">
-            Abrir Homepage em uma Nova Janela
-        </button>
+        <div *ngIf="username">
+            
+            <!-- Botão para abrir a homepage pública -->
+            <button (click)="openHomepage()" class="open-homepage-btn">
+                Abrir Homepage em uma Nova Janela
+            </button>
+
+        </div>
     </div>
 </div>
 

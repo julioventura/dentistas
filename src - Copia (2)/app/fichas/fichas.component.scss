@@ -1,0 +1,140 @@
+@import '../../styles.scss';
+
+// Header com título e botões de ação
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        color: $primary-color;
+        text-align: center;
+        flex-grow: 1;
+    }
+}
+
+// Linha com o nome da coleção
+.record-header {
+    background-color: $primary-color;
+    color: $white;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+// Botões gerais
+button {
+    background-color: #2A7AC3;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.5s ease;
+    font-size: 9pt;
+    font-weight: 500;
+    text-align: center;
+    margin: 5px 0px 5px 5px;
+    width: 120px;
+}
+
+button:hover {
+    background-color: lighten($primary-color, 15%);
+}
+
+// Formulário e inputs
+.form-container {
+    padding: 15px;
+    background-color: $white;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+.fields-section {
+    margin-bottom: 20px;
+
+    .field-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0px 6px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 5px;
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-right: 10px;
+
+            label {
+                font-size: 10pt;
+                font-weight: bold;
+                margin-bottom: 4px;
+                color: $primary-color;
+            }
+
+            input,
+            select {
+                padding: 4px;
+                font-size: 8pt;
+                border: 1px solid $primary-color-light;
+                border-radius: 8px;
+                width: 140px;
+            }
+
+            input:focus,
+            select:focus {
+                outline: none;
+                border-color: $primary-color-dark;
+            }
+        }
+
+        .remove-button {
+            background-color: $red-dark;
+            border: none;
+            color: $white;
+            padding: 4px;
+            border-radius: 6px;
+            width: 80px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: darken($red-color, 15%);
+            }
+        }
+    }
+}
+
+// Ajustes para responsividade
+@media screen and (max-width: 768px) {
+    .field-row {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .input-group {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 10px;
+
+            input,
+            select {
+                width: 100%;
+            }
+        }
+    }
+}
+
+label {
+    font-size: 10px;
+}

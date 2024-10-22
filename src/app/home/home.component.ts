@@ -12,7 +12,8 @@ import { FirestoreService } from '../shared/firestore.service'; // Import Firest
 export class HomeComponent implements OnInit {
   nome: string = '';  // Variável para armazenar o nome do usuário logado
   username: string | null = null;  // Variável para armazenar o username do usuário logado
-
+  new_window: boolean = false;
+  
   constructor(
     private auth: AngularFireAuth,  // Usando AngularFireAuth
     private router: Router,
@@ -53,6 +54,7 @@ export class HomeComponent implements OnInit {
 
   // Método para navegação dinâmica
   go(component: string, new_window: boolean = false) {
+    this.new_window = new_window;
     if (new_window) {
       const introUrl = `/${component}/intro`;
       this.router.navigate([introUrl]); // Navega para a introdução no próprio app
@@ -60,20 +62,5 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/' + component]);
     }
   }
-
-
-  // go(component: string, new_window: boolean = false) {
-  //   console.log("Navegando para " + component);
-
-  //   // Se for para abrir a homepage em uma nova janela
-  //   if (new_window) {
-  //     const homepageUrl = `/${component}`;
-  //     window.open(homepageUrl, '_blank', 'noopener,noreferrer');
-  //   } else {
-  //     // Navega no próprio app para o componente de introdução
-  //     const introUrl = `/${component}/intro`;
-  //     this.router.navigate([introUrl]);
-  //   }
-  // }
   
 }

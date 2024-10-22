@@ -1,0 +1,29 @@
+<div class="container">
+    <div class="header">
+        <div class="actions">
+            <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="util.goHome()">
+        </div>
+        <h1 class="title">Configurações</h1>
+        <div class="actions">
+            <img src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()">
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Configurações da Aplicação</h1>
+
+        <div class="config-item">
+            <strong>URL da API:</strong> {{ apiUrl }}
+        </div>
+
+        <div class="config-item">
+            <strong>Ambiente:</strong> {{ environment }}
+        </div>
+
+        <div class="config-item">
+            <strong>Configuração do Firebase:</strong>
+            <pre>{{ firebaseConfig | json }}</pre>
+        </div>
+    </div>
+
+</div>
