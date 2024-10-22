@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { CamposFichaService } from '../shared/campos-ficha.service';
+import { FormGroup } from '@angular/forms';
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
 
@@ -33,7 +33,6 @@ export class ViewFichaComponent implements OnInit {
     private firestore: AngularFirestore,
     private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
-    private camposFichaService: CamposFichaService,
     public util: UtilService,
     public FormService: FormService,
 

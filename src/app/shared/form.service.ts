@@ -44,21 +44,10 @@ export class FormService {
         }, {});
 
         this.fichaForm = this.fb.group(formControls);
-
-        // createForm() {
-        //     console.log('createForm()');
-        //     // Inicializa o formulário reativo
-        //     this.fichaForm = this.fb.group({
-        //         nome: ['', Validators.required],  // Apenas o campo nome é obrigatório
-        //         descricao: [''],
-        //         valor: [''],
-        //         data: ['']
-        //     });
-        // }
     }
 
 
-    loadFicha(userId: string, collection: string, id: string, subCollection: string, fichaId: string, view: boolean = false) {
+    loadFicha(userId: string, collection: string, id: string, subCollection: string, fichaId: string, view: boolean) {
         console.log('loadFicha()');
 
         console.log('Collection:', collection);
@@ -73,18 +62,18 @@ export class FormService {
 
             this.carregarCampos(subCollection);
             this.createForm();
+            
+            if (view) {
+                this.fichaForm.disable();  // Desabilita o formulário
+            }
+            else {
+                this.fichaForm.enable();  // Habilita o formulário
+            }
 
             // Carrega a ficha para edição
             this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
                 if (ficha) {
-                    if (view) {
-                        this.fichaForm.disable();  // Desabilita todo o formulário
-                    }
-                    else {
-                        this.fichaForm.enable();  // Habilita todo o formulário
-                    }
-
-                    this.registro = ficha;  // pro view-ficha
+                    this.registro = ficha;  // pro view-ficha   TODO: PRECISA?????
 
                     // ------------------------------
                     this.fichaForm.patchValue(ficha); // Preenche o formulário - edit-ficha

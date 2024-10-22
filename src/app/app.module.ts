@@ -74,34 +74,34 @@ import { MatIconModule } from '@angular/material/icon';
     ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent }, // Página inicial padrão
-      { path: 'home', component: HomeComponent },
+      { path: 'home', component: HomeComponent, data: { animation: '1' } },
       { path: 'login', component: LoginComponent },
       { path: 'chatbot', component: ChatbotComponent },
       { path: 'menu', component: MenuComponent },
       { path: 'reset-password', component: ResetPasswordComponent },
       { path: 'config', component: ConfigComponent },
-      { path: 'perfil', component: PerfilComponent }, // Rota para a página de perfil
+      { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, // Rota para a página de perfil
 
       // Rota para o componente camposRegistro
       { path: 'camposRegistro', component: CamposRegistroComponent },
-      { path: 'registros/:collection', component: RegistrosComponent }, // lista os registros de uma coleção
-      { path: 'view/:collection/:id', component: ViewComponent },
-      { path: 'edit/:collection/:id', component: EditComponent },
+      { path: 'registros/:collection', component: RegistrosComponent, data: { animation: '3' } }, // lista os registros de uma coleção
+      { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '4' } },
+      { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '5' } },
 
       // Rota para o componente fichas
       { path: 'fichas', component: FichasComponent },
       { path: 'add-ficha/:collection/:id/ficha/:subCollection', component: EditFichaComponent },
       
-      { path: 'list-fichas/:collection/:id/ficha/:subcollection', component: ListFichasComponent },
-      { path: 'view-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: ViewFichaComponent },
-      { path: 'edit-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: EditFichaComponent },
+      { path: 'list-fichas/:collection/:id/ficha/:subcollection', component: ListFichasComponent, data: { animation: '6' } },
+      { path: 'view-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: ViewFichaComponent, data: { animation: '7' } },
+      { path: 'edit-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: EditFichaComponent, data: { animation: '8' } },
 
       // HOMEPAGES
       { path: ':username/intro', component: HomepageIntroComponent },
       { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
 
       // Redireciona para a página inicial em caso de rota inválida
-      { path: '**', component: HomeComponent }
+      { path: '**', component: HomeComponent, data: { animation: '9' } }
     ]),
 
 

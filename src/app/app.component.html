@@ -1,5 +1,7 @@
    
-<router-outlet></router-outlet>
+<div [@routeAnimations]="prepareRoute(outlet)">
+    <router-outlet #outlet="outlet"></router-outlet>
+</div>
 
 <ng-container *ngIf="showFooter">
     <app-footer></app-footer>

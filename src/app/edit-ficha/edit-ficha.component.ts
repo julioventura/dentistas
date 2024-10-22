@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
-import { CamposFichaService } from '../shared/campos-ficha.service';
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
 
@@ -23,7 +22,6 @@ export class EditFichaComponent implements OnInit {
   ficha: any;
   userId!: string;
   titulo_da_pagina: string = '';
-  registroForm!: FormGroup;
   campos: any[] = [];
   arquivos: { [key: string]: File } = {};
   view_ficha: boolean = false;
@@ -36,11 +34,8 @@ export class EditFichaComponent implements OnInit {
     private firestoreService: FirestoreService<any>,
     private navegacaoService: NavegacaoService,
     private afAuth: AngularFireAuth,
-    private fb: FormBuilder,
     public util: UtilService,
     public FormService: FormService,
-    private CamposFichaService: CamposFichaService,
-
   ) { }
 
   ngOnInit(): void {
@@ -62,10 +57,7 @@ export class EditFichaComponent implements OnInit {
         console.log('fichaId:', this.fichaId); 
         console.log('titulo_da_pagina:', this.titulo_da_pagina); 
 
-        // this.carregarCampos();
-
         if (this.fichaId) {
-          // this.loadRegistro(id);
           this.FormService.loadFicha(this.userId, this.collection, this.id, this.subCollection, this.fichaId, this.view_ficha);
         } else {
           this.isNew = true;
@@ -78,22 +70,6 @@ export class EditFichaComponent implements OnInit {
     console.log('Formulário de edição de ficha inicializado.');
   }
 
-
-  // carregarCampos() {
-  //   this.CamposFichaService.getCamposRegistro(this.collection).subscribe((campos: any[]) => {
-  //     this.campos = campos || [];
-  //     this.createForm();
-  //   });
-  // }
-
-  // createForm() {
-  //   const formControls = this.campos.reduce((acc, campo) => {
-  //     acc[campo.nome] = new FormControl('');
-  //     return acc;
-  //   }, {});
-
-  //   this.registroForm = this.fb.group(formControls);
-  // }
 
   onFileSelected(event: any, campoNome: string) {
     const file: File = event.target.files[0];
@@ -117,7 +93,6 @@ export class EditFichaComponent implements OnInit {
       console.log('Novo registro gerado (temporário):', this.registro);
     });
   }
-
 
   salvar() {
     if (this.fichaId) {

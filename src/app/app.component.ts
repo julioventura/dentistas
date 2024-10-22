@@ -1,16 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router'; // Importamos Router e ActivatedRoute
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  animations: [
+    trigger('routeAnimations', [
+      transition('* <=> *', [
+        style({ opacity: 0 }),      // Inicia invisível
+        animate('0.3s ease-in-out', style({ opacity: 1 }))  
+      ])
+    ])
+  ]
 })
+
 export class AppComponent implements OnInit {
   showFooter = true; // Variável que controla a exibição do menu
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(
+    private router: Router, 
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     // Detecta mudanças na rota
@@ -26,4 +40,10 @@ export class AppComponent implements OnInit {
         }
       });
   }
+
+  // Método para aplicar as animações nas rotas
+  prepareRoute(outlet: RouterOutlet) {
+    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+  }
+
 }
