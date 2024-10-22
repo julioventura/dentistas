@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from './firestore.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CamposFichaService } from './campos-ficha.service';
 
 @Injectable({
@@ -34,15 +34,27 @@ export class FormService {
         });
     }
 
+
     createForm() {
         console.log('createForm()');
-        // Inicializa o formulário reativo
-        this.fichaForm = this.fb.group({
-            nome: ['', Validators.required],  // Apenas o campo nome é obrigatório
-            descricao: [''],
-            valor: [''],
-            data: ['']
-        });
+
+        const formControls = this.campos.reduce((acc, campo) => {
+            acc[campo.nome] = new FormControl('');
+            return acc;
+        }, {});
+
+        this.fichaForm = this.fb.group(formControls);
+
+        // createForm() {
+        //     console.log('createForm()');
+        //     // Inicializa o formulário reativo
+        //     this.fichaForm = this.fb.group({
+        //         nome: ['', Validators.required],  // Apenas o campo nome é obrigatório
+        //         descricao: [''],
+        //         valor: [''],
+        //         data: ['']
+        //     });
+        // }
     }
 
 
@@ -59,7 +71,7 @@ export class FormService {
             const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subCollection}/itens`;
             console.log('Caminho para carregar ficha:', fichaPath);
 
-            this.carregarCampos(collection);
+            this.carregarCampos(subCollection);
             this.createForm();
 
             // Carrega a ficha para edição

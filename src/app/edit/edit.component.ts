@@ -4,6 +4,7 @@ import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+
 import { CamposService } from '../shared/campos.service';
 import { UtilService } from '../shared/util.service';
 
@@ -16,10 +17,8 @@ export class EditComponent implements OnInit {
   collection!: string;
   registro: any = {};
   isLoading = true;
-
   isNew = false;
   userId: string | null = null;
-
   registroForm!: FormGroup;
   campos: any[] = [];
   arquivos: { [key: string]: File } = {};
@@ -37,16 +36,21 @@ export class EditComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log('ngOnInit()');
+
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
-
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         const id = this.route.snapshot.paramMap.get('id');
+        this.titulo_da_pagina = this.util.capitalizar(this.collection);
+
+        console.log('userId:', this.userId);
+        console.log('Collection:', this.collection);
+        console.log('ID:', id);
+        console.log('titulo_da_pagina:', this.titulo_da_pagina); 
 
         this.carregarCampos();
-
-        this.titulo_da_pagina = this.util.capitalizar(this.collection);
 
         if (id) {
           this.loadRegistro(id);
@@ -55,6 +59,7 @@ export class EditComponent implements OnInit {
           this.gerarNovoRegistro();  // Gera um ID e cria um registro temporário
         }
       }
+      else { console.error('Usuário não autenticado.'); this.util.goHome(); }
     });
 
     // Inicializa o formulário
@@ -73,6 +78,19 @@ export class EditComponent implements OnInit {
       this.createForm();
     });
   }
+
+
+  createForm() {
+    const formControls = this.campos.reduce((acc, campo) => {
+      acc[campo.nome] = new FormControl('');
+      return acc;
+    }, {});
+
+    this.registroForm = this.fb.group(formControls);
+  }
+
+
+
 
   gerarNovoRegistro() {
     if (!this.userId || !this.collection) return;
@@ -134,15 +152,6 @@ export class EditComponent implements OnInit {
     );
   }
 
-
-  createForm() {
-    const formControls = this.campos.reduce((acc, campo) => {
-      acc[campo.nome] = new FormControl('');
-      return acc;
-    }, {});
-
-    this.registroForm = this.fb.group(formControls);
-  }
 
   salvar() {
     if (this.registroForm.valid && this.userId) {

@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+
+import { CamposFichaService } from '../shared/campos-ficha.service';
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
 
@@ -19,16 +23,24 @@ export class EditFichaComponent implements OnInit {
   ficha: any;
   userId!: string;
   titulo_da_pagina: string = '';
+  registroForm!: FormGroup;
   campos: any[] = [];
   arquivos: { [key: string]: File } = {};
   view_ficha: boolean = false;
+  isNew = false;
+  isLoading = true;
+
 
   constructor(
     private route: ActivatedRoute,
+    private firestoreService: FirestoreService<any>,
     private navegacaoService: NavegacaoService,
     private afAuth: AngularFireAuth,
+    private fb: FormBuilder,
     public util: UtilService,
     public FormService: FormService,
+    private CamposFichaService: CamposFichaService,
+
   ) { }
 
   ngOnInit(): void {
@@ -48,23 +60,40 @@ export class EditFichaComponent implements OnInit {
         console.log('ID:', this.id);
         console.log('subCollection:', this.subCollection);
         console.log('fichaId:', this.fichaId); 
+        console.log('titulo_da_pagina:', this.titulo_da_pagina); 
 
-        if (!this.fichaId) {
-          console.error('Ficha não identificada.');
-          this.voltar();
-        }
-        else {
+        // this.carregarCampos();
+
+        if (this.fichaId) {
+          // this.loadRegistro(id);
           this.FormService.loadFicha(this.userId, this.collection, this.id, this.subCollection, this.fichaId, this.view_ficha);
+        } else {
+          this.isNew = true;
+          this.gerarNovoRegistro();  // Gera um ID e cria um registro temporário
         }
+    
       }
-      else {
-        console.error('Usuário não autenticado.');
-        this.util.goHome();
-      }
+      else { console.error('Usuário não autenticado.'); this.util.goHome(); }
     });
     console.log('Formulário de edição de ficha inicializado.');
   }
 
+
+  // carregarCampos() {
+  //   this.CamposFichaService.getCamposRegistro(this.collection).subscribe((campos: any[]) => {
+  //     this.campos = campos || [];
+  //     this.createForm();
+  //   });
+  // }
+
+  // createForm() {
+  //   const formControls = this.campos.reduce((acc, campo) => {
+  //     acc[campo.nome] = new FormControl('');
+  //     return acc;
+  //   }, {});
+
+  //   this.registroForm = this.fb.group(formControls);
+  // }
 
   onFileSelected(event: any, campoNome: string) {
     const file: File = event.target.files[0];
@@ -72,6 +101,23 @@ export class EditFichaComponent implements OnInit {
       this.arquivos[campoNome] = file;
     }
   }
+
+
+  gerarNovoRegistro() {
+    if (!this.userId || !this.collection) return;
+
+    this.firestoreService.gerarProximoCodigo(`users/${this.userId}/${this.collection}`).then(novoCodigo => {
+      const id = this.firestoreService.createId();
+      this.registro = {
+        id,
+        codigo: novoCodigo,
+        ...this.campos.reduce((acc, campo) => ({ ...acc, [campo.nome]: '' }), {})
+      };
+
+      console.log('Novo registro gerado (temporário):', this.registro);
+    });
+  }
+
 
   salvar() {
     if (this.fichaId) {
