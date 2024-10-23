@@ -22,15 +22,21 @@
     </div>
 
 
-    <form *ngIf="FormService.fichaForm && !FormService.isLoading" [formGroup]="FormService.fichaForm"
-      class="record-details">
+    <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details">
+
       <div *ngFor="let campo of FormService.campos" class="detail-container">
+
         <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
-    
+
         <!-- Input para tipos normais  -->
         <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-          *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url'"
-          (change)="FormService.onFieldChange($event, campo.nome)">
+          (change)="FormService.onFieldChange($event, campo.nome)"
+          *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
+
+        <!-- Textarea para campos longos -->
+        <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+          *ngIf="campo.tipo === 'textarea'" rows="4" placeholder="Digite o conteúdo"></textarea>
+
       </div>
     </form>
 

@@ -14,21 +14,20 @@ import { FormService } from '../shared/form.service';
   styleUrls: ['./edit-ficha.component.scss']
 })
 export class EditFichaComponent implements OnInit {
+  userId!: string;
   collection!: string;
   subCollection!: string;
   registro: any = {};
   id!: string;
   fichaId: string | null = null; // Pode ser null se não houver fichaId
   ficha: any;
-  userId!: string;
-  titulo_da_pagina: string = '';
-  subtitulo_da_pagina: string = '';
+  isNew = false;
   campos: any[] = [];
   arquivos: { [key: string]: File } = {};
   view_ficha: boolean = false;
-  isNew = false;
+  titulo_da_pagina: string = '';
+  subtitulo_da_pagina: string = '';
   isLoading = true;
-  fichaForm!: FormGroup;
 
 
   constructor(

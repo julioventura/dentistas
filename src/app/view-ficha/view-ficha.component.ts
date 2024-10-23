@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
 
@@ -12,6 +11,7 @@ import { FormService } from '../shared/form.service';
   styleUrls: ['./view-ficha.component.scss'],
 })
 export class ViewFichaComponent implements OnInit {
+  userId: string | null = null;
   collection!: string;
   subCollection!: string; // Sub-coleção (exames, etc.)
   registro: any = null;
@@ -19,18 +19,16 @@ export class ViewFichaComponent implements OnInit {
   fichaId: string | null = null; // Pode ser null se não houver fichaId
   fichas: any[] = []; // Lista de fichas (exames, atendimentos, etc.)
   ficha: any = null;  // Detalhes de uma ficha específica
-  userId: string | null = null;
   campos: any[] = [];
   camposIniciais: any[] = []; // Armazena os campos ao carregar a página
-  isLoading = true;   // Indicador de carregamento  
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
   view_ficha: boolean = true;
+  isLoading = true;   // Indicador de carregamento  
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private firestore: AngularFirestore,
     private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
     public util: UtilService,
@@ -121,24 +119,25 @@ export class ViewFichaComponent implements OnInit {
   }
 
 
-  criarNovaFicha(): void {
-    console.log('criarNovaFicha()');
+  // criarNovaFicha(): void {
+  //   console.log('criarNovaFicha()');
 
-    const novaFicha = {
-      nome: 'bbbbbbbbb',
-      descricao: '333333',
-      data: new Date().toISOString().split('T')[0],
-    };
+  //   const novaFicha = {
+  //     nome: 'bbbbbbbbb',
+  //     descricao: '333333',
+  //     data: new Date().toISOString().split('T')[0],
+  //   };
 
-    const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
-    console.log('Tentando criar nova ficha no caminho:', fichaPath);
-    console.log('Conteúdo da nova ficha:', novaFicha);
+  //   const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
+  //   console.log('Tentando criar nova ficha no caminho:', fichaPath);
+  //   console.log('Conteúdo da nova ficha:', novaFicha);
 
-    this.firestore.collection(fichaPath).add(novaFicha).then(docRef => {
-      console.log('Nova ficha criada com sucesso com ID:', docRef.id);
-      this.router.navigate([`/view-ficha/${this.collection}/${this.id}/ficha/${this.subCollection}/itens/${docRef.id}`]);
-    }).catch((error) => {
-      console.error('Erro ao criar nova ficha:', error);
-    });
-  }
+  //   this.firestore.collection(fichaPath).add(novaFicha).then(docRef => {
+  //     console.log('Nova ficha criada com sucesso com ID:', docRef.id);
+  //     this.router.navigate([`/view-ficha/${this.collection}/${this.id}/ficha/${this.subCollection}/itens/${docRef.id}`]);
+  //   }).catch((error) => {
+  //     console.error('Erro ao criar nova ficha:', error);
+  //   });
+  // }
+
 }

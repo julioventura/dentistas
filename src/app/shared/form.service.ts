@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from './firestore.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
 import { UtilService } from '../shared/util.service';
 
@@ -15,21 +16,33 @@ export class FormService {
     fichaForm!: FormGroup;
     campos: any[] = [];
     isLoading = true;
-    registro: any = null;
+    public registro: any = null;
     public id_nome_collected: string = ' ';
 
     constructor(
         private firestore: AngularFirestore,
         private firestoreService: FirestoreService<any>,
         private fb: FormBuilder,
+        private CamposService: CamposService,
         private CamposFichaService: CamposFichaService,
         private router: Router,
         public util: UtilService,
 
     ) { }
 
-    carregarCampos(collection: string) {
+    carregarCamposFichas(collection: string) {
         this.CamposFichaService.getCamposRegistro(collection).subscribe((campos: any[]) => {
+            this.campos = campos || [];
+            console.log('Campos carregados:', this.campos);
+
+            // Chama o método para criar o FormGroup APÓS carregar os campos
+            this.createForm();
+        });
+    }
+
+
+    carregarCamposCollection(collection: string) {
+        this.CamposService.getCamposRegistro(collection).subscribe((campos: any[]) => {
             this.campos = campos || [];
             console.log('Campos carregados:', this.campos);
 
@@ -57,13 +70,81 @@ export class FormService {
     }
 
 
+
+    loadRegistro(userId: string, collection: string, id: string, view: boolean) {
+        console.log('loadRegistro()');
+
+        console.log('userId: ', userId);
+        console.log('Collection: ', collection);
+        console.log('ID: ', id);
+        console.log('view (visualizar registro): ', view);
+
+        if (id) {
+
+            const fichaPath = `users/${userId}/${collection}`;
+            console.log('Caminho para carregar ficha:', fichaPath);
+
+            // Define o formulário como carregando
+            this.isLoading = true;
+
+            // Carrega os campos do formulário antes de tentar carregar a ficha
+            this.carregarCamposCollection(collection);
+
+            // Carrega os dados da ficha do Firestore
+            this.firestoreService.getRegistroById(fichaPath, id).subscribe(ficha => {
+                if (ficha) {
+                    console.log('Ficha carregada:', ficha);
+                    this.registro = ficha;  // Para o view-ficha, se necessário
+
+                    // Verifica se os campos foram carregados corretamente antes de preencher o formulário
+                    if (this.fichaForm && this.campos.length > 0) {
+                        // Preenche o FormGroup com os dados da ficha
+                        this.fichaForm.patchValue(ficha); // Preenche o formulário de edição
+                    } else {
+                        console.error('Formulário ou campos não carregados corretamente.');
+                    }
+
+                    // Condicional para desabilitar o formulário se estiver na view (visualização)
+                    if (view) {
+                        this.fichaForm.disable();  // Desabilita o formulário
+                        console.log("Formulário desabilitado.");
+                    } else {
+                        this.fichaForm.enable();  // Habilita o formulário
+                        console.log("Formulário habilitado.");
+                    }
+                    console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
+                    Object.keys(this.fichaForm.controls).forEach(campoNome => {
+                        console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
+                    });
+
+                    // Marca como carregado (isLoading = false)
+                    this.isLoading = false;
+                    console.log('isLoading == false');
+
+                } else {
+                    console.error('Ficha não encontrada no caminho:', fichaPath);
+                    this.isLoading = false;
+                }
+            }, error => {
+                console.error('Erro ao carregar ficha para edição:', error);
+                this.isLoading = false;
+            });
+        } else {
+            console.error('Identificador id não definido corretamente.');
+            this.isLoading = false;
+        }
+    }
+
+
     loadFicha(userId: string, collection: string, id: string, subCollection: string, fichaId: string, view: boolean) {
         console.log('loadFicha()');
 
+        console.log('userId: ', userId);
         console.log('Collection:', collection);
         console.log('ID:', id);
         console.log('subCollection: ' + subCollection);
         console.log('fichaId: ' + fichaId);
+        console.log('view (visualizar registro): ', view);
 
         if (subCollection && fichaId) {
 
@@ -74,7 +155,7 @@ export class FormService {
             this.isLoading = true;
 
             // Carrega os campos do formulário antes de tentar carregar a ficha
-            this.carregarCampos(subCollection);
+            this.carregarCamposFichas(subCollection);
 
             // Carrega os dados da ficha do Firestore
             this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { CamposService } from '../shared/campos.service';
+
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
 
@@ -12,21 +12,20 @@ import { FormService } from '../shared/form.service';
   styleUrls: ['./view.component.scss'],
 })
 export class ViewComponent implements OnInit {
+  userId: string | null = null;
   collection!: string;
   registro: any = null;
   id!: string;
-  id_nome_collected: string = '';
-  isLoading = true;
+  view_ficha: boolean = true;
   titulo_da_pagina: string = '';
-  userId: string | null = null;
-  campos: any[] = [];
+  subtitulo_da_pagina: string = '';
+  isLoading = true;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
-    private camposService: CamposService,
     public util: UtilService,
     public FormService: FormService,
 
@@ -39,23 +38,24 @@ export class ViewComponent implements OnInit {
       if (user && user.uid) {
         this.userId = user.uid;
         this.collection = this.route.snapshot.paramMap.get('collection')!;
-        this.id = this.route.snapshot.paramMap.get('id')!;
+        const id = this.route.snapshot.paramMap.get('id');
+        if (id) { this.id = id; }
         this.titulo_da_pagina = this.util.capitalizar(this.collection);
 
         console.log('userId:', this.userId);
         console.log('Collection:', this.collection);
-        console.log('ID:', this.id);
+        console.log('ID:', id);
+        console.log('titulo_da_pagina:', this.titulo_da_pagina); 
 
-        this.carregarCampos();
-
-        if (this.id && this.collection) {
-          this.titulo_da_pagina = "Ficha de " + this.util.titulo_ajuste(this.collection);
-          this.loadRegistro(this.id);
-          this.FormService.id_nome_collected = this.registro.nome;
+        if (!this.id) {
+          console.error('Registro não identificado.');
+          this.voltar();
         }
         else {
-          // In case no user is authenticated, navigate to home
-          this.router.navigate(['/home']);
+          this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_ficha);
+
+          this.subtitulo_da_pagina = this.FormService.registro.nome;
+          console.log("subtitulo_da_pagina = " + this.subtitulo_da_pagina);
         }
       }
       else {
@@ -66,37 +66,7 @@ export class ViewComponent implements OnInit {
     console.log('Formulário de visualização inicializado.');
   }
 
-  carregarCampos() {
-    this.camposService.getCamposRegistro(this.collection).subscribe((campos: any[]) => {
-      this.campos = campos || [];
-    });
-  }
-
-
-  loadRegistro(id: string) {
-    console.log("loadRegistro(" + id + ")");
-
-    if (!this.userId) return;
-
-    const registroPath = `users/${this.userId}/${this.collection}`;
-    console.log("registroPath = " + registroPath);
-
-    this.firestoreService.getRegistroById(registroPath, id).subscribe(registro => {
-      if (registro) {
-        this.registro = registro;
-        console.log('Registro carregado com sucesso:', this.registro);
-        this.isLoading = false;
-      } else {
-        console.error('Registro não encontrado.');
-        alert('Registro não encontrado!');
-        this.router.navigate(['/home']);
-      }
-    }, (error) => {
-      console.error('Erro ao carregar o registro:', error);
-      this.router.navigate(['/home']);
-    });
-  }
-
+  
 
   verFichaDoMenu(subcollection: string) {
     this.router.navigate([`/list-fichas/${this.collection}/${this.id}/ficha`, subcollection]);
@@ -129,6 +99,5 @@ export class ViewComponent implements OnInit {
   voltar() {
     this.router.navigate([`/registros/${this.collection}`]);
   }
-
 
 }

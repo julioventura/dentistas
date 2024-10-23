@@ -1,4 +1,4 @@
-<div class="container" *ngIf="registro">
+<div class="container">
 
   <div class="header">
     <div class="actions">
@@ -13,9 +13,7 @@
   </div>
 
   <div class="record-header">
-    <div *ngIf="registro?.nome">
-      {{ registro.nome }}
-    </div>
+    {{ subtitulo_da_pagina }}
   </div>
 
   <!-- Botões das fichas internas -->
@@ -29,32 +27,42 @@
 
 
   <!-- Detalhes -->
-  <div class="record-details">
+  <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
 
-    <div *ngFor="let campo of campos">
+    <div *ngIf="FormService.isLoading" class="aviso">
+      Carregando dados da ficha...
+    </div>
 
-      <!-- Verifica se o campo está preenchido antes de exibir -->
-      <div *ngIf="registro[campo.nome] && registro[campo.nome].length > 1" class="detail-container">
 
-        <!-- Label do campo -->
-        <div class="detail-label">{{ campo.label }}</div>
+    <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details">
 
-        <!-- Exibir o valor normalmente -->
-        <div class="detail-value" *ngIf="campo.tipo !== 'image' && campo.tipo !== 'file' && campo.tipo !== 'url'">
-          {{ registro[campo.nome] }}
+      <div *ngFor="let campo of FormService.campos">
+
+        <!-- Verifica se o campo está preenchido antes de exibir -->
+        <div *ngIf="FormService.registro[campo.nome] && FormService.registro[campo.nome].length > 0"
+          class="detail-container">
+
+          <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+
+          <!-- Input para tipos normais -->
+          <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+            *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
+
+          <!-- Input para URL -->
+          <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+            *ngIf="campo.tipo === 'url'" placeholder="Cole aqui o link do arquivo">
+
+          <!-- Textarea para campos longos -->
+          <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+            *ngIf="campo.tipo === 'textarea'" rows="4" placeholder="Digite o conteúdo"></textarea>
+
         </div>
-
-        <!-- NUVEM -->
-        <div *ngIf="campo.tipo === 'url' && (registro[campo.nome].length>10)" id='nuvem' class="url_container"
-          (click)="util.go_url(registro[campo.nome])">
-          {{ registro[campo.nome] }}
-        </div>
-
-        <!-- Exibir imagem se for tipo 'image' e URL for válida -->
-        <img *ngIf="util.isImageUrl(registro[campo.nome])" [src]="registro[campo.nome]" alt="Imagem do Registro"
-          style="max-width: 100px; margin-left: 10px;">
 
       </div>
-    </div>
+    </form>
   </div>
+
+
+
+
 </div>
