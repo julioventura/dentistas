@@ -4,6 +4,7 @@ import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { CamposService } from '../shared/campos.service';
 import { UtilService } from '../shared/util.service';
+import { FormService } from '../shared/form.service';
 
 @Component({
   selector: 'app-view',
@@ -14,6 +15,7 @@ export class ViewComponent implements OnInit {
   collection!: string;
   registro: any = null;
   id!: string;
+  id_nome_collected: string = '';
   isLoading = true;
   titulo_da_pagina: string = '';
   userId: string | null = null;
@@ -25,7 +27,8 @@ export class ViewComponent implements OnInit {
     private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
     private camposService: CamposService,
-    public util: UtilService
+    public util: UtilService,
+    public FormService: FormService,
 
   ) { }
 
@@ -48,6 +51,7 @@ export class ViewComponent implements OnInit {
         if (this.id && this.collection) {
           this.titulo_da_pagina = "Ficha de " + this.util.titulo_ajuste(this.collection);
           this.loadRegistro(this.id);
+          this.FormService.id_nome_collected = this.registro.nome;
         }
         else {
           // In case no user is authenticated, navigate to home

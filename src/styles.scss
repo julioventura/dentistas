@@ -4,6 +4,10 @@
 // Variáveis de cores
 // ====================================
 
+// $cor-de-fundo: #07162d;
+// $cor-de-fundo: #282828;
+// $cor-de-fundo: #2f476c;
+$cor-de-fundo: #3d4c62;
 $white: #ffffff;
 $white-color: #ffffff;
 $gray: #bdbdbd;
@@ -48,8 +52,7 @@ body {
     color: $text-color;
     padding: 0;
     padding-top: 0.8rem;
-    // background-color: #839DAC;
-    background-color: $background-cinza;
+    background-color: $cor-de-fundo;
 }
 
 html,
@@ -363,7 +366,7 @@ h3 {
     }
 }
 
-// Linha com o nome do paciente
+// Linha com o nome do registro
 .record-header {
     background-color: $primary-color;
     color: $white;

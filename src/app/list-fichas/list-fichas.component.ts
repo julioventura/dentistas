@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FirestoreService } from '../shared/firestore.service';
-import { NavegacaoService } from '../shared/navegacao.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { UtilService } from '../shared/util.service';
+import { FormService } from '../shared/form.service';
 
 @Component({
   selector: 'app-list-fichas',
@@ -15,20 +14,21 @@ export class ListFichasComponent implements OnInit {
   collection!: string;
   subCollection!: string; // Sub-coleção (exames, etc.)
   id!: string;
+  id_nome_collected: string = '';
   fichas: any[] = []; // Lista de fichas (exames, atendimentos, etc.)
   userId: string | null = null;
   isLoading = true;   // Indicador de carregamento  
   titulo_da_pagina: string = '';
-  pacienteNome: string = '';
+  subtitulo_da_pagina: string = '';  
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private firestore: AngularFirestore,
-    private firestoreService: FirestoreService<any>,
-    private navegacaoService: NavegacaoService,
     private afAuth: AngularFireAuth,
-    public util: UtilService
+    public util: UtilService,
+    public FormService: FormService,
+
   ) { }
 
   ngOnInit(): void {
@@ -41,7 +41,6 @@ export class ListFichasComponent implements OnInit {
         this.id = this.route.snapshot.paramMap.get('id')!;
         this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
 
-        this.loadPacienteNome();  // Carrega o nome do paciente
         this.loadAllFichas();
       }
     });
@@ -50,32 +49,16 @@ export class ListFichasComponent implements OnInit {
 
   }
 
-  loadPacienteNome() {
-    const pacientePath = `users/${this.userId}/${this.collection}`;
-    console.log('Caminho para o paciente:', pacientePath);
-    console.log('Id do paciente:', this.id);
-
-    this.firestoreService.getRegistroById(pacientePath, this.id).subscribe(paciente => {
-      if (paciente && paciente.nome) {
-        this.pacienteNome = paciente.nome;
-        console.log('Nome do paciente carregado:', this.pacienteNome);
-        this.titulo_da_pagina = "Fichas de " + this.util.capitalizar(this.subCollection);
-      } else {
-        console.error('Paciente não encontrado ou sem nome.');
-      }
-    }, error => {
-      console.error('Erro ao carregar o paciente:', error);
-    });
-  }
-
+  
   loadAllFichas() {
     console.log('loadAllFichas()');
-
+    
     console.log('Collection:', this.collection);
     console.log('ID:', this.id);
     console.log('subCollection:', this.subCollection);
-
-    this.titulo_da_pagina = "Lista de " + this.subCollection;
+    
+    this.titulo_da_pagina = "Fichas de " + this.util.capitalizar(this.subCollection);
+    this.subtitulo_da_pagina = this.FormService.id_nome_collected;
 
 
     if (this.subCollection && this.userId && this.collection && this.id) {

@@ -22,11 +22,13 @@ export class EditFichaComponent implements OnInit {
   ficha: any;
   userId!: string;
   titulo_da_pagina: string = '';
+  subtitulo_da_pagina: string = '';
   campos: any[] = [];
   arquivos: { [key: string]: File } = {};
   view_ficha: boolean = false;
   isNew = false;
   isLoading = true;
+  fichaForm!: FormGroup;
 
 
   constructor(
@@ -46,9 +48,11 @@ export class EditFichaComponent implements OnInit {
         this.userId = user.uid; 
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.id = this.route.snapshot.paramMap.get('id')!;
+
         this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
         this.titulo_da_pagina = "Editar " + this.util.capitalizar(this.subCollection);
+        this.subtitulo_da_pagina = this.FormService.id_nome_collected;
 
         console.log('userId:', this.userId); 
         console.log('Collection:', this.collection);
@@ -94,6 +98,7 @@ export class EditFichaComponent implements OnInit {
     });
   }
 
+  
   salvar() {
     if (this.fichaId) {
       this.FormService.salvar(this.userId, this.collection, this.id, this.subCollection, this.fichaId);

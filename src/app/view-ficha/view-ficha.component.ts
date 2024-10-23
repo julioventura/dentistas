@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { FormGroup } from '@angular/forms';
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
 
@@ -25,6 +24,7 @@ export class ViewFichaComponent implements OnInit {
   camposIniciais: any[] = []; // Armazena os campos ao carregar a página
   isLoading = true;   // Indicador de carregamento  
   titulo_da_pagina: string = '';
+  subtitulo_da_pagina: string = '';
   view_ficha: boolean = true;
 
   constructor(
@@ -49,7 +49,8 @@ export class ViewFichaComponent implements OnInit {
         this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
         this.titulo_da_pagina = "Ficha de " + this.util.capitalizar(this.subCollection);
-
+        this.subtitulo_da_pagina = this.FormService.id_nome_collected;
+        
         console.log('userId:', this.userId); 
         console.log('Collection:', this.collection);
         console.log('ID:', this.id);

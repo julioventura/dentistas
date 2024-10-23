@@ -15,7 +15,20 @@ section {
   flex-wrap: wrap;
   padding: 20px;
   gap: 10px;
-  /* Adiciona espaçamento entre os containers */
+}
+
+.boxvazio {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0px;
+  border: 0;
+  box-shadow: unset;
+  margin: 0px;
+  margin: 0 auto;
+  gap: 10px;
 }
 
 .column {

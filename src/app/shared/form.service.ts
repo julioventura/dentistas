@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from './firestore.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CamposFichaService } from './campos-ficha.service';
+import { UtilService } from '../shared/util.service';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,7 @@ export class FormService {
     campos: any[] = [];
     isLoading = true;
     registro: any = null;
-
+    public id_nome_collected: string = ' ';
 
     constructor(
         private firestore: AngularFirestore,
@@ -23,17 +24,19 @@ export class FormService {
         private fb: FormBuilder,
         private CamposFichaService: CamposFichaService,
         private router: Router,
+        public util: UtilService,
 
     ) { }
-
-
 
     carregarCampos(collection: string) {
         this.CamposFichaService.getCamposRegistro(collection).subscribe((campos: any[]) => {
             this.campos = campos || [];
+            console.log('Campos carregados:', this.campos);
+
+            // Chama o método para criar o FormGroup APÓS carregar os campos
+            this.createForm();
         });
     }
-
 
     createForm() {
         console.log('createForm()');
@@ -43,7 +46,14 @@ export class FormService {
             return acc;
         }, {});
 
-        this.fichaForm = this.fb.group(formControls);
+        // Verifica se o FormGroup foi corretamente criado
+        if (Object.keys(formControls).length > 0) {
+            this.fichaForm = this.fb.group(formControls);
+            console.log('FormGroup criado com sucesso:', this.fichaForm);
+            console.log('Formulário criado com os controles:', this.fichaForm.controls);
+        } else {
+            console.error('Nenhum campo foi adicionado ao FormGroup.');
+        }
     }
 
 
@@ -60,41 +70,82 @@ export class FormService {
             const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subCollection}/itens`;
             console.log('Caminho para carregar ficha:', fichaPath);
 
-            this.carregarCampos(subCollection);
-            this.createForm();
-            
-            if (view) {
-                this.fichaForm.disable();  // Desabilita o formulário
-            }
-            else {
-                this.fichaForm.enable();  // Habilita o formulário
-            }
+            // Define o formulário como carregando
+            this.isLoading = true;
 
-            // Carrega a ficha para edição
+            // Carrega os campos do formulário antes de tentar carregar a ficha
+            this.carregarCampos(subCollection);
+
+            // Carrega os dados da ficha do Firestore
             this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
                 if (ficha) {
-                    this.registro = ficha;  // pro view-ficha   TODO: PRECISA?????
+                    console.log('Ficha carregada:', ficha);
+                    this.registro = ficha;  // Para o view-ficha, se necessário
 
-                    // ------------------------------
-                    this.fichaForm.patchValue(ficha); // Preenche o formulário - edit-ficha
-                    // ------------------------------
+                    // Verifica se os campos foram carregados corretamente antes de preencher o formulário
+                    if (this.fichaForm && this.campos.length > 0) {
+                        // Preenche o FormGroup com os dados da ficha
+                        this.fichaForm.patchValue(ficha); // Preenche o formulário de edição
+                    } else {
+                        console.error('Formulário ou campos não carregados corretamente.');
+                    }
 
-                    this.isLoading = false;  // Desativa o indicador de carregamento
+                    // Condicional para desabilitar o formulário se estiver na view (visualização)
+                    if (view) {
+                        this.fichaForm.disable();  // Desabilita o formulário
+                        console.log("Formulário desabilitado.");
+                    } else {
+                        this.fichaForm.enable();  // Habilita o formulário
+                        console.log("Formulário habilitado.");
+                    }
+                    console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
+                    Object.keys(this.fichaForm.controls).forEach(campoNome => {
+                        console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
+                    });
+
+                    // Marca como carregado (isLoading = false)
+                    this.isLoading = false;
                     console.log('isLoading == false');
 
-                    console.log('Ficha carregada:', ficha);
                 } else {
                     console.error('Ficha não encontrada no caminho:', fichaPath);
-                    // this.voltar();
+                    this.isLoading = false;
                 }
             }, error => {
                 console.error('Erro ao carregar ficha para edição:', error);
+                this.isLoading = false;
             });
-        }
-        else {
+        } else {
             console.error('subCollection ou fichaId não definidos corretamente.');
+            this.isLoading = false;
         }
     }
+
+
+
+    onFieldChange(event: any, campoNome: string): void {
+        console.log(`onFieldChange(event, campoNome = ${campoNome})`);
+        console.log(campoNome);
+        // Verifica se o formGroup está inicializado e o controle existe
+        if (this.fichaForm) {
+            console.log('fichaForm controls:', this.fichaForm.controls);
+        }
+
+        if (this.fichaForm && this.fichaForm.get(campoNome)) {
+            const valorAtual = event.target.value;
+
+            // Capitaliza o valor ou aplica outras transformações
+            const valorCapitalizado = this.util.capitalizar(valorAtual);
+            console.log("Valor capitalizado:", valorCapitalizado);
+
+            // Atualiza o valor no FormGroup
+            this.fichaForm.get(campoNome)?.setValue(valorCapitalizado);
+        } else {
+            console.error(`O campo ${campoNome} não foi encontrado no FormGroup ou o FormGroup não está pronto.`);
+        }
+    }
+
+
 
     salvar(userId: string, collection: string, id: string, subCollection: string, fichaId: string) {
 

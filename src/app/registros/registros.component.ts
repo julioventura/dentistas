@@ -44,7 +44,7 @@ export class RegistrosComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Pega a coleção da URL (ex: 'pacientes', 'usuarios')
+    // Pega a coleção da URL (ex: 'pacientes', 'dentistas')
     this.collection = this.route.snapshot.paramMap.get('collection')!;
     console.log("Registros de " + this.collection);
 
