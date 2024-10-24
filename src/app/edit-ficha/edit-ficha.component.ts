@@ -24,7 +24,7 @@ export class EditFichaComponent implements OnInit {
   isNew = false;
   campos: any[] = [];
   arquivos: { [key: string]: File } = {};
-  view_ficha: boolean = false;
+  view_only: boolean = false;
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
   isLoading = true;
@@ -61,7 +61,7 @@ export class EditFichaComponent implements OnInit {
         console.log('titulo_da_pagina:', this.titulo_da_pagina); 
 
         if (this.fichaId) {
-          this.FormService.loadFicha(this.userId, this.collection, this.id, this.subCollection, this.fichaId, this.view_ficha);
+          this.FormService.loadFicha(this.userId, this.collection, this.id, this.subCollection, this.fichaId, this.view_only);
         } else {
           this.isNew = true;
           this.gerarNovoRegistro();  // Gera um ID e cria um registro temporário

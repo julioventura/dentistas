@@ -104,3 +104,33 @@ button {
     align-items: flex-start;
   }
 }
+
+textarea {
+  background-color: $primary-color-light;
+  /* Cor de fundo */
+  border: 1px solid #ccc;
+  /* Cor e espessura da borda */
+  border-radius: 6px;
+  /* Arredondar cantos */
+  padding: 10px;
+  /* Espaçamento interno */
+  color: $primary-color-dark;
+  /* Cor do texto */
+  font-size: 16px;
+  /* Tamanho da fonte */
+  width: 100%;
+  /* Largura total */
+  box-sizing: border-box;
+  /* Inclui borda e padding no cálculo da largura */
+  transition: background-color 0.3s ease;
+  /* Transição suave ao mudar o fundo */
+
+  &:focus {
+    background-color: $primary-color-light;
+    /* Cor de fundo ao focar */
+    outline: none;
+    /* Remove o outline padrão ao focar */
+    border-color: #66afe9;
+    /* Cor da borda ao focar */
+  }
+}

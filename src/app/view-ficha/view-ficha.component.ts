@@ -23,7 +23,7 @@ export class ViewFichaComponent implements OnInit {
   camposIniciais: any[] = []; // Armazena os campos ao carregar a página
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
-  view_ficha: boolean = true;
+  view_only: boolean = true;
   isLoading = true;   // Indicador de carregamento  
 
   constructor(
@@ -45,9 +45,9 @@ export class ViewFichaComponent implements OnInit {
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.id = this.route.snapshot.paramMap.get('id')!;
         this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
-        this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
         this.titulo_da_pagina = "Ficha de " + this.util.capitalizar(this.subCollection);
         this.subtitulo_da_pagina = this.FormService.id_nome_collected;
+        this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
         
         console.log('userId:', this.userId); 
         console.log('Collection:', this.collection);
@@ -56,11 +56,11 @@ export class ViewFichaComponent implements OnInit {
         console.log('fichaId:', this.fichaId); 
 
         if (!this.fichaId) {
-          console.error('Ficha não identificada.');
+          console.error('fichaId não identificado.');
           this.voltar();
         }
         else {
-          this.FormService.loadFicha(this.userId, this.collection, this.id, this.subCollection, this.fichaId, this.view_ficha);
+          this.FormService.loadFicha(this.userId, this.collection, this.id, this.subCollection, this.fichaId, this.view_only);
         }
       }
       else {
@@ -117,27 +117,5 @@ export class ViewFichaComponent implements OnInit {
     this.fichaId = null;
     this.router.navigate([`/list-fichas/${this.collection}/${this.id}/ficha/${this.subCollection}/`]);
   }
-
-
-  // criarNovaFicha(): void {
-  //   console.log('criarNovaFicha()');
-
-  //   const novaFicha = {
-  //     nome: 'bbbbbbbbb',
-  //     descricao: '333333',
-  //     data: new Date().toISOString().split('T')[0],
-  //   };
-
-  //   const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
-  //   console.log('Tentando criar nova ficha no caminho:', fichaPath);
-  //   console.log('Conteúdo da nova ficha:', novaFicha);
-
-  //   this.firestore.collection(fichaPath).add(novaFicha).then(docRef => {
-  //     console.log('Nova ficha criada com sucesso com ID:', docRef.id);
-  //     this.router.navigate([`/view-ficha/${this.collection}/${this.id}/ficha/${this.subCollection}/itens/${docRef.id}`]);
-  //   }).catch((error) => {
-  //     console.error('Erro ao criar nova ficha:', error);
-  //   });
-  // }
 
 }

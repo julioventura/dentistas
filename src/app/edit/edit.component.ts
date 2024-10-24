@@ -22,7 +22,7 @@ export class EditComponent implements OnInit {
   id!: string;
   isNew = false;
   arquivos: { [key: string]: File } = {};
-  view_ficha: boolean = false;
+  view_only: boolean = false;
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
   isLoading = true;
@@ -59,7 +59,7 @@ export class EditComponent implements OnInit {
           this.voltar();
         }
         else {
-          this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_ficha);
+          this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
 
           this.subtitulo_da_pagina = this.FormService.registro.nome;
           console.log("subtitulo_da_pagina = " + this.subtitulo_da_pagina);

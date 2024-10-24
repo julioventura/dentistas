@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { CamposService } from '../shared/campos.service';
+import { UserService } from '../shared/user.service'; // 
 
 @Component({
   selector: 'app-camposRegistro',
@@ -12,26 +13,39 @@ export class CamposRegistroComponent implements OnInit {
   campos: any[] = []; // Armazena os campos da coleção selecionada
   colecoes: any[] = []; // Lista de coleções disponíveis
   camposIniciais: any[] = []; // Armazena os campos ao carregar a página
+  userId: string = ''; // Armazena o userId do usuário logado
 
   constructor(
     private camposService: CamposService,
     private navegacaoService: NavegacaoService,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
-    this.carregarColecoes();
-    this.carregarCampos();
+    // Obtém o userId do usuário logado
+    this.userService.getUser().subscribe(user => {
+      if (user && user.uid) {
+        this.userId = user.uid; // Armazena o uid do usuário logado
+        console.log("User ID:", this.userId);
+
+        // Após recuperar o userId, carregar coleções e campos
+        this.carregarColecoes();
+        this.carregarCampos();
+      } else {
+        console.error("Usuário não está autenticado.");
+      }
+    });
   }
 
   carregarColecoes() {
-    this.camposService.getColecoes().subscribe((colecoes) => {
+    this.camposService.getColecoes(this.userId).subscribe((colecoes) => {
       this.colecoes = ['padrao', ...colecoes]; // 'padrao' aparece primeiro na lista de coleções
     });
   }
 
   carregarCampos() {
     // Carrega os campos da coleção selecionada
-    this.camposService.getCamposRegistro(this.colecaoSelecionada).subscribe((campos) => {
+    this.camposService.getCamposRegistro(this.userId, this.colecaoSelecionada).subscribe((campos) => {
       this.campos = campos;
       this.camposIniciais = JSON.parse(JSON.stringify(campos)); // Faz uma cópia dos campos iniciais
     });
@@ -39,7 +53,7 @@ export class CamposRegistroComponent implements OnInit {
 
   salvar() {
     // Salva as configurações da coleção atual
-    this.camposService.setCamposRegistro(this.colecaoSelecionada, this.campos).then(() => {
+    this.camposService.setCamposRegistro(this.userId, this.colecaoSelecionada, this.campos).then(() => {
       alert('Configurações salvas com sucesso!');
       this.camposIniciais = JSON.parse(JSON.stringify(this.campos)); // Atualiza os campos iniciais após salvar
     });
@@ -63,7 +77,7 @@ export class CamposRegistroComponent implements OnInit {
     const novaColecao = prompt('Digite o nome da nova coleção:');
     if (novaColecao) {
       // Cria a nova coleção com base nos campos padrão
-      this.camposService.setCamposRegistro(novaColecao, [...this.camposService.camposPadrao]).then(() => {
+      this.camposService.setCamposRegistro(this.userId, novaColecao, [...this.camposService.camposPadrao]).then(() => {
         this.colecaoSelecionada = novaColecao;
         this.carregarColecoes();
         this.carregarCampos();

@@ -175,6 +175,8 @@ export class UtilService {
   // NOVOS 2024 Dentistas.com.br versão 4
   // ====================================
   public capitalizar(str: string): string {
+    console.log("capitalizar(" + str + ")");
+
     if (!str || typeof str !== 'string') {
       return '';
     }
@@ -187,10 +189,21 @@ export class UtilService {
     });
 
     // Exceções que devem permanecer em minúsculas
-    const excecoes = ['de', 'do', 'da', 'dos', 'das', 'por', 'para', 'e', 'com', 'em', 'à'];
+    const excecoesMinusculas = 'de do da dos das por para e com em à'.split(' ');
+
+    // Exceções que devem permanecer em MAIÚSCULAS (exemplo: siglas de estados)
+    const excecoesMaiusculas = 'AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO'.split(' ');
+
     str = str.split(' ').map(palavra => {
-      return excecoes.includes(palavra.toLowerCase()) ? palavra.toLowerCase() : palavra;
+      if (excecoesMinusculas.includes(palavra.toLowerCase())) {
+        return palavra.toLowerCase();
+      } else if (excecoesMaiusculas.includes(palavra.toUpperCase())) {
+        return palavra.toUpperCase();
+      } else {
+        return palavra;  // Mantém o restante como está
+      }
     }).join(' ');
+
 
     return str;
   }

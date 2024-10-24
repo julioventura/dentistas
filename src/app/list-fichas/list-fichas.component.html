@@ -32,14 +32,14 @@
         <table>
             <thead>
                 <tr>
-                    <th>Data</th>
-                    <th class="right">Nome</th>
+                    <th>Nome</th>
+                    <th class="right">Data</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let ficha of fichas" (click)="verFicha(ficha.id)" style="cursor: pointer;">
-                    <td>{{ ficha.data }}</td>
-                    <td class="right">{{ ficha.nome }}</td>
+                    <td>{{ ficha.nome }}</td>
+                    <td class="right">{{ ficha.data }}</td>
                 </tr>
             </tbody>
         </table>

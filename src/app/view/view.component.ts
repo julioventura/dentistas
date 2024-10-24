@@ -16,7 +16,7 @@ export class ViewComponent implements OnInit {
   collection!: string;
   registro: any = null;
   id!: string;
-  view_ficha: boolean = true;
+  view_only: boolean = true;
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
   isLoading = true;
@@ -52,7 +52,7 @@ export class ViewComponent implements OnInit {
           this.voltar();
         }
         else {
-          this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_ficha);
+          this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
 
           this.subtitulo_da_pagina = this.FormService.registro.nome;
           console.log("subtitulo_da_pagina = " + this.subtitulo_da_pagina);

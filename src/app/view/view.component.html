@@ -23,7 +23,7 @@
     <button class="menu-ficha" (click)="verFichaDoMenu('atendimentos')">ATENDIMENTOS</button>
     <button class="menu-ficha" (click)="verFichaDoMenu('pagamentos')">PAGAMENTOS</button>
   </div>
-  <div class="espacador_vertical_duplo">&nbsp;</div>
+  <div class="espacador_vertical">&nbsp;</div>
 
 
   <!-- Detalhes -->
@@ -49,7 +49,7 @@
             *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
 
           <!-- Input para URL -->
-          <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+          <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url"
             *ngIf="campo.tipo === 'url'" placeholder="Cole aqui o link do arquivo">
 
           <!-- Textarea para campos longos -->

@@ -13,7 +13,7 @@ $white-color: #ffffff;
 $gray: #bdbdbd;
 $light-grey: #eee;
 $red: #ff0000;
-$red-color: #a80000;
+$red-color: #ff0000;
 $red-dark: #a80000;
 $red-light: #ffdfdf;
 $primary-color: #2A7AC3;
@@ -181,21 +181,7 @@ h3 {
 }
 
 
-.url_container {
-    max-width: 800px;
-    margin: 5pt;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    padding: 1em;
-    background-color: white;
-    border: 2pt solid dodgerblue;
-    border-radius: 12px;
-    box-shadow: 0 0 5pt 5pt #ccc;
-    text-align: -webkit-center;
-    text-align: center;
-    cursor: pointer;
-    font-size: 10px;
-}
+
 
 
 // Estilos dos detalhes de uma ficha
@@ -211,7 +197,7 @@ h3 {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        padding: 10px;
+        padding: 0px;
         border-bottom: 1px solid $primary-color-light;
 
         // &:last-child {
@@ -221,7 +207,7 @@ h3 {
         .detail-label {
             width: 100px;
             /* Ajustado para 200px */
-            font-weight: bold;
+            font-weight: normal;
             color: $primary-color;
             font-size: 12px;
             text-align: left;
@@ -229,7 +215,7 @@ h3 {
 
         .detail-value {
             color: $text-color-dark;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             text-align: left;
         }
@@ -243,7 +229,8 @@ h3 {
         input,
         select {
             width: 100%;
-            padding: 8px;
+            padding: 4px;
+            margin: 2px 0;
             border: 0px;
             font-size: 12px;
             border-radius: 6px;
@@ -260,7 +247,7 @@ h3 {
             color: $white;
             border: none;
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             margin-left: 10px;
@@ -269,6 +256,77 @@ h3 {
         .whatsapp-btn:hover {
             background-color: $secondary-color-dark;
         }
+
+        .url {
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+            margin: 0;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            padding: 0.5em;
+            background-color: $primary-color;
+            border: 1pt solid $primary-color;
+            border-radius: 6px;
+            box-shadow: 1pt 1pt 4pt 1pt #aaa;
+            text-align: center;
+            cursor: pointer;
+
+            &:focus {
+                background-color: $primary-color-light;
+                /* Cor de fundo ao focar */
+                outline: none;
+                /* Remove o outline padrão ao focar */
+                border-color: $primary-color-dark;
+                color: $primary-color-dark;
+                font-weight: bold;
+            }
+
+        }
+    }
+}
+
+// .record-details .detail-container .detail-value {
+//     background: white;
+// }
+.detail-value {
+    width: 100%;
+    /* Ocupará 100% da largura disponível */
+    box-sizing: border-box;
+    /* Inclui o padding e border dentro da largura */
+}
+
+input {
+    background-color: #fff;
+
+    &:focus {
+        background-color: #ffdcb6;
+        outline: none;
+        /* Remove o outline padrão ao focar */
+        border-color: #ff7373;
+    }
+}
+
+textarea {
+    background-color: #cee1f1;
+    border: 1px solid #76b3ff;
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0px;
+    color: #333;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 1pt 1pt 4pt 1pt #ccc;
+    transition: background-color 0.3s ease;
+
+    &:focus {
+        background-color: #ffdcb6;
+        outline: none;
+        border-color: #66afe9;
     }
 }
 
@@ -283,7 +341,7 @@ h3 {
         color: $white;
         padding: 10px 20px;
         border: none;
-        border-radius: 5px;
+        border-radius: 6px;
         cursor: pointer;
         font-size: 16px;
 
@@ -327,7 +385,7 @@ h3 {
     color: $primary-color;
 }
 
-// FORMULARIOS DE VIEW.COMPONENT E VIEW_FICHA.COMPONENT E LIST-FICHAS E REGISTROS,COMPONENT
+// FORMULARIOS DE VIEW.COMPONENT E view_only.COMPONENT E LIST-FICHAS E REGISTROS,COMPONENT
 // EDIT-FICHA
 
 // Header com título e botões de ação
@@ -521,7 +579,7 @@ h3 {
         color: $white;
         border: none;
         padding: 6px 10px;
-        border-radius: 5px;
+        border-radius: 6px;
         cursor: pointer;
         height: 1.7rem;
 
@@ -553,7 +611,7 @@ h3 {
         max-width: 300px;
         padding: 4px 10px;
         border: 2px solid $primary-color;
-        border-radius: 8px;
+        border-radius: 6px;
         font-size: 14px;
         color: $primary-color;
 

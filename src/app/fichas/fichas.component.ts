@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { CamposFichaService } from '../shared/campos-ficha.service';
+import { UserService } from '../shared/user.service'; // 
 
 @Component({
   selector: 'app-fichas',
@@ -12,35 +13,40 @@ export class FichasComponent implements OnInit {
   campos: any[] = []; // Armazena os campos da coleção selecionada
   colecoes: any[] = []; // Lista de coleções disponíveis
   camposIniciais: any[] = []; // Armazena os campos ao carregar a página
+  userId: string = ''; // Armazena o userId do usuário logado
 
-  // subColecoes: any[] = []; // Armazena as sub-coleções (exames, atendimentos, etc.)
-  // fichas: any[] = []; // Lista de fichas carregadas
-  // fichaSelecionadaId: string | null = null; // ID da ficha selecionada
-  // ficha: any = null; // Armazena os detalhes da ficha selecionada
-  // isLoading: boolean = true; // Indicador de carregamento
-  // collection!: string;
-  // id!: string;
 
   constructor(
     private CamposFichaService: CamposFichaService,
     private navegacaoService: NavegacaoService,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
-    this.carregarColecoes();
-    this.carregarCampos();
+    // Obtém o userId do usuário logado
+    this.userService.getUser().subscribe(user => {
+      if (user && user.uid) {
+        this.userId = user.uid; // Armazena o uid do usuário logado
+        console.log("User ID:", this.userId);
+
+        // Após recuperar o userId, carregar coleções e campos
+        this.carregarColecoes();
+        this.carregarCampos();
+      } else {
+        console.error("Usuário não está autenticado.");
+      }
+    });
   }
 
   carregarColecoes() {
-
-    this.CamposFichaService.getColecoes().subscribe((colecoes) => {
+    this.CamposFichaService.getColecoes(this.userId).subscribe((colecoes) => {
       this.colecoes = ['padrao', ...colecoes]; // 'padrao' aparece primeiro na lista de coleções
     });
   }
 
   carregarCampos() {
     // Carrega os campos da coleção selecionada
-    this.CamposFichaService.getCamposRegistro(this.colecaoSelecionada).subscribe((campos) => {
+    this.CamposFichaService.getCamposRegistro(this.userId, this.colecaoSelecionada).subscribe((campos) => {
       this.campos = campos;
       this.camposIniciais = JSON.parse(JSON.stringify(campos)); // Faz uma cópia dos campos iniciais
     });
@@ -48,7 +54,7 @@ export class FichasComponent implements OnInit {
 
   salvar() {
     // Salva as configurações da coleção atual
-    this.CamposFichaService.setCamposRegistro(this.colecaoSelecionada, this.campos).then(() => {
+    this.CamposFichaService.setCamposRegistro(this.userId, this.colecaoSelecionada, this.campos).then(() => {
       alert('Configurações salvas com sucesso!');
       this.camposIniciais = JSON.parse(JSON.stringify(this.campos)); // Atualiza os campos iniciais após salvar
     });
@@ -72,7 +78,7 @@ export class FichasComponent implements OnInit {
     const novaColecao = prompt('Digite o nome da nova coleção:');
     if (novaColecao) {
       // Cria a nova coleção com base nos campos padrão
-      this.CamposFichaService.setCamposRegistro(novaColecao, [...this.CamposFichaService.camposPadrao]).then(() => {
+      this.CamposFichaService.setCamposRegistro(this.userId, novaColecao, [...this.CamposFichaService.camposPadrao]).then(() => {
         this.colecaoSelecionada = novaColecao;
         this.carregarColecoes();
         this.carregarCampos();
@@ -106,63 +112,3 @@ export class FichasComponent implements OnInit {
     }
   }
 }
-
-
-
-
-
-//   salvar() {
-//     this.CamposFichaService.setCamposFicha(this.colecaoSelecionada, this.campos).then(() => {
-//       alert('Configurações salvas com sucesso!');
-//       this.camposIniciais = JSON.parse(JSON.stringify(this.campos));
-//     }).catch((error) => {
-//       console.error('Erro ao salvar as configurações:', error);
-//       alert('Erro ao salvar as configurações.');
-//     });
-//   }
-
-//   adicionarCampo() {
-//     this.campos.push({ nome: '', tipo: 'text', label: '' });
-//   }
-
-//   removerCampo(index: number) {
-//     const confirmacao = confirm('Você tem certeza que deseja remover este campo?');
-//     if (confirmacao) {
-//       this.campos.splice(index, 1);
-//     }
-//   }
-
-//   moverCampoParaCima(index: number) {
-//     if (index > 0) {
-//       [this.campos[index - 1], this.campos[index]] = [this.campos[index], this.campos[index - 1]];
-//     }
-//   }
-
-//   moverCampoParaBaixo(index: number) {
-//     if (index < this.campos.length - 1) {
-//       [this.campos[index + 1], this.campos[index]] = [this.campos[index], this.campos[index + 1]];
-//     }
-//   }
-
-//   voltar() {
-//     this.navegacaoService.goBack();
-//   }
-
-//   @HostListener('window:beforeunload', ['$event'])
-//   unloadNotification($event: any): void {
-//     if (JSON.stringify(this.campos) !== JSON.stringify(this.camposIniciais)) {
-//       $event.returnValue = true;
-//     }
-//   }
-// }
-
-
-
-
-// carregarFicha(fichaId: string): void {
-//   const fichaPath = `users/${this.id}/${this.collection}/fichas/${fichaId}`;
-//   this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe((ficha) => {
-//     this.ficha = ficha;
-//     this.isLoading = false;
-//   });
-// }

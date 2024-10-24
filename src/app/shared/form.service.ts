@@ -30,8 +30,8 @@ export class FormService {
 
     ) { }
 
-    carregarCamposFichas(collection: string) {
-        this.CamposFichaService.getCamposRegistro(collection).subscribe((campos: any[]) => {
+    carregarCamposFichas(userId: string, collection: string) {
+        this.CamposFichaService.getCamposRegistro(userId, collection).subscribe((campos: any[]) => {
             this.campos = campos || [];
             console.log('Campos carregados:', this.campos);
 
@@ -41,8 +41,8 @@ export class FormService {
     }
 
 
-    carregarCamposCollection(collection: string) {
-        this.CamposService.getCamposRegistro(collection).subscribe((campos: any[]) => {
+    carregarCamposRegistro(userId: string, collection: string) {
+        this.CamposService.getCamposRegistro(userId, collection).subscribe((campos: any[]) => {
             this.campos = campos || [];
             console.log('Campos carregados:', this.campos);
 
@@ -88,7 +88,7 @@ export class FormService {
             this.isLoading = true;
 
             // Carrega os campos do formulário antes de tentar carregar a ficha
-            this.carregarCamposCollection(collection);
+            this.carregarCamposRegistro(userId, collection);
 
             // Carrega os dados da ficha do Firestore
             this.firestoreService.getRegistroById(fichaPath, id).subscribe(ficha => {
@@ -155,7 +155,7 @@ export class FormService {
             this.isLoading = true;
 
             // Carrega os campos do formulário antes de tentar carregar a ficha
-            this.carregarCamposFichas(subCollection);
+            this.carregarCamposFichas(userId, subCollection);
 
             // Carrega os dados da ficha do Firestore
             this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
