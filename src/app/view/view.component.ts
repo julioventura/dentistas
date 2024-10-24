@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
 
@@ -16,9 +15,10 @@ export class ViewComponent implements OnInit {
   collection!: string;
   registro: any = null;
   id!: string;
-  view_only: boolean = true;
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
+  view_only: boolean = true;
+  mostrar_menu: boolean = true;
   isLoading = true;
 
   constructor(
@@ -69,12 +69,21 @@ export class ViewComponent implements OnInit {
   
 
   verFichaDoMenu(subcollection: string) {
+    console.log('verFichaDoMenu(subcollection)');
+    console.log('subcollection =', subcollection);
+
+    const viewPath = `/list-fichas/${this.collection}/${this.id}/ficha`;
+    console.log('viewPath = ', viewPath);
     this.router.navigate([`/list-fichas/${this.collection}/${this.id}/ficha`, subcollection]);
   }
 
 
   editar() {
-    this.router.navigate([`/edit/${this.collection}`, this.id]);
+    console.log('editar()');
+
+    const editPath = `/edit/${this.collection}`;
+    console.log('editPath = ', editPath);
+    this.router.navigate([editPath, this.id]);
   }
 
   excluir() {

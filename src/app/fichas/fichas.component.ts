@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { CamposFichaService } from '../shared/campos-ficha.service';
 import { UserService } from '../shared/user.service'; // 
+import { UtilService } from '../shared/util.service';
 
 @Component({
   selector: 'app-fichas',
@@ -19,7 +20,9 @@ export class FichasComponent implements OnInit {
   constructor(
     private CamposFichaService: CamposFichaService,
     private navegacaoService: NavegacaoService,
-    private userService: UserService
+    private userService: UserService,
+    public util: UtilService,
+
   ) { }
 
   ngOnInit(): void {

@@ -1,5 +1,10 @@
 @import '../../styles.scss';
 
+
+.container {
+    padding: 20px 10px 20px 10px;
+}
+
 // Header com título e botões de ação
 .header {
     display: flex;
@@ -7,7 +12,7 @@
     align-items: center;
 
     .title {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: bold;
         color: $primary-color;
         text-align: center;
@@ -19,29 +24,38 @@
 .record-header {
     background-color: $primary-color;
     color: $white;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 500;
     text-align: center;
     margin-bottom: 10px;
-    border-radius: 8px;
-    padding: 4px;
+    border-radius: 6px;
+    padding: 0px;
 }
 
 // Botões gerais
 button {
     background-color: #2A7AC3;
-    border: 2px solid #fff;
+    border: 0px solid #fff;
     border-radius: 6px;
-    padding: 6px 12px;
+    padding: 6px 6px;
     color: #ffffff;
     cursor: pointer;
     transition: background-color 0.5s ease;
-    font-size: 9pt;
+    font-size: 8pt;
     font-weight: 500;
     text-align: center;
     margin: 5px 0px 5px 5px;
     width: 120px;
 }
+
+
+.mat-body-large,
+.mat-typography .mat-body-large,
+.mat-typography {
+    font: 400 1rem / 1.5rem Roboto, sans-serif;
+    letter-spacing: unset;
+}
+
 
 button:hover {
     background-color: lighten($primary-color, 15%);
@@ -71,70 +85,61 @@ button:hover {
         border-radius: 8px;
         margin-bottom: 5px;
 
-        .input-group {
+        // Faz com que os inputs e selects ocupem o espaço disponível
+        input,
+        select {
+            flex: 1; // Faz os inputs e selects ocuparem o espaço restante
+            min-width: 0; // Garante que os inputs não se expandam muito
+        }
+
+        .button-group {
             display: flex;
+            gap: 0px; // Espaçamento entre os botões
+
+            button {
+                flex: 0 0 auto; // Os botões mantêm seu tamanho normal, mas podem encolher
+                width: 30px; // Define uma largura mínima para os botões
+                cursor: pointer;
+
+                &:hover {
+                    background-color: lighten($primary-color, 25%);
+                }
+
+                font-size: 10px;
+            }
+
+            .remove-button {
+                background-color: $red-dark;
+                color: $white;
+                width: 30px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+
+                &:hover {
+                    background-color: lighten($red, 25%);
+                }
+            }
+        }
+    }
+}
+
+// Ajustes para responsividade em telas pequenas
+@media screen and (max-width: $medium-width) {
+    .fields-section {
+        .field-row {
             flex-direction: column;
-            margin-right: 10px;
+            align-items: flex-start;
 
-            label {
-                font-size: 10pt;
-                font-weight: bold;
-                margin-bottom: 4px;
-                color: $primary-color;
-            }
+            .button-group {
+                display: flex;
+                justify-content: flex-start;
+                gap: 0px;
+                margin-top: 5px;
 
-            input,
-            select {
-                padding: 4px;
-                font-size: 8pt;
-                border: 1px solid $primary-color-light;
-                border-radius: 8px;
-                width: 140px;
-            }
-
-            input:focus,
-            select:focus {
-                outline: none;
-                border-color: $primary-color-dark;
+                button {
+                    width: 30px; // Tamanho padrão dos botões em telas pequenas
+                }
             }
         }
-
-        .remove-button {
-            background-color: $red-dark;
-            border: none;
-            color: $white;
-            padding: 4px;
-            border-radius: 6px;
-            width: 80px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-
-            &:hover {
-                background-color: darken($red-color, 15%);
-            }
-        }
-    }
-}
-
-// Ajustes para responsividade
-@media screen and (max-width: 768px) {
-    .field-row {
-        flex-direction: column;
-        align-items: flex-start;
-
-        .input-group {
-            width: 100%;
-            margin-right: 0;
-            margin-bottom: 10px;
-
-            input,
-            select {
-                width: 100%;
-            }
-        }
-    }
-}
-
-label {
-    font-size: 10px;
+    }    
 }

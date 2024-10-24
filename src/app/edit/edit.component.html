@@ -1,5 +1,6 @@
 <div class="container">
 
+  <!-- HEADER -->
   <div class="header">
     <div class="actions">
       <img src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
@@ -13,6 +14,8 @@
   <div class="record-header">
     {{ subtitulo_da_pagina }}
   </div>
+  <!-- /HEADER -->
+
 
   <!-- Formulário Dinâmico -->
   <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
@@ -32,16 +35,17 @@
           (change)="FormService.onFieldChange($event, campo.nome)"
           *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
 
-        <!-- Input para URL -->
-        <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url"
-          *ngIf="campo.tipo === 'url'" placeholder="Cole aqui o link do arquivo">
-
         <!-- Textarea para campos longos -->
         <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
           *ngIf="campo.tipo === 'textarea'" rows="4" placeholder="Digite o conteúdo"></textarea>
+
+        <!-- Input para URL -->
+        <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url" *ngIf="campo.tipo === 'url'"
+          placeholder="Cole aqui o link do arquivo">
 
       </div>
     </form>
 
   </div>
+
 </div>

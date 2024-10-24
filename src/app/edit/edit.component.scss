@@ -47,15 +47,21 @@
     }
 
     textarea {
+      background-color: #fff6ed;
+      /* Cor de fundo */
+      border: 1px solid #ccc;
+      /* Cor e espessura da borda */
+      color: #333;
+      /* Cor do texto */
+      font-size: 16px;
+      /* Tamanho da fonte */
+
 
       &:focus {
         background-color: #ffdcb6;
         /* Cor de fundo ao focar */
-        outline: none;
-        /* Remove o outline padrão ao focar */
-        color: $red-dark;
-        border: 1pt solid $red;
-        font-weight: bold;
+        border: 1pt solid red;
+        /* Cor e espessura da borda */
       }
     }
 

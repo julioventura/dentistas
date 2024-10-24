@@ -2,11 +2,12 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { CamposService } from '../shared/campos.service';
 import { UserService } from '../shared/user.service'; // 
+import { UtilService } from '../shared/util.service';
 
 @Component({
   selector: 'app-camposRegistro',
   templateUrl: './camposRegistro.component.html',
-  styleUrls: ['./camposRegistro.component.scss']
+  styleUrls: ['../fichas/fichas.component.scss']
 })
 export class CamposRegistroComponent implements OnInit {
   colecaoSelecionada: string = 'padrao'; // Seleciona "padrao" inicialmente
@@ -18,7 +19,9 @@ export class CamposRegistroComponent implements OnInit {
   constructor(
     private camposService: CamposService,
     private navegacaoService: NavegacaoService,
-    private userService: UserService
+    private userService: UserService,
+    public util: UtilService,
+
   ) { }
 
   ngOnInit(): void {

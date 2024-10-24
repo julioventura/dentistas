@@ -1,5 +1,6 @@
 <div class="container">
 
+  <!-- HEADER -->
   <div class="header">
     <div class="actions">
       <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
@@ -15,16 +16,18 @@
   <div class="record-header">
     {{ subtitulo_da_pagina }}
   </div>
+  <!-- HEADER / -->
 
   <!-- Botões das fichas internas -->
-  <div class="menu">
-    <button class="menu-ficha" (click)="verFichaDoMenu('exames')">EXAMES</button>
-    <button class="menu-ficha" (click)="verFichaDoMenu('planos')">PLANOS</button>
-    <button class="menu-ficha" (click)="verFichaDoMenu('atendimentos')">ATENDIMENTOS</button>
-    <button class="menu-ficha" (click)="verFichaDoMenu('pagamentos')">PAGAMENTOS</button>
+  <div *ngIf="mostrar_menu">
+    <div class="menu">
+      <button class="menu-ficha" (click)="verFichaDoMenu('exames')">EXAMES</button>
+      <button class="menu-ficha" (click)="verFichaDoMenu('planos')">PLANOS</button>
+      <button class="menu-ficha" (click)="verFichaDoMenu('atendimentos')">ATENDIMENTOS</button>
+      <button class="menu-ficha" (click)="verFichaDoMenu('pagamentos')">PAGAMENTOS</button>
+    </div>
+    <div class="espacador_vertical">&nbsp;</div>
   </div>
-  <div class="espacador_vertical">&nbsp;</div>
-
 
   <!-- Detalhes -->
   <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
@@ -49,8 +52,8 @@
             *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
 
           <!-- Input para URL -->
-          <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url"
-            *ngIf="campo.tipo === 'url'" placeholder="Cole aqui o link do arquivo">
+          <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url" *ngIf="campo.tipo === 'url'"
+            placeholder="Cole aqui o link do arquivo">
 
           <!-- Textarea para campos longos -->
           <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"

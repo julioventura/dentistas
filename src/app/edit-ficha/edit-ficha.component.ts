@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
-import { FormGroup } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 import { UtilService } from '../shared/util.service';
@@ -10,8 +9,8 @@ import { FormService } from '../shared/form.service';
 
 @Component({
   selector: 'app-edit-ficha',
-  templateUrl: './edit-ficha.component.html',
-  styleUrls: ['./edit-ficha.component.scss']
+  templateUrl: '../edit/edit.component.html',
+  styleUrls: ['../edit/edit.component.scss']
 })
 export class EditFichaComponent implements OnInit {
   userId!: string;

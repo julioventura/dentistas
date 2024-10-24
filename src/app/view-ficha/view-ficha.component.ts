@@ -7,8 +7,8 @@ import { FormService } from '../shared/form.service';
 
 @Component({
   selector: 'app-view-ficha',
-  templateUrl: './view-ficha.component.html',
-  styleUrls: ['./view-ficha.component.scss'],
+  templateUrl: '../view/view.component.html',
+  styleUrls: ['../view/view.component.scss'],
 })
 export class ViewFichaComponent implements OnInit {
   userId: string | null = null;
@@ -24,6 +24,7 @@ export class ViewFichaComponent implements OnInit {
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
   view_only: boolean = true;
+  mostrar_menu: boolean = false;
   isLoading = true;   // Indicador de carregamento  
 
   constructor(
@@ -44,11 +45,11 @@ export class ViewFichaComponent implements OnInit {
         this.userId = user.uid;
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.id = this.route.snapshot.paramMap.get('id')!;
-        this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.titulo_da_pagina = "Ficha de " + this.util.capitalizar(this.subCollection);
         this.subtitulo_da_pagina = this.FormService.id_nome_collected;
-        this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
         
+        this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
+        this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
         console.log('userId:', this.userId); 
         console.log('Collection:', this.collection);
         console.log('ID:', this.id);
@@ -77,12 +78,15 @@ export class ViewFichaComponent implements OnInit {
   editar() {
     console.log('editar()');
 
-    const editarPath = `/edit-ficha/${this.collection}/${this.id}/ficha/${this.subCollection}/itens/${this.fichaId}`;
-    console.log('editar - Navegando para edição da ficha:', editarPath);
-    this.router.navigate([editarPath]);
+    const editPath = `/edit-ficha/${this.collection}/${this.id}/ficha/${this.subCollection}/itens`;
+    console.log('editPath = ', editPath);
+    this.router.navigate([editPath, this.fichaId]);
   }
 
+
   excluir() {
+    console.log('excluir()');
+
     if (!this.fichaId) {
       console.error('Nenhum ID de ficha para excluir.');
       return;
@@ -112,6 +116,7 @@ export class ViewFichaComponent implements OnInit {
       });
   }
 
+  verFichaDoMenu(subcollection: string) { }
 
   voltar(): void {
     this.fichaId = null;
