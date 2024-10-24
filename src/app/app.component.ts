@@ -3,6 +3,7 @@ import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { AngularFireAuth } from '@angular/fire/compat/auth'; // Importa o serviço de autenticação
 
 @Component({
   selector: 'app-root',
@@ -19,11 +20,13 @@ import { trigger, transition, style, animate } from '@angular/animations';
 })
 
 export class AppComponent implements OnInit {
-  showFooter = true; // Variável que controla a exibição do menu
+  showFooter = false; // Variável que controla a exibição do menu
 
   constructor(
     private router: Router, 
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private afAuth: AngularFireAuth
+
   ) { }
 
   ngOnInit(): void {
@@ -33,6 +36,12 @@ export class AppComponent implements OnInit {
       .subscribe(() => {
         // Verifica se o caminho atual é para o componente Homepage
         const currentRoute = this.activatedRoute.firstChild?.snapshot.routeConfig?.path;
+
+        // Verifica se o usuário está logado
+        this.afAuth.authState.subscribe(user => {
+          this.showFooter = !!user; // Se o usuário estiver logado, showFooter é true; caso contrário, false
+        });
+        
         if (currentRoute && currentRoute.includes(':username')) {
           this.showFooter = false; // Se a rota for para o Homepage, ocultamos o menu
         } else {

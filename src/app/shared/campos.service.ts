@@ -12,12 +12,12 @@ export class CamposService {
   // Configurações padrão para todas as coleções
   public camposPadrao: any[] = [
     { nome: 'nome', tipo: 'text', label: 'Nome' },
-    { nome: 'data', tipo: 'text', label: 'Data' },
     { nome: 'codigo', tipo: 'text', label: 'Código' },
     { nome: 'sexo', tipo: 'text', label: 'Sexo' },
-    { nome: 'nascimento', tipo: 'text', label: 'Nascimento' },
+    { nome: 'nascimento', tipo: 'date', label: 'Nascimento' },
     { nome: 'whatsapp', tipo: 'text', label: 'WhatsApp' },
-    { nome: 'telefone', tipo: 'text', label: 'Telefone' },
+    { nome: 'telefone', tipo: 'text', label: 'Email' },
+    { nome: 'email', tipo: 'text', label: 'Telefone' },
     { nome: 'endereço', tipo: 'text', label: 'Endereço' },
     { nome: 'bairro', tipo: 'text', label: 'Bairro' },
     { nome: 'cidade', tipo: 'text', label: 'Cidade' },
@@ -25,8 +25,7 @@ export class CamposService {
     { nome: 'cep', tipo: 'text', label: 'Cep' },
     { nome: 'cpf', tipo: 'text', label: 'CPF' },
     { nome: 'obs', tipo: 'textarea', label: 'Observação' },    
-    { nome: 'nuvem', tipo: 'url', label: 'Arquivos' },
-    { nome: 'id', tipo: 'text', label: 'ID' },
+    { nome: 'nuvem', tipo: 'url', label: 'Arquivos' }
   ];
 
   private configPath: string = '';

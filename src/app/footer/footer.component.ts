@@ -11,6 +11,7 @@ import firebase from 'firebase/compat/app'; // Importa o firebase para usar fire
 export class FooterComponent implements OnInit {
   user: firebase.User | null = null; // Armazena o usuário logado
   is_admin: boolean = false;
+  show_footer: boolean = false;
 
   constructor(
     private router: Router,
@@ -18,6 +19,8 @@ export class FooterComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log("ngOnInit()");
+
     // Verifica se há um usuário logado e armazena as informações
     this.auth.authState.subscribe((user) => {
       this.user = user;
@@ -25,6 +28,7 @@ export class FooterComponent implements OnInit {
       if(user?.email=='julio@dentistas.com.br'){
         this.is_admin = true;
       }
+      this.show_footer = true;
     });
   }
 
