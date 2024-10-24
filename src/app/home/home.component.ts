@@ -13,6 +13,8 @@ export class HomeComponent implements OnInit {
   nome: string = '';  // Variável para armazenar o nome do usuário logado
   username: string | null = null;  // Variável para armazenar o username do usuário logado
   new_window: boolean = false;
+  is_admin: boolean = false;
+
   
   constructor(
     private auth: AngularFireAuth,  // Usando AngularFireAuth
@@ -27,6 +29,10 @@ export class HomeComponent implements OnInit {
       if (user && user.email) {
         this.nome = this.capitalize(user.displayName || user.email || 'Usuário');
         this.loadUserData(user.email);  // Carregar os dados do usuário pelo email
+
+        if (user.email == 'julio@dentistas.com.br') {
+          this.is_admin = true;
+        }
       } else {
         console.log('Nenhum usuário logado.');
         // Redireciona para a página de login se o usuário não estiver logado
@@ -50,6 +56,10 @@ export class HomeComponent implements OnInit {
         console.log('Nenhum username encontrado para este usuário.');
       }
     });
+  }
+
+  mostrarAlerta(): void {
+    alert('Acesso reservado ao administrador');
   }
 
   // Método para navegação dinâmica
