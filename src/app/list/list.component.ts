@@ -4,10 +4,8 @@ import { NavegacaoService } from '../shared/navegacao.service';
 import { FirestoreService } from '../shared/firestore.service';
 import { Registro } from './registro.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { UserService } from '../shared/user.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UtilService } from '../shared/util.service';
-import { CamposService } from '../shared/campos.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore'; // Importar o AngularFirestore
 
 @Component({
@@ -19,19 +17,15 @@ import { AngularFirestore } from '@angular/fire/compat/firestore'; // Importar o
 export class ListComponent implements OnInit {
   collection!: string;
   registros: Registro[] = [];
+  registrosFiltrados: Registro[] = [];
   totalRegistros = 0;
   page = 1;
   pageSize = 10;
   totalPages = 0;
-  pages: number[] = [];
   userId: string | null = null;
   isLoading = true;
   titulo_da_pagina: string = '';
   searchQuery: string = '';
-  registrosFiltrados: Registro[] = [];
-  colecoes: any[] = [];
-  camposIniciais: any[] = [];
-  colecaoSelecionada: string = 'padrao';
 
   registroForm!: FormGroup;
   campos: { nome: string, tipo: string, label: string }[] = [];
@@ -42,10 +36,8 @@ export class ListComponent implements OnInit {
     private navegacaoService: NavegacaoService,
     private firestoreService: FirestoreService<Registro>,
     private afAuth: AngularFireAuth,
-    private userService: UserService,
     private fb: FormBuilder,
     public util: UtilService,
-    private camposService: CamposService,
     private firestore: AngularFirestore,
 
   ) { }
@@ -56,7 +48,6 @@ export class ListComponent implements OnInit {
 
     if (this.collection) {
       this.titulo_da_pagina = 'Lista de ' + this.util.titulo_ajuste_plural(this.collection);
-      this.definirCampos();
     } else {
       console.error('Erro: A coleção não foi definida corretamente.');
       this.titulo_da_pagina = 'Coleção não definida';
@@ -69,34 +60,8 @@ export class ListComponent implements OnInit {
         this.verificarOuCriarConfiguracao(); // Verifica a configuração ao carregar a página
         this.loadRegistros();
         this.createForm();
-
       }
     });
-  }
-
-  definirCampos() {
-    if (this.collection === 'pacientes') {
-      this.campos = [
-        { nome: 'nome', tipo: 'text', label: 'Nome' },
-        { nome: 'cpf', tipo: 'text', label: 'CPF' },
-        { nome: 'telefone', tipo: 'text', label: 'Telefone' },
-        { nome: 'sexo', tipo: 'text', label: 'Sexo' },
-        { nome: 'nascimento', tipo: 'date', label: 'Data de Nascimento' }
-      ];
-    } else if (this.collection === 'alunos') {
-      this.campos = [
-        { nome: 'nome', tipo: 'text', label: 'Nome do Aluno' },
-        { nome: 'cpf', tipo: 'text', label: 'CPF do Aluno' },
-        { nome: 'telefone', tipo: 'text', label: 'Telefone do Aluno' },
-        { nome: 'curso', tipo: 'text', label: 'Curso' },
-        { nome: 'nascimento', tipo: 'date', label: 'Data de Nascimento' }
-      ];
-    } else {
-      this.campos = [
-        { nome: 'nome', tipo: 'text', label: 'Nome' },
-        { nome: 'cpf', tipo: 'text', label: 'CPF' }
-      ];
-    }
   }
 
   loadRegistros() {
@@ -109,10 +74,9 @@ export class ListComponent implements OnInit {
       this.firestoreService.getRegistros(collectionPath, ref => ref.orderBy('nome')).subscribe(
         (registros: Registro[]) => {
           this.registros = registros;
-          this.registrosFiltrados = registros;
-          this.totalRegistros = this.registros.length;
+          this.registrosFiltrados = this.applyPagination(registros);
+          this.totalRegistros = registros.length;
           this.totalPages = Math.ceil(this.totalRegistros / this.pageSize);
-          this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
 
           // Verifica se a lista de registros está vazia
           if (registros.length === 0) {
@@ -132,19 +96,22 @@ export class ListComponent implements OnInit {
     }
   }
 
-  
+  // Aplica a paginação nos registros
+  applyPagination(registros: Registro[]): Registro[] {
+    const startIndex = (this.page - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    return registros.slice(startIndex, endIndex);
+  }
 
   verificarOuCriarConfiguracao() {
     if (this.userId) {
       const configPath = `users/${this.userId}/configuracoesCampos/${this.collection}`;
 
-      // Verifica se a coleção já existe em "configuracoesCampos"
       this.firestore.collection(`users/${this.userId}/configuracoesCampos`).doc(this.collection).get()
         .subscribe((doc) => {
           if (doc.exists) {
             console.log(`Configuração já existe para a coleção "${this.collection}".`);
           } else {
-            // Se a configuração não existir, cria com os campos padrão
             const camposPadrao = this.getCamposPadraoPorCollection();
 
             this.firestore.collection(`users/${this.userId}/configuracoesCampos`).doc(this.collection).set({ campos: camposPadrao })
@@ -162,39 +129,27 @@ export class ListComponent implements OnInit {
     }
   }
 
-  getCamposPadraoPorCollection() {  
-      // Campos padrão genéricos
-      return [
-        { nome: 'nome', tipo: 'text', label: 'Nome' },
-        { nome: 'codigo', tipo: 'text', label: 'Código' },
-        { nome: 'sexo', tipo: 'text', label: 'Sexo' },
-        { nome: 'nascimento', tipo: 'date', label: 'Nascimento' },
-        { nome: 'whatsapp', tipo: 'text', label: 'WhatsApp' },
-        { nome: 'telefone', tipo: 'text', label: 'Email' },
-        { nome: 'email', tipo: 'text', label: 'Telefone' },
-        { nome: 'endereço', tipo: 'text', label: 'Endereço' },
-        { nome: 'bairro', tipo: 'text', label: 'Bairro' },
-        { nome: 'cidade', tipo: 'text', label: 'Cidade' },
-        { nome: 'estado', tipo: 'text', label: 'Estado' },
-        { nome: 'cep', tipo: 'text', label: 'Cep' },
-        { nome: 'cpf', tipo: 'text', label: 'CPF' },
-        { nome: 'obs', tipo: 'textarea', label: 'Observação' },
-        { nome: 'nuvem', tipo: 'url', label: 'Arquivos' }
-      ];
+  getCamposPadraoPorCollection() {
+    return [
+      { nome: 'nome', tipo: 'text', label: 'Nome' },
+      { nome: 'codigo', tipo: 'text', label: 'Código' },
+      { nome: 'sexo', tipo: 'text', label: 'Sexo' },
+      { nome: 'nascimento', tipo: 'date', label: 'Nascimento' },
+      { nome: 'whatsapp', tipo: 'text', label: 'WhatsApp' },
+      { nome: 'telefone', tipo: 'text', label: 'Email' },
+      { nome: 'email', tipo: 'text', label: 'Telefone' },
+      { nome: 'endereço', tipo: 'text', label: 'Endereço' },
+      { nome: 'bairro', tipo: 'text', label: 'Bairro' },
+      { nome: 'cidade', tipo: 'text', label: 'Cidade' },
+      { nome: 'estado', tipo: 'text', label: 'Estado' },
+      { nome: 'cep', tipo: 'text', label: 'Cep' },
+      { nome: 'cpf', tipo: 'text', label: 'CPF' },
+      { nome: 'obs', tipo: 'textarea', label: 'Observação' },
+      { nome: 'nuvem', tipo: 'url', label: 'Arquivos' }
+    ];
   }
 
-
-
-  // setCamposRegistro(userId: string, colecao: string, campos: any[]): Promise<void> {
-  //   const configPath = `users/${userId}/configuracoesCampos/${colecao}`;
-  //   return this.firestore.collection(configPath).doc('campos').set({ campos });
-  // }
-
-
-
   createForm() {
-    console.log("createForm()");
-
     let formGroup: any = {};
     this.campos.forEach(campo => {
       formGroup[campo.nome] = [''];
@@ -203,25 +158,21 @@ export class ListComponent implements OnInit {
   }
 
   setPage(page: number) {
-    this.page = page;
-    this.loadRegistros();
-  }
-
-  voltar() {
-    this.navegacaoService.goBack();
+    if (page >= 1 && page <= this.totalPages) {
+      this.page = page;
+      this.registrosFiltrados = this.applyPagination(this.registros);
+    }
   }
 
   previousPage() {
     if (this.page > 1) {
-      this.page--;
-      this.loadRegistros();
+      this.setPage(this.page - 1);
     }
   }
 
   nextPage() {
     if (this.page < this.totalPages) {
-      this.page++;
-      this.loadRegistros();
+      this.setPage(this.page + 1);
     }
   }
 
@@ -231,8 +182,6 @@ export class ListComponent implements OnInit {
   }
 
   adicionar() {
-    console.log("adicionar()");
-
     if (!this.userId) return;
 
     this.firestoreService
@@ -261,19 +210,16 @@ export class ListComponent implements OnInit {
   }
 
   filtrarRegistros() {
-    console.log("filtrarRegistros()");
-
     const query = this.searchQuery.toLowerCase();
     this.registrosFiltrados = this.registros.filter(registro => {
       const nome = registro.nome ? registro.nome.toLowerCase() : '';
       const codigo = registro.codigo ? registro.codigo.toLowerCase() : '';
       return nome.includes(query) || codigo.includes(query);
     });
+    this.registrosFiltrados = this.applyPagination(this.registrosFiltrados);
   }
 
   onSubmit() {
-    console.log("onSubmit()");
-
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
 

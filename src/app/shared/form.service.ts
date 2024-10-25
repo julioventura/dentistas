@@ -114,7 +114,7 @@ export class FormService {
                     }
                     console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
                     Object.keys(this.fichaForm.controls).forEach(campoNome => {
-                        console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
+                        // console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
                     });
 
                     // Marca como carregado (isLoading = false)

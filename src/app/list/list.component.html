@@ -19,11 +19,7 @@
 
   <!-- Barra de pesquisa -->
   <div *ngIf="registros.length > 0" class="search-bar">
-    <input 
-    type="text" 
-    placeholder="Buscar registro..." 
-    [(ngModel)]="searchQuery" 
-    (input)="filtrarRegistros()" />
+    <input type="text" placeholder="Buscar registro..." [(ngModel)]="searchQuery" (input)="filtrarRegistros()" />
   </div>
 
 
@@ -45,11 +41,24 @@
     </table>
   </div>
 
-  
+
   <!-- Paginação -->
-  <div *ngIf="!isLoading && registrosFiltrados.length > 0" class="pagination">
-    <button (click)="previousPage()">Anterior</button>
-    <span>Página {{ page }} de {{ totalPages }}</span>
-    <button (click)="nextPage()">Próximo</button>
-  </div>
-  </div>
+<div *ngIf="!isLoading && registrosFiltrados.length > 0" class="pagination">
+  <span (click)="previousPage()">
+    <img src="https://dentistas.com.br/assets/voltar.png" alt="Anterior" />
+  </span>
+
+  <span>Página {{ page }} de {{ totalPages }}</span>
+
+  <span (click)="nextPage()">
+    <img src="https://dentistas.com.br/assets/seguir.png" alt="Próximo" />
+  </span>
+</div>
+
+  <div *ngIf="!isLoading && registrosFiltrados.length > 0" class="pagination_total">
+      <span></span>
+      <span>{{ totalRegistros }} registros</span>
+      <span></span>
+    </div>
+
+</div>

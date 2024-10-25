@@ -582,67 +582,24 @@ label {
     }
 }
 
-// Paginação com botões
-.pagination {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: $font-family;
-    font-size: $font-size;
-    color: $white;
-    background-color: $primary-color;
-    border-radius: 0 0 10px 10px;
-    height: 1.7rem;
 
-
-    button {
-        background-color: $primary-color;
-        color: $white;
-        border: none;
-        padding: 6px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        height: 1.7rem;
-
-        &:hover {
-            background-color: $primary-hover;
-        }
-
-        &:disabled {
-            background-color: $gray;
-            cursor: not-allowed;
-        }
-    }
-
-    span {
-        color: $white;
-        // font-weight: 500;
-    }
-}
-
-
-// Barra de pesquisa da listagem
-.search-bar {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 20px;
-
-    input {
-        width: 100%;
-        max-width: 300px;
-        padding: 4px 10px;
-        border: 2px solid $primary-color;
-        border-radius: 6px;
-        font-size: 14px;
-        color: $primary-color;
-
-        &:focus {
-            outline: none;
-            border-color: $primary-hover;
-        }
-    }
-}
 
 .semitransparent {
     opacity: 0.5;
+}
+
+
+.normal {
+    font-family: $font-family;
+    font-size: $font-size;
+    color: $text-color;
+    // padding: 0.5em;
+    // padding-top: 1.5em;
+    background-color: $white;
+}
+
+// Header
+h1 {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
 }

@@ -257,6 +257,14 @@ export class UtilService {
         return 'Protéticos';
       case 'equipe':
         return 'Equipe';
+      case 'dentistas':
+        return 'Dentistas';
+      case 'dentais':
+        return 'Dentais';
+      case 'empresas':
+        return 'Empresas';
+      case 'notas':
+        return 'Anotações';
 
       case 'exames':
         return 'Exames';
@@ -266,7 +274,7 @@ export class UtilService {
         return 'Atendimentos';
       case 'pagamentos':
         return 'Pagamentos';
-
+       
       default:
         return 'Registros';
     }
@@ -286,6 +294,14 @@ export class UtilService {
         return 'Protético';
       case 'equipe':
         return 'Equipe';
+      case 'dentistas':
+        return 'Dentista';
+      case 'dentais':
+        return 'Dental';
+      case 'empresas':
+        return 'Empresa';
+      case 'notas':
+        return 'Anotação';
 
       case 'exames':
         return 'Exame';
