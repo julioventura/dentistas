@@ -4,7 +4,7 @@
   <div class="header">
     <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="util.goHome()">
     <h1 class="title">{{ titulo_da_pagina }}</h1>
-    <img src="https://dentistas.com.br/assets/novo.png" class="navegacao" (click)="incluir()">
+    <img src="https://dentistas.com.br/assets/novo.png" class="navegacao" (click)="adicionar()">
   </div>
 
 
@@ -43,26 +43,22 @@
 
 
   <!-- Paginação -->
-  <div *ngIf="!isLoading && registrosPaginados.length > 0">
+<div *ngIf="!isLoading && registrosFiltrados.length > 0" class="pagination">
+  <span (click)="previousPage()">
+    <img src="https://dentistas.com.br/assets/voltar.png" alt="Anterior" />
+  </span>
 
-    <!-- LINHA 1 -->
-    <div class="pagination">
-      <span (click)="previousPage()">
-        <img src="https://dentistas.com.br/assets/voltar.png" alt="Anterior" />
-      </span>
-      <span>Página {{ page }} de {{ totalPages }}</span>
-      <span (click)="nextPage()">
-        <img src="https://dentistas.com.br/assets/seguir.png" alt="Próximo" />
-      </span>
-    </div>
+  <span>Página {{ page }} de {{ totalPages }}</span>
 
-    <!-- LINHA 2 -->
-    <div class="pagination_total">
+  <span (click)="nextPage()">
+    <img src="https://dentistas.com.br/assets/seguir.png" alt="Próximo" />
+  </span>
+</div>
+
+  <div *ngIf="!isLoading && registrosFiltrados.length > 0" class="pagination_total">
       <span></span>
-  <span>{{ registrosPaginados.length }} de {{ filteredTotal }} registros (Total: {{ totalRegistros }})</span>
+      <span>{{ totalRegistros }} registros</span>
       <span></span>
     </div>
-
-  </div>
 
 </div>
