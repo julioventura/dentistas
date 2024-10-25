@@ -177,8 +177,18 @@ export class ListComponent implements OnInit {
           this.totalRegistros = this.registros.length;
           this.page = 1;
           this.searchQuery = '';
-          this.filtrarRegistros();
+          this.registrosFiltrados = [...this.registros];
+
+          // Log para total de registros carregados
+          console.log('Total registros:', this.registros);
+
+          this.atualizarPaginacao(); // Atualiza totalPages e paginados
           this.isLoading = false;
+
+          // Log para verificar registros paginados na página atual
+          console.log(`registrosPaginados ${this.page}:`, this.registrosPaginados);
+          console.log(`registrosFiltrados ${this.page}:`, this.registrosFiltrados);
+          console.log(`registros ${this.page}:`, this.registros);
         },
         (error) => {
           console.error('Erro ao carregar registros:', error);
@@ -190,8 +200,14 @@ export class ListComponent implements OnInit {
 
 
 
+
   filtrarRegistros() {
     const query = this.searchQuery.toLowerCase();
+
+    // Log para verificar registros paginados na página atual
+    console.log(`registrosPaginados ${this.page}:`, this.registrosPaginados);
+    console.log(`registrosFiltrados ${this.page}:`, this.registrosFiltrados);
+    console.log(`registros ${this.page}:`, this.registros);
 
     if (query) {
       this.registrosFiltrados = this.registros.filter(registro => {
@@ -203,14 +219,20 @@ export class ListComponent implements OnInit {
       this.registrosFiltrados = [...this.registros];
       this.page = 1;
     }
-
+    // Log para verificar registros filtrados
+    console.log('Registros após filtro:', this.registrosFiltrados);
     this.atualizarPaginacao();
   }
+
 
   atualizarPaginacao() {
     this.filteredTotal = this.registrosFiltrados.length;
     this.totalPages = Math.ceil(this.filteredTotal / this.pageSize);
     this.atualizarRegistrosPaginados();
+    // Log para verificar registros paginados na página atual
+    console.log(`registrosPaginados ${this.page}:`, this.registrosPaginados);
+    console.log(`registrosFiltrados ${this.page}:`, this.registrosFiltrados);
+    console.log(`registros ${this.page}:`, this.registros);
   }
 
 
@@ -218,6 +240,10 @@ export class ListComponent implements OnInit {
     const startIndex = (this.page - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
     this.registrosPaginados = this.registrosFiltrados.slice(startIndex, endIndex);
+    // Log para verificar registros paginados na página atual
+    console.log(`registrosPaginados ${this.page}:`, this.registrosPaginados);
+    console.log(`registrosFiltrados ${this.page}:`, this.registrosFiltrados);
+    console.log(`registros ${this.page}:`, this.registros);
   }
 
 

@@ -24,7 +24,7 @@
 
 
   <!-- Listagem -->
-  <div *ngIf="!isLoading && registrosFiltrados.length > 0" class="registros-table">
+  <div *ngIf="!isLoading && registrosPaginados.length > 0" class="registros-table">
     <table>
       <thead>
         <tr>
@@ -33,7 +33,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let registro of registrosFiltrados" (click)="verFicha(registro.id)" style="cursor: pointer;">
+        <tr *ngFor="let registro of registrosPaginados" (click)="verFicha(registro.id)" style="cursor: pointer;">
           <td>{{ registro.nome }}</td>
           <td class="right">{{ registro.codigo }}</td>
         </tr>
