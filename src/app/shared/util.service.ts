@@ -243,7 +243,36 @@ export class UtilService {
   }
 
 
-  titulo_ajuste(titulo: string) {
+  titulo_ajuste_plural(titulo: string) {
+    switch (titulo) {
+      case 'usuarios':
+        return 'Usuários';
+      case 'professores':
+        return 'Professores';
+      case 'alunos':
+        return 'Alunos';
+      case 'pacientes':
+        return 'Pacientes';
+      case 'proteticos':
+        return 'Protéticos';
+      case 'equipe':
+        return 'Equipe';
+
+      case 'exames':
+        return 'Exames';
+      case 'planos':
+        return 'Planos';
+      case 'atendimentos':
+        return 'Atendimentos';
+      case 'pagamentos':
+        return 'Pagamentos';
+
+      default:
+        return 'Registros';
+    }
+  }
+
+  titulo_ajuste_singular(titulo: string) {
     switch (titulo) {
       case 'usuarios':
         return 'Usuário';
@@ -257,11 +286,20 @@ export class UtilService {
         return 'Protético';
       case 'equipe':
         return 'Equipe';
+
+      case 'exames':
+        return 'Exame';
+      case 'planos':
+        return 'Plano';
+      case 'atendimentos':
+        return 'Atendimento';
+      case 'pagamentos':
+        return 'Pagamento';
+
       default:
         return 'Registro';
     }
   }
-
 
 
   // Função para calcular o dígito verificador

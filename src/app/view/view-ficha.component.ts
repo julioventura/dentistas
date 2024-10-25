@@ -7,8 +7,8 @@ import { FormService } from '../shared/form.service';
 
 @Component({
   selector: 'app-view-ficha',
-  templateUrl: '../view/view.component.html',
-  styleUrls: ['../view/view.component.scss'],
+  templateUrl: './view.component.html',
+  styleUrls: ['./view.component.scss'],
 })
 export class ViewFichaComponent implements OnInit {
   userId: string | null = null;
@@ -45,7 +45,8 @@ export class ViewFichaComponent implements OnInit {
         this.userId = user.uid;
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.id = this.route.snapshot.paramMap.get('id')!;
-        this.titulo_da_pagina = "Ficha de " + this.util.capitalizar(this.subCollection);
+        this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subCollection);
+
         this.subtitulo_da_pagina = this.FormService.id_nome_collected;
         
         this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;

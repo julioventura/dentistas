@@ -58,7 +58,7 @@ export class ListFichasComponent implements OnInit {
     console.log('ID:', this.id);
     console.log('subCollection:', this.subCollection);
 
-    this.titulo_da_pagina = "Fichas de " + this.util.capitalizar(this.subCollection);
+    this.titulo_da_pagina = "Lista de " + this.util.titulo_ajuste_plural(this.subCollection);
     this.subtitulo_da_pagina = this.FormService.id_nome_collected;
 
     if (this.subCollection && this.userId && this.collection && this.id) {

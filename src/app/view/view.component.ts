@@ -10,6 +10,7 @@ import { FormService } from '../shared/form.service';
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
 })
+
 export class ViewComponent implements OnInit {
   userId: string | null = null;
   collection!: string;
@@ -28,24 +29,23 @@ export class ViewComponent implements OnInit {
     private afAuth: AngularFireAuth,
     public util: UtilService,
     public FormService: FormService,
-
   ) { }
 
   ngOnInit() {
     console.log('ngOnInit()');
-   
+
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         const id = this.route.snapshot.paramMap.get('id');
         if (id) { this.id = id; }
-        this.titulo_da_pagina = this.util.capitalizar(this.collection);
+        this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.collection);
 
         console.log('userId:', this.userId);
         console.log('Collection:', this.collection);
         console.log('ID:', id);
-        console.log('titulo_da_pagina:', this.titulo_da_pagina); 
+        console.log('titulo_da_pagina:', this.titulo_da_pagina);
 
         if (!this.id) {
           console.error('Registro não identificado.');
@@ -54,8 +54,12 @@ export class ViewComponent implements OnInit {
         else {
           this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
 
-          this.subtitulo_da_pagina = this.FormService.registro.nome;
-          console.log("subtitulo_da_pagina = " + this.subtitulo_da_pagina);
+          // Verifica se o registro foi carregado antes de acessar o nome
+          if (this.FormService.registro && this.FormService.registro.nome) {
+            this.subtitulo_da_pagina = this.FormService.registro.nome;
+          } else {
+            console.error('Registro ou nome não disponível.');
+          }
         }
       }
       else {
@@ -66,8 +70,6 @@ export class ViewComponent implements OnInit {
     console.log('Formulário de visualização inicializado.');
   }
 
-  
-
   verFichaDoMenu(subcollection: string) {
     console.log('verFichaDoMenu(subcollection)');
     console.log('subcollection =', subcollection);
@@ -76,7 +78,6 @@ export class ViewComponent implements OnInit {
     console.log('viewPath = ', viewPath);
     this.router.navigate([`/list-fichas/${this.collection}/${this.id}/ficha`, subcollection]);
   }
-
 
   editar() {
     console.log('editar()');
@@ -97,7 +98,7 @@ export class ViewComponent implements OnInit {
     if (confirm('Você tem certeza que deseja excluir este registro?')) {
       this.firestoreService.deleteRegistro(registroPath, this.id)
         .then(() => {
-          this.router.navigate([`/registros/${this.collection}`]);
+          this.router.navigate([`/list/${this.collection}`]);
         })
         .catch((error) => {
           console.error('Erro ao excluir o registro:', error);
@@ -106,7 +107,6 @@ export class ViewComponent implements OnInit {
   }
 
   voltar() {
-    this.router.navigate([`/registros/${this.collection}`]);
+    this.router.navigate([`/list/${this.collection}`]);
   }
-
 }

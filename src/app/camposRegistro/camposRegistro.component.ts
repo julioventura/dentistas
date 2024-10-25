@@ -15,13 +15,13 @@ export class CamposRegistroComponent implements OnInit {
   colecoes: any[] = []; // Lista de coleções disponíveis
   camposIniciais: any[] = []; // Armazena os campos ao carregar a página
   userId: string = ''; // Armazena o userId do usuário logado
+  alteracoesPendentes: boolean = false; // Flag para saber se há alterações pendentes
 
   constructor(
     private camposService: CamposService,
     private navegacaoService: NavegacaoService,
     private userService: UserService,
     public util: UtilService,
-
   ) { }
 
   ngOnInit(): void {
@@ -59,12 +59,14 @@ export class CamposRegistroComponent implements OnInit {
     this.camposService.setCamposRegistro(this.userId, this.colecaoSelecionada, this.campos).then(() => {
       alert('Configurações salvas com sucesso!');
       this.camposIniciais = JSON.parse(JSON.stringify(this.campos)); // Atualiza os campos iniciais após salvar
+      this.alteracoesPendentes = false; // Nenhuma alteração pendente após salvar
     });
   }
 
   adicionarCampo() {
     // Adiciona um novo campo com nome e tipo padrão
     this.campos.push({ nome: '', tipo: 'text', label: '' });
+    this.alteracoesPendentes = true; // Marca alterações pendentes
   }
 
   removerCampo(index: number) {
@@ -73,6 +75,7 @@ export class CamposRegistroComponent implements OnInit {
     if (confirmacao) {
       // Se o usuário confirmar, o campo é removido
       this.campos.splice(index, 1);
+      this.alteracoesPendentes = true; // Marca alterações pendentes
     }
   }
 
@@ -84,6 +87,7 @@ export class CamposRegistroComponent implements OnInit {
         this.colecaoSelecionada = novaColecao;
         this.carregarColecoes();
         this.carregarCampos();
+        this.alteracoesPendentes = true; // Marca alterações pendentes
       });
     }
   }
@@ -92,6 +96,7 @@ export class CamposRegistroComponent implements OnInit {
   moverCampoParaCima(index: number) {
     if (index > 0) {
       [this.campos[index - 1], this.campos[index]] = [this.campos[index], this.campos[index - 1]];
+      this.alteracoesPendentes = true; // Marca alterações pendentes
     }
   }
 
@@ -99,6 +104,7 @@ export class CamposRegistroComponent implements OnInit {
   moverCampoParaBaixo(index: number) {
     if (index < this.campos.length - 1) {
       [this.campos[index + 1], this.campos[index]] = [this.campos[index], this.campos[index + 1]];
+      this.alteracoesPendentes = true; // Marca alterações pendentes
     }
   }
 
@@ -109,8 +115,10 @@ export class CamposRegistroComponent implements OnInit {
   // HostListener para interceptar o evento de saída da página
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
-    if (JSON.stringify(this.campos) !== JSON.stringify(this.camposIniciais)) {
+    if (this.alteracoesPendentes) {
       $event.returnValue = true; // Mostra o alerta de confirmação de saída
     }
   }
+
+
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage'; // Importa o serviço de Storage
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -11,7 +11,8 @@ import { finalize } from 'rxjs/operators';
 export class FirestoreService<T extends { id?: string }> {
   constructor(
     private firestore: AngularFirestore,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    private afs: AngularFirestore
   ) { }
 
   // CREATE: Adicionar um novo registro à subcoleção do usuário
@@ -28,9 +29,9 @@ export class FirestoreService<T extends { id?: string }> {
   }
 
 
-  // READ: Buscar todos os registros da subcoleção do usuário
-  getRegistros(collectionPath: string): Observable<T[]> {
-    return this.firestore.collection<T>(collectionPath).valueChanges({ idField: 'id' });
+  // Altere o método para aceitar uma função de consulta como argumento opcional
+  getRegistros(path: string, queryFn?: QueryFn) {
+    return this.afs.collection<T>(path, queryFn).valueChanges({ idField: 'id' });
   }
 
   // Método para obter uma coleção inteira

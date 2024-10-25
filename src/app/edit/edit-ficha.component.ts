@@ -9,8 +9,8 @@ import { FormService } from '../shared/form.service';
 
 @Component({
   selector: 'app-edit-ficha',
-  templateUrl: '../edit/edit.component.html',
-  styleUrls: ['../edit/edit.component.scss']
+  templateUrl: './edit.component.html',
+  styleUrls: ['./edit.component.scss']
 })
 export class EditFichaComponent implements OnInit {
   userId!: string;

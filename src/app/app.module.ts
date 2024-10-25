@@ -22,13 +22,13 @@ import { MenuComponent } from './menu/menu.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ConfigComponent } from './shared/config/config.component';
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component';
-import { RegistrosComponent } from './registros/registros.component';
+import { ListComponent } from './list/list.component';
 import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
 import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
-import { ViewFichaComponent } from './view-ficha/view-ficha.component';
-import { EditFichaComponent } from './edit-ficha/edit-ficha.component';
+import { ViewFichaComponent } from './view/view-ficha.component';
+import { EditFichaComponent } from './edit/edit-ficha.component';
 import { ListFichasComponent } from './list-fichas/list-fichas.component';
 
 // Serviços
@@ -56,7 +56,7 @@ import { MatIconModule } from '@angular/material/icon';
     ResetPasswordComponent,
     ConfigComponent,
     SignupDialogComponent,
-    RegistrosComponent,
+    ListComponent,
     CamposRegistroComponent,
     ViewComponent,
     EditComponent,
@@ -84,18 +84,17 @@ import { MatIconModule } from '@angular/material/icon';
 
       // Rota para o componente camposRegistro
       { path: 'camposRegistro', component: CamposRegistroComponent },
-      { path: 'registros/:collection', component: RegistrosComponent, data: { animation: '3' } }, // lista os registros de uma coleção
+      { path: 'list/:collection', component: ListComponent, data: { animation: '3' } }, // lista de uma coleção
       { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '4' } },
       { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '5' } },
 
       // Rota para o componente fichas
       { path: 'fichas', component: FichasComponent },
-      { path: 'add-ficha/:collection/:id/ficha/:subCollection', component: EditFichaComponent },
-      
       { path: 'list-fichas/:collection/:id/ficha/:subcollection', component: ListFichasComponent, data: { animation: '6' } },
       { path: 'view-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: ViewFichaComponent, data: { animation: '7' } },
       { path: 'edit-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: EditFichaComponent, data: { animation: '8' } },
-
+      { path: 'add-ficha/:collection/:id/ficha/:subCollection', component: EditFichaComponent },
+      
       // HOMEPAGES
       { path: ':username/intro', component: HomepageIntroComponent },
       { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
