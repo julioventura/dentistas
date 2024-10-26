@@ -1,18 +1,17 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
+// import { ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
-  encapsulation: ViewEncapsulation.None // Remova o encapsulamento
+  // encapsulation: ViewEncapsulation.None // Remova o encapsulamento
 
 })
 export class EditComponent implements OnInit, AfterViewInit {
@@ -20,14 +19,18 @@ export class EditComponent implements OnInit, AfterViewInit {
 
   userId: string | null = null;
   collection!: string;
+  subcollection!: string;
   registro: any = {};
   id!: string;
-  isNew = false;
-  arquivos: { [key: string]: File } = {};
   view_only: boolean = false;
+  fichaId: string = '';
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
   isLoading = true;
+  registroPath: string = '';
+  routePath: string = '';
+  arquivos: { [key: string]: File } = {};
+  // isNew = false;
 
 
   constructor(
@@ -46,25 +49,39 @@ export class EditComponent implements OnInit, AfterViewInit {
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
-        this.collection = this.route.snapshot.paramMap.get('collection')!;
         const id = this.route.snapshot.paramMap.get('id');
-        if (id) { this.id = id;}
+        if (id) { this.id = id; }
+        this.collection = this.route.snapshot.paramMap.get('collection')!;
+        this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
+        this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
         this.titulo_da_pagina = this.util.capitalizar(this.collection);
 
         console.log('userId:', this.userId);
-        console.log('Collection:', this.collection);
-        console.log('ID:', id);
-        console.log('titulo_da_pagina:', this.titulo_da_pagina); 
+        console.log('collection:', this.collection);
+        console.log('id:', id);
+        console.log('titulo_da_pagina:', this.titulo_da_pagina);
+        console.log('subcollection:', this.subcollection);
+        console.log('fichaId:', this.fichaId);
 
         if (!this.id) {
           console.error('Registro não identificado.');
           this.voltar();
         }
         else {
-          this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
+          if (this.subcollection) {
+            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
+          }
+          else {
+            this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
+          }
 
-          this.subtitulo_da_pagina = this.FormService.registro.nome;
-          console.log("subtitulo_da_pagina = " + this.subtitulo_da_pagina);
+          // Verifica se o registro foi carregado antes de acessar o nome
+          if (this.FormService.registro && this.FormService.registro.nome) {
+            console.log("this.FormService.registro", this.FormService.registro);
+            this.subtitulo_da_pagina = this.FormService.registro.nome;
+          } else {
+            console.error('Registro ou nome não disponível.');
+          }
         }
       }
       else {
@@ -86,8 +103,43 @@ export class EditComponent implements OnInit, AfterViewInit {
     }
   }
 
+
+
+
   salvar() {
+    console.log('salvar()');
+    if (this.userId) {
+
+      console.log('userId:', this.userId);
+      console.log('collection:', this.collection);
+      console.log('id:', this.id);
+      console.log('subcollection:', this.subcollection);
+      console.log('fichaId:', this.fichaId);
+
+      if (this.subcollection) {
+        console.log("Salvar uma subcollection: ", this.subcollection)
+        if (this.fichaId) {
+          this.FormService.salvarSubcollection(this.userId, this.collection, this.id, this.subcollection, this.fichaId);
+        }
+      }
+      else {
+        console.log("Salvar uma collection: ", this.collection)
+        // if (this.id) {
+        //   this.FormService.salvarCollection(this.userId, this.collection, this.id);
+        // }
+        this.salvar_collection_anterior();
+      }
+      this.verFicha();
+    }
+  }
+
+
+
+
+  salvar_collection_anterior() {
     if (this.FormService.fichaForm.valid && this.userId) {
+
+
       const registroAtualizado = { ...this.FormService.registro, ...this.FormService.fichaForm.value };
 
       // Verifique se o ID está presente antes de salvar
@@ -123,14 +175,33 @@ export class EditComponent implements OnInit, AfterViewInit {
             alert('Erro ao salvar o registro. Por favor, tente novamente.');
           });
       });
+
+
     } else {
       console.error('Registro inválido ou sem ID:', this.FormService.registro);
       alert('Registro inválido ou sem ID. Não é possível salvar.');
     }
   }
 
+  verFicha() {
+    console.log("verFicha()");
 
-  voltar() {
-    this.navegacaoService.goBack();
+    const fichaPath = this.subcollection ?
+      `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
+      `view/${this.collection}/${this.id}`;
+
+    this.router.navigate([fichaPath]);
   }
+  
+  voltar() {
+    console.log("voltar()");
+    console.log("subcollection =", this.subcollection);
+
+    const listaPath = this.subcollection ?
+      `/list-fichas/${this.collection}/${this.id}/fichas/${this.subcollection}` :
+      `list/${this.collection}`;
+
+    this.router.navigate([listaPath]);
+  }
+
 }

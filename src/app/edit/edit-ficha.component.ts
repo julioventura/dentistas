@@ -99,7 +99,7 @@ export class EditFichaComponent implements OnInit {
   
   salvar() {
     if (this.fichaId) {
-      this.FormService.salvar(this.userId, this.collection, this.id, this.subcollection, this.fichaId);
+      this.FormService.salvarSubcollection(this.userId, this.collection, this.id, this.subcollection, this.fichaId);
     }
   }
 

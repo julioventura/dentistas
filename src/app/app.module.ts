@@ -28,7 +28,6 @@ import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
 import { EditFichaComponent } from './edit/edit-ficha.component';
-import { ListFichasComponent } from './list-fichas/list-fichas.component'; // Importe o componente Fichas
 
 // Serviços
 
@@ -62,7 +61,6 @@ import { MatIconModule } from '@angular/material/icon';
     PerfilComponent,
     HomepageIntroComponent,
     FichasComponent,
-    ListFichasComponent,
     EditFichaComponent,
   ],
   imports: [
@@ -90,7 +88,7 @@ import { MatIconModule } from '@angular/material/icon';
       { path: 'fichas', component: FichasComponent },
       { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '6' } },
       { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '7' } },
-      { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditFichaComponent, data: { animation: '8' } },
+      { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '8' } },
       { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditFichaComponent },
       
       // HOMEPAGES

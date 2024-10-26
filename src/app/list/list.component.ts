@@ -193,7 +193,6 @@ export class ListComponent implements OnInit {
   }
 
 
-
   filtrarRegistros() {
     const query = this.searchQuery.toLowerCase();
 
@@ -217,7 +216,6 @@ export class ListComponent implements OnInit {
     this.atualizarPaginacao();
   }
 
-
   atualizarPaginacao() {
     this.filteredTotal = this.registrosFiltrados.length;
     this.totalPages = Math.ceil(this.filteredTotal / this.pageSize);
@@ -231,7 +229,6 @@ export class ListComponent implements OnInit {
     // console.log(`registros ${this.page}:`, this.registros);
   }
 
-
   atualizarRegistrosPaginados() {
     const startIndex = (this.page - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
@@ -242,8 +239,6 @@ export class ListComponent implements OnInit {
     // console.log(`registrosFiltrados ${this.page}:`, this.registrosFiltrados);
     // console.log(`registros ${this.page}:`, this.registros);
   }
-
-
 
   setPage(page: number) {
     this.page = page;
@@ -265,8 +260,6 @@ export class ListComponent implements OnInit {
       this.atualizarRegistrosPaginados();
     }
   }
-
-
 
   verificarOuCriarConfiguracao() {
     console.log("verificarOuCriarConfiguracao()");
@@ -352,8 +345,6 @@ export class ListComponent implements OnInit {
     }
   }
 
-
-
   voltar() {
     console.log("voltar()");
     console.log("subcollection =", this.subcollection);
@@ -364,7 +355,6 @@ export class ListComponent implements OnInit {
 
     this.router.navigate([listaPath]);
   }
-
 
 
 }

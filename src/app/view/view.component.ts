@@ -17,10 +17,10 @@ export class ViewComponent implements OnInit {
   subcollection!: string;
   registro: any = null;
   id!: string;
+  view_only: boolean = true;
   fichaId: string = '';
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
-  view_only: boolean = true;
   mostrar_menu: boolean = false;
   isLoading = true;
   registroPath: string = '';
@@ -46,9 +46,7 @@ export class ViewComponent implements OnInit {
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
-
         this.titulo_da_pagina = this.subcollection ? this.util.titulo_ajuste_singular(this.subcollection) : this.util.titulo_ajuste_singular(this.collection);
-
         this.mostrar_menu = (this.collection == 'pacientes' && !this.subcollection) ? true : false;
 
         console.log('userId:', this.userId);

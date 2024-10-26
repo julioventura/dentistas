@@ -228,40 +228,63 @@ export class FormService {
 
 
 
-    salvar(userId: string, collection: string, id: string, subcollection: string, fichaId: string) {
+    salvarCollection(userId: string, collection: string, id: string) {
+
+        if (this.fichaForm.valid) {
+            const fichaAtualizada = this.fichaForm.value; // Obtém os valores do formulário
+            const fichaPath = `users/${userId}/${collection}`;
+            const fichaRoute = `/view/${collection}`;
+
+            console.log('Caminho para salvar a ficha:', fichaPath);
+            console.log('id da coleção:', id);
+            console.log('Dados da ficha a serem salvos:', fichaAtualizada);
+
+            // this.firestore.collection(fichaPath).add(fichaAtualizada).then(docRef => {
+            //     console.log('Nova ficha criada com sucesso com ID:', docRef.id);
+            //     this.router.navigate([`/view-ficha/${collection}/${id}/fichas/${subcollection}/itens/${docRef.id}`]);
+            // }).catch(error => {
+            //     console.error('Erro ao criar nova ficha:', error);
+            // });
+
+            if (id) {
+                this.firestoreService.updateRegistro(fichaPath, id, fichaAtualizada).then(() => {
+                    console.log('Ficha atualizada com sucesso');
+                    this.router.navigate([`fichaRoute/${id}`]);
+                }).catch(error => {
+                    console.error('Erro ao atualizar a ficha:', error);
+                });
+            } 
+
+        }
+    }
+
+
+    salvarSubcollection(userId: string, collection: string, id: string, subcollection: string, fichaId: string) {
 
         if (this.fichaForm.valid) {
             const fichaAtualizada = this.fichaForm.value; // Obtém os valores do formulário
             const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
+            const fichaRoute = `/view-ficha/${collection}/${id}/fichas/${subcollection}/itens`;
+
+            console.log('fichaPath - Caminho para salvar a ficha:', fichaPath);
+            console.log('fichaRoute - Caminho para acessar a ficha:', fichaRoute);
+            console.log('ID da ficha:', fichaId);
+            console.log('Dados da ficha a serem salvos:', fichaAtualizada);
 
             if (fichaId) {
-                // Atualiza uma ficha existente
-                console.log('Caminho para salvar a ficha:', fichaPath);
-                console.log('ID da ficha:', fichaId);
-                console.log('Dados da ficha a serem salvos:', fichaAtualizada);
-
                 this.firestoreService.updateRegistro(fichaPath, fichaId, fichaAtualizada).then(() => {
                     console.log('Ficha atualizada com sucesso');
-                    this.router.navigate([`/view-ficha/${collection}/${id}/fichas/${subcollection}/itens/${fichaId}`]);
+                    this.router.navigate([`${fichaRoute}/${fichaId}`]);
                 }).catch(error => {
                     console.error('Erro ao atualizar a ficha:', error);
                 });
-            } else {
-                // Adicionar nova ficha se fichaId for null
-                this.firestore.collection(fichaPath).add(fichaAtualizada).then(docRef => {
-                    console.log('Nova ficha criada com sucesso com ID:', docRef.id);
-                    this.router.navigate([`/view-ficha/${collection}/${id}/fichas/${subcollection}/itens/${docRef.id}`]);
-                }).catch(error => {
-                    console.error('Erro ao criar nova ficha:', error);
-                });
-            }
+            } 
         } else {
             console.error('Formulário inválido. Verifique os campos obrigatórios.');
             console.log('Estado atual do formulário:', this.fichaForm.status);
             console.log('Erros no formulário:', this.fichaForm.errors);
         }
     }
-
 
 
 }
