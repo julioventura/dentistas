@@ -31,17 +31,39 @@
         <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
 
         <!-- Input para tipos normais -->
-        <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+        <!-- <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
           (change)="FormService.onFieldChange($event, campo.nome)"
-          *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
+          *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'"> -->
+
+        <!-- Verifique se o campo é "Nome" -->
+        <input
+          *ngIf="campo.nome === 'nome' && campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'"
+          [type]="campo.tipo" 
+          [formControlName]="campo.nome" 
+          [id]="campo.nome" 
+          class="detail-value"
+          (change)="FormService.onFieldChange($event, campo.nome)" 
+          #nomeInput autofocus/>
+          <!-- #nomeInput autofocus/> -->
+
+        <input
+          *ngIf="campo.nome != 'nome' && campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'"
+          [type]="campo.tipo" 
+          [formControlName]="campo.nome" 
+          [id]="campo.nome" 
+          class="detail-value"
+          (change)="FormService.onFieldChange($event, campo.nome)" />
 
         <!-- Textarea para campos longos -->
-        <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-          *ngIf="campo.tipo === 'textarea'" rows="4" placeholder="Digite o conteúdo"></textarea>
+        <textarea *ngIf="campo.tipo === 'textarea'" [formControlName]="campo.nome" [id]="campo.nome"
+          class="detail-value" rows="4" placeholder="Digite o conteúdo"></textarea>
+
 
         <!-- Input para URL -->
-        <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url" *ngIf="campo.tipo === 'url'"
-          placeholder="Cole aqui o link do arquivo">
+        <input *ngIf="campo.tipo === 'url'" type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url"
+          placeholder="Cole aqui o link do arquivo" />
+
+
 
       </div>
     </form>

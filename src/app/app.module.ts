@@ -27,9 +27,8 @@ import { CamposRegistroComponent } from './camposRegistro/camposRegistro.compone
 import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
-import { ViewFichaComponent } from './view/view-ficha.component';
 import { EditFichaComponent } from './edit/edit-ficha.component';
-import { ListFichasComponent } from './list-fichas/list-fichas.component';
+import { ListFichasComponent } from './list-fichas/list-fichas.component'; // Importe o componente Fichas
 
 // Serviços
 
@@ -63,9 +62,8 @@ import { MatIconModule } from '@angular/material/icon';
     PerfilComponent,
     HomepageIntroComponent,
     FichasComponent,
-    ViewFichaComponent,
-    EditFichaComponent,
     ListFichasComponent,
+    EditFichaComponent,
   ],
   imports: [
     BrowserModule,
@@ -90,10 +88,10 @@ import { MatIconModule } from '@angular/material/icon';
 
       // Rota para o componente fichas
       { path: 'fichas', component: FichasComponent },
-      { path: 'list-fichas/:collection/:id/ficha/:subcollection', component: ListFichasComponent, data: { animation: '6' } },
-      { path: 'view-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: ViewFichaComponent, data: { animation: '7' } },
-      { path: 'edit-ficha/:collection/:id/ficha/:subcollection/itens/:fichaId', component: EditFichaComponent, data: { animation: '8' } },
-      { path: 'add-ficha/:collection/:id/ficha/:subCollection', component: EditFichaComponent },
+      { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '6' } },
+      { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '7' } },
+      { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditFichaComponent, data: { animation: '8' } },
+      { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditFichaComponent },
       
       // HOMEPAGES
       { path: ':username/intro', component: HomepageIntroComponent },

@@ -15,7 +15,7 @@ import { FormService } from '../shared/form.service';
 export class EditFichaComponent implements OnInit {
   userId!: string;
   collection!: string;
-  subCollection!: string;
+  subcollection!: string;
   registro: any = {};
   id!: string;
   fichaId: string | null = null; // Pode ser null se não houver fichaId
@@ -47,20 +47,20 @@ export class EditFichaComponent implements OnInit {
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.id = this.route.snapshot.paramMap.get('id')!;
 
-        this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
+        this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId') || null;
-        this.titulo_da_pagina = "Editar " + this.util.capitalizar(this.subCollection);
+        this.titulo_da_pagina = "Editar " + this.util.capitalizar(this.subcollection);
         this.subtitulo_da_pagina = this.FormService.id_nome_collected;
 
         console.log('userId:', this.userId); 
         console.log('Collection:', this.collection);
         console.log('ID:', this.id);
-        console.log('subCollection:', this.subCollection);
+        console.log('subcollection:', this.subcollection);
         console.log('fichaId:', this.fichaId); 
         console.log('titulo_da_pagina:', this.titulo_da_pagina); 
 
         if (this.fichaId) {
-          this.FormService.loadFicha(this.userId, this.collection, this.id, this.subCollection, this.fichaId, this.view_only);
+          this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
         } else {
           this.isNew = true;
           this.gerarNovoRegistro();  // Gera um ID e cria um registro temporário
@@ -99,7 +99,7 @@ export class EditFichaComponent implements OnInit {
   
   salvar() {
     if (this.fichaId) {
-      this.FormService.salvar(this.userId, this.collection, this.id, this.subCollection, this.fichaId);
+      this.FormService.salvar(this.userId, this.collection, this.id, this.subcollection, this.fichaId);
     }
   }
 

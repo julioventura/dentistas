@@ -113,9 +113,9 @@ export class FormService {
                         console.log("Formulário habilitado.");
                     }
                     console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
-                    Object.keys(this.fichaForm.controls).forEach(campoNome => {
-                        // console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
-                    });
+                    // Object.keys(this.fichaForm.controls).forEach(campoNome => {
+                    //     console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
+                    // });
 
                     // Marca como carregado (isLoading = false)
                     this.isLoading = false;
@@ -136,26 +136,26 @@ export class FormService {
     }
 
 
-    loadFicha(userId: string, collection: string, id: string, subCollection: string, fichaId: string, view: boolean) {
+    loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view: boolean) {
         console.log('loadFicha()');
 
         console.log('userId: ', userId);
         console.log('Collection:', collection);
         console.log('ID:', id);
-        console.log('subCollection: ' + subCollection);
+        console.log('subcollection: ' + subcollection);
         console.log('fichaId: ' + fichaId);
         console.log('view (visualizar registro): ', view);
 
-        if (subCollection && fichaId) {
+        if (subcollection && fichaId) {
 
-            const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subCollection}/itens`;
+            const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
             console.log('Caminho para carregar ficha:', fichaPath);
 
             // Define o formulário como carregando
             this.isLoading = true;
 
             // Carrega os campos do formulário antes de tentar carregar a ficha
-            this.carregarCamposFichas(userId, subCollection);
+            this.carregarCamposFichas(userId, subcollection);
 
             // Carrega os dados da ficha do Firestore
             this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
@@ -180,9 +180,9 @@ export class FormService {
                         console.log("Formulário habilitado.");
                     }
                     console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
-                    Object.keys(this.fichaForm.controls).forEach(campoNome => {
-                        console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
-                    });
+                    // Object.keys(this.fichaForm.controls).forEach(campoNome => {
+                    //     console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
+                    // });
 
                     // Marca como carregado (isLoading = false)
                     this.isLoading = false;
@@ -197,7 +197,7 @@ export class FormService {
                 this.isLoading = false;
             });
         } else {
-            console.error('subCollection ou fichaId não definidos corretamente.');
+            console.error('subcollection ou fichaId não definidos corretamente.');
             this.isLoading = false;
         }
     }
@@ -228,11 +228,11 @@ export class FormService {
 
 
 
-    salvar(userId: string, collection: string, id: string, subCollection: string, fichaId: string) {
+    salvar(userId: string, collection: string, id: string, subcollection: string, fichaId: string) {
 
         if (this.fichaForm.valid) {
             const fichaAtualizada = this.fichaForm.value; // Obtém os valores do formulário
-            const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subCollection}/itens`;
+            const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
 
             if (fichaId) {
                 // Atualiza uma ficha existente
@@ -242,7 +242,7 @@ export class FormService {
 
                 this.firestoreService.updateRegistro(fichaPath, fichaId, fichaAtualizada).then(() => {
                     console.log('Ficha atualizada com sucesso');
-                    this.router.navigate([`/view-ficha/${collection}/${id}/ficha/${subCollection}/itens/${fichaId}`]);
+                    this.router.navigate([`/view-ficha/${collection}/${id}/fichas/${subcollection}/itens/${fichaId}`]);
                 }).catch(error => {
                     console.error('Erro ao atualizar a ficha:', error);
                 });
@@ -250,7 +250,7 @@ export class FormService {
                 // Adicionar nova ficha se fichaId for null
                 this.firestore.collection(fichaPath).add(fichaAtualizada).then(docRef => {
                     console.log('Nova ficha criada com sucesso com ID:', docRef.id);
-                    this.router.navigate([`/view-ficha/${collection}/${id}/ficha/${subCollection}/itens/${docRef.id}`]);
+                    this.router.navigate([`/view-ficha/${collection}/${id}/fichas/${subcollection}/itens/${docRef.id}`]);
                 }).catch(error => {
                     console.error('Erro ao criar nova ficha:', error);
                 });

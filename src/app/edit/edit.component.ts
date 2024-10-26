@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
@@ -15,7 +15,9 @@ import { FormService } from '../shared/form.service';
   encapsulation: ViewEncapsulation.None // Remova o encapsulamento
 
 })
-export class EditComponent implements OnInit {
+export class EditComponent implements OnInit, AfterViewInit {
+  @ViewChild('nomeInput') nomeInput?: ElementRef;
+
   userId: string | null = null;
   collection!: string;
   registro: any = {};
@@ -73,7 +75,16 @@ export class EditComponent implements OnInit {
     console.log('Formulário de visualização inicializado.');
   }
 
-  
+  ngAfterViewInit() {
+    // Verifique se o nomeInput foi definido
+    if (this.nomeInput) {
+      setTimeout(() => {
+        this.nomeInput?.nativeElement.focus();
+      }, 0);
+    } else {
+      console.warn('Campo "Nome" não encontrado ao inicializar. Verifique se o campo foi carregado.');
+    }
+  }
 
   salvar() {
     if (this.FormService.fichaForm.valid && this.userId) {

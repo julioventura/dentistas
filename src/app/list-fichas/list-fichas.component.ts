@@ -13,7 +13,7 @@ import { CamposFichaService } from '../shared/campos-ficha.service';
 })
 export class ListFichasComponent implements OnInit {
   collection!: string;
-  subCollection!: string; // Sub-coleção (exames, etc.)
+  subcollection!: string; // Sub-coleção (exames, etc.)
   id!: string;
   id_nome_collected: string = '';
   fichas: any[] = []; // Lista de fichas (exames, atendimentos, etc.)
@@ -41,7 +41,7 @@ export class ListFichasComponent implements OnInit {
         this.userId = user.uid;
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.id = this.route.snapshot.paramMap.get('id')!;
-        this.subCollection = this.route.snapshot.paramMap.get('subcollection')!;
+        this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
 
         this.loadAllFichas();
       }
@@ -56,13 +56,13 @@ export class ListFichasComponent implements OnInit {
 
     console.log('Collection:', this.collection);
     console.log('ID:', this.id);
-    console.log('subCollection:', this.subCollection);
+    console.log('subcollection:', this.subcollection);
 
-    this.titulo_da_pagina = "Lista de " + this.util.titulo_ajuste_plural(this.subCollection);
+    this.titulo_da_pagina = "Lista de " + this.util.titulo_ajuste_plural(this.subcollection);
     this.subtitulo_da_pagina = this.FormService.id_nome_collected;
 
-    if (this.subCollection && this.userId && this.collection && this.id) {
-      const fichasPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
+    if (this.subcollection && this.userId && this.collection && this.id) {
+      const fichasPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subcollection}/itens`;
       console.log('Caminho para subcoleção (listagem de fichas):', fichasPath);
 
       this.firestore.collection(fichasPath)
@@ -100,11 +100,11 @@ export class ListFichasComponent implements OnInit {
       return; // Verifica se o userId está disponível
     }
 
-    const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subCollection}/itens`;
+    const fichaPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subcollection}/itens`;
     console.log('Caminho para nova ficha:', fichaPath);
 
     // Verifica se existe configuração personalizada de campos para a sub-coleção
-    this.CamposFichaService.getCamposRegistro(this.userId,this.subCollection).subscribe((camposConfigurados) => {
+    this.CamposFichaService.getCamposRegistro(this.userId,this.subcollection).subscribe((camposConfigurados) => {
       let campos = camposConfigurados || this.CamposFichaService.camposPadrao;
 
       // Gera o novo registro com campos em branco
@@ -124,7 +124,7 @@ export class ListFichasComponent implements OnInit {
       this.firestore.collection(fichaPath).doc(novoRegistro.id).set(novoRegistro).then(() => {
         console.log('Nova ficha criada com sucesso:', novoRegistro.id);
         // Redireciona para a página de edição da nova ficha criada
-        this.router.navigate([`/edit-ficha/${this.collection}/${this.id}/ficha/${this.subCollection}/itens/${novoRegistro.id}`]);
+        this.router.navigate([`/edit-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${novoRegistro.id}`]);
       }).catch((error) => {
         console.error('Erro ao adicionar nova ficha:', error);
         alert('Erro ao criar nova ficha.');
@@ -138,14 +138,17 @@ export class ListFichasComponent implements OnInit {
     console.log("fichaId = '" + fichaId + "'");
 
     // Utiliza sempre o fichaId do Firestore
+    //       { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewFichaComponent, data: { animation: '7' } },
     if (fichaId && fichaId.trim() !== '') {
-      const fichaPath = `/view-ficha/${this.collection}/${this.id}/ficha/${this.subCollection}/itens/${fichaId}`;
+      const fichaPath = `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${fichaId}`;
       console.log('Navegando para ficha:', fichaPath);
       this.router.navigate([fichaPath]);
     } else {
       this.exibirAlertaIdInvalido("fichaId é inválido: '" + fichaId + "'");
     }
   }
+
+
 
   exibirAlertaIdInvalido(mensagem: string) {
     // Exibe um alerta e, após confirmação, redireciona o usuário para a listagem
