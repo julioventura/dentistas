@@ -15,6 +15,7 @@ export interface Registro {
   cpf: string;
   obs: string;
   nuvem: string;
+  data: string;
 }
 
 

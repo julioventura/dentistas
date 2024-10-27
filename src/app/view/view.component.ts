@@ -46,8 +46,14 @@ export class ViewComponent implements OnInit {
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
-        this.titulo_da_pagina = this.subcollection ? this.util.titulo_ajuste_singular(this.subcollection) : this.util.titulo_ajuste_singular(this.collection);
         this.mostrar_menu = (this.collection == 'pacientes' && !this.subcollection) ? true : false;
+
+        if (this.subcollection) {
+          this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection);
+        }
+        else {
+          this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.collection);
+        }
 
         console.log('userId:', this.userId);
         console.log('collection:', this.collection);
@@ -66,15 +72,17 @@ export class ViewComponent implements OnInit {
           }
           else {
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
-          }
 
-          // Verifica se o registro foi carregado antes de acessar o nome
-          if (this.FormService.registro && this.FormService.registro.nome) {
-            console.log("this.FormService.registro", this.FormService.registro);
-            this.subtitulo_da_pagina = this.FormService.registro.nome;
-          } else {
-            console.error('Registro ou nome não disponível.');
+            // Verifica se o registro foi carregado antes de acessar o nome
+            if (this.FormService.registro) {
+              console.log("this.FormService.registro", this.FormService.registro);
+            } else {
+              console.error('Registro ou nome não disponível.');
+            }
           }
+          this.subtitulo_da_pagina = this.FormService.nome_in_collection;
+          console.log('subtitulo_da_pagina:', this.subtitulo_da_pagina);
+          
         }
       }
       else {
@@ -85,13 +93,14 @@ export class ViewComponent implements OnInit {
     console.log('Formulário de visualização inicializado.');
   }
 
-  verFichaDoMenu(subcollection: string) {
-    console.log('verFichaDoMenu(subcollection)');
+  listarSubcollection(subcollection: string) {
+    console.log('listarSubcollection(subcollection)');
     console.log('subcollection =', subcollection);
 
-    const viewPath = `/list-fichas/${this.collection}/${this.id}/fichas`;
-    console.log('viewPath = ', viewPath);
-    this.router.navigate([`/list-fichas/${this.collection}/${this.id}/fichas`, subcollection]);
+    const listPath = `/list-fichas/${this.collection}/${this.id}/fichas`;
+    console.log('listPath = ', listPath);
+
+    this.router.navigate([`${listPath}`, subcollection]);
   }
 
   editar() {
@@ -119,7 +128,6 @@ export class ViewComponent implements OnInit {
 
   excluir() {
     console.log("excluir()");
-
     // console.log("this.userId = " + this.userId);
     // console.log("collection =", this.collection);
     // console.log("this.id = " + this.id);
@@ -165,3 +173,4 @@ export class ViewComponent implements OnInit {
   }
 
 }
+

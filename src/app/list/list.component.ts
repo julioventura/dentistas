@@ -9,6 +9,7 @@ import { UtilService } from '../shared/util.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore'; // Importar o AngularFirestore
 import { CamposService } from '../shared/campos.service';
 import { CamposFichaService } from '../shared/campos-ficha.service';
+import { FormService } from '../shared/form.service';
 
 
 @Component({
@@ -38,9 +39,9 @@ export class ListComponent implements OnInit {
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
   id!: string;
-  id_nome_collected: string = '';
+  nome_in_collection: string = '';
   fichas: any[] = []; // Lista de fichas (exames, atendimentos, etc.)
-
+  show_busca: boolean = false;
 
 
   constructor(
@@ -53,7 +54,8 @@ export class ListComponent implements OnInit {
     public util: UtilService,
     private firestore: AngularFirestore,
     private camposService: CamposService,
-    private camposFichaService: CamposFichaService
+    private camposFichaService: CamposFichaService,
+    public FormService: FormService,
 
   ) { }
 
@@ -64,10 +66,10 @@ export class ListComponent implements OnInit {
     this.id = this.route.snapshot.paramMap.get('id')!;
     this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
 
-    this.titulo_da_pagina = this.subcollection ? 'Lista de ' + this.util.titulo_ajuste_plural(this.subcollection) : 'Lista de ' + this.util.titulo_ajuste_plural(this.collection);
-    this.subtitulo_da_pagina = this.subcollection ? 'Lista de ' + this.util.titulo_ajuste_plural(this.subcollection) : '';
+    this.titulo_da_pagina = this.subcollection ? this.util.titulo_ajuste_plural(this.subcollection) : this.util.titulo_ajuste_plural(this.collection);
+    this.subtitulo_da_pagina = this.subcollection ? this.FormService.nome_in_collection : '';
 
-    // console.log("Registros de " + this.collection);
+
 
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
@@ -172,7 +174,8 @@ export class ListComponent implements OnInit {
         cep: '',
         cpf: '',
         obs: '',
-        nuvem: ''
+        nuvem: '',
+        data: ''
       };
 
       this.firestoreService.addRegistro(collectionPath, novoRegistro).then(() => {
@@ -343,6 +346,11 @@ export class ListComponent implements OnInit {
     } else {
       alert('Formulário inválido. Por favor, verifique os campos.');
     }
+  }
+
+
+  showbusca() {
+    this.show_busca = !this.show_busca;
   }
 
   voltar() {

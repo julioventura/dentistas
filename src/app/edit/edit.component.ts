@@ -54,7 +54,14 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
-        this.titulo_da_pagina = this.util.capitalizar(this.collection);
+
+        if (this.subcollection) {
+          this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection);
+        }
+        else {
+          this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.collection);
+        }
+        this.subtitulo_da_pagina = this.FormService.nome_in_collection;
 
         console.log('userId:', this.userId);
         console.log('collection:', this.collection);
@@ -62,6 +69,7 @@ export class EditComponent implements OnInit, AfterViewInit {
         console.log('titulo_da_pagina:', this.titulo_da_pagina);
         console.log('subcollection:', this.subcollection);
         console.log('fichaId:', this.fichaId);
+        console.log("subtitulo_da_pagina =", this.subtitulo_da_pagina);
 
         if (!this.id) {
           console.error('Registro não identificado.');
@@ -75,13 +83,6 @@ export class EditComponent implements OnInit, AfterViewInit {
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
           }
 
-          // Verifica se o registro foi carregado antes de acessar o nome
-          if (this.FormService.registro && this.FormService.registro.nome) {
-            console.log("this.FormService.registro", this.FormService.registro);
-            this.subtitulo_da_pagina = this.FormService.registro.nome;
-          } else {
-            console.error('Registro ou nome não disponível.');
-          }
         }
       }
       else {
@@ -192,16 +193,16 @@ export class EditComponent implements OnInit, AfterViewInit {
 
     this.router.navigate([fichaPath]);
   }
-  
+
   voltar() {
     console.log("voltar()");
     console.log("subcollection =", this.subcollection);
 
-    const listaPath = this.subcollection ?
-      `/list-fichas/${this.collection}/${this.id}/fichas/${this.subcollection}` :
-      `list/${this.collection}`;
+    const viewPath = this.subcollection ?
+      `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
+      `view/${this.collection}/${this.id}`;
 
-    this.router.navigate([listaPath]);
+    this.router.navigate([viewPath]);
   }
 
 }

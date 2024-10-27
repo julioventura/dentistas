@@ -275,6 +275,15 @@ export class UtilService {
       case 'pagamentos':
         return 'Pagamentos';
        
+      case 'erupcoes':
+        return 'Erupções Dentárias';
+      case 'riscodecarie':
+        return 'Risco de Cárie';
+      case 'retornos':
+        return 'Retornos';
+      case 'historicozap':
+        return 'Histórico de Avisos';
+
       default:
         return 'Registros';
     }
@@ -311,6 +320,15 @@ export class UtilService {
         return 'Atendimento';
       case 'pagamentos':
         return 'Pagamento';
+
+      case 'erupcoes':
+        return 'Erupções Dentárias';
+      case 'riscodecarie':
+        return 'Risco de Cárie';
+      case 'retornos':
+        return 'Retornos';
+      case 'historicozap':
+        return 'Histórico de Avisos';
 
       default:
         return 'Registro';

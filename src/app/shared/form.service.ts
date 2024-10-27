@@ -17,8 +17,10 @@ export class FormService {
     campos: any[] = [];
     isLoading = true;
     public registro: any = null;
-    public id_nome_collected: string = ' ';
-
+    public nome_in_collection: string = '';
+    public collection: string = '';
+    public subcollection: string = '';
+    
     constructor(
         private firestore: AngularFirestore,
         private firestoreService: FirestoreService<any>,
@@ -75,9 +77,11 @@ export class FormService {
         console.log('loadRegistro()');
 
         console.log('userId: ', userId);
-        console.log('Collection: ', collection);
-        console.log('ID: ', id);
+        console.log('collection: ', collection);
+        console.log('id: ', id);
         console.log('view (visualizar registro): ', view);
+
+        this.collection = collection;
 
         if (id) {
 
@@ -95,6 +99,9 @@ export class FormService {
                 if (ficha) {
                     console.log('Ficha carregada:', ficha);
                     this.registro = ficha;  // Para o view-ficha, se necessário
+                    
+                    // Nome parte da coleção (nome do paciente, aluno, etc)
+                    this.nome_in_collection = this.registro.nome;
 
                     // Verifica se os campos foram carregados corretamente antes de preencher o formulário
                     if (this.fichaForm && this.campos.length > 0) {
@@ -113,11 +120,7 @@ export class FormService {
                         console.log("Formulário habilitado.");
                     }
                     console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
-                    // Object.keys(this.fichaForm.controls).forEach(campoNome => {
-                    //     console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
-                    // });
-
-                    // Marca como carregado (isLoading = false)
+     
                     this.isLoading = false;
                     console.log('isLoading == false');
 
@@ -140,13 +143,15 @@ export class FormService {
         console.log('loadFicha()');
 
         console.log('userId: ', userId);
-        console.log('Collection:', collection);
-        console.log('ID:', id);
+        console.log('collection:', collection);
+        console.log('id:', id);
         console.log('subcollection: ' + subcollection);
         console.log('fichaId: ' + fichaId);
         console.log('view (visualizar registro): ', view);
 
         if (subcollection && fichaId) {
+
+            this.subcollection = subcollection;
 
             const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
             console.log('Caminho para carregar ficha:', fichaPath);

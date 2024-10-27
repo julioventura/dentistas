@@ -2,14 +2,14 @@
 
   <!-- HEADER -->
   <div class="header">
-    <div class="actions">
+    <div class="left">
       <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
       <img src="https://dentistas.com.br/assets/home.png" class="navegacao" (click)="util.goHome()">
     </div>
     <h1 class="title">{{ titulo_da_pagina }}</h1>
-    <div class="actions">
-      <img src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()">
-      <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao" (click)="excluir()">
+    <div class="right">
+      <img src="https://dentistas.com.br/assets/editar.png" class="navegacao_direita" (click)="editar()">
+      <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao_direita" (click)="excluir()">
     </div>
   </div>
 
@@ -21,12 +21,18 @@
   <!-- Botões das fichas internas -->
   <div *ngIf="mostrar_menu">
     <div class="menu">
-      <button class="menu-ficha" (click)="verFichaDoMenu('exames')">EXAMES</button>
-      <button class="menu-ficha" (click)="verFichaDoMenu('planos')">PLANOS</button>
-      <button class="menu-ficha" (click)="verFichaDoMenu('atendimentos')">ATENDIMENTOS</button>
-      <button class="menu-ficha" (click)="verFichaDoMenu('pagamentos')">PAGAMENTOS</button>
+      <!-- <button class="menu-ficha" (click)="listarSubcollection('exames')">EXAMES</button>
+      <button class="menu-ficha" (click)="listarSubcollection('planos')">PLANOS</button>
+      <button class="menu-ficha" (click)="listarSubcollection('atendimentos')">ATENDIMENTOS</button>
+      <button class="menu-ficha" (click)="listarSubcollection('pagamentos')">PAGAMENTOS</button> -->
+
+      <button class="menu-ficha" (click)="listarSubcollection('erupcoes')">Erupções</button>
+      <button class="menu-ficha" (click)="listarSubcollection('riscodecarie')">Risco de Cárie</button>
+      <button class="menu-ficha" (click)="listarSubcollection('retornos')">Retornos</button>
+      <button class="menu-ficha" (click)="listarSubcollection('historicozap')">Histórico de Avisos</button>
+
+
     </div>
-    <div class="espacador_vertical">&nbsp;</div>
   </div>
 
   <!-- Detalhes -->
@@ -57,7 +63,7 @@
 
           <!-- Textarea para campos longos -->
           <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-            *ngIf="campo.tipo === 'textarea'" rows="4" placeholder="Digite o conteúdo"></textarea>
+            *ngIf="campo.tipo === 'textarea'" rows="3" placeholder="Digite o conteúdo"></textarea>
 
         </div>
 

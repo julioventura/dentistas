@@ -23,11 +23,11 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ConfigComponent } from './shared/config/config.component';
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component';
 import { ListComponent } from './list/list.component';
-import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
 import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
+
+import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
-import { EditFichaComponent } from './edit/edit-ficha.component';
 
 // Serviços
 
@@ -61,7 +61,6 @@ import { MatIconModule } from '@angular/material/icon';
     PerfilComponent,
     HomepageIntroComponent,
     FichasComponent,
-    EditFichaComponent,
   ],
   imports: [
     BrowserModule,
@@ -89,7 +88,7 @@ import { MatIconModule } from '@angular/material/icon';
       { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '6' } },
       { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '7' } },
       { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '8' } },
-      { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditFichaComponent },
+      { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent },
       
       // HOMEPAGES
       { path: ':username/intro', component: HomepageIntroComponent },

@@ -51,19 +51,22 @@
     display: flex;
     justify-content: center;
     padding-bottom: 10px;
+        color: $primary-color;
 
     input {
         width: 100%;
-        max-width: 300px;
+        max-width: 200px;
         padding: 4px 10px;
         border: 2px solid $primary-color;
         border-radius: 6px;
         font-size: 14px;
+        font-weight: bold;
         color: $primary-color;
 
         &:focus {
             outline: none;
-            border-color: $primary-hover;
+            border-color: $primary-color;
+            outline: 0;
         }
     }
 }
