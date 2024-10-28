@@ -20,19 +20,34 @@
 
   <!-- Botões das fichas internas -->
   <div *ngIf="mostrar_menu">
-    <div class="menu">
-      <!-- <button class="menu-ficha" (click)="listarSubcollection('planos')">PLANOS</button> -->
-      <!-- <button class="menu-ficha" (click)="listarSubcollection('pagamentos')">Pgamentos</button> -->
-      <button class="menu-ficha" (click)="listarSubcollection('exames')">Exames</button>
-      <button class="menu-ficha" (click)="listarSubcollection('atendimentos')">Atendimentos</button>
+<app-menu [subcolecoes]="[
+    { nome: 'Exames', rota: 'exames' },
+    { nome: 'Atendimentos', rota: 'atendimentos' },
+    { nome: 'Erupções', rota: '/erupcoes' },
+    { nome: 'Risco de Cárie', rota: '/riscodecarie' },
+    { nome: 'Retornos', rota: '/retornos' },
+    { nome: 'Histórico', rota: '/historicozap' },
+  ]" [colecao]="collection" [id]="id">
+</app-menu>
 
-      <button class="menu-ficha" (click)="listarSubcollection('erupcoes')">Erupções</button>
-      <button class="menu-ficha" (click)="listarSubcollection('riscodecarie')">Risco de Cárie</button>
-      <button class="menu-ficha" (click)="listarSubcollection('retornos')">Retornos</button>
-      <button class="menu-ficha" (click)="listarSubcollection('historicozap')">Histórico</button>
-    </div>
+
   </div>
 
+  <!-- Botões das fichas internas -->
+  <!-- <div *ngIf="mostrar_menu">
+    <div class="menu">
+      <button class="menu-button" (click)="listarSubcollection('planos')">Planos</button>
+      <button class="menu-button" (click)="listarSubcollection('pagamentos')">Pagamentos</button>
+      <button class="menu-button" (click)="listarSubcollection('exames')">Exames</button>
+      <button class="menu-button" (click)="listarSubcollection('atendimentos')">Atendimentos</button>
+
+      <button class="menu-button" (click)="listarSubcollection('erupcoes')">Erupções</button>
+      <button class="menu-button" (click)="listarSubcollection('riscodecarie')">Risco de Cárie</button>
+      <button class="menu-button" (click)="listarSubcollection('retornos')">Retornos</button>
+      <button class="menu-button" (click)="listarSubcollection('historicozap')">Histórico</button>
+    </div>
+  </div> -->
+  
   <!-- Detalhes -->
   <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
 

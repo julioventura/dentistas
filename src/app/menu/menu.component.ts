@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,10 +7,20 @@ import { Router } from '@angular/router';
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent {
-  constructor(private router: Router) {}
+  // Recebe a lista de subcoleções para exibição
+  @Input() subcolecoes: { nome: string, rota: string }[] = [];
+  @Input() colecao: string = '';
+  @Input() id: string = '';
 
-  logout() {
-    // Aqui você pode adicionar a lógica de logout
-    this.router.navigate(['/login']);
+  constructor(private router: Router) { }
+
+  // Função para navegar para a rota da subcoleção selecionada
+  navegarPara(subcolecao: string) {
+    // this.router.navigate([rota]);
+
+    const listPath = `/list-fichas/${this.colecao}/${this.id}/fichas`;
+    console.log('listPath = ', listPath);
+
+    this.router.navigate([`${listPath}`, subcolecao]);
   }
 }
