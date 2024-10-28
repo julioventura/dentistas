@@ -203,8 +203,8 @@ h3 {
     padding: 20px;
     border-radius: 0 0 6px 6px;
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
-    border: 0px solid #ddf5ff;
-    margin-top: 2px;
+    border: 0px solid #fff;
+    margin: 0px 1px 0px 1px;
     box-shadow: box-shadow;
 
     .detail-container {
@@ -481,12 +481,10 @@ label {
     font-size: small;
     font-weight: 500;
     text-align: center;
-    margin-bottom: 0;
-    margin-left: 0;
-    margin-right: 0;
-    border: 0;
-    border-radius: 6px 6px 0 0;
-    padding: 0px;
+    margin: 0;
+    border: 1px solid white;
+    padding: 0;
+    border-radius: 8px 8px 0 0;
 
     h2 {
         margin: 0;
@@ -521,7 +519,7 @@ label {
     background-color: #2A7AC3;
     color: #ffffff;
     margin: 4px 0 4px 0;
-    border-radius: 0;
+    border-radius: 0px;
     border: 0;
     font-size: 8pt;
     font-weight: bold;
@@ -570,7 +568,7 @@ label {
         border-collapse: collapse;
         border: $white 1px solid;
         border-radius: 10px;
-        background-color: $background-cinza;
+        background-color: $white;
 
         thead {
             background-color: $primary-color;

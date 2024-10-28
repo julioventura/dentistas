@@ -61,7 +61,6 @@ export class EditComponent implements OnInit, AfterViewInit {
         else {
           this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.collection);
         }
-        this.subtitulo_da_pagina = this.FormService.nome_in_collection;
 
         console.log('userId:', this.userId);
         console.log('collection:', this.collection);
@@ -82,8 +81,15 @@ export class EditComponent implements OnInit, AfterViewInit {
           else {
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
           }
-
+          this.subtitulo_da_pagina = this.FormService.registro.nome;
         }
+
+        // Usando setTimeout para garantir que o campo "Nome" esteja disponível após o carregamento
+        setTimeout(() => {
+          if (this.nomeInput) {
+            this.nomeInput.nativeElement.focus();
+          }
+        }, 500); // Ajuste o tempo conforme necessário
       }
       else {
         console.error('Usuário não autenticado.');
@@ -103,7 +109,6 @@ export class EditComponent implements OnInit, AfterViewInit {
       console.warn('Campo "Nome" não encontrado ao inicializar. Verifique se o campo foi carregado.');
     }
   }
-
 
 
 
