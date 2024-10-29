@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from './firestore.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
 import { UtilService } from '../shared/util.service';
-import { of, pipe } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
@@ -24,7 +22,6 @@ export class FormService {
     public subcollection: string = '';
     
     constructor(
-        private firestore: AngularFirestore,
         private firestoreService: FirestoreService<any>,
         private fb: FormBuilder,
         private CamposService: CamposService,

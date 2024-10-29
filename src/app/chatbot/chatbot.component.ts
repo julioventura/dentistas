@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { FooterComponent } from '../footer/footer.component'; // Importando o FooterComponent
 
 @Component({
   selector: 'app-chatbot',

@@ -21,7 +21,9 @@ export class CamposFichaService {
 
   private configPath: string = '';
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(
+    private firestore: AngularFirestore
+  ) { }
 
   // Método para obter os campos de uma coleção específica do Firestore ou carregar os padrões
   getCamposRegistro(userId: string, colecao: string): Observable<any[]> {

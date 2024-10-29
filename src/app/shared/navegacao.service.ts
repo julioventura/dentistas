@@ -6,7 +6,9 @@ import { Location } from '@angular/common';
 })
 export class NavegacaoService {
 
-  constructor(private location: Location) { }
+  constructor(
+    private location: Location
+  ) { }
 
   // Método para voltar à página anterior no histórico do navegador
   goBack() {

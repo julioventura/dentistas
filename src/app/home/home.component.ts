@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';  // Usando AngularFireAuth
 import { Router } from '@angular/router';
-import { UserService } from '../shared/user.service';
 import { FirestoreService } from '../shared/firestore.service'; // Import FirestoreService
 
 @Component({
@@ -19,7 +18,6 @@ export class HomeComponent implements OnInit {
   constructor(
     private auth: AngularFireAuth,  // Usando AngularFireAuth
     private router: Router,
-    private userService: UserService,
     private firestoreService: FirestoreService<any> // Usando FirestoreService para buscar o username
   ) { }
 

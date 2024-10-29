@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavegacaoService } from '../shared/navegacao.service';
 import { FirestoreService } from '../shared/firestore.service';
 import { Registro } from './registro.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UtilService } from '../shared/util.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore'; // Importar o AngularFirestore
-import { CamposService } from '../shared/campos.service';
-import { CamposFichaService } from '../shared/campos-ficha.service';
 import { FormService } from '../shared/form.service';
 
 
@@ -47,14 +44,11 @@ export class ListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private navegacaoService: NavegacaoService,
     private firestoreService: FirestoreService<Registro>,
     private afAuth: AngularFireAuth,
     private fb: FormBuilder,
     public util: UtilService,
     private firestore: AngularFirestore,
-    private camposService: CamposService,
-    private camposFichaService: CamposFichaService,
     public FormService: FormService,
 
   ) { }
@@ -69,8 +63,6 @@ export class ListComponent implements OnInit {
     this.titulo_da_pagina = this.subcollection ? this.util.titulo_ajuste_plural(this.subcollection) : this.util.titulo_ajuste_plural(this.collection);
     this.subtitulo_da_pagina = this.subcollection ? this.FormService.nome_in_collection : '';
 
-
-
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
@@ -79,7 +71,7 @@ export class ListComponent implements OnInit {
 
         // Verifica se tem a configuração de campos personalizada, ao carregar a página
         this.verificarOuCriarConfiguracao();
-        this.createForm();
+        // this.createForm();
 
 
         // Carrega a lista de registros
@@ -292,6 +284,65 @@ export class ListComponent implements OnInit {
     }
   }
 
+
+  verificarOuCriarMenus() {
+    console.log("verificarOuCriarMenus()");
+
+    if (this.userId) {
+      const configPath = `users/${this.userId}/configuracoesMenus`;
+      const colecoes = [
+        'pacientes',
+        'clientes',
+        'alunos',
+        'professores',
+        'dentistas',
+        'equipe',
+        'proteticos'
+      ];
+
+      colecoes.forEach((colecao) => {
+        this.firestore.collection(configPath).doc(colecao).get()
+          .subscribe((doc) => {
+            if (doc.exists) {
+              console.log(`Configuração de menu já existe para a coleção "${colecao}".`);
+            } else {
+              const menuPadrao = this.getMenusPadraoPorCollection(colecao);
+
+              this.firestore.collection(configPath).doc(colecao).set({ menus: menuPadrao })
+                .then(() => {
+                  console.log(`Configuração de menu criada para a coleção "${colecao}".`);
+                  alert(`Configuração de menu padrão criada para a coleção "${colecao}". Você pode personalizar os menus em "Configurações".`);
+                })
+                .catch((error) => {
+                  console.error('Erro ao criar configuração de menu padrão:', error);
+                });
+            }
+          }, (error) => {
+            console.error('Erro ao verificar configuração de menu:', error);
+          });
+      });
+    } else {
+      console.warn("User ID não definido. Não é possível verificar ou criar configurações de menu.");
+    }
+  }
+
+
+  getMenusPadraoPorCollection(colecao: string): any {
+    const menusPadrao: { [key: string]: any[] } = {
+      pacientes: ['exames', 'planos', 'atendimentos', 'pagamentos', 'historico'],
+      clientes: ['planos', 'atendimentos', 'pagamentos', 'historico'],
+      alunos: ['planos', 'atendimentos', 'historico'],
+      professores: ['planos', 'atendimentos', 'historico'],
+      dentistas: ['planos', 'atendimentos', 'pagamentos', 'historico'],
+      equipe: ['planos', 'atendimentos', 'pagamentos', 'historico'],
+      proteticos: ['planos', 'atendimentos', 'pagamentos', 'historico']
+    };
+
+    return menusPadrao[colecao] || [];
+  }
+
+
+
   getCamposPadraoPorCollection() {
     console.log("getCamposPadraoPorCollection()");
 
@@ -314,41 +365,7 @@ export class ListComponent implements OnInit {
     ];
   }
 
-  createForm() {
-    console.log("createForm()");
-
-    let formGroup: any = {};
-    this.campos.forEach(campo => {
-      formGroup[campo.nome] = [''];
-    });
-    this.registroForm = this.fb.group(formGroup);
-  }
-
-
-  onSubmit() {
-    console.log("onSubmit()");
-
-    if (this.registroForm.valid) {
-      const registroData = this.registroForm.value;
-
-      if (this.userId && this.collection) {
-        const registroId = this.firestoreService.createId();
-        this.firestoreService.addRegistro(`users/${this.userId}/${this.collection}`, { id: registroId, ...registroData })
-          .then(() => {
-            alert('Registro salvo com sucesso!');
-            this.loadRegistros();
-          })
-          .catch(error => {
-            console.error('Erro ao salvar o registro:', error);
-            alert('Erro ao salvar o registro.');
-          });
-      }
-    } else {
-      alert('Formulário inválido. Por favor, verifique os campos.');
-    }
-  }
-
-
+  
   showbusca() {
     this.show_busca = !this.show_busca;
   }
