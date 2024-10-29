@@ -25,14 +25,14 @@
   <div *ngIf="!isLoading && registros.length === 0" class="aviso">
     <p>Nenhuma ficha encontrada.</p>
   </div>
+  
+    <!-- Barra de pesquisa -->
+    <div *ngIf="registros.length > 0 && show_busca" class="search-bar">
+      <input type="text" placeholder="Buscar registro..." [(ngModel)]="searchQuery" (input)="filtrarRegistros()" />
+    </div>
 
-  <div *ngIf="this.subtitulo_da_pagina" class="record-header">
+  <div *ngIf="!isLoading && registrosPaginados.length > 0 && this.subtitulo_da_pagina" class="record-header">
     {{ subtitulo_da_pagina }}
-  </div>
-
-  <!-- Barra de pesquisa -->
-  <div *ngIf="registros.length > 0 && show_busca" class="search-bar">
-    <input type="text" placeholder="Buscar registro..." [(ngModel)]="searchQuery" (input)="filtrarRegistros()" />
   </div>
 
 
@@ -50,8 +50,8 @@
           </tr>
           
           <tr *ngIf="this.subcollection">
-            <th>Data</th>
-            <th class="right">Nome</th>
+            <th>Registro</th>
+            <th class="right">Código</th>
           </tr>
 
         </thead>
@@ -62,8 +62,8 @@
             <td *ngIf="!this.subcollection">{{ registro.nome }}</td>
             <td *ngIf="!this.subcollection" class="right">{{ registro.codigo }}</td>
 
-            <td *ngIf="this.subcollection">{{ registro.data }}</td>
-            <td *ngIf="this.subcollection" class="right">{{ registro.nome }}</td>
+            <td *ngIf="this.subcollection">{{ registro.data }} - {{ registro.nome }}</td>
+            <td *ngIf="this.subcollection" class="right">{{ registro.codigo }}</td>
 
           </tr>
 

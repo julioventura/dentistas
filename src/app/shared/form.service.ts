@@ -6,6 +6,8 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
 import { UtilService } from '../shared/util.service';
+import { of, pipe } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -32,26 +34,31 @@ export class FormService {
 
     ) { }
 
-    carregarCamposFichas(userId: string, collection: string) {
-        this.CamposFichaService.getCamposRegistro(userId, collection).subscribe((campos: any[]) => {
-            this.campos = campos || [];
-            console.log('Campos carregados:', this.campos);
 
-            // Chama o método para criar o FormGroup APÓS carregar os campos
-            this.createForm();
-        });
+    
+    carregarCamposFichas(userId: string, collection: string) {
+        return this.CamposFichaService.getCamposRegistro(userId, collection).pipe(
+            tap((campos: any[]) => {
+                this.campos = campos || [];
+                console.log('Campos carregados:', this.campos);
+                this.createForm();
+            })
+        );
     }
+
 
 
     carregarCamposRegistro(userId: string, collection: string) {
-        this.CamposService.getCamposRegistro(userId, collection).subscribe((campos: any[]) => {
-            this.campos = campos || [];
-            console.log('Campos carregados:', this.campos);
-
-            // Chama o método para criar o FormGroup APÓS carregar os campos
-            this.createForm();
-        });
+        return this.CamposService.getCamposRegistro(userId, collection).pipe(
+            tap((campos: any[]) => {
+                this.campos = campos || [];
+                console.log('Campos carregados:', this.campos);
+                this.createForm();
+            })
+        );
     }
+
+
 
     createForm() {
         console.log('createForm()');
@@ -82,48 +89,38 @@ export class FormService {
         console.log('view (visualizar registro): ', view);
 
         this.collection = collection;
+        this.isLoading = true; // Define o formulário como carregando
 
-        if (id) {
-
+        if (userId && collection && id) {
             const fichaPath = `users/${userId}/${collection}`;
             console.log('Caminho para carregar ficha:', fichaPath);
 
-            // Define o formulário como carregando
-            this.isLoading = true;
-
-            // Carrega os campos do formulário antes de tentar carregar a ficha
-            this.carregarCamposRegistro(userId, collection);
-
-            // Carrega os dados da ficha do Firestore
-            this.firestoreService.getRegistroById(fichaPath, id).subscribe(ficha => {
+            // Primeiro, carregue os campos e crie o formulário
+            this.carregarCamposRegistro(userId, collection).pipe(
+                // Após os campos serem carregados e o formulário criado, carregue os dados da ficha
+                switchMap(() => {
+                    return this.firestoreService.getRegistroById(fichaPath, id);
+                })
+            ).subscribe(ficha => {
                 if (ficha) {
                     console.log('Ficha carregada:', ficha);
-                    this.registro = ficha;  // Para o view-ficha, se necessário
-                    
-                    // Nome parte da coleção (nome do paciente, aluno, etc)
+                    this.registro = ficha;
                     this.nome_in_collection = this.registro.nome;
 
-                    // Verifica se os campos foram carregados corretamente antes de preencher o formulário
-                    if (this.fichaForm && this.campos.length > 0) {
-                        // Preenche o FormGroup com os dados da ficha
-                        this.fichaForm.patchValue(ficha); // Preenche o formulário de edição
-                    } else {
-                        console.error('Formulário ou campos não carregados corretamente.');
-                    }
+                    // Agora que o formulário está garantidamente criado, podemos preenchê-lo
+                    this.fichaForm.patchValue(ficha);
 
-                    // Condicional para desabilitar o formulário se estiver na view (visualização)
+                    // Desabilita ou habilita o formulário com segurança
                     if (view) {
-                        this.fichaForm.disable();  // Desabilita o formulário
+                        this.fichaForm.disable();
                         console.log("Formulário desabilitado.");
                     } else {
-                        this.fichaForm.enable();  // Habilita o formulário
+                        this.fichaForm.enable();
                         console.log("Formulário habilitado.");
                     }
-                    console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
-     
+
                     this.isLoading = false;
                     console.log('isLoading == false');
-
                 } else {
                     console.error('Ficha não encontrada no caminho:', fichaPath);
                     this.isLoading = false;

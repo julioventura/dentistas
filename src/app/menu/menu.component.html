@@ -1,6 +1,7 @@
 <div class="menu">
-  <button *ngFor="let sub of subcolecoes" (click)="navegarPara(sub.rota)" class="menu-button">
-    {{ sub.nome }}
+  <button *ngFor="let subcolecao of subcolecoes" class="menu-button" (click)="navegarPara(subcolecao)">
+    {{ subcolecao.nome }}
   </button>
 </div>
+
 

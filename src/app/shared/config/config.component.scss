@@ -1,45 +1,82 @@
 @import '../../../styles.scss';
 
-// Estilo Geral
+
 .container {
-    padding: 20px;
-  }
-  
-  // Header com título e botões de ação
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 10px;
-  
-    .title {
-      font-size: 24px;
-      font-weight: bold;
-      color: $primary-color;
-      text-align: center;
-      flex-grow: 1;
-    }
-  }
+  padding: 20px;
+}
+
+ /* Seção de Ícones (Novo Estilo) */
+ .icon-grid {
+   display: grid;
+   grid-template-columns: repeat(8, 1fr);
+   justify-items: center;
+   text-align: center;
+   justify-content: space-between;
+
+   .icon-item {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     cursor: pointer;
+     width: 110px;
+
+     img {
+       width: 65px;
+       height: 65px;
+     }
+
+     p {
+       font-weight: 500;
+       color: $primary-color;
+       font-size: 8px;
+     }
+   }
+ }
+
+ /* Seção de Serviços */
+ .services-section {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   flex-wrap: wrap;
+   // gap: 10px;
+   /* Adiciona espaçamento entre os serviços */
+ }
 
 
-.config-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid $primary-color-light;
-  }
-  
-  .config-item {
-    color: $text-color-dark;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: left;
-    // margin-bottom: 10px;
-  }
-  
-  strong {
-    color: $primary-color;
-  }
-  
- 
+
+ /* Nova regra de media query para colapsar a coluna apenas abaixo de 550px */
+ @media screen and (min-width: 550px) {
+   .container {
+     flex-direction: row;
+     // flex-direction: column;
+     // width: 100%;
+   }
+ }
+
+ /* Estilos para o container do cabeçalho */
+ #header {
+   position: relative;
+   padding-top: 4px;
+   padding-bottom: 2px;
+   max-height: 50px;
+   width: 100%;
+   margin-top: 0px;
+   /* border: 1px solid #eee; */
+   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4);
+   border-radius: 6px;
+   /* padding-left: 20px; */
+   /* padding-right: 20px; */
+   text-align: center;
+ }
+
+ /* Estilos para as imagens do cabeçalho */
+ .header-image {
+   max-width: 40%;
+   max-height: 47px;
+   margin-right: 10px;
+ }
+
+ .IAOdonto {
+   margin-bottom: 10px;
+ }

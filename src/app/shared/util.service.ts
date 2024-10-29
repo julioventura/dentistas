@@ -277,11 +277,11 @@ export class UtilService {
        
       case 'erupcoes':
         return 'Erupções Dentárias';
-      case 'riscodecarie':
+      case 'risco':
         return 'Risco de Cárie';
       case 'retornos':
         return 'Retornos';
-      case 'historicozap':
+      case 'historico':
         return 'Histórico de Avisos';
 
       default:
@@ -323,11 +323,11 @@ export class UtilService {
 
       case 'erupcoes':
         return 'Erupções Dentárias';
-      case 'riscodecarie':
+      case 'risco':
         return 'Risco de Cárie';
       case 'retornos':
         return 'Retornos';
-      case 'historicozap':
+      case 'historico':
         return 'Histórico de Avisos';
 
       default:

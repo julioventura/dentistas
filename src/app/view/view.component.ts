@@ -21,10 +21,10 @@ export class ViewComponent implements OnInit {
   fichaId: string = '';
   titulo_da_pagina: string = '';
   subtitulo_da_pagina: string = '';
-  mostrar_menu: boolean = false;
   isLoading = true;
   registroPath: string = '';
   routePath: string = '';
+  show_menu: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -46,7 +46,14 @@ export class ViewComponent implements OnInit {
         this.collection = this.route.snapshot.paramMap.get('collection')!;
         this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
-        this.mostrar_menu = (this.collection == 'pacientes' && !this.subcollection) ? true : false;
+
+        if (!this.collection || !this.id) {
+          console.warn('Collection ou ID não foram passados corretamente.');
+          return;
+        }
+
+        console.log("view.component.ts -> collection:", this.collection);
+        console.log("view.component.ts -> id:", this.id);
 
         if (this.subcollection) {
           this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection);
@@ -77,12 +84,20 @@ export class ViewComponent implements OnInit {
             if (this.FormService.registro) {
               console.log("this.FormService.registro", this.FormService.registro);
             } else {
-              console.error('Registro ou nome não disponível.');
+              console.warn('Registro ou nome não disponível.');
             }
           }
+
           this.subtitulo_da_pagina = this.FormService.nome_in_collection;
           console.log('subtitulo_da_pagina:', this.subtitulo_da_pagina);
-          
+
+          if (this.collection && id && !this.subcollection) {
+            this.show_menu = true;
+          }
+          else {
+            this.show_menu = false;
+          }
+
         }
       }
       else {

@@ -25,9 +25,9 @@ import { SignupDialogComponent } from './signup-dialog/signup-dialog.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
-
 import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
+import { MenuConfigComponent } from './menu-config/menu-config.component';
 
 // Serviços
 
@@ -61,6 +61,7 @@ import { MatIconModule } from '@angular/material/icon';
     PerfilComponent,
     HomepageIntroComponent,
     FichasComponent,
+    MenuConfigComponent
   ],
   imports: [
     BrowserModule,
@@ -76,6 +77,7 @@ import { MatIconModule } from '@angular/material/icon';
       { path: 'reset-password', component: ResetPasswordComponent },
       { path: 'config', component: ConfigComponent },
       { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, // Rota para a página de perfil
+      { path: 'configurar-menu', component: MenuConfigComponent },
 
       // Rota para o componente camposRegistro
       { path: 'camposRegistro', component: CamposRegistroComponent },

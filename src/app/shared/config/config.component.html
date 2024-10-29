@@ -5,11 +5,47 @@
         </div>
         <h1 class="title">Configurações</h1>
         <div class="actions">
-            <img src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()">
+            <!-- <img src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()"> -->
+            <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
         </div>
     </div>
 
+    <!-- PARA TODOS USUARIOS -->
     <div class="container">
+
+<div id="Services" class="container margin0">
+
+    <section class="services-section icon-grid largo">
+
+        <div class="icon-item" (click)="go('camposRegistro')">
+            <img src="https://dentistas.com.br/assets/ficha_campos.png" alt="Configurar">
+            <p>CAMPOS DAS FICHAS</p>
+        </div>
+
+                <div class="icon-item" (click)="go('configurar-menu')">
+                    <img src="https://dentistas.com.br/assets/menu.png" alt="Configurar">
+                    <p>MENU DAS FICHAS</p>
+                </div>
+
+        
+        <div class="icon-item" (click)="go('perfil')">
+            <img src="https://dentistas.com.br/assets/perfil.png" alt="Seu Perfil">
+            <p>SEU PERFIL</p>
+        </div>
+
+        <div class="icon-item" (click)="go('homepage')">
+            <img src="https://dentistas.com.br/assets/global.png" alt="Sua Homepage">
+            <p>SUA HOMEPAGE</p>
+        </div>
+
+    </section>
+
+</div>
+
+    </div>
+
+    <!-- PARA ADMIN -->
+    <div *ngIf="is_admin" class="container">
         <h1>Configurações da Aplicação</h1>
 
         <div class="config-item">
@@ -25,5 +61,6 @@
             <pre>{{ firebaseConfig | json }}</pre>
         </div>
     </div>
+
 
 </div>
