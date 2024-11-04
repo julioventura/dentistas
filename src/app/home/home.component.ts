@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';  // Usando AngularFireAuth
 import { Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service'; // Import FirestoreService
+import { ConfigService } from '../shared/config.service';
 
 @Component({
   selector: 'app-home',
@@ -12,13 +13,30 @@ export class HomeComponent implements OnInit {
   nome: string = '';  // Variável para armazenar o nome do usuário logado
   username: string | null = null;  // Variável para armazenar o username do usuário logado
   new_window: boolean = false;
-  is_admin: boolean = false;
 
-  
+  // Lista de ícones visíveis
+  visibleIcons: { [key: string]: boolean } = {
+    pacientes: true,
+    alunos: true,
+    professores: true,
+    dentistas: true,
+    equipe: true,
+    proteticos: true,
+    indicador: false,
+    dentais: false,
+    empresas: false,
+    perfil: true,
+    homepage: true,
+  };
+
+  // Controle de visibilidade do menu de configuração
+  showConfig = false;
+
   constructor(
     private auth: AngularFireAuth,  // Usando AngularFireAuth
     private router: Router,
-    private firestoreService: FirestoreService<any> // Usando FirestoreService para buscar o username
+    public config: ConfigService,
+    private firestoreService: FirestoreService<any>, // Usando FirestoreService para buscar o username
   ) { }
 
   ngOnInit() {
@@ -29,8 +47,11 @@ export class HomeComponent implements OnInit {
         this.loadUserData(user.email);  // Carregar os dados do usuário pelo email
 
         if (user.email == 'julio@dentistas.com.br') {
-          this.is_admin = true;
+          this.config.is_admin = true;
         }
+
+        this.loadIconConfig();
+
       } else {
         console.log('Nenhum usuário logado.');
         // Redireciona para a página de login se o usuário não estiver logado
@@ -44,6 +65,21 @@ export class HomeComponent implements OnInit {
     return text.replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
+  toggleConfig() {
+    this.showConfig = !this.showConfig;
+  }
+
+  loadIconConfig() {
+    const savedConfig = localStorage.getItem('iconVisibility');
+    if (savedConfig) {
+      this.visibleIcons = JSON.parse(savedConfig);
+    }
+  }
+
+  saveIconConfig() {
+    localStorage.setItem('iconVisibility', JSON.stringify(this.visibleIcons));
+  }
+  
   // Função para carregar os dados do usuário, incluindo o username
   loadUserData(email: string): void {
     this.firestoreService.getRegistroById('usuarios/dentistascombr/users', email).subscribe(userData => {
@@ -70,5 +106,5 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/' + component]);
     }
   }
-  
+
 }

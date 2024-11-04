@@ -5,10 +5,13 @@ section {
   text-align: center;
 }
 
+
 .container {
-  max-width: 800px;
-  /* Limita a largura máxima a 800px */
-  margin: 0 auto;
+  max-width: min(800px, calc(100% - 60px));
+}
+
+.container {
+  margin: 10px auto;
   /* Centraliza o container horizontalmente */
   display: flex;
   justify-content: space-between;
@@ -144,7 +147,9 @@ section {
   .container {
     flex-direction: row;
     // flex-direction: column;
-    // width: 100%;
+    width: 100%;
+    // margin-left: 40px;
+    // margin-right: 40px;
   }
 }
 
@@ -173,4 +178,43 @@ section {
 
 .IAOdonto {
   margin-bottom: 10px;
+}
+
+
+// ================================
+// Configuracao dos icones do home
+// ================================
+
+.config-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.config-panel {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background-color: white;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.config-panel h3 {
+  margin-top: 0;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.config-panel label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.config-panel input[type="checkbox"] {
+  margin-right: 5px;
 }

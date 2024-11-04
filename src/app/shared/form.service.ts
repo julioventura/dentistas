@@ -6,6 +6,8 @@ import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
 import { UtilService } from '../shared/util.service';
 import { switchMap, tap } from 'rxjs/operators';
+import { formatDate } from '@angular/common';  // Adicione essa importação
+import { DatePipe } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -14,13 +16,13 @@ import { switchMap, tap } from 'rxjs/operators';
 export class FormService {
 
     fichaForm!: FormGroup;
-    campos: any[] = [];
-    isLoading = true;
-    public registro: any = null;
+    campos: any[] = []; // Definição dos campos do formulário
+    isLoading: boolean = true;
+    public registro: any = null; // Dados do registro
     public nome_in_collection: string = '';
     public collection: string = '';
     public subcollection: string = '';
-    
+
     constructor(
         private firestoreService: FirestoreService<any>,
         private fb: FormBuilder,
@@ -28,11 +30,11 @@ export class FormService {
         private CamposFichaService: CamposFichaService,
         private router: Router,
         public util: UtilService,
-
+        private datePipe: DatePipe
     ) { }
 
 
-    
+
     carregarCamposFichas(userId: string, collection: string) {
         return this.CamposFichaService.getCamposRegistro(userId, collection).pipe(
             tap((campos: any[]) => {
@@ -80,34 +82,32 @@ export class FormService {
     loadRegistro(userId: string, collection: string, id: string, view: boolean) {
         console.log('loadRegistro()');
 
-        console.log('userId: ', userId);
-        console.log('collection: ', collection);
-        console.log('id: ', id);
-        console.log('view (visualizar registro): ', view);
-
         this.collection = collection;
-        this.isLoading = true; // Define o formulário como carregando
+        this.isLoading = true;
 
         if (userId && collection && id) {
             const fichaPath = `users/${userId}/${collection}`;
             console.log('Caminho para carregar ficha:', fichaPath);
 
-            // Primeiro, carregue os campos e crie o formulário
             this.carregarCamposRegistro(userId, collection).pipe(
-                // Após os campos serem carregados e o formulário criado, carregue os dados da ficha
-                switchMap(() => {
-                    return this.firestoreService.getRegistroById(fichaPath, id);
-                })
+                switchMap(() => this.firestoreService.getRegistroById(fichaPath, id))
             ).subscribe(ficha => {
                 if (ficha) {
                     console.log('Ficha carregada:', ficha);
                     this.registro = ficha;
                     this.nome_in_collection = this.registro.nome;
 
-                    // Agora que o formulário está garantidamente criado, podemos preenchê-lo
-                    this.fichaForm.patchValue(ficha);
+                    // Verifica se o campo é uma data e formata para "yyyy-MM-dd"
+                    const formattedData = { ...ficha };
+                    for (const key in formattedData) {
+                        if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
+                            formattedData[key] = this.formatToDateInput(formattedData[key]);
+                        }
+                    }
 
-                    // Desabilita ou habilita o formulário com segurança
+                    // Preenche o FormGroup com os dados formatados
+                    this.fichaForm.patchValue(formattedData);
+
                     if (view) {
                         this.fichaForm.disable();
                         console.log("Formulário desabilitado.");
@@ -132,36 +132,54 @@ export class FormService {
         }
     }
 
+    
+    // Função auxiliar para verificar se um campo é de data (ajuste conforme necessário)
+    private isDateField(fieldName: string): boolean {
+        return fieldName === 'nascimento';  // Adicione outros campos de data aqui se necessário
+    }
+
+
+    // Função auxiliar para converter para o formato "yyyy-MM-dd"
+    private formatToDateInput(dateString: string): string {
+        const [day, month, year] = dateString.split('-');
+        return `${year}-${month}-${day}`;  // Converte para o formato esperado
+    }
+
 
     loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view: boolean) {
         console.log('loadFicha()');
-
+    
         console.log('userId: ', userId);
         console.log('collection:', collection);
         console.log('id:', id);
         console.log('subcollection: ' + subcollection);
         console.log('fichaId: ' + fichaId);
         console.log('view (visualizar registro): ', view);
-
+    
         if (subcollection && fichaId) {
-
+    
             this.subcollection = subcollection;
-
+    
             const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
             console.log('Caminho para carregar ficha:', fichaPath);
-
+    
             // Define o formulário como carregando
             this.isLoading = true;
-
+    
             // Carrega os campos do formulário antes de tentar carregar a ficha
             this.carregarCamposFichas(userId, subcollection);
-
+    
             // Carrega os dados da ficha do Firestore
             this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
                 if (ficha) {
                     console.log('Ficha carregada:', ficha);
                     this.registro = ficha;  // Para o view-ficha, se necessário
-
+    
+                    // Formata a data de nascimento para 'dd-MM-yyyy'
+                    if (ficha.nascimento) {
+                        ficha.nascimento = this.datePipe.transform(ficha.nascimento, 'dd-MM-yyyy');
+                    }
+    
                     // Verifica se os campos foram carregados corretamente antes de preencher o formulário
                     if (this.fichaForm && this.campos.length > 0) {
                         // Preenche o FormGroup com os dados da ficha
@@ -169,7 +187,7 @@ export class FormService {
                     } else {
                         console.error('Formulário ou campos não carregados corretamente.');
                     }
-
+    
                     // Condicional para desabilitar o formulário se estiver na view (visualização)
                     if (view) {
                         this.fichaForm.disable();  // Desabilita o formulário
@@ -179,14 +197,11 @@ export class FormService {
                         console.log("Formulário habilitado.");
                     }
                     console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
-                    // Object.keys(this.fichaForm.controls).forEach(campoNome => {
-                    //     console.log(`Campo ${campoNome} está desabilitado:`, this.fichaForm.get(campoNome)?.disabled);
-                    // });
-
+    
                     // Marca como carregado (isLoading = false)
                     this.isLoading = false;
                     console.log('isLoading == false');
-
+    
                 } else {
                     console.error('Ficha não encontrada no caminho:', fichaPath);
                     this.isLoading = false;
@@ -200,7 +215,6 @@ export class FormService {
             this.isLoading = false;
         }
     }
-
 
 
     onFieldChange(event: any, campoNome: string): void {
@@ -252,7 +266,7 @@ export class FormService {
                 }).catch(error => {
                     console.error('Erro ao atualizar a ficha:', error);
                 });
-            } 
+            }
 
         }
     }
@@ -277,7 +291,7 @@ export class FormService {
                 }).catch(error => {
                     console.error('Erro ao atualizar a ficha:', error);
                 });
-            } 
+            }
         } else {
             console.error('Formulário inválido. Verifique os campos obrigatórios.');
             console.log('Estado atual do formulário:', this.fichaForm.status);

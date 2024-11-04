@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Importa a autenticação do Firebase
 import firebase from 'firebase/compat/app'; // Importa o firebase para usar firebase.User
+import { ConfigService } from '../shared/config.service';
 
 @Component({
   selector: 'app-footer',
@@ -10,12 +11,13 @@ import firebase from 'firebase/compat/app'; // Importa o firebase para usar fire
 })
 export class FooterComponent implements OnInit {
   user: firebase.User | null = null; // Armazena o usuário logado
-  is_admin: boolean = false;
   show_footer: boolean = false;
+  ambiente: string = '';
 
   constructor(
     private router: Router,
     private auth: AngularFireAuth, // Injeta o serviço de autenticação
+    public config: ConfigService
   ) { }
 
   ngOnInit() {
@@ -26,8 +28,13 @@ export class FooterComponent implements OnInit {
       this.user = user;
       console.log(user);
       if(user?.email=='julio@dentistas.com.br'){
-        this.is_admin = true;
+        this.config.is_admin = true;
       }
+      else {
+        this.config.is_admin = false;
+      }
+
+      this.ambiente = this.config.getAmbiente();
       this.show_footer = true;
     });
   }

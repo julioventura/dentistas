@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../config.service';  // Importando o ConfigService
-import { NavegacaoService } from '../navegacao.service';
 import { Router } from '@angular/router';
-import { UtilService } from '../util.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+
+import { NavegacaoService } from '../navegacao.service';
+import { ConfigService } from '../config.service';  
+import { UtilService } from '../util.service';
 
 @Component({
   selector: 'app-config',
@@ -12,14 +13,20 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 
 export class ConfigComponent implements OnInit {
-  apiUrl: string = '';
-  environment: string = '';
-  firebaseConfig: any;
-  is_admin: boolean = false;
+  ambiente: string = '';
   new_window: boolean = false;
   colecaoSelecionada: string = '';
+
+  colecoesDisponiveis = [
+    'Campos das coleções',
+    'Campos das fichas sub-coleções',
+    'Menu das fichas',
+    'Seu perfil',
+    'Sua homepage',
+  ];
+
   subcolecoesDisponiveis = [
-    { nome: 'exames', selecionado: false },
+    { nome: 'exames', selecionado: true },
     { nome: 'planos', selecionado: false },
     { nome: 'atendimentos', selecionado: false },
     { nome: 'pagamentos', selecionado: false },
@@ -30,7 +37,7 @@ export class ConfigComponent implements OnInit {
   ];
 
   constructor(
-    private configService: ConfigService,
+    public config: ConfigService,
     private router: Router,
     private navegacaoService: NavegacaoService,
     public util: UtilService,
@@ -40,10 +47,17 @@ export class ConfigComponent implements OnInit {
   ngOnInit(): void {
     console.log("ngOnInit()");
     // Pegando as configurações do ConfigService
-    this.apiUrl = this.configService.getApiUrl();
-    this.environment = this.configService.getEnvironment();
-    this.firebaseConfig = this.configService.getFirebaseConfig();
+
+    this.ambiente = this.config.getAmbiente();
   }
+
+
+  selecionarColecao(colecao: string) {
+    // Toggle entre a coleção e uma string vazia para "desselecionar"
+    this.colecaoSelecionada = this.colecaoSelecionada === colecao ? '' : colecao;
+    this.carregarConfiguracoes();
+  }
+
 
   // Método para navegação dinâmica
   go(component: string, new_window: boolean = false) {

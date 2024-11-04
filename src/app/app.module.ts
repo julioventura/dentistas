@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 // Firebase e Firestore
 import { AngularFireModule } from '@angular/fire/compat';
@@ -28,6 +29,7 @@ import { EditComponent } from './edit/edit.component';
 import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
 import { MenuConfigComponent } from './menu-config/menu-config.component';
+import { HomeConfigComponent } from './home-config/home-config.component';
 
 // Serviços
 
@@ -42,6 +44,42 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+
+
+
+const routes: Routes = [
+  { path: '', component: HomeComponent }, // Página inicial padrão
+  { path: 'home', component: HomeComponent, data: { animation: '1' } },
+  { path: 'login', component: LoginComponent },
+  { path: 'chatbot', component: ChatbotComponent },
+  { path: 'menu', component: MenuComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'config', component: ConfigComponent },
+  { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, // Rota para a página de perfil
+  { path: 'menu-config', component: MenuConfigComponent },
+  { path: 'home-config', component: HomeConfigComponent },
+
+  // Rota para o componente camposRegistro
+  { path: 'camposRegistro', component: CamposRegistroComponent },
+  { path: 'list/:collection', component: ListComponent, data: { animation: '3' } }, // lista de uma coleção
+  { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '4' } },
+  { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '5' } },
+
+  // Rota para o componente fichas
+  { path: 'fichas', component: FichasComponent },
+  { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '6' } },
+  { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '7' } },
+  { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '8' } },
+  { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent },
+  
+  // HOMEPAGES
+  { path: ':username/intro', component: HomepageIntroComponent },
+  { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
+
+  // Redireciona para a página inicial em caso de rota inválida
+  { path: '**', component: HomeComponent, data: { animation: '9' } }
+];
+
 
 @NgModule({
   declarations: [
@@ -61,46 +99,15 @@ import { MatIconModule } from '@angular/material/icon';
     PerfilComponent,
     HomepageIntroComponent,
     FichasComponent,
-    MenuConfigComponent
+    MenuConfigComponent,
+    HomeConfigComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent }, // Página inicial padrão
-      { path: 'home', component: HomeComponent, data: { animation: '1' } },
-      { path: 'login', component: LoginComponent },
-      { path: 'chatbot', component: ChatbotComponent },
-      { path: 'menu', component: MenuComponent },
-      { path: 'reset-password', component: ResetPasswordComponent },
-      { path: 'config', component: ConfigComponent },
-      { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, // Rota para a página de perfil
-      { path: 'configurar-menu', component: MenuConfigComponent },
-
-      // Rota para o componente camposRegistro
-      { path: 'camposRegistro', component: CamposRegistroComponent },
-      { path: 'list/:collection', component: ListComponent, data: { animation: '3' } }, // lista de uma coleção
-      { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '4' } },
-      { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '5' } },
-
-      // Rota para o componente fichas
-      { path: 'fichas', component: FichasComponent },
-      { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '6' } },
-      { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '7' } },
-      { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '8' } },
-      { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent },
-      
-      // HOMEPAGES
-      { path: ':username/intro', component: HomepageIntroComponent },
-      { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
-
-      // Redireciona para a página inicial em caso de rota inválida
-      { path: '**', component: HomeComponent, data: { animation: '9' } }
-    ]),
-
-
+    RouterModule.forRoot(routes), // Configurar roteamento diretamente
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -111,8 +118,42 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule
   ],
   providers: [
-    AuthGuard
+    AuthGuard, DatePipe
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+
+// RouterModule.forRoot([
+//   { path: '', component: HomeComponent }, // Página inicial padrão
+//   { path: 'home', component: HomeComponent, data: { animation: '1' } },
+//   { path: 'login', component: LoginComponent },
+//   { path: 'chatbot', component: ChatbotComponent },
+//   { path: 'menu', component: MenuComponent },
+//   { path: 'reset-password', component: ResetPasswordComponent },
+//   { path: 'config', component: ConfigComponent },
+//   { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, // Rota para a página de perfil
+//   { path: 'menu-config', component: MenuConfigComponent },
+//   { path: 'home-config', component: HomeConfigComponent },
+
+//   // Rota para o componente camposRegistro
+//   { path: 'camposRegistro', component: CamposRegistroComponent },
+//   { path: 'list/:collection', component: ListComponent, data: { animation: '3' } }, // lista de uma coleção
+//   { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '4' } },
+//   { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '5' } },
+
+//   // Rota para o componente fichas
+//   { path: 'fichas', component: FichasComponent },
+//   { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '6' } },
+//   { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '7' } },
+//   { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '8' } },
+//   { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent },
+  
+//   // HOMEPAGES
+//   { path: ':username/intro', component: HomepageIntroComponent },
+//   { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
+
+//   // Redireciona para a página inicial em caso de rota inválida
+//   { path: '**', component: HomeComponent, data: { animation: '9' } }
+// ]),

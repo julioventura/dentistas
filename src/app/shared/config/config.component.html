@@ -13,54 +13,41 @@
     <!-- PARA TODOS USUARIOS -->
     <div class="container">
 
-<div id="Services" class="container margin0">
+        <div id="Services" class="container margin0">
+            <section class="services-section icon-grid largo">
 
-    <section class="services-section icon-grid largo">
-
-        <div class="icon-item" (click)="go('camposRegistro')">
-            <img src="https://dentistas.com.br/assets/ficha_campos.png" alt="Configurar">
-            <p>CAMPOS DAS FICHAS</p>
-        </div>
-
-                <div class="icon-item" (click)="go('configurar-menu')">
+                <div class="icon-item" (click)="go('home-config')">
                     <img src="https://dentistas.com.br/assets/menu.png" alt="Configurar">
-                    <p>MENU DAS FICHAS</p>
+                    <p>MENU DA PÁGINA INICIAL <br><span class="normal">(Pacientes, Alunos, Equipe, etc)</span></p>
+                </div>
+        
+                <div class="icon-item" (click)="go('camposRegistro')">
+                    <img src="https://dentistas.com.br/assets/ficha_campos.png" alt="Configurar">
+                    <p>CAMPOS DOS CADASTROS </p>
                 </div>
 
+            </section>
+        </div>
         
-        <div class="icon-item" (click)="go('perfil')">
-            <img src="https://dentistas.com.br/assets/perfil.png" alt="Seu Perfil">
-            <p>SEU PERFIL</p>
+        <div class="espacador_vertical"></div>
+        <div id="Services" class="container margin0">
+            <section class="services-section icon-grid largo">
+     
+                <div class="icon-item" (click)="go('menu-config')">
+                    <img src="https://dentistas.com.br/assets/menu.png" alt="Configurar">
+                    <p>MENU INTERNO DAS FICHAS<br><span class="normal">(Ex: Atendimentos, Pagamentos, Exames, etc)</span></p>
+                </div>
+
+                <div class="icon-item" (click)="go('fichas')">
+                    <img src="https://dentistas.com.br/assets/ficha_campos.png" alt="Configurar">
+                    <p>CAMPOS DAS FICHAS</p>
+                </div>
+        
+            </section>
         </div>
+        
 
-        <div class="icon-item" (click)="go('homepage')">
-            <img src="https://dentistas.com.br/assets/global.png" alt="Sua Homepage">
-            <p>SUA HOMEPAGE</p>
-        </div>
-
-    </section>
-
-</div>
 
     </div>
-
-    <!-- PARA ADMIN -->
-    <div *ngIf="is_admin" class="container">
-        <h1>Configurações da Aplicação</h1>
-
-        <div class="config-item">
-            <strong>URL da API:</strong> {{ apiUrl }}
-        </div>
-
-        <div class="config-item">
-            <strong>Ambiente:</strong> {{ environment }}
-        </div>
-
-        <div class="config-item">
-            <strong>Configuração do Firebase:</strong>
-            <pre>{{ firebaseConfig | json }}</pre>
-        </div>
-    </div>
-
 
 </div>

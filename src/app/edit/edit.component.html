@@ -38,21 +38,17 @@
         <!-- Verifique se o campo é "Nome" -->
         <input
           *ngIf="campo.nome === 'nome' && campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'"
-          [type]="campo.tipo" 
-          [formControlName]="campo.nome" 
-          [id]="campo.nome" 
-          class="detail-value"
-          (change)="FormService.onFieldChange($event, campo.nome)" 
-          #nomeInput autofocus/>
-          <!-- #nomeInput autofocus/> -->
+          [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+          (change)="FormService.onFieldChange($event, campo.nome)" #nomeInput autofocus />
 
         <input
-          *ngIf="campo.nome != 'nome' && campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'"
-          [type]="campo.tipo" 
-          [formControlName]="campo.nome" 
-          [id]="campo.nome" 
-          class="detail-value"
+          *ngIf="campo.nome != 'nome' && campo.tipo !== 'date' && campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'"
+          [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
           (change)="FormService.onFieldChange($event, campo.nome)" />
+
+        <input
+          *ngIf="campo.tipo === 'date'"
+          [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
 
         <!-- Textarea para campos longos -->
         <textarea *ngIf="campo.tipo === 'textarea'" [formControlName]="campo.nome" [id]="campo.nome"

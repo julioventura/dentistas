@@ -3,7 +3,7 @@
         <div class="actions">
             <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="util.goHome()">
         </div>
-        <h1 class="title">Configurar Menu das Fichas</h1>
+        <h1 class="title">MENU INTERNO DAS FICHAS</h1>
         <div class="actions">
             <img src="https://dentistas.com.br/assets/salvar.png" class="navegacao" (click)="salvarConfiguracoes()">
         </div>
@@ -16,7 +16,8 @@
             <!-- Selecionar a Coleção Principal com Botões -->
             <div class="colecao-buttons" style="display: flex; flex-direction: column; gap: 10px;">
                 <button *ngFor="let colecao of colecoesDisponiveis" (click)="selecionarColecao(colecao)"
-                    [class.selected]="colecao === colecaoSelecionada">
+                    [class.selected]="colecao === colecaoSelecionada"
+                    class="menu-button">
                     {{ colecao }}
                 </button>
             </div>

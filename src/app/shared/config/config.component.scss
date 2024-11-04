@@ -5,78 +5,28 @@
   padding: 20px;
 }
 
- /* Seção de Ícones (Novo Estilo) */
- .icon-grid {
-   display: grid;
-   grid-template-columns: repeat(8, 1fr);
-   justify-items: center;
-   text-align: center;
-   justify-content: space-between;
+.services-section.icon-grid {
+  display: flex;
+  flex-direction: column; /* Alinha os itens em uma coluna */
+  gap: 15px; /* Espaçamento entre os itens */
+}
 
-   .icon-item {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     cursor: pointer;
-     width: 110px;
+.icon-item {
+  display: flex;
+  flex-direction: row; /* Alinha o ícone e o texto horizontalmente */
+  align-items: center; /* Centraliza verticalmente o texto em relação ao ícone */
+  cursor: pointer;
+}
 
-     img {
-       width: 65px;
-       height: 65px;
-     }
+.icon-item img {
+  width: 50px; /* Tamanho do ícone */
+  height: auto;
+  margin-right: 15px; /* Espaço entre o ícone e o texto */
+}
 
-     p {
-       font-weight: 500;
-       color: $primary-color;
-       font-size: 8px;
-     }
-   }
- }
-
- /* Seção de Serviços */
- .services-section {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   flex-wrap: wrap;
-   // gap: 10px;
-   /* Adiciona espaçamento entre os serviços */
- }
-
-
-
- /* Nova regra de media query para colapsar a coluna apenas abaixo de 550px */
- @media screen and (min-width: 550px) {
-   .container {
-     flex-direction: row;
-     // flex-direction: column;
-     // width: 100%;
-   }
- }
-
- /* Estilos para o container do cabeçalho */
- #header {
-   position: relative;
-   padding-top: 4px;
-   padding-bottom: 2px;
-   max-height: 50px;
-   width: 100%;
-   margin-top: 0px;
-   /* border: 1px solid #eee; */
-   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4);
-   border-radius: 6px;
-   /* padding-left: 20px; */
-   /* padding-right: 20px; */
-   text-align: center;
- }
-
- /* Estilos para as imagens do cabeçalho */
- .header-image {
-   max-width: 40%;
-   max-height: 47px;
-   margin-right: 10px;
- }
-
- .IAOdonto {
-   margin-bottom: 10px;
- }
+.icon-item p {
+  margin: 0;
+  font-weight: bold; /* Deixa o texto em negrito */
+  font-size: 1rem; /* Tamanho normal do texto */
+  color: $primary-color; /* Cor do texto (ajuste conforme necessário) */
+}

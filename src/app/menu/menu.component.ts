@@ -49,7 +49,9 @@ export class MenuComponent implements OnInit {
   }
 
   carregarSubcolecoes() {
-    this.firestore.collection('users').doc(this.userId).collection('configuracoesMenu').doc(this.collection).get()
+    const configPath = `users/${this.userId}/configuracoesMenu`;
+
+    this.firestore.collection(configPath).doc(this.collection).get()
       .subscribe(doc => {
         if (doc.exists) {
           const dados = doc.data() as { subcolecoes: string[] } | undefined;
@@ -62,13 +64,43 @@ export class MenuComponent implements OnInit {
             console.warn(`Nenhuma subcoleção configurada para a coleção "${this.collection}".`);
           }
         } else {
-          console.warn(`Documento "configuracoesMenu/${this.collection}" não encontrado.`);
+          console.warn(`Documento "configuracoesMenu/${this.collection}" não encontrado. Criando configuração padrão...`);
+
+          // Usa o método getMenusPadraoPorCollection para obter subcoleções padrão
+          const subcolecoesPadrao = this.getMenusPadraoPorCollection(this.collection);
+
+          this.firestore.collection(configPath).doc(this.collection).set({ subcolecoes: subcolecoesPadrao })
+            .then(() => {
+              console.log(`Configuração padrão criada para a coleção "${this.collection}".`);
+              this.subcolecoes = subcolecoesPadrao.map(nome => ({
+                nome,
+                rota: `/list-fichas/${this.collection}/${this.id}/fichas/${nome}`
+              }));
+            })
+            .catch(error => {
+              console.error('Erro ao criar configuração de subcoleções padrão:', error);
+            });
         }
       }, error => {
         console.error('Erro ao carregar subcoleções:', error);
       });
   }
 
+
+
+  getMenusPadraoPorCollection(colecao: string): any[] {
+    const menusPadrao: { [key: string]: any[] } = {
+      pacientes: ['exames', 'planos', 'atendimentos', 'pagamentos', 'historico'],
+      clientes: ['planos', 'atendimentos', 'pagamentos', 'historico'],
+      alunos: ['planos', 'atendimentos', 'historico'],
+      professores: ['planos', 'atendimentos', 'historico'],
+      dentistas: ['planos', 'atendimentos', 'pagamentos', 'historico'],
+      equipe: ['planos', 'atendimentos', 'pagamentos', 'historico'],
+      proteticos: ['planos', 'atendimentos', 'pagamentos', 'historico']
+    };
+
+    return menusPadrao[colecao] || [];
+  }
 
 
   // Função para navegar para a rota da subcoleção selecionada

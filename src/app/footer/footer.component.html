@@ -20,7 +20,7 @@
       <img src="https://dentistas.com.br/assets/youtube.png" alt="YouTube" width="40" />
     </a>
 
-    <span *ngIf="this.is_admin">
+    <span *ngIf="config.is_admin">
       <a href="./usuarios">
         <img src="https://dentistas.com.br/assets/usuarios_red.png" alt="Usuários" width="40" />
       </a>
@@ -34,7 +34,7 @@
 
   <!-- Exibe informações do usuário logado, se disponível -->
   <div id="usuario_logado" *ngIf="user">
-    &copy; 2024&nbsp; Dentistas.com.br &nbsp;4.02 - {{ user.displayName || 'Usuário' }} ({{ user.email }})
+    {{ambiente}} - {{ user.displayName || 'Usuário' }} ({{ user.email }})
   </div>
 
 

@@ -243,6 +243,8 @@ export class UtilService {
   }
 
 
+
+
   titulo_ajuste_plural(titulo: string) {
     switch (titulo) {
       case 'usuarios':

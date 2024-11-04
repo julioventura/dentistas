@@ -201,7 +201,7 @@ h3 {
 .record-details {
     background-color: #ffffff;
     padding: 20px;
-    border-radius: 0 0 6px 6px;
+    border-radius: 0px;
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
     border: 0px solid #fff;
     margin: 0px 1px 0px 1px;
@@ -320,10 +320,6 @@ h3 {
     }
 }
 
-
-// .record-details .detail-container .detail-value {
-//     background: white;
-// }
 .detail-value {
     width: 100%;
     /* Ocupará 100% da largura disponível */
@@ -619,8 +615,7 @@ label {
     font-family: $font-family;
     font-size: $font-size;
     color: $text-color;
-    // padding: 0.5em;
-    // padding-top: 1.5em;
+    font-weight: normal;
     background-color: $white;
 }
 
