@@ -5,13 +5,11 @@ import { NavegacaoService } from '../shared/navegacao.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/util.service';
 import { FormService } from '../shared/form.service';
-// import { ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
-  // encapsulation: ViewEncapsulation.None // Remova o encapsulamento
 
 })
 export class EditComponent implements OnInit, AfterViewInit {
@@ -30,7 +28,6 @@ export class EditComponent implements OnInit, AfterViewInit {
   registroPath: string = '';
   routePath: string = '';
   arquivos: { [key: string]: File } = {};
-  // isNew = false;
 
 
   constructor(
@@ -55,12 +52,7 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
         this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
 
-        if (this.subcollection) {
-          this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection);
-        }
-        else {
-          this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.collection);
-        }
+        this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection || this.collection);
 
         console.log('userId:', this.userId);
         console.log('collection:', this.collection);

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container container_principal">
 
   <!-- HEADER -->
   <div class="header">
@@ -24,42 +24,49 @@
   </div>
 
   <!-- Detalhes -->
-  <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
+  <div class="dynamic-form-container" *ngIf="FormService.fichaForm && FormService.campos.length > 0">
 
     <div *ngIf="FormService.isLoading" class="aviso">
       Carregando dados da ficha...
     </div>
 
 
-    <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details">
+  <!-- Formulário principal para os campos predefinidos -->
+  <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details">
 
-      <div *ngFor="let campo of FormService.campos">
+    <div *ngFor="let campo of FormService.campos">
+      <!-- Verifica se o campo está preenchido antes de exibir -->
+      <div *ngIf="FormService.registro[campo.nome] && FormService.registro[campo.nome].length > 0" class="detail-container">
+        <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
 
-        <!-- Verifica se o campo está preenchido antes de exibir -->
-        <div *ngIf="FormService.registro[campo.nome] && FormService.registro[campo.nome].length > 0"
-          class="detail-container">
+        <!-- Input para tipos normais -->
+        <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+               *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
 
-          <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+        <!-- Input para URL -->
+        <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url" *ngIf="campo.tipo === 'url'"
+               placeholder="Cole aqui o link do arquivo">
 
-          <!-- Input para tipos normais -->
-          <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-            *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
-
-          <!-- Input para URL -->
-          <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url" *ngIf="campo.tipo === 'url'"
-            placeholder="Cole aqui o link do arquivo">
-
-          <!-- Textarea para campos longos -->
-          <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-            *ngIf="campo.tipo === 'textarea'" rows="3" placeholder="Digite o conteúdo"></textarea>
-
-        </div>
-
+        <!-- Textarea para campos longos -->
+        <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" *ngIf="campo.tipo === 'textarea'"
+                  rows="3" placeholder="Digite o conteúdo"></textarea>
       </div>
+    </div>
+
+  </form>
+
+  <!-- Formulário dinâmico para exibir apenas os campos adicionais -->
+  <div *ngIf="!FormService.isLoading" class="extra-fields-container">
+    <div class="espacador_vertical"></div>
+    <form [formGroup]="FormService.fichaForm" class="record-details">
+
+      <div *ngFor="let campoNome of getDynamicFields()">
+        <div class="detail-container">
+          <label [for]="campoNome" class="detail-label">{{ campoNome | titlecase }}</label>
+          <input type="text" [formControlName]="campoNome" [id]="campoNome" class="detail-value" readonly>
+        </div>
+      </div>
+
     </form>
   </div>
-
-
-
-
 </div>

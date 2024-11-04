@@ -176,6 +176,18 @@ export class ViewComponent implements OnInit {
     }
   }
 
+  getDynamicFields(): string[] {
+    // Pega os nomes dos campos já definidos em `FormService.campos`
+    const predefinedFields = this.FormService.campos.map(campo => campo.nome);
+    
+    // Retorna apenas os campos que não estão na lista de campos pré-definidos
+    return Object.keys(this.FormService.fichaForm.controls).filter(
+      campoNome => !predefinedFields.includes(campoNome)
+    );
+  }
+  
+  
+
   voltar() {
     console.log("voltar()");
     console.log("subcollection =", this.subcollection);

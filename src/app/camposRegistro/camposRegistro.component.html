@@ -1,11 +1,11 @@
-<div class="container">
+<div class="container container_principal">
 
     <div class="header">
         <div class="actions">
             <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
             <img src="https://dentistas.com.br/assets/home.png" class="navegacao" (click)="util.goHome()">
         </div>
-        <h1 class="title">CAMPOS DOS CADASTROS Formulários</h1>
+        <h1 class="title">CAMPOS DOS CADASTROS</h1>
         <div class="actions">
             <img src="https://dentistas.com.br/assets/salvar.png" class="navegacao_dupla_largura_right" (click)="salvar()">
         </div>
@@ -18,13 +18,12 @@
     <div class="container">
         <!-- Seletor de Coleções -->
         <div class="section">
-            <label for="colecao">Selecionar Coleção:</label>
+            <label for="colecao">Selecionar Cadastro:</label>
             <select id="colecao" [(ngModel)]="colecaoSelecionada" (change)="carregarCampos()">
                 <option *ngFor="let colecao of colecoes" [value]="colecao">{{ colecao === 'padrao' ? 'Padrão' : colecao
                     }}
                 </option>
             </select>
-            <!-- <button (click)="adicionarColecao()">Criar Coleção</button> -->
         </div>
 
         <!-- Edição de Campos -->
@@ -54,7 +53,7 @@
                     <option value="image">Imagem (com submit)</option>
                 </select>
 
-                <label>Label:</label>
+                <label>Etiqueta:</label>
                 <input [(ngModel)]="campo.label" placeholder="Label" />
 
                 <!-- Agrupar os botões dentro do div button-group -->

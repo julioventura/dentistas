@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavegacaoService } from '../shared/navegacao.service';
-
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+ 
 import { UtilService } from '../shared/util.service';
 
 @Component({
@@ -28,15 +30,24 @@ export class HomeConfigComponent implements OnInit {
   ];
   visibleIcons: { [key: string]: boolean } = {};
 
+  private userId: string | null = null;
+
 
   constructor(
     public util: UtilService,
     private navegacaoService: NavegacaoService,
+    private afAuth: AngularFireAuth,
+    private firestore: AngularFirestore
   ) { }
 
 
   ngOnInit() {
-    this.loadIconConfig();
+    this.afAuth.authState.subscribe(user => {
+      if (user && user.uid) {
+        this.userId = user.uid;
+        this.loadIconConfig(); // Carrega as configurações do Firestore para o usuário
+      }
+    });
   }
 
   selecionarColecao(colecao: string) {
@@ -44,21 +55,29 @@ export class HomeConfigComponent implements OnInit {
   }
 
   loadIconConfig() {
-    const savedConfig = localStorage.getItem('iconVisibility');
-    if (savedConfig) {
-      this.visibleIcons = JSON.parse(savedConfig);
-    } else {
-      // Define todos como visíveis por padrão se não houver configuração salva
-      this.icons.forEach(icon => {
-        this.visibleIcons[icon.key] = true;
-      });
-    }
+    if (!this.userId) return;
+
+    // Novo caminho: `/users/[userId]/settings/HomeConfig`
+    this.firestore.doc(`/users/${this.userId}/settings/HomeConfig`).get().subscribe(doc => {
+      if (doc.exists) {
+        this.visibleIcons = doc.data() as { [key: string]: boolean };
+      } else {
+        this.icons.forEach(icon => {
+          this.visibleIcons[icon.key] = true;
+        });
+      }
+    });
   }
 
   salvarConfiguracoes() {
-    localStorage.setItem('iconVisibility', JSON.stringify(this.visibleIcons));
-    alert('Configurações salvas com sucesso!');
+    if (!this.userId) return;
+
+    // Salva as configurações no caminho `/users/[userId]/settings/HomeConfig`
+    this.firestore.doc(`/users/${this.userId}/settings/HomeConfig`).set(this.visibleIcons)
+      .then(() => alert('Configurações salvas com sucesso!'))
+      .catch(error => console.error('Erro ao salvar configurações:', error));
   }
+
 
   voltar() {
     this.navegacaoService.goBack();

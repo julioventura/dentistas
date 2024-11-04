@@ -6,7 +6,6 @@ import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
 import { UtilService } from '../shared/util.service';
 import { switchMap, tap } from 'rxjs/operators';
-import { formatDate } from '@angular/common';  // Adicione essa importação
 import { DatePipe } from '@angular/common';
 
 @Injectable({
@@ -57,26 +56,26 @@ export class FormService {
         );
     }
 
-
-
     createForm() {
         console.log('createForm()');
+
+        // Se `fichaForm` já está inicializado, evite recriá-lo
+        if (this.fichaForm) {
+            return;
+        }
 
         const formControls = this.campos.reduce((acc, campo) => {
             acc[campo.nome] = new FormControl('');
             return acc;
         }, {});
 
-        // Verifica se o FormGroup foi corretamente criado
         if (Object.keys(formControls).length > 0) {
             this.fichaForm = this.fb.group(formControls);
             console.log('FormGroup criado com sucesso:', this.fichaForm);
-            console.log('Formulário criado com os controles:', this.fichaForm.controls);
         } else {
             console.error('Nenhum campo foi adicionado ao FormGroup.');
         }
     }
-
 
 
     loadRegistro(userId: string, collection: string, id: string, view: boolean) {
@@ -97,15 +96,17 @@ export class FormService {
                     this.registro = ficha;
                     this.nome_in_collection = this.registro.nome;
 
-                    // Verifica se o campo é uma data e formata para "yyyy-MM-dd"
+                    // Verifica e formata campos de data no registro
                     const formattedData = { ...ficha };
                     for (const key in formattedData) {
                         if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
-                            formattedData[key] = this.formatToDateInput(formattedData[key]);
+                            const formattedDate = this.formatToDateInput(formattedData[key]);
+                            formattedData[key] = formattedDate ? formattedDate : formattedData[key];
                         }
                     }
 
-                    // Preenche o FormGroup com os dados formatados
+                    // Preenche o FormGroup com os dados formatados e adiciona campos dinâmicos
+                    this.addDynamicFields(formattedData);
                     this.fichaForm.patchValue(formattedData);
 
                     if (view) {
@@ -132,62 +133,87 @@ export class FormService {
         }
     }
 
-    
+
+
+    // Função auxiliar para adicionar campos dinâmicos ao FormGroup
+    private addDynamicFields(data: any) {
+        for (const key in data) {
+            if (data.hasOwnProperty(key) && !this.fichaForm.contains(key)) {
+                this.fichaForm.addControl(key, new FormControl(''));
+            }
+        }
+    }
+
+
+
+
+
     // Função auxiliar para verificar se um campo é de data (ajuste conforme necessário)
     private isDateField(fieldName: string): boolean {
         return fieldName === 'nascimento';  // Adicione outros campos de data aqui se necessário
     }
 
 
-    // Função auxiliar para converter para o formato "yyyy-MM-dd"
-    private formatToDateInput(dateString: string): string {
-        const [day, month, year] = dateString.split('-');
-        return `${year}-${month}-${day}`;  // Converte para o formato esperado
+    // Função auxiliar para converter datas no formato dd/MM/yyyy para o formato yyyy-MM-dd
+    private formatToDateInput(dateString: string): string | null {
+        // Verifica se a data está no formato dd/MM/yyyy
+        const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+        const match = dateString.match(dateRegex);
+
+        if (match) {
+            const day = match[1];
+            const month = match[2];
+            const year = match[3];
+            return `${year}-${month}-${day}`; // Formato yyyy-MM-dd
+        }
+
+        // Retorna null se o formato da data não for reconhecido
+        return null;
     }
+
 
 
     loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view: boolean) {
         console.log('loadFicha()');
-    
+
         console.log('userId: ', userId);
         console.log('collection:', collection);
         console.log('id:', id);
         console.log('subcollection: ' + subcollection);
         console.log('fichaId: ' + fichaId);
         console.log('view (visualizar registro): ', view);
-    
+
         if (subcollection && fichaId) {
-    
             this.subcollection = subcollection;
-    
+
             const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
             console.log('Caminho para carregar ficha:', fichaPath);
-    
+
             // Define o formulário como carregando
             this.isLoading = true;
-    
+
             // Carrega os campos do formulário antes de tentar carregar a ficha
             this.carregarCamposFichas(userId, subcollection);
-    
+
             // Carrega os dados da ficha do Firestore
             this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
                 if (ficha) {
                     console.log('Ficha carregada:', ficha);
                     this.registro = ficha;  // Para o view-ficha, se necessário
-    
-                    // Formata a data de nascimento para 'dd-MM-yyyy'
-                    if (ficha.nascimento) {
-                        ficha.nascimento = this.datePipe.transform(ficha.nascimento, 'dd-MM-yyyy');
+
+                    // Formata os campos de data e adiciona campos dinâmicos
+                    const formattedData = { ...ficha };
+                    for (const key in formattedData) {
+                        if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
+                            const formattedDate = this.formatToDateInput(formattedData[key]);
+                            formattedData[key] = formattedDate ? formattedDate : formattedData[key];
+                        }
                     }
-    
-                    // Verifica se os campos foram carregados corretamente antes de preencher o formulário
-                    if (this.fichaForm && this.campos.length > 0) {
-                        // Preenche o FormGroup com os dados da ficha
-                        this.fichaForm.patchValue(ficha); // Preenche o formulário de edição
-                    } else {
-                        console.error('Formulário ou campos não carregados corretamente.');
-                    }
-    
+
+                    // Adiciona campos dinâmicos e preenche o FormGroup com os dados formatados
+                    this.addDynamicFields(formattedData);
+                    this.fichaForm.patchValue(formattedData);
+
                     // Condicional para desabilitar o formulário se estiver na view (visualização)
                     if (view) {
                         this.fichaForm.disable();  // Desabilita o formulário
@@ -197,11 +223,11 @@ export class FormService {
                         console.log("Formulário habilitado.");
                     }
                     console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
-    
+
                     // Marca como carregado (isLoading = false)
                     this.isLoading = false;
                     console.log('isLoading == false');
-    
+
                 } else {
                     console.error('Ficha não encontrada no caminho:', fichaPath);
                     this.isLoading = false;

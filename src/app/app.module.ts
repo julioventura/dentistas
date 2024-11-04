@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';  // Importe o CommonModule
 
 // Firebase e Firestore
 import { AngularFireModule } from '@angular/fire/compat';
@@ -30,6 +31,7 @@ import { CamposRegistroComponent } from './camposRegistro/camposRegistro.compone
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { HomeConfigComponent } from './home-config/home-config.component';
+import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
 
 // Serviços
 
@@ -58,6 +60,7 @@ const routes: Routes = [
   { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, // Rota para a página de perfil
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
+  { path: 'importar-cadastro', component: ImportarCadastroComponent },
 
   // Rota para o componente camposRegistro
   { path: 'camposRegistro', component: CamposRegistroComponent },
@@ -101,10 +104,12 @@ const routes: Routes = [
     FichasComponent,
     MenuConfigComponent,
     HomeConfigComponent,
+    ImportarCadastroComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes), // Configurar roteamento diretamente

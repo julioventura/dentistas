@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { UtilService } from '../shared/util.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+
+import { UtilService } from '../shared/util.service';
+import { NavegacaoService } from '../shared/navegacao.service';
 
 interface Subcolecao {
   nome: string;
@@ -49,6 +51,7 @@ export class MenuConfigComponent implements OnInit {
   constructor(
     private firestore: AngularFirestore,
     public util: UtilService,
+    private navegacaoService: NavegacaoService,
     private afAuth: AngularFireAuth
   ) { }
 
@@ -140,4 +143,9 @@ export class MenuConfigComponent implements OnInit {
         alert('Erro ao salvar configuração.');
       });
   }
+
+  voltar() {
+    this.navegacaoService.goBack();
+  }
+
 }

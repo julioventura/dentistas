@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container container_principal">
 
   <!-- Header - Cabeçalho da página -->
   <div id="header">
@@ -10,25 +10,9 @@
 
   <!-- Conteúdo principal -->
 
-  <div id="Services" class="container margin0">
 
     <section class="services-section icon-grid largo">
 
-        <!-- Botão de Configuração -->
-        <div class="config-button icon-item">
-          <img src="https://dentistas.com.br/assets/config.png" alt="Configurar" (click)="toggleConfig()">
-        </div>
-      
-        <!-- Menu de Configuração -->
-        <div *ngIf="showConfig" class="config-panel">
-          <h3>Configurações de Ícones</h3>
-          <div *ngFor="let icon of ['pacientes', 'alunos', 'professores', 'dentistas', 'equipe', 'proteticos', 'indicador', 'dentais', 'empresas', 'perfil', 'homepage']">
-            <label>
-              <input type="checkbox" [(ngModel)]="visibleIcons[icon]" (change)="saveIconConfig()"> {{ icon | titlecase }}
-            </label>
-          </div>
-        </div>
-      
         <!-- Conteúdo principal -->
         <div id="Services" class="container margin0">
           <section class="services-section icon-grid largo">
@@ -94,27 +78,23 @@
         <img src="https://dentistas.com.br/assets/config.png" alt="Configurar">
         <p>CONFIGURAR</p>
       </div>
-
       
           </section>
         </div>
       
-
-   
-
     </section>
 
-  </div>
 
 
-  <div class="boxvazio">
+  <!-- <div class="boxvazio"> -->
+
     <!-- Coluna 1 -->
-    <div class="column column-left">
+    <!-- <div class="column column-left">
       <app-chatbot></app-chatbot>
-    </div>
+    </div> -->
 
     <!-- Coluna 2 -->
-    <div class="column column-right">
+    <!-- <div class="column column-right">
 
       <section class="chatbots-section box">
 
@@ -157,10 +137,8 @@
 
       </section>
 
-    </div>
-    <!--     
-  </div>
-  <div class="container largo"> -->
+    </div> -->
+   
+  <!-- </div> -->
 
-  </div>
 </div>
