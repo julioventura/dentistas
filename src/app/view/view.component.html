@@ -32,7 +32,7 @@
 
 
   <!-- Formulário principal para os campos predefinidos -->
-  <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details">
+  <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
 
     <div *ngFor="let campo of FormService.campos">
       <!-- Verifica se o campo está preenchido antes de exibir -->

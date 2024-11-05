@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavegacaoService } from '../shared/navegacao.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,8 @@ import { Router } from '@angular/router';
 export class UtilService {
 
   constructor(
-    private router: Router
+    private router: Router,
+    private navegacaoService: NavegacaoService,
   ) { }
 
   // Regex para validação de email
@@ -229,21 +231,6 @@ export class UtilService {
     }
   }
 
-  // Método para ir para a página home
-  goHome() {
-    this.router.navigate(['/home']);
-  }
-
-  go(route: string) {
-    this.router.navigate(['/' + route]);
-  }
-
-  go_url(url: string) {
-    window.open(url, '_blank'); // Abre em uma nova aba ou janela
-  }
-
-
-
 
   titulo_ajuste_plural(titulo: string) {
     switch (titulo) {
@@ -342,6 +329,26 @@ export class UtilService {
   calcularDigitoVerificador(codigo: string): number {
     return codigo.split('').reduce((acc, num) => acc + parseInt(num, 10), 0) % 10;
   }
+
+
+  
+  // Método para ir para a página home
+  goHome() {
+    this.router.navigate(['/home']);
+  }
+
+  go(route: string) {
+    this.router.navigate(['/' + route]);
+  }
+
+  go_url(url: string) {
+    window.open(url, '_blank'); // Abre em uma nova aba ou janela
+  }
+
+  voltar() {
+    this.navegacaoService.goBack();
+  }
+
 
 
 

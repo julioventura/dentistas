@@ -91,7 +91,7 @@ h3 {
     margin: 0 auto;
     /* Centraliza o container */
     background-color: #ffffff;
-    border-radius: 6px;
+    border-radius: 16px;
     box-shadow: 0px 0px 6px $shadow-color;
     padding: 20px 20px 20px 20px;
 }
@@ -205,11 +205,11 @@ h3 {
 .record-details {
     background-color: #ffffff;
     padding: 20px;
-    border-radius: 0px;
+    border-radius: 6px;
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
     border: 0px solid #fff;
     margin: 0px 1px 0px 1px;
-    box-shadow: box-shadow;
+
 
     .detail-container {
         display: flex;
@@ -419,16 +419,16 @@ label {
 
 
 .aviso {
-    // container para avisos definitivos como "registro não encontrado"
-    background-color: $white;
+    // container para avisos de status apos realizar tarefas
+    background-color: #bef4cf;
     padding: 40px 20px 30px 20px;
     border-radius: 10px;
-    box-shadow: $box-shadow;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4);
     text-align: center;
-    border: 1px solid $primary-color-light;
+    border: 2px solid;
     font-size: large;
-    font-weight: 500;
-    color: $primary-color;
+    font-weight: bold;
+    color: #089000;
 }
 
 // FORMULARIOS DE VIEW.COMPONENT E view_only.COMPONENT E LIST-FICHAS E REGISTROS,COMPONENT
@@ -519,7 +519,7 @@ label {
     background-color: #2A7AC3;
     color: #ffffff;
     margin: 2px 0 4px 0;
-    border-radius: 0px;
+    border-radius: 4px;
     border: 1px white solid;
     font-size: 8pt;
     font-weight: bold;

@@ -2,7 +2,7 @@
 
 	<div class="header">
 		<div class="actions">
-			<img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+			<img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="util.voltar()">
 		</div>
 		<h1 class="title">Importar Cadastro</h1>
 		<div class="actions">
@@ -34,7 +34,7 @@
 			<button (click)="importarDados()" [disabled]="!csvData.length">Importar Dados</button>
 
 			<div class="espacador_vertical_duplo"></div>
-			<div *ngIf="importStatus" class="container">
+			<div *ngIf="importStatus" class="aviso">
 				<p>{{ importStatus }}</p>
 			</div>
 		</div>
