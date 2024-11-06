@@ -1,52 +1,64 @@
 <div class="container container_principal">
+    <!-- Header -->
+    <div class="header">
+        <div class="actions">
+            <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+        </div>
+        <h1 class="title">Erupções Dentárias do Mês</h1>
+        <div class="actions">
+            <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
+        </div>
+    </div>
 
-	<div class="header">
-		<div class="actions">
-			<img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="util.goHome()">
-		</div>
-		<h1 class="title">Erupções Dentárias do Mês</h1>
-		<div class="actions">
-			<!-- <img src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()"> -->
-			<img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
-		</div>
-	</div>
-
-	<!-- PARA TODOS USUARIOS -->
-	<div class="container">
-
-
-		<div class="record-details">
-			<button (click)="verificarErupcoes()">Verificar Erupções</button>
-			<table>
-				<thead>
-					<tr>
-						<th>#</th> <!-- Coluna para o número da linha -->
-						<th style="text-align: left;">Nome</th>
-						<th style="text-align: left;">Nascimento</th>
-						<th style="text-align: left;">Meses</th>
-						<th style="text-align: left;">Erupcionando</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let paciente of pacientesComErupcao; index as i">
-						<td>{{ i + 1 }}</td> <!-- Exibe o número da linha -->
-						<td style="text-align: left;">{{ paciente.nome }}</td>
-						<td style="text-align: left;">{{ paciente.nascimento }}</td>
-							<td style="text-align: left;">{{ paciente.meses }}</td>
-						<td style="text-align: left;">{{ paciente.dentesNaoNascidos.join(', ') }}</td>
-						<!-- Exibe os dentes não erupcionados -->
-					</tr>
-				</tbody>
-			</table>
-		</div>
+    <!-- Campo de input para alterar a faixa de meses -->
+    <div class="faixa-de-meses">
+        <label for="faixaMeses">Faixa de meses para erupção:</label>
+        <input type="number" id="faixaMeses" [(ngModel)]="faixaDeMeses" (change)="verificarErupcoes()" maxlength="5"
+            min="1" max="3">
+    </div>
 
 
-		<div class="espacador_vertical_duplo"></div>
-		<!-- Exibe mensagem se nenhum paciente tiver dentes erupcionando neste mês -->
-		<div *ngIf="pacientesComErupcao.length === 0" class="aviso">
-			<p>Nenhum paciente tem dentes erupcionando este mês.</p>
-		</div>
-	</div>
+    <!-- Mensagem de carregamento ou nenhum paciente encontrado -->
+    <div *ngIf="isLoading" class="aviso">
+        <p>Carregando...</p>
+    </div>
+    <div *ngIf="!isLoading && pacientesComErupcao.length === 0" class="aviso">
+        <p>Nenhum paciente tem dentes erupcionando este mês.</p>
+    </div>
 
+    <!-- Tabela de resultados -->
+    <div *ngIf="!isLoading && pacientesComErupcao.length > 0" class="registros-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th> <!-- Número da linha -->
+                    <th>Nome</th>
+                    <th>Nascimento</th>
+                    <th>Meses</th>
+                    <th>Telefone</th>
+                    <th>Erupcionando</th>
+                    <th>Zap</th> <!-- Coluna de contato -->
 
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let paciente of pacientesComErupcao; index as i">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ paciente.nome }}</td>
+                    <td>{{ paciente.nascimento }}</td>
+                    <td>{{ paciente.meses }}</td>
+                    <td>{{ paciente.telefone }}</td>
+                    <td>{{ paciente.dentesEmErupcao?.join(', ') || 'Nenhum dente erupcionando' }}</td>
+                    <td>
+                        <img src="https://dentistas.com.br/assets/whatsapp.png" alt="WhatsApp" class="enviar_zap" (click)="enviar_whatsapp(paciente.nome,paciente.telefone)">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginação (caso aplicável no futuro) -->
+    <div *ngIf="!isLoading && pacientesComErupcao.length > 0" class="pagination_total">
+        <span>{{ pacientesComErupcao.length }} registros</span>
+    </div>
 </div>

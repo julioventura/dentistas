@@ -25,11 +25,11 @@
   <div *ngIf="!isLoading && registros.length === 0" class="aviso">
     <p>Nenhuma ficha encontrada.</p>
   </div>
-  
-    <!-- Barra de pesquisa -->
-    <div *ngIf="registros.length > 0 && show_busca" class="search-bar">
-      <input type="text" placeholder="Buscar registro..." [(ngModel)]="searchQuery" (input)="filtrarRegistros()" />
-    </div>
+
+  <!-- Barra de pesquisa -->
+  <div *ngIf="registros.length > 0 && show_busca" class="search-bar">
+    <input type="text" placeholder="Buscar registro..." [(ngModel)]="searchQuery" (input)="filtrarRegistros()" />
+  </div>
 
   <div *ngIf="!isLoading && registrosPaginados.length > 0 && this.subtitulo_da_pagina" class="record-header">
     {{ subtitulo_da_pagina }}
@@ -48,7 +48,7 @@
             <th>Nome</th>
             <th class="right">Código</th>
           </tr>
-          
+
           <tr *ngIf="this.subcollection">
             <th>Registro</th>
             <th class="right">Código</th>
@@ -58,7 +58,7 @@
         <tbody>
 
           <tr *ngFor="let registro of registrosPaginados" (click)="verFicha(registro.id)" style="cursor: pointer;">
-            
+
             <td *ngIf="!this.subcollection">{{ registro.nome }}</td>
             <td *ngIf="!this.subcollection" class="right">{{ registro.codigo }}</td>
 
@@ -95,4 +95,22 @@
     </div>
 
   </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
+      <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao" (click)="util.goHome()">
+    </div>
+
+    <div class="rodape">
+      <img src="https://dentistas.com.br/assets/spider1.png" class="navegacao" (click)="util.go('erupcoes')"><br>
+    </div>
+
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
+      <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
+    </div>
+  </div>
+
 </div>
