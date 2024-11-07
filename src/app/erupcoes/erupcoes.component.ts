@@ -192,19 +192,23 @@ export class ErupcoesComponent implements OnInit {
 
     // Formatação da mensagem, substituindo <nome> pelo nome real do paciente
     const mensagem = encodeURIComponent(`
-        Ao responsável por ${nome}
+        Ao responsável por *${nome}*
 
         Olá!
 
-        Informamos que em breve vão nascer dentes importantes. Este é o período de maior risco de cárie para esses dentes.
+        Informamos que em breve vão nascer dentes importantes. 
+        Este é o período de maior risco de cárie para esses dentes.
 
-        Traga ${nome} para atendimento odontológico na UBS Candeia São Sebastião para os exames e orientação necessários para garantir a saúde dos novos dentes.
+        Traga ${nome} para atendimento odontológico na *UBS Candeia São Sebastião* para os exames e orientação necessários para garantir a saúde dos novos dentes.
+
 
         Atenciosamente,
         
-        CD Emanuelle Albuquerque
+        *Equipe de Saúde Bucal UBS Candeia São Sebastião*
     `);
 
+    // remove do telefone tudo que não for dígitos
+    telefone = telefone.replace(/\D/g, '');  
     // Formatação da URL do WhatsApp com telefone e mensagem
     const whatsappUrl = `https://wa.me/${telefone}?text=${mensagem}`;
 
