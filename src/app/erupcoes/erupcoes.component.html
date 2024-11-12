@@ -42,7 +42,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let paciente of pacientesComErupcao; index as i">
+                <tr *ngFor="let paciente of pacientesComErupcao; index as i" (click)="abrirPopup(paciente)">
                     <td>{{ i + 1 }}</td>
                     <td>{{ paciente.nome }}</td>
                     <td>{{ paciente.nascimento }}</td>

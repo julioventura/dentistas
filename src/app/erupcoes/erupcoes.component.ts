@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { UtilService } from '../shared/util.service';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ErupcoesPopupComponent } from '../erupcoes-popup/erupcoes-popup.component';
+
+import { UtilService } from '../shared/util.service';
 
 @Component({
   selector: 'app-erupcoes',
@@ -77,15 +80,14 @@ export class ErupcoesComponent implements OnInit {
   ];
 
 
-
-
   constructor(
     private firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
     private router: Router,
     public util: UtilService,
+    public dialog: MatDialog 
   ) {
-    this.faixaDeMeses = 1;  // Inicializa faixaDeMeses no construtor
+    this.faixaDeMeses = 3;  // Inicializa faixaDeMeses no construtor
   }
 
 
@@ -104,7 +106,18 @@ export class ErupcoesComponent implements OnInit {
 
   }
 
+  abrirPopup(paciente: any): void {
+    const dialogRef = this.dialog.open(ErupcoesPopupComponent, {
+      data: {
+        dataChamadaOriginal: '21/10/2024',
+        enviosSeguintes: '28/10/2024',
+        dataResposta: '29/10/2024',
+        dataComparecimento: '31/10/2024'
+      }
+    });
+  }
   
+
   carregarPacientes(): void {
     console.log("carregarPacientes()");
 
@@ -182,12 +195,12 @@ export class ErupcoesComponent implements OnInit {
   }
 
 
-  enviar_whatsapp(nome:string, telefone:string) {
-    console.log("paciente = "),nome;
+  enviar_whatsapp(nome: string, telefone: string) {
+    console.log("paciente = "), nome;
 
     if (!telefone || !nome) {
-        console.error("Telefone ou nome do paciente não fornecido.");
-        return;
+      console.error("Telefone ou nome do paciente não fornecido.");
+      return;
     }
 
     // Formatação da mensagem, substituindo <nome> pelo nome real do paciente
@@ -208,16 +221,13 @@ export class ErupcoesComponent implements OnInit {
     `);
 
     // remove do telefone tudo que não for dígitos
-    telefone = telefone.replace(/\D/g, '');  
+    telefone = telefone.replace(/\D/g, '');
     // Formatação da URL do WhatsApp com telefone e mensagem
     const whatsappUrl = `https://wa.me/${telefone}?text=${mensagem}`;
 
     // Abre a URL em uma nova aba
     window.open(whatsappUrl, '_blank');
-}
-
-
-
+  }
 
   voltar() {
     console.log("voltar()");
@@ -227,59 +237,3 @@ export class ErupcoesComponent implements OnInit {
 
 
 }
-
-
-
-
-// 51: De 7.5
-// 52: De 9
-// 53: De 18
-// 54: De 14
-// 55: De 24
-// 61: De 7.5
-// 62: De 9
-// 63: De 18
-// 64: De 14
-// 65: De 24
-// 71: De 6
-// 72: De 7
-// 73: De 16
-// 74: De 12
-// 75: De 20
-// 81: De 6
-// 82: De 7
-// 83: De 16
-// 84: De 12
-// 85: De 20
-// 11: De 84
-// 12: De 96
-// 13: De 132
-// 14: De 120
-// 15: De 120
-// 16: De 72
-// 17: De 144
-// 18: De 204
-// 21: De 84
-// 22: De 96
-// 23: De 132
-// 24: De 120
-// 25: De 120
-// 26: De 72
-// 27: De 144
-// 28: De 204
-// 31: De 72
-// 32: De 84
-// 33: De 108
-// 34: De 120
-// 35: De 132
-// 36: De 72
-// 37: De 132
-// 38: De 204
-// 41: De 72
-// 42: De 84
-// 43: De 108
-// 44: De 120
-// 45: De 132
-// 46: De 72
-// 47: De 132
-// 48: De 204

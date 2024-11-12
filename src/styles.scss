@@ -602,7 +602,7 @@ label {
                 border-top: 3px solid $white;
                 color: $primary-color;
                 font-weight: 500;
-                font-size: 13px;
+                font-size: 12px;
             }
         }
     }
@@ -659,3 +659,5 @@ h1 {
         }
     }
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

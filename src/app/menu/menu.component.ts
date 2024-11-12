@@ -25,7 +25,7 @@ export class MenuComponent implements OnInit {
     private router: Router,
     private firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
-    private util: UtilService
+    public util: UtilService
   ) { }
 
   ngOnInit(): void {

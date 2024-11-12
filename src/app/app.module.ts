@@ -47,6 +47,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 
@@ -58,7 +59,7 @@ const routes: Routes = [
   { path: 'menu', component: MenuComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'config', component: ConfigComponent },
-  { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, // Rota para a página de perfil
+  { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, 
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
   { path: 'importar-cadastro', component: ImportarCadastroComponent },
@@ -66,7 +67,7 @@ const routes: Routes = [
 
   // Rota para o componente camposRegistro
   { path: 'camposRegistro', component: CamposRegistroComponent },
-  { path: 'list/:collection', component: ListComponent, data: { animation: '3' } }, // lista de uma coleção
+  { path: 'list/:collection', component: ListComponent, data: { animation: '3' } }, 
   { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '4' } },
   { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '5' } },
 
@@ -126,7 +127,7 @@ const routes: Routes = [
     MatIconModule
   ],
   providers: [
-    AuthGuard, DatePipe
+    AuthGuard, DatePipe, provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })
