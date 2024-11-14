@@ -105,3 +105,26 @@
     width: 20px;
     height: 20px;
 }
+
+.faixa-de-meses {
+    display: flex;
+    align-items: center;
+    justify-content: center; // Centraliza o conteúdo horizontalmente
+    gap: 10px;
+    font-size: 16px;
+    color: $primary-color;
+
+    .faixa-display {
+        font-weight: bold;
+        border: 1px solid $primary-color;
+        border-radius: 6px;
+        width: 10em;
+        text-align: center;
+    }
+
+    .control-icon {
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+    }
+}

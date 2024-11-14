@@ -1,6 +1,6 @@
 <div class="menu">
   <button *ngFor="let subcolecao of subcolecoes" class="menu-button" (click)="navegarPara(subcolecao)">
-    {{ util.capitalizar(subcolecao.nome) }}
+    {{ ajustar(subcolecao.nome) }}
   </button>
 </div>
 

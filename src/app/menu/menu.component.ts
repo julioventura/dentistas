@@ -120,5 +120,9 @@ export class MenuComponent implements OnInit {
       this.router.navigate([subcolecao.rota]);
       console.log(`Navegando para a subcoleção: ${subcolecao.nome} na rota: ${subcolecao.rota}`);    }
   }
+ 
+  ajustar(str: string): string {
+    return this.util.titulo_ajuste_singular(str);
+  }
 
 }

@@ -106,13 +106,21 @@ export class ErupcoesComponent implements OnInit {
 
   }
 
+
+    // Getter para o texto formatado
+    get faixaDeMesesTexto(): string {
+      return `em ${this.faixaDeMeses} ${this.faixaDeMeses === 1 ? 'mês' : 'meses'}`;
+    }
+
+
   abrirPopup(paciente: any): void {
     const dialogRef = this.dialog.open(ErupcoesPopupComponent, {
       data: {
+        Nome: paciente.nome,               
         dataChamadaOriginal: '21/10/2024',
         enviosSeguintes: '28/10/2024',
         dataResposta: '29/10/2024',
-        dataComparecimento: '31/10/2024'
+        dataRetorno: '31/10/2024'
       }
     });
   }
@@ -228,6 +236,22 @@ export class ErupcoesComponent implements OnInit {
     // Abre a URL em uma nova aba
     window.open(whatsappUrl, '_blank');
   }
+
+
+  aumentarFaixaMeses() {
+    if (this.faixaDeMeses < 360) { // Limite máximo de 360 meses (30 anos)
+      this.faixaDeMeses++;
+      this.verificarErupcoes(); // Chama o método para verificar as erupções quando o valor muda
+    }
+  }
+
+  diminuirFaixaMeses() {
+    if (this.faixaDeMeses > 1) { // Limite mínimo de 1
+      this.faixaDeMeses--;
+      this.verificarErupcoes(); // Chama o método para verificar as erupções quando o valor muda
+    }
+  }
+
 
   voltar() {
     console.log("voltar()");

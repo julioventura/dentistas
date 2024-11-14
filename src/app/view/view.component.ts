@@ -121,12 +121,6 @@ export class ViewComponent implements OnInit {
   editar() {
     console.log('editar()');
 
-    // console.log('userId:', this.userId);
-    // console.log('collection:', this.collection);
-    // console.log('id:', this.id);
-    // console.log('subcollection:', this.subcollection);
-    // console.log('fichaId:', this.fichaId);
-
     if (this.subcollection) {
       const editPath = `/edit-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens`;
       console.log("editPath =", editPath);
@@ -143,12 +137,6 @@ export class ViewComponent implements OnInit {
 
   excluir() {
     console.log("excluir()");
-    // console.log("this.userId = " + this.userId);
-    // console.log("collection =", this.collection);
-    // console.log("this.id = " + this.id);
-    // console.log("subcollection =", this.subcollection);
-    // console.log("this.fichaId = " + this.fichaId);
-    // console.log("registroPath = " + this.registroPath);
 
     if (confirm('Você tem certeza que deseja excluir este registro?')) {
 
@@ -179,6 +167,7 @@ export class ViewComponent implements OnInit {
   getDynamicFields(): string[] {
     // Pega os nomes dos campos já definidos em `FormService.campos`
     const predefinedFields = this.FormService.campos.map(campo => campo.nome);
+    // console.log("predefinedFields =", predefinedFields);
     
     // Retorna apenas os campos que não estão na lista de campos pré-definidos
     return Object.keys(this.FormService.fichaForm.controls).filter(

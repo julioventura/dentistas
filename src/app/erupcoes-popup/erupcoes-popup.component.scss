@@ -1,0 +1,52 @@
+@import '../../styles.scss';
+
+.container {
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.95); // Fundo quase opaco para melhor contraste
+    // border-radius: 10px;
+    border: 0;
+    box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.5); // Sombra mais intensa
+    margin: 0;
+    font-size: 12px; // Tamanho da fonte geral do conteúdo
+}
+
+.container h3 {	
+    color: $primary-color;
+    font-size: 1.5em;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.container p {
+    padding: 8px;
+    border-bottom: 1px solid $secondary-color-light; // Linha inferior colorida para separação
+    &:nth-child(odd) {
+        background-color: $primary-color-light; // Cor de fundo alternada para as linhas
+    }
+}
+
+.container p strong {
+    font-size: 10px; // Tamanho da fonte dos labels
+    color: $primary-color-dark;
+}
+
+.menu-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 8px;
+    outline: 0;
+    background-color: $success-color; // Cor verde para o botão
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    font-size: 12px; // Tamanho da fonte do botão
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: darken($success-color, 10%);
+    }
+}

@@ -25,6 +25,7 @@ export class ImportarCadastroComponent {
       if (user) {
         this.userId = user.uid;
       }
+      console.log("ImportarCadastroComponent");
     });
   }
 

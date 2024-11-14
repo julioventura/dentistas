@@ -4,18 +4,19 @@
         <div class="actions">
             <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
         </div>
-        <h1 class="title">Erupções Dentárias do Mês</h1>
+        <h1 class="title">Erupções Dentárias Previstas</h1>
         <div class="actions">
             <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
         </div>
     </div>
 
-    <!-- Campo de input para alterar a faixa de meses -->
+
     <div class="faixa-de-meses">
-        <label for="faixaMeses">Faixa de meses para erupção:</label>
-        <input type="number" id="faixaMeses" [(ngModel)]="faixaDeMeses" (change)="verificarErupcoes()" maxlength="5"
-            min="1" max="3">
+        <img src="https://dentistas.com.br/assets/menos.png" alt="Diminuir" (click)="diminuirFaixaMeses()" class="control-icon" />
+        <span class="faixa-display">{{ faixaDeMesesTexto }}</span>
+        <img src="https://dentistas.com.br/assets/mais.png" alt="Aumentar" (click)="aumentarFaixaMeses()" class="control-icon" />
     </div>
+    
 
 
     <!-- Mensagem de carregamento ou nenhum paciente encontrado -->
