@@ -1,12 +1,11 @@
 <div class="container">
-  <h3>{{ data.nome }}</h3>
+  <h3>{{ data?.nome }}</h3>
   <div>
-    <p><strong>Nome:</strong> {{ data.nome }}</p>
-    <p><strong>Nascimento:</strong> {{ data.nascimento }}</p>
-    <p><strong>Envio original:</strong> {{ data.dataChamadaOriginal }}</p>
-    <p><strong>Envios seguintes:</strong> {{ data.enviosSeguintes }}</p>
-    <p><strong>Respondeu em:</strong> {{ data.dataResposta }}</p>
-    <p><strong>Retornou em:</strong> {{ data.dataComparecimento }}</p>
+    <p><strong>Nome:</strong> {{ data?.nome }}</p>
+    <p><strong>Envio original:</strong> {{ data?.dataChamadaOriginal }}</p>
+    <p><strong>Envios seguintes:</strong> {{ data?.enviosSeguintes }}</p>
+    <p><strong>Respondeu em:</strong> {{ data?.dataResposta }}</p>
+    <p><strong>Retornou em:</strong> {{ data?.dataComparecimento }}</p>
   </div>
   <button (click)="fechar()" class="menu-button">Fechar</button>
 </div>

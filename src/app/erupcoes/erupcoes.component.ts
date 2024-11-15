@@ -3,8 +3,8 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { ErupcoesPopupComponent } from '../erupcoes-popup/erupcoes-popup.component';
 
+import { ErupcoesPopupComponent } from '../erupcoes-popup/erupcoes-popup.component';
 import { UtilService } from '../shared/util.service';
 
 @Component({
@@ -86,9 +86,7 @@ export class ErupcoesComponent implements OnInit {
     private router: Router,
     public util: UtilService,
     public dialog: MatDialog 
-  ) {
-    this.faixaDeMeses = 3;  // Inicializa faixaDeMeses no construtor
-  }
+  ) {}
 
 
   ngOnInit(): void {
@@ -113,17 +111,20 @@ export class ErupcoesComponent implements OnInit {
     }
 
 
-  abrirPopup(paciente: any): void {
-    const dialogRef = this.dialog.open(ErupcoesPopupComponent, {
-      data: {
-        Nome: paciente.nome,               
+  
+    abrirPopup(paciente: any): void {
+      const dialogRef = this.dialog.open(ErupcoesPopupComponent);
+      // Configura os dados manualmente usando `componentInstance`
+      dialogRef.componentInstance.data = {
+        nome: paciente.nome,
+        nascimento: paciente.nascimento,
         dataChamadaOriginal: '21/10/2024',
         enviosSeguintes: '28/10/2024',
         dataResposta: '29/10/2024',
-        dataRetorno: '31/10/2024'
-      }
-    });
-  }
+        dataComparecimento: '31/10/2024'
+      };
+    }
+  
   
 
   carregarPacientes(): void {

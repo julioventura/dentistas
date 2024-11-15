@@ -36,7 +36,6 @@
                     <th>Nome</th>
                     <th>Nascimento</th>
                     <th>Meses</th>
-                    <th>Telefone</th>
                     <th>Erupcionando</th>
                     <th>Zap</th> <!-- Coluna de contato -->
 
@@ -48,7 +47,6 @@
                     <td>{{ paciente.nome }}</td>
                     <td>{{ paciente.nascimento }}</td>
                     <td>{{ paciente.meses }}</td>
-                    <td>{{ paciente.telefone }}</td>
                     <td>{{ paciente.dentesEmErupcao?.join(', ') || 'Nenhum dente erupcionando' }}</td>
                     <td>
                         <img src="https://dentistas.com.br/assets/whatsapp.png" alt="WhatsApp" class="enviar_zap" (click)="enviar_whatsapp(paciente.nome,paciente.telefone)">

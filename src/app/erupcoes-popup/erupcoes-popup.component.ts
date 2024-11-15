@@ -1,5 +1,14 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+
+interface DialogData {
+  nome: string;
+  nascimento: string;
+  dataChamadaOriginal: string;
+  enviosSeguintes: string;
+  dataResposta: string;
+  dataComparecimento: string;
+}
 
 @Component({
   selector: 'app-erupcoes-popup',
@@ -7,21 +16,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./erupcoes-popup.component.scss']
 })
 export class ErupcoesPopupComponent {
-  public data: { 
-    dataChamadaOriginal: string, 
-    enviosSeguintes: string, 
-    dataResposta: string, 
-    dataComparecimento: string, 
-    nome: string,
-    nascimento: string
-  };
+  // Define `data` como uma propriedade opcional, que será atribuída depois
+  public data?: DialogData;
 
-  constructor(
-    public dialogRef: MatDialogRef<ErupcoesPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) private injectedData: any
-  ) {
-    this.data = this.injectedData;
-  }
+  constructor(public dialogRef: MatDialogRef<ErupcoesPopupComponent>) {}
 
   fechar(): void {
     this.dialogRef.close();
