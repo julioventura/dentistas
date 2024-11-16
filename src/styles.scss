@@ -26,7 +26,7 @@ $secondary-color: #0d9113;
 $secondary-color-light: #ddffde;
 $secondary-color-dark: #105d14;
 
-$success-color: #105d14;
+$success-color: #0d9113;
 
 $text-color: $primary-color;
 $text-color-dark: $primary-color-dark;
@@ -81,6 +81,7 @@ h3 {
     margin-top: 0px;
     margin-bottom: 10px;
     color: $text-color-dark;
+    font-weight: bold;
 }
 
 .box {

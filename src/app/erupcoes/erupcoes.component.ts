@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { DateUtils } from '../shared/utils/date-utils';
 
 import { ErupcoesPopupComponent } from '../erupcoes-popup/erupcoes-popup.component';
 import { UtilService } from '../shared/util.service';
@@ -17,6 +18,7 @@ export class ErupcoesComponent implements OnInit {
   pacientes: any[] = [];
   pacientesComErupcao: any[] = [];
   faixaDeMeses: number = 3;  // Define faixaDeMeses com um valor inicial
+  public DateUtils = DateUtils;
 
   isLoading: boolean = false;
 
@@ -118,8 +120,9 @@ export class ErupcoesComponent implements OnInit {
       dialogRef.componentInstance.data = {
         nome: paciente.nome,
         nascimento: paciente.nascimento,
-        dataChamadaOriginal: '21/10/2024',
-        enviosSeguintes: '28/10/2024',
+        idade: paciente.idade,
+        dataChamadaInicial: '21/10/2024',
+        dataUltimaChamada: '28/10/2024',
         dataResposta: '29/10/2024',
         dataComparecimento: '31/10/2024'
       };

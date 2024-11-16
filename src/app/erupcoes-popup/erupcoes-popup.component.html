@@ -1,8 +1,15 @@
 <div class="container">
   <h3>{{ data?.nome }}</h3>
   <div>
-    <p><strong>Envio original:</strong> {{ data?.dataChamadaOriginal }}</p>
-    <p><strong>Envios seguintes:</strong> {{ data?.enviosSeguintes }}</p>
+    <p><strong>Nascimento:</strong> {{ data?.nascimento }}<br>
+      <strong>Idade:</strong> {{ idade }}<br>    
+    </p>
+
+    <p> &nbsp; </p>
+    <p><strong>Chamada inicial:</strong> {{ data?.dataChamadaInicial }}</p>
+    <p><strong>Última chamada:</strong> {{ data?.dataUltimaChamada }}</p>
+
+    <p> &nbsp; </p>
     <p><strong>Respondeu em:</strong> {{ data?.dataResposta }}</p>
     <p><strong>Retornou em:</strong> {{ data?.dataComparecimento }}</p>
   </div>
