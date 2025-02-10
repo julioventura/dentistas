@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavegacaoService } from '../shared/navegacao.service';
+import { NavegacaoService } from '../navegacao.service';
 
 @Injectable({
   providedIn: 'root'
@@ -103,34 +103,6 @@ export class UtilService {
   public ARCADA4 = ["41", "42", "43", "44", "45", "46", "47", "48"];
   public DENTES = [...this.ARCADA1, ...this.ARCADA2, ...this.ARCADA3, ...this.ARCADA4];
 
-  // Funções de data
-  getAgoraEmMilisegundos() {
-    return Date.now();
-  }
-
-  getTempoDecorridoEmMilisegundos(data: string) {
-    return Date.parse(data);
-  }
-
-  public formata_data(data: string, data_recente: string = ''): string {
-    if (!data) {
-      return '';
-    }
-
-    data = data.replace(/\D/g, ''); // Limpa tudo que não é número
-
-    if (data.length === 6) {
-      let ano = Number(data.substr(4, 2)) + 1900;
-      if (ano < 1950) {
-        ano += 100;
-      }
-      return `${data.substr(0, 2)}/${data.substr(2, 2)}/${ano}`;
-    } else if (data.length === 8) {
-      return `${data.substr(0, 2)}/${data.substr(2, 2)}/${data.substr(4, 4)}`;
-    }
-
-    return data;
-  }
 
   public formata_email(email: string): string {
     if (!email) return '';
@@ -145,14 +117,6 @@ export class UtilService {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'); // Formata CPF
   }
 
-  // Função para data atual
-  public hoje(): string {
-    const hoje = new Date();
-    const dia = this.pad(hoje.getDate(), 2);
-    const mes = this.pad(hoje.getMonth() + 1, 2);
-    const ano = hoje.getFullYear();
-    return `${dia}/${mes}/${ano}`;
-  }
 
   // Funções auxiliares
   public pad(num: any, size: number): string {
