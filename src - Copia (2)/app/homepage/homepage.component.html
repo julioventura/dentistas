@@ -1,0 +1,95 @@
+<!-- <div class="container" *ngIf="loggedInUser && !username"> -->
+<div class="container container_principal" *ngIf="!username">
+    <div class="intro-container">
+        <h1>Configuração da Homepage</h1>
+        <p>
+            Para configurar sua homepage profissional, acesse o componente "Perfil" e insira as informações necessárias.
+        </p>
+
+        <div *ngIf="username">
+            
+            <!-- Botão para abrir a homepage pública -->
+            <button (click)="openHomepage()" class="open-homepage-btn">
+                Abrir Homepage em uma Nova Janela
+            </button>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Exibe a homepage pública se houver um username na rota -->
+<div class="container">
+
+    <div class="profile-header">
+        <div class="header-bg">
+            <!-- Foto do usuário -->
+            <img src="{{ userProfile.foto }}" alt="{{ userProfile.nome}}" class="profile-photo">
+            <div class="header-overlay">
+                <h1>{{ userProfile.nome }}</h1> <!-- Nome do dentista -->
+                <h3 class="center">{{ userProfile.tituloProfissional }}</h3> <!-- Título Profissional -->
+
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-info">
+        <h2>Contato</h2>
+        <div class="contact-buttons">
+            <p>Email: <a [href]="'mailto:' + userProfile.email" class="contact-btn">{{userProfile.email}}</a></p>
+            <p>Whatsapp: {{userProfile.whatsapp}} </p>
+            <p>Telefone: {{userProfile.telefone}} </p>
+        </div>
+
+        <h2>Endereço</h2>
+        <p>{{ userProfile.endereco }}</p>
+        <p>{{ userProfile.website }}</p>
+
+        <h2>Título Profissional</h2>
+        <p>{{ userProfile.tituloProfissional }}</p> <!-- Título Profissional -->
+        <p>{{ userProfile.descricao }}</p> <!-- Descrição do dentista -->
+
+        <h2>Horários de Atendimeto</h2>
+        <p>{{ userProfile.tituloProfissional }}</p> <!-- Título Profissional -->
+    </div>
+
+<div class="social-media">
+    <h2>Convênios</h2>
+    <div class="center">
+        {{userProfile.convenios}} 
+
+    </div>
+</div>
+
+    <div class="social-media">
+        <h2>Redes Sociais</h2>
+        <div class="center">
+            <a href="{{ userProfile.facebook }}" target="_blank">
+                <img src="https://dentistas.com.br/assets/facebook.png" alt="Facebook" width="40" />
+            </a>
+
+            <a href="{{ userProfile.instagram }}" target="_blank">
+                <img src="https://dentistas.com.br/assets/instagram.png?v=1" alt="Instagram" width="40" />
+            </a>
+
+            <a href="{{ userProfile.youtube }}" target="_blank">
+                <img src="https://dentistas.com.br/assets/youtube.png" alt="YouTube" width="40" />
+            </a>
+        </div>
+    </div>
+
+    <div class="cartao-digital">
+        <h2>Cartão de Visitas Digital</h2>
+        <div class="center">
+            <!-- Exibe o QR Code para a URL da homepage do usuário -->
+            <div class="qr-code" *ngIf="qrCodeUrl">
+                <img [src]="qrCodeUrl" alt="QR Code da homepage">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="footer">
+    <p>© {{ currentYear }} Dentistas.com.br</p>
+</div>

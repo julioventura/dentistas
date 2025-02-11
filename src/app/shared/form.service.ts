@@ -4,7 +4,7 @@ import { FirestoreService } from './firestore.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
-import { UtilService } from '../shared/util.service';
+import { UtilService } from '../shared/utils/util.service';
 import { switchMap, tap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 
@@ -78,59 +78,65 @@ export class FormService {
     }
 
 
-    loadRegistro(userId: string, collection: string, id: string, view: boolean) {
-        console.log('loadRegistro()');
+    loadRegistro(userId: string, collection: string, id: string, view_only: boolean): Promise<void> {
+        return new Promise((resolve, reject) => {
+            console.log('loadRegistro()');
 
-        this.collection = collection;
-        this.isLoading = true;
+            this.collection = collection;
+            this.isLoading = true;
 
-        if (userId && collection && id) {
-            const fichaPath = `users/${userId}/${collection}`;
-            console.log('Caminho para carregar ficha:', fichaPath);
+            if (userId && collection && id) {
+                const fichaPath = `users/${userId}/${collection}`;
+                console.log('Caminho para carregar ficha:', fichaPath);
 
-            this.carregarCamposRegistro(userId, collection).pipe(
-                switchMap(() => this.firestoreService.getRegistroById(fichaPath, id))
-            ).subscribe(ficha => {
-                if (ficha) {
-                    console.log('Ficha carregada:', ficha);
-                    this.registro = ficha;
-                    this.nome_in_collection = this.registro.nome;
+                this.carregarCamposRegistro(userId, collection).pipe(
+                    switchMap(() => this.firestoreService.getRegistroById(fichaPath, id))
+                ).subscribe(ficha => {
+                    if (ficha) {
+                        console.log('Ficha carregada:', ficha);
+                        this.registro = ficha;
+                        this.nome_in_collection = this.registro.nome;
 
-                    // Verifica e formata campos de data no registro
-                    const formattedData = { ...ficha };
-                    for (const key in formattedData) {
-                        if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
-                            const formattedDate = this.formatToDateInput(formattedData[key]);
-                            formattedData[key] = formattedDate ? formattedDate : formattedData[key];
+                        // Verifica e formata campos de data no registro
+                        const formattedData = { ...ficha };
+                        for (const key in formattedData) {
+                            if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
+                                const formattedDate = this.formatToDateInput(formattedData[key]);
+                                formattedData[key] = formattedDate ? formattedDate : formattedData[key];
+                            }
                         }
-                    }
 
-                    // Preenche o FormGroup com os dados formatados e adiciona campos dinâmicos
-                    this.addDynamicFields(formattedData);
-                    this.fichaForm.patchValue(formattedData);
+                        // Preenche o FormGroup com os dados formatados e adiciona campos dinâmicos
+                        this.addDynamicFields(formattedData);
+                        this.fichaForm.patchValue(formattedData);
 
-                    if (view) {
-                        this.fichaForm.disable();
-                        console.log("Formulário desabilitado.");
+                        if (view_only) {
+                            this.fichaForm.disable();
+                            console.log("Formulário desabilitado.");
+                        } else {
+                            this.fichaForm.enable();
+                            console.log("Formulário habilitado.");
+                        }
+
+                        this.isLoading = false;
+                        console.log('isLoading == false');
+                        resolve();
                     } else {
-                        this.fichaForm.enable();
-                        console.log("Formulário habilitado.");
+                        console.error('Ficha não encontrada no caminho:', fichaPath);
+                        this.isLoading = false;
+                        reject('Ficha não encontrada');
                     }
-
+                }, error => {
+                    console.error('Erro ao carregar ficha para edição:', error);
                     this.isLoading = false;
-                    console.log('isLoading == false');
-                } else {
-                    console.error('Ficha não encontrada no caminho:', fichaPath);
-                    this.isLoading = false;
-                }
-            }, error => {
-                console.error('Erro ao carregar ficha para edição:', error);
+                    reject(error);
+                });
+            } else {
+                console.error('Identificador id não definido corretamente.');
                 this.isLoading = false;
-            });
-        } else {
-            console.error('Identificador id não definido corretamente.');
-            this.isLoading = false;
-        }
+                reject('Identificador id não definido corretamente');
+            }
+        });
     }
 
 
@@ -173,73 +179,78 @@ export class FormService {
 
 
 
-    loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view: boolean) {
-        console.log('loadFicha()');
+    loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view_only: boolean): Promise<void> {
+        return new Promise((resolve, reject) => {
+            console.log('loadFicha()');
 
-        console.log('userId: ', userId);
-        console.log('collection:', collection);
-        console.log('id:', id);
-        console.log('subcollection: ' + subcollection);
-        console.log('fichaId: ' + fichaId);
-        console.log('view (visualizar registro): ', view);
+            console.log('userId: ', userId);
+            console.log('collection:', collection);
+            console.log('id:', id);
+            console.log('subcollection: ' + subcollection);
+            console.log('fichaId: ' + fichaId);
+            console.log('view (visualizar registro): ', view_only);
 
-        if (subcollection && fichaId) {
-            this.subcollection = subcollection;
+            if (subcollection && fichaId) {
+                this.subcollection = subcollection;
 
-            const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
-            console.log('Caminho para carregar ficha:', fichaPath);
+                const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
+                console.log('Caminho para carregar ficha:', fichaPath);
 
-            // Define o formulário como carregando
-            this.isLoading = true;
+                // Define o formulário como carregando
+                this.isLoading = true;
 
-            // Carrega os campos do formulário antes de tentar carregar a ficha
-            this.carregarCamposFichas(userId, subcollection);
+                // Carrega os campos do formulário antes de tentar carregar a ficha
+                this.carregarCamposFichas(userId, subcollection);
 
-            // Carrega os dados da ficha do Firestore
-            this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
-                if (ficha) {
-                    console.log('Ficha carregada:', ficha);
-                    this.registro = ficha;  // Para o view-ficha, se necessário
+                // Carrega os dados da ficha do Firestore
+                this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
+                    if (ficha) {
+                        console.log('Ficha carregada:', ficha);
+                        this.registro = ficha;  // Para o view-ficha, se necessário
 
-                    // Formata os campos de data e adiciona campos dinâmicos
-                    const formattedData = { ...ficha };
-                    for (const key in formattedData) {
-                        if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
-                            const formattedDate = this.formatToDateInput(formattedData[key]);
-                            formattedData[key] = formattedDate ? formattedDate : formattedData[key];
+                        // Formata os campos de data e adiciona campos dinâmicos
+                        const formattedData = { ...ficha };
+                        for (const key in formattedData) {
+                            if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
+                                const formattedDate = this.formatToDateInput(formattedData[key]);
+                                formattedData[key] = formattedDate ? formattedDate : formattedData[key];
+                            }
                         }
-                    }
 
-                    // Adiciona campos dinâmicos e preenche o FormGroup com os dados formatados
-                    this.addDynamicFields(formattedData);
-                    this.fichaForm.patchValue(formattedData);
+                        // Adiciona campos dinâmicos e preenche o FormGroup com os dados formatados
+                        this.addDynamicFields(formattedData);
+                        this.fichaForm.patchValue(formattedData);
 
-                    // Condicional para desabilitar o formulário se estiver na view (visualização)
-                    if (view) {
-                        this.fichaForm.disable();  // Desabilita o formulário
-                        console.log("Formulário desabilitado.");
+                        // Condicional para desabilitar o formulário se estiver na view (visualização)
+                        if (view_only) {
+                            this.fichaForm.disable();  // Desabilita o formulário
+                            console.log("Formulário desabilitado.");
+                        } else {
+                            this.fichaForm.enable();  // Habilita o formulário
+                            console.log("Formulário habilitado.");
+                        }
+                        console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
+
+                        // Marca como carregado (isLoading = false)
+                        this.isLoading = false;
+                        console.log('isLoading == false');
+                        resolve();
                     } else {
-                        this.fichaForm.enable();  // Habilita o formulário
-                        console.log("Formulário habilitado.");
+                        console.error('Ficha não encontrada no caminho:', fichaPath);
+                        this.isLoading = false;
+                        reject('Ficha não encontrada');
                     }
-                    console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
-
-                    // Marca como carregado (isLoading = false)
+                }, error => {
+                    console.error('Erro ao carregar ficha para edição:', error);
                     this.isLoading = false;
-                    console.log('isLoading == false');
-
-                } else {
-                    console.error('Ficha não encontrada no caminho:', fichaPath);
-                    this.isLoading = false;
-                }
-            }, error => {
-                console.error('Erro ao carregar ficha para edição:', error);
+                    reject(error);
+                });
+            } else {
+                console.error('subcollection ou fichaId não definidos corretamente.');
                 this.isLoading = false;
-            });
-        } else {
-            console.error('subcollection ou fichaId não definidos corretamente.');
-            this.isLoading = false;
-        }
+                reject('subcollection ou fichaId não definidos corretamente');
+            }
+        });
     }
 
 

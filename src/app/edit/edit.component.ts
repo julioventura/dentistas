@@ -3,14 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { NavegacaoService } from '../shared/navegacao.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { UtilService } from '../shared/util.service';
+import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
-
 })
 export class EditComponent implements OnInit, AfterViewInit {
   @ViewChild('nomeInput') nomeInput?: ElementRef;
@@ -28,7 +27,6 @@ export class EditComponent implements OnInit, AfterViewInit {
   registroPath: string = '';
   routePath: string = '';
   arquivos: { [key: string]: File } = {};
-
 
   constructor(
     private route: ActivatedRoute,
@@ -68,12 +66,23 @@ export class EditComponent implements OnInit, AfterViewInit {
         }
         else {
           if (this.subcollection) {
-            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
+            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
+              .then(() => {
+                this.subtitulo_da_pagina = this.FormService.registro.nome;
+              })
+              .catch(error => {
+                console.error('Erro ao carregar ficha:', error);
+              });
           }
           else {
-            this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
+            this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
+              .then(() => {
+                this.subtitulo_da_pagina = this.FormService.registro.nome;
+              })
+              .catch(error => {
+                console.error('Erro ao carregar registro:', error);
+              });
           }
-          this.subtitulo_da_pagina = this.FormService.registro.nome;
         }
 
         // Usando setTimeout para garantir que o campo "Nome" esteja disponível após o carregamento
@@ -81,7 +90,8 @@ export class EditComponent implements OnInit, AfterViewInit {
           if (this.nomeInput) {
             this.nomeInput.nativeElement.focus();
           }
-        }, 500); // Ajuste o tempo conforme necessário
+        }, 1000); // Ajuste o tempo conforme necessário
+        
       }
       else {
         console.error('Usuário não autenticado.');
@@ -102,8 +112,6 @@ export class EditComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-
   salvar() {
     console.log('salvar()');
     if (this.userId) {
@@ -115,45 +123,43 @@ export class EditComponent implements OnInit, AfterViewInit {
       console.log('fichaId:', this.fichaId);
 
       if (this.subcollection) {
-        console.log("Salvar uma subcollection: ", this.subcollection)
+        console.log("Salvar uma subcollection: ", this.subcollection);
         if (this.fichaId) {
           this.FormService.salvarSubcollection(this.userId, this.collection, this.id, this.subcollection, this.fichaId);
         }
       }
       else {
-        console.log("Salvar uma collection: ", this.collection)
-        // if (this.id) {
-        //   this.FormService.salvarCollection(this.userId, this.collection, this.id);
-        // }
+        console.log("Salvar uma collection: ", this.collection);
         this.salvar_collection_anterior();
       }
       this.verFicha();
     }
   }
 
-
-
-
   salvar_collection_anterior() {
     if (this.FormService.fichaForm.valid && this.userId) {
-
-
-      const registroAtualizado = { ...this.FormService.registro, ...this.FormService.fichaForm.value };
-
+      // Converte o valor do campo email para minúsculas, se existir.
+      const formValues = { ...this.FormService.fichaForm.value };
+      if (formValues.email) {
+        formValues.email = formValues.email.toLowerCase();
+      }
+    
+      const registroAtualizado = { ...this.FormService.registro, ...formValues };
+  
       // Verifique se o ID está presente antes de salvar
       if (!this.FormService.registro.id) {
         console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
         alert('Erro ao atualizar o registro. O ID está indefinido.');
         return;
       }
-
+  
       const registroPath = `users/${this.userId}/${this.collection}`;
       console.log('registroPath =', registroPath);
-
+  
       console.log('Tentando salvar o registro:');
       console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
       console.log('Dados do registro a serem atualizados:', registroAtualizado);
-
+  
       const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
         const file = this.arquivos[campoNome];
         const url = prompt('Insira a URL do arquivo ou imagem:');
@@ -162,7 +168,7 @@ export class EditComponent implements OnInit, AfterViewInit {
           resolve();
         });
       });
-
+  
       Promise.all(uploadPromises).then(() => {
         this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
           .then(() => {
@@ -173,8 +179,6 @@ export class EditComponent implements OnInit, AfterViewInit {
             alert('Erro ao salvar o registro. Por favor, tente novamente.');
           });
       });
-
-
     } else {
       console.error('Registro inválido ou sem ID:', this.FormService.registro);
       alert('Registro inválido ou sem ID. Não é possível salvar.');

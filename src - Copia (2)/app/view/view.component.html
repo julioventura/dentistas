@@ -1,0 +1,77 @@
+<div class="container container_principal">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="left">
+      <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+      <img src="https://dentistas.com.br/assets/home.png" class="navegacao" (click)="util.goHome()">
+    </div>
+    <h1 class="title">{{ titulo_da_pagina }}</h1>
+    <div class="right">
+      <img src="https://dentistas.com.br/assets/editar.png" class="navegacao_direita" (click)="editar()">
+      <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao_direita" (click)="excluir()">
+    </div>
+  </div>
+
+  <div class="record-header">
+    {{ subtitulo_da_pagina }}
+  </div>
+  <!-- HEADER / -->
+
+  <!-- Botões das fichas internas -->
+  <div *ngIf="show_menu">
+    <app-menu [collection]="collection" [id]="id"></app-menu>
+  </div>
+
+  <!-- Detalhes -->
+  <div class="dynamic-form-container" *ngIf="FormService.fichaForm && FormService.campos.length > 0">
+
+    <div *ngIf="FormService.isLoading" class="aviso">
+      Carregando dados da ficha...
+    </div>
+
+
+    <!-- Formulário principal para os campos predefinidos -->
+    <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
+
+      <div *ngFor="let campo of FormService.campos">
+        <!-- Verifica se o campo está preenchido antes de exibir -->
+        <div *ngIf="FormService.registro[campo.nome] && FormService.registro[campo.nome].length > 0"
+          class="detail-container">
+          <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+
+          <!-- Input para tipos normais -->
+          <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+            *ngIf="campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'">
+
+          <!-- Input para URL -->
+          <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url" *ngIf="campo.tipo === 'url'"
+            placeholder="Cole aqui o link do arquivo">
+
+          <!-- Textarea para campos longos -->
+          <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+            *ngIf="campo.tipo === 'textarea'" rows="3" placeholder="Digite o conteúdo"></textarea>
+        </div>
+      </div>
+
+    </form>
+
+
+    <!-- Formulário dinâmico para exibir apenas os campos adicionais -->
+    <div *ngIf="!FormService.isLoading && menu_exame" class="extra-fields-container">
+      <div class="espacador_vertical"></div>
+      <form [formGroup]="FormService.fichaForm" class="record-details">
+        <div *ngFor="let campoNome of getDynamicFields()">
+
+          <!-- Condição para ocultar o campo 'id' -->
+          <div *ngIf="campoNome !== 'id'" class="detail-container">
+            <label [for]="campoNome" class="detail-label">{{ campoNome | titlecase }}</label>
+            <input type="text" [formControlName]="campoNome" [id]="campoNome" class="detail-value" readonly>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+
+  </div>
