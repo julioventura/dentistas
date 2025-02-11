@@ -42,17 +42,29 @@ export class FichasComponent implements OnInit {
   }
 
   carregarColecoes() {
-    this.CamposFichaService.getColecoes(this.userId).subscribe((colecoes) => {
-      this.colecoes = ['padrao', ...colecoes]; // 'padrao' aparece primeiro na lista de coleções
-    });
+    this.CamposFichaService.getColecoes(this.userId).subscribe(
+      (colecoes) => {
+        this.colecoes = ['padrao', ...colecoes]; // 'padrao' aparece primeiro na lista de coleções
+      },
+      (error) => {
+        console.error('Erro ao carregar coleções:', error);
+        alert('Erro ao carregar coleções. Tente novamente.');
+      }
+    );
   }
 
   carregarCampos() {
     // Carrega os campos da coleção selecionada
-    this.CamposFichaService.getCamposRegistro(this.userId, this.colecaoSelecionada).subscribe((campos) => {
-      this.campos = campos;
-      this.camposIniciais = JSON.parse(JSON.stringify(campos)); // Faz uma cópia dos campos iniciais
-    });
+    this.CamposFichaService.getCamposRegistro(this.userId, this.colecaoSelecionada).subscribe(
+      (campos) => {
+        this.campos = campos;
+        this.camposIniciais = JSON.parse(JSON.stringify(campos)); // Faz uma cópia dos campos iniciais
+      },
+      (error) => {
+        console.error('Erro ao carregar campos:', error);
+        alert('Erro ao carregar campos. Tente novamente.');
+      }
+    );
   }
 
   salvar() {
@@ -78,14 +90,21 @@ export class FichasComponent implements OnInit {
   }
 
   adicionarColecao() {
-    const novaColecao = prompt('Digite o nome da nova coleção:');
-    if (novaColecao) {
-      // Cria a nova coleção com base nos campos padrão
-      this.CamposFichaService.setCamposRegistro(this.userId, novaColecao, [...this.CamposFichaService.camposPadrao]).then(() => {
-        this.colecaoSelecionada = novaColecao;
-        this.carregarColecoes();
-        this.carregarCampos();
-      });
+    const novaColecao = prompt('Digite o nome da nova coleção em uma palavra:');
+    if (novaColecao && /^[a-zA-Z0-9_]+$/.test(novaColecao.trim())) {
+      this.CamposFichaService.setCamposRegistro(this.userId, novaColecao, [...this.CamposFichaService.camposPadrao])
+        .then(() => {
+          this.colecaoSelecionada = novaColecao;
+          this.carregarColecoes();
+          this.carregarCampos();
+          alert('Coleção adicionada com sucesso!');
+        })
+        .catch(error => {
+          console.error('Erro ao adicionar coleção:', error);
+          alert('Erro ao adicionar coleção. Tente novamente.');
+        });
+    } else {
+      alert('Nome de coleção inválido. Use apenas letras, números e underscores.');
     }
   }
 
