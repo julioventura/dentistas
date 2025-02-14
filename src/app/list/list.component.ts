@@ -7,6 +7,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { UtilService } from '../shared/utils/util.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore'; // Importar o AngularFirestore
 import { FormService } from '../shared/form.service';
+import { ExportService } from '../shared/export.service';
+import { PdfExportService } from '../shared/pdf-export.service';
 
 
 @Component({
@@ -50,6 +52,8 @@ export class ListComponent implements OnInit {
     public util: UtilService,
     private firestore: AngularFirestore,
     public FormService: FormService,
+    private exportService: ExportService,
+    private pdfExportService: PdfExportService
 
   ) { }
 
@@ -393,5 +397,18 @@ export class ListComponent implements OnInit {
     this.router.navigate([listaPath]);
   }
 
+  exportAsCSV() {
+    const csvData = this.exportService.convertToCSV(this.registrosFiltrados.length
+      ? this.registrosFiltrados
+      : this.registros);
+    this.exportService.downloadCSV('registros.csv', csvData);
+  }
+
+  exportAsPDF() {
+    const dataToExport = this.registrosFiltrados.length
+      ? this.registrosFiltrados
+      : this.registros;
+    this.pdfExportService.exportDataAsPDF(dataToExport, 'Registros');
+  }
 
 }

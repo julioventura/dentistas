@@ -10,7 +10,6 @@ import { FormService } from '../shared/form.service';
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
 })
-
 export class ViewComponent implements OnInit {
   userId: string | null = null;
   collection!: string;
