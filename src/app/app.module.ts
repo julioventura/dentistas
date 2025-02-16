@@ -50,6 +50,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
+
 const routes: Routes = [
   { path: '', component: HomeComponent }, // Página inicial padrão
   { path: 'home', component: HomeComponent, data: { animation: '1' } },

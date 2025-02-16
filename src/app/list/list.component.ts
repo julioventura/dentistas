@@ -10,14 +10,13 @@ import { FormService } from '../shared/form.service';
 import { ExportService } from '../shared/export.service';
 import { PdfExportService } from '../shared/pdf-export.service';
 
-
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
 })
-
 export class ListComponent implements OnInit {
+  // Propriedades do componente
   collection!: string;
   subcollection?: string;
   registros: Registro[] = [];
@@ -42,7 +41,6 @@ export class ListComponent implements OnInit {
   fichas: any[] = []; // Lista de fichas (exames, atendimentos, etc.)
   show_busca: boolean = false;
 
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -54,9 +52,13 @@ export class ListComponent implements OnInit {
     public FormService: FormService,
     private exportService: ExportService,
     private pdfExportService: PdfExportService
-
   ) { }
 
+  /**
+   * ngOnInit() - (a) Ação automática (hook do Angular)
+   * Executado quando o componente é inicializado.
+   * Responsável por obter parâmetros de rota, definir títulos e carregar registros.
+   */
   ngOnInit() {
     console.log("ngOnInit()");
 
@@ -64,30 +66,28 @@ export class ListComponent implements OnInit {
     this.id = this.route.snapshot.paramMap.get('id')!;
     this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
 
+    // Define os títulos conforme se há subcollection ou não
     this.titulo_da_pagina = this.subcollection ? this.util.titulo_ajuste_plural(this.subcollection) : this.util.titulo_ajuste_plural(this.collection);
     this.subtitulo_da_pagina = this.subcollection ? this.FormService.nome_in_collection : '';
 
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
-        // console.log("this.userId = " + user.uid);
-
-
-        // Verifica se tem a configuração de campos personalizada, ao carregar a página
+        // Chamada interna para verificar configuração de campos (d)
         this.verificarOuCriarConfiguracao();
-        // this.createForm();
-
-
-        // Carrega a lista de registros
+        // Chamada interna para carregar registros (d)
         this.loadRegistros();
       }
     });
   }
 
-
+  /**
+   * loadRegistros() - (d) Chamada apenas internamente no componente.
+   * Responsável por construir o caminho da coleção e consultar o Firestore
+   * para recuperar e armazenar os registros, bem como inicializar a paginação.
+   */
   loadRegistros() {
     console.log('loadRegistros()');
-
     console.log('Collection:', this.collection);
     console.log('ID:', this.id);
     console.log('subcollection:', this.subcollection);
@@ -98,17 +98,16 @@ export class ListComponent implements OnInit {
         : `users/${this.userId}/${this.collection}`;
       this.isLoading = true;
 
-      // Obtenção dos registros ordenados
+      // Consulta os registros ordenados pelo campo "nome"
       this.firestoreService.getRegistros(collectionPath, ref => ref.orderBy('nome')).subscribe(
         (registros: Registro[]) => {
-          this.registros = registros; // Registros completos
+          this.registros = registros;
           this.totalRegistros = this.registros.length;
-          this.page = 1; // Reseta para a primeira página
-          this.searchQuery = ''; // Limpa a barra de pesquisa
-
-          // Inicializa registrosFiltrados com todos os registros
+          this.page = 1;
+          this.searchQuery = '';
+          // Inicializa a listagem filtrada e atualiza a paginação
           this.registrosFiltrados = [...this.registros];
-          this.atualizarPaginacao(); // Atualiza totalPages e registrosPaginados
+          this.atualizarPaginacao();
           this.isLoading = false;
         },
         (error) => {
@@ -121,26 +120,26 @@ export class ListComponent implements OnInit {
     }
   }
 
-
+  /**
+   * verFicha(fichaId: string) - (b) É chamada a partir do template (por clique, por exemplo)
+   * Responsável por montar o caminho para a visualização do registro ou ficha e realizar a navegação.
+   */
   verFicha(fichaId: string) {
     console.log("verFicha(fichaId)");
-
     const fichaPath = this.subcollection ?
       `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
       `view/${this.collection}`;
-
     console.log("fichaPath =", fichaPath);
     console.log("fichaId =", fichaId);
-
     this.router.navigate([fichaPath, fichaId]);
-
   }
 
-
-
+  /**
+   * incluir() - (b) É chamada a partir do template (por exemplo, ao clicar em "Novo")
+   * Cria um novo registro com um código gerado automaticamente e navega para a rota de edição.
+   */
   incluir() {
     console.log("incluir()");
-
     if (!this.userId) return;
 
     const collectionPath = this.subcollection ?
@@ -184,8 +183,6 @@ export class ListComponent implements OnInit {
         console.log("Criou registro " + novoRegistro.id);
         console.log("collectionRoute " + collectionRoute);
         console.log("collectionPath " + collectionPath);
-
-
         this.router.navigate([collectionRoute, novoRegistro.id]);
       })
         .catch((error) => {
@@ -193,19 +190,14 @@ export class ListComponent implements OnInit {
           alert('Erro ao incluir novo registro.');
         });
     });
-
-
   }
 
-
+  /**
+   * filtrarRegistros() - (b) É chamada a partir do template (por exemplo, no evento input da barra de busca)
+   * Filtra o array de registros com base na query de busca (nome ou código) e atualiza a paginação.
+   */
   filtrarRegistros() {
     const query = this.searchQuery.toLowerCase();
-
-    // // Log para verificar registros paginados na página atual
-    // console.log(`registrosPaginados ${this.page}:`, this.registrosPaginados);
-    // console.log(`registrosFiltrados ${this.page}:`, this.registrosFiltrados);
-    // console.log(`registros ${this.page}:`, this.registros);
-
     if (query) {
       this.registrosFiltrados = this.registros.filter(registro => {
         const nome = registro.nome ? registro.nome.toLowerCase() : '';
@@ -216,40 +208,43 @@ export class ListComponent implements OnInit {
       this.registrosFiltrados = [...this.registros];
       this.page = 1;
     }
-    // Log para verificar registros filtrados
-    // console.log('Registros após filtro:', this.registrosFiltrados);
     this.atualizarPaginacao();
   }
 
+  /**
+   * atualizarPaginacao() - (d) Chamada internamente para atualizar a paginação.
+   * Recalcula o total de páginas e chama atualizarRegistrosPaginados() para definir o slice de registros da página atual.
+   */
   atualizarPaginacao() {
     this.filteredTotal = this.registrosFiltrados.length;
     this.totalPages = Math.ceil(this.filteredTotal / this.pageSize);
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
     this.atualizarRegistrosPaginados();
-
-    // Log para verificar registros paginados na página atual
-    // console.log(`registrosPaginados ${this.page}:`, this.registrosPaginados);
-    // console.log(`registrosFiltrados ${this.page}:`, this.registrosFiltrados);
-    // console.log(`pages:`, this.pages);
-    // console.log(`registros ${this.page}:`, this.registros);
   }
 
+  /**
+   * atualizarRegistrosPaginados() - (d) Chamada internamente para atualizar os registros exibidos na página atual.
+   * Calcula o índice de início e fim com base na página atual e no tamanho da página, e atualiza o array de registros paginados.
+   */
   atualizarRegistrosPaginados() {
     const startIndex = (this.page - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
     this.registrosPaginados = this.registrosFiltrados.slice(startIndex, endIndex);
-
-    // Log para verificar registros paginados na página atual
-    // console.log(`registrosPaginados ${this.page}:`, this.registrosPaginados);
-    // console.log(`registrosFiltrados ${this.page}:`, this.registrosFiltrados);
-    // console.log(`registros ${this.page}:`, this.registros);
   }
 
+  /**
+   * setPage(page: number) - (b) Geralmente chamada a partir do template (por controle de paginação)
+   * Ajusta a página atual para o número informado e atualiza os registros exibidos.
+   */
   setPage(page: number) {
     this.page = page;
     this.atualizarRegistrosPaginados();
   }
 
+  /**
+   * previousPage() - (b) Chamada a partir do template (por exemplo, botão "Página Anterior")
+   * Decrementa a página atual se não for a primeira e atualiza os registros paginados.
+   */
   previousPage() {
     console.log("previousPage()");
     if (this.page > 1) {
@@ -258,6 +253,10 @@ export class ListComponent implements OnInit {
     }
   }
 
+  /**
+   * nextPage() - (b) Chamada a partir do template (por exemplo, botão "Próxima Página")
+   * Incrementa a página atual se houver páginas posteriores e atualiza os registros paginados.
+   */
   nextPage() {
     console.log("nextPage()");
     if (this.page < this.totalPages) {
@@ -266,19 +265,20 @@ export class ListComponent implements OnInit {
     }
   }
 
+  /**
+   * verificarOuCriarConfiguracao() - (d) Chamada internamente (por ngOnInit) para garantir configurações de campos.
+   * Verifica se existe uma configuração de campos para a coleção do usuário e, se não existir, cria uma padrão.
+   */
   verificarOuCriarConfiguracao() {
     console.log("verificarOuCriarConfiguracao()");
-
     if (this.userId) {
       const configPath = `users/${this.userId}/configuracoesCampos`;
-
       this.firestore.collection(configPath).doc(this.collection).get()
         .subscribe((doc) => {
           if (doc.exists) {
             console.log(`Configuração já existe para a coleção "${this.collection}".`);
           } else {
             const camposPadrao = this.getCamposPadraoPorCollection();
-
             this.firestore.collection(configPath).doc(this.collection).set({ campos: camposPadrao })
               .then(() => {
                 console.log(`Configuração criada para a coleção "${this.collection}".`);
@@ -294,10 +294,11 @@ export class ListComponent implements OnInit {
     }
   }
 
-
+  // A função verificarOuCriarMenus() está comentada e não é utilizada atualmente no codebase.
+  // Ela seria classificada como (c) não usada, conforme a análise prévia.
+  /*
   verificarOuCriarMenus() {
     console.log("verificarOuCriarMenus()");
-
     if (this.userId) {
       const configPath = `users/${this.userId}/configuracoesMenus`;
       const colecoes = [
@@ -309,7 +310,6 @@ export class ListComponent implements OnInit {
         'equipe',
         'proteticos'
       ];
-
       colecoes.forEach((colecao) => {
         this.firestore.collection(configPath).doc(colecao).get()
           .subscribe((doc) => {
@@ -317,7 +317,6 @@ export class ListComponent implements OnInit {
               console.log(`Configuração de menu já existe para a coleção "${colecao}".`);
             } else {
               const menuPadrao = this.getMenusPadraoPorCollection(colecao);
-
               this.firestore.collection(configPath).doc(colecao).set({ menus: menuPadrao })
                 .then(() => {
                   console.log(`Configuração de menu criada para a coleção "${colecao}".`);
@@ -335,8 +334,12 @@ export class ListComponent implements OnInit {
       console.warn("User ID não definido. Não é possível verificar ou criar configurações de menu.");
     }
   }
+  */
 
-
+  /**
+   * getMenusPadraoPorCollection(colecao: string) - (d) Chamada internamente (por verificarOuCriarMenus, se fosse usado)
+   * Retorna um array com os menus padrão para a coleção informada.
+   */
   getMenusPadraoPorCollection(colecao: string): any {
     const menusPadrao: { [key: string]: any[] } = {
       pacientes: ['exames', 'planos', 'atendimentos', 'pagamentos', 'historico'],
@@ -347,15 +350,15 @@ export class ListComponent implements OnInit {
       equipe: ['planos', 'atendimentos', 'pagamentos', 'historico'],
       proteticos: ['planos', 'atendimentos', 'pagamentos', 'historico']
     };
-
     return menusPadrao[colecao] || [];
   }
 
-
-
+  /**
+   * getCamposPadraoPorCollection() - (d) Chamada apenas internamente (por verificarOuCriarConfiguracao)
+   * Retorna um array de objetos definindo os campos padrão para a coleção de registros.
+   */
   getCamposPadraoPorCollection() {
     console.log("getCamposPadraoPorCollection()");
-
     return [
       { nome: 'nome', tipo: 'text', label: 'Nome' },
       { nome: 'codigo', tipo: 'text', label: 'Código' },
@@ -378,37 +381,47 @@ export class ListComponent implements OnInit {
       { nome: 'raca', tipo: 'text', label: 'Raça ou cor' },
       { nome: 'datainicio', tipo: 'date', label: 'Data início' },
       { nome: 'dataalta', tipo: 'date', label: 'Data de alta' }
-    ]
+    ];
   }
 
-  
+  /**
+   * showbusca() - (b) Chamado a partir do template (por exemplo, ao clicar num botão para alternar a busca)
+   * Inverte o estado booleano que controla a exibição da barra de pesquisa.
+   */
   showbusca() {
     this.show_busca = !this.show_busca;
   }
 
+  /**
+   * voltar() - (b) Chamado a partir do template (por exemplo, ao clicar num botão "voltar")
+   * Navega para a rota determinada, conforme se há subcoleção ou não.
+   */
   voltar() {
     console.log("voltar()");
     console.log("subcollection =", this.subcollection);
-
     const listaPath = this.subcollection ?
       `/view/${this.collection}/${this.id}` :
       `home`;
-
     this.router.navigate([listaPath]);
   }
 
-  exportAsCSV() {
-    const csvData = this.exportService.convertToCSV(this.registrosFiltrados.length
-      ? this.registrosFiltrados
-      : this.registros);
-    this.exportService.downloadCSV('registros.csv', csvData);
-  }
+  /**
+   * exportAsCSV() - (b) Chamado a partir do template (por exemplo, botão "Exportar CSV")
+   * Converte os registros (filtrados ou todos) para CSV e inicia o download.
+   */
+  // exportAsCSV() {
+  //   const csvData = this.exportService.convertToCSV(
+  //     this.registrosFiltrados.length ? this.registrosFiltrados : this.registros
+  //   );
+  //   this.exportService.downloadCSV('registros.csv', csvData);
+  // }
 
-  exportAsPDF() {
-    const dataToExport = this.registrosFiltrados.length
-      ? this.registrosFiltrados
-      : this.registros;
-    this.pdfExportService.exportDataAsPDF(dataToExport, 'Registros');
-  }
-
+  /**
+   * exportAsPDF() - (b) Chamado a partir do template (por exemplo, botão "Exportar PDF")
+   * Seleciona os registros (filtrados ou todos) e aciona a exportação para PDF.
+   */
+  // exportAsPDF() {
+  //   const dataToExport = this.registrosFiltrados.length ? this.registrosFiltrados : this.registros;
+  //   this.pdfExportService.exportDataAsPDF(dataToExport, 'Registros');
+  // }
 }

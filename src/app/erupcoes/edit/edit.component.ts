@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
+import { NavegacaoService } from '../shared/navegacao.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
@@ -31,17 +32,12 @@ export class EditComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private router: Router,
     private firestoreService: FirestoreService<any>,
+    private navegacaoService: NavegacaoService,
     private afAuth: AngularFireAuth,
     public util: UtilService,
     public FormService: FormService,
   ) { }
 
-  /**
-   * Método Angular OnInit (a)
-   * - Ação automática (pelo framework).
-   * - Executado ao criar o componente. 
-   *   Checa autenticação do usuário, carrega dados do registro e ajusta foco no campo "Nome".
-   */
   ngOnInit() {
     console.log('ngOnInit()');
 
@@ -94,9 +90,10 @@ export class EditComponent implements OnInit, AfterViewInit {
           if (this.nomeInput) {
             this.nomeInput.nativeElement.focus();
           }
-        }, 1000);
-
-      } else {
+        }, 1000); // Ajuste o tempo conforme necessário
+        
+      }
+      else {
         console.error('Usuário não autenticado.');
         this.util.goHome();
       }
@@ -104,13 +101,8 @@ export class EditComponent implements OnInit, AfterViewInit {
     console.log('Formulário de visualização inicializado.');
   }
 
-  /**
-   * Método Angular AfterViewInit (a)
-   * - Ação automática (pelo framework).
-   * - Chamado após a view do componente ser inicializada.
-   *   Aqui, tenta focar o campo "Nome".
-   */
   ngAfterViewInit() {
+    // Verifique se o nomeInput foi definido
     if (this.nomeInput) {
       setTimeout(() => {
         this.nomeInput?.nativeElement.focus();
@@ -120,12 +112,6 @@ export class EditComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Função salvar() (b)
-   * - É chamada no template (arquivo edit.component.html) quando o usuário clica para salvar.
-   * - Verifica se é uma subcollection para chamar outro método ou 
-   *   usa salvar_collection_anterior() para atualizar o registro.
-   */
   salvar() {
     console.log('salvar()');
     if (this.userId) {
@@ -150,11 +136,6 @@ export class EditComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Função salvar_collection_anterior() (d)
-   * - Chamada apenas internamente (no próprio arquivo) dentro de salvar().
-   * - Manipula o formulário e chama o serviço para persistir atualização do registro.
-   */
   salvar_collection_anterior() {
     if (this.FormService.fichaForm.valid && this.userId) {
       // Converte o valor do campo email para minúsculas, se existir.
@@ -162,23 +143,23 @@ export class EditComponent implements OnInit, AfterViewInit {
       if (formValues.email) {
         formValues.email = formValues.email.toLowerCase();
       }
-
+    
       const registroAtualizado = { ...this.FormService.registro, ...formValues };
-
+  
       // Verifique se o ID está presente antes de salvar
       if (!this.FormService.registro.id) {
         console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
         alert('Erro ao atualizar o registro. O ID está indefinido.');
         return;
       }
-
+  
       const registroPath = `users/${this.userId}/${this.collection}`;
       console.log('registroPath =', registroPath);
-
+  
       console.log('Tentando salvar o registro:');
       console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
       console.log('Dados do registro a serem atualizados:', registroAtualizado);
-
+  
       const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
         const file = this.arquivos[campoNome];
         const url = prompt('Insira a URL do arquivo ou imagem:');
@@ -187,7 +168,7 @@ export class EditComponent implements OnInit, AfterViewInit {
           resolve();
         });
       });
-
+  
       Promise.all(uploadPromises).then(() => {
         this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
           .then(() => {
@@ -204,11 +185,6 @@ export class EditComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Função verFicha() (d)
-   * - Chamada apenas internamente (no próprio arquivo) no final de salvar().
-   * - Responsável por navegar para o caminho de visualização (view) do registro ou da ficha.
-   */
   verFicha() {
     console.log("verFicha()");
 
@@ -219,12 +195,6 @@ export class EditComponent implements OnInit, AfterViewInit {
     this.router.navigate([fichaPath]);
   }
 
-  /**
-   * Função voltar() (b / também interna)
-   * - Geralmente é chamada via (click)="voltar()" no template (se houver) 
-   *   ou internamente (por exemplo, quando o registro não é encontrado).
-   * - Retorna à rota de visualização do registro.
-   */
   voltar() {
     console.log("voltar()");
     console.log("subcollection =", this.subcollection);
