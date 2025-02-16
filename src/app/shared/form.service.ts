@@ -56,27 +56,30 @@ export class FormService {
         );
     }
 
-    // Cria o FormGroup com base na definição dos campos carregados.
+    // Cria ou atualiza o FormGroup com base na definição dos campos carregados.
     createForm() {
         console.log('createForm()');
-
-        // Se fichaForm já está inicializado, evita recriação (mantém os dados existentes).
-        if (this.fichaForm) {
-            return;
-        }
-
-        // Cria o objeto com os controles de formulário para cada campo definido
-        const formControls = this.campos.reduce((acc, campo) => {
-            acc[campo.nome] = new FormControl('');
-            return acc;
-        }, {});
-
-        // Se houver pelo menos um campo, inicializa o FormGroup com os controles criados.
-        if (Object.keys(formControls).length > 0) {
-            this.fichaForm = this.fb.group(formControls);
-            console.log('FormGroup criado com sucesso:', this.fichaForm);
+        
+        if (!this.fichaForm) {
+            // Cria o FormGroup inicialmente com todos os controles.
+            const formControls = this.campos.reduce((acc, campo) => {
+                acc[campo.nome] = new FormControl('');
+                return acc;
+            }, {});
+            if (Object.keys(formControls).length > 0) {
+                this.fichaForm = this.fb.group(formControls);
+                console.log('FormGroup criado com sucesso:', this.fichaForm);
+            } else {
+                console.error('Nenhum campo foi adicionado ao FormGroup.');
+            }
         } else {
-            console.error('Nenhum campo foi adicionado ao FormGroup.');
+            // Se o FormGroup já existe, adiciona controles para novos campos.
+            this.campos.forEach(campo => {
+                if (!this.fichaForm.contains(campo.nome)) {
+                    this.fichaForm.addControl(campo.nome, new FormControl(''));
+                    console.log(`Controle adicionado para o campo: ${campo.nome}`);
+                }
+            });
         }
     }
 

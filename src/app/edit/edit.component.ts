@@ -157,50 +157,51 @@ export class EditComponent implements OnInit, AfterViewInit {
    */
   salvar_collection_anterior() {
     if (this.FormService.fichaForm.valid && this.userId) {
-      // Converte o valor do campo email para minúsculas, se existir.
-      const formValues = { ...this.FormService.fichaForm.value };
-      if (formValues.email) {
-        formValues.email = formValues.email.toLowerCase();
-      }
+        // Converte o valor do campo email para minúsculas, se existir.
+        const formValues = { ...this.FormService.fichaForm.value };
+        if (formValues.email) {
+            formValues.email = formValues.email.toLowerCase();
+        }
 
-      const registroAtualizado = { ...this.FormService.registro, ...formValues };
+        // Atualiza o registro com todos os valores do formulário, incluindo novos campos.
+        const registroAtualizado = { ...this.FormService.registro, ...formValues };
 
-      // Verifique se o ID está presente antes de salvar
-      if (!this.FormService.registro.id) {
-        console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
-        alert('Erro ao atualizar o registro. O ID está indefinido.');
-        return;
-      }
+        // Verifique se o ID está presente antes de salvar
+        if (!this.FormService.registro.id) {
+            console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
+            alert('Erro ao atualizar o registro. O ID está indefinido.');
+            return;
+        }
 
-      const registroPath = `users/${this.userId}/${this.collection}`;
-      console.log('registroPath =', registroPath);
+        const registroPath = `users/${this.userId}/${this.collection}`;
+        console.log('registroPath =', registroPath);
 
-      console.log('Tentando salvar o registro:');
-      console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
-      console.log('Dados do registro a serem atualizados:', registroAtualizado);
+        console.log('Tentando salvar o registro:');
+        console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
+        console.log('Dados do registro a serem atualizados:', registroAtualizado);
 
-      const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
-        const file = this.arquivos[campoNome];
-        const url = prompt('Insira a URL do arquivo ou imagem:');
-        return new Promise<void>((resolve) => {
-          registroAtualizado[campoNome] = url;
-          resolve();
+        const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
+            const file = this.arquivos[campoNome];
+            const url = prompt('Insira a URL do arquivo ou imagem:');
+            return new Promise<void>((resolve) => {
+                registroAtualizado[campoNome] = url;
+                resolve();
+            });
         });
-      });
 
-      Promise.all(uploadPromises).then(() => {
-        this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
-          .then(() => {
-            this.router.navigate([`/view/${this.collection}`, this.FormService.registro.id]);
-          })
-          .catch(error => {
-            console.error('Erro ao salvar o registro:', error);
-            alert('Erro ao salvar o registro. Por favor, tente novamente.');
-          });
-      });
+        Promise.all(uploadPromises).then(() => {
+            this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
+                .then(() => {
+                    this.router.navigate([`/view/${this.collection}`, this.FormService.registro.id]);
+                })
+                .catch(error => {
+                    console.error('Erro ao salvar o registro:', error);
+                    alert('Erro ao salvar o registro. Por favor, tente novamente.');
+                });
+        });
     } else {
-      console.error('Registro inválido ou sem ID:', this.FormService.registro);
-      alert('Registro inválido ou sem ID. Não é possível salvar.');
+        console.error('Registro inválido ou sem ID:', this.FormService.registro);
+        alert('Registro inválido ou sem ID. Não é possível salvar.');
     }
   }
 
