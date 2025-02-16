@@ -135,8 +135,13 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * incluir() - (b) É chamada a partir do template (por exemplo, ao clicar em "Novo")
-   * Cria um novo registro com um código gerado automaticamente e navega para a rota de edição.
+   * incluir() - (b) Invocada a partir do template (ex: clique em "Novo")
+   * Cria dinamicamente um novo registro, gerando seu ID e código, e inicializando
+   * seus campos com base na configuração personalizada definida pelo usuário.
+   *
+   * Essa abordagem evita a inicialização fixa do objeto Registro e reflete as personalizações
+   * realizadas no componente CamposRegistro, permitindo que campos customizados sejam
+   * considerados automaticamente na criação do objeto.
    */
   incluir() {
     console.log("incluir()");
@@ -153,42 +158,26 @@ export class ListComponent implements OnInit {
     console.log("collectionRoute ", collectionRoute);
 
     this.firestoreService.gerarProximoCodigo(collectionPath).then((novoCodigo) => {
-      const novoRegistro: Registro = {
-        id: this.firestoreService.createId(),
-        codigo: novoCodigo,
-        nome: '',
-        sexo: '',
-        nascimento: '',
-        whatsapp: '',
-        telefone: '',
-        email: '',
-        endereço: '',
-        bairro: '',
-        cidade: '',
-        estado: '',
-        cep: '',
-        cpf: '',
-        obs: '',
-        nuvem: '',
-        data: '',
-        operador: '',
-        datainicio: '',
-        dataalta: '',
-        raca: '',
-        mae: '',
-        sus: ''
-      };
+      // Criação dinâmica do objeto novoRegistro:
+      // - Gera um id único e atribui o código gerado.
+      // - Itera sobre os campos personalizados configurados (por ex.: via CamposRegistro)
+      //   para inicializar, dinamicamente, cada campo com valor padrão (neste caso, uma string vazia).
+      const novoRegistro: any = {};
+      novoRegistro.id = this.firestoreService.createId();
+      novoRegistro.codigo = novoCodigo;
+      this.FormService.campos.forEach(campo => {
+        novoRegistro[campo.nome] = '';
+      });
+      // Fim da inicialização dinâmica do registro que reflete a personalização de campos
 
       this.firestoreService.addRegistro(collectionPath, novoRegistro).then(() => {
         console.log("Criou registro " + novoRegistro.id);
-        console.log("collectionRoute " + collectionRoute);
-        console.log("collectionPath " + collectionPath);
         this.router.navigate([collectionRoute, novoRegistro.id]);
       })
-        .catch((error) => {
-          console.error('Erro ao incluir novo registro:', error);
-          alert('Erro ao incluir novo registro.');
-        });
+      .catch((error) => {
+        console.error('Erro ao incluir novo registro:', error);
+        alert('Erro ao incluir novo registro.');
+      });
     });
   }
 

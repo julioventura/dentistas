@@ -6,19 +6,19 @@ import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
 import { UtilService } from '../shared/utils/util.service';
 import { switchMap, tap } from 'rxjs/operators';
-import { DatePipe } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
 })
-
 export class FormService {
 
+    // Propriedades do serviço para armazenar o formulário dinâmico,
+    // os campos a serem exibidos, bem como o estado do registro carregado.
     fichaForm!: FormGroup;
-    campos: any[] = []; // Definição dos campos do formulário
-    isLoading: boolean = true;
-    public registro: any = null; // Dados do registro
-    public nome_in_collection: string = '';
+    campos: any[] = []; // Armazena a definição dos campos do formulário
+    isLoading: boolean = true; // Flag que indica se os dados estão sendo carregados
+    public registro: any = null; // Armazena os dados do registro carregado
+    public nome_in_collection: string = ''; // Armazena o nome recebido do registro para exibir na interface
     public collection: string = '';
     public subcollection: string = '';
 
@@ -28,12 +28,13 @@ export class FormService {
         private CamposService: CamposService,
         private CamposFichaService: CamposFichaService,
         private router: Router,
-        public util: UtilService,
-        private datePipe: DatePipe
-    ) { }
+        public util: UtilService
+    ) { 
+        // Construtor injetando as dependências necessárias: acesso ao Firestore, criação de formulários,
+        // serviços para obtenção dos campos e utilidades, entre outros.
+    }
 
-
-
+    // Método para carregar os campos da ficha (subcollection) e criar o formulário a partir deles.
     carregarCamposFichas(userId: string, collection: string) {
         return this.CamposFichaService.getCamposRegistro(userId, collection).pipe(
             tap((campos: any[]) => {
@@ -44,8 +45,7 @@ export class FormService {
         );
     }
 
-
-
+    // Método semelhante ao carregarCamposFichas, mas para a collection principal.
     carregarCamposRegistro(userId: string, collection: string) {
         return this.CamposService.getCamposRegistro(userId, collection).pipe(
             tap((campos: any[]) => {
@@ -56,19 +56,22 @@ export class FormService {
         );
     }
 
+    // Cria o FormGroup com base na definição dos campos carregados.
     createForm() {
         console.log('createForm()');
 
-        // Se `fichaForm` já está inicializado, evite recriá-lo
+        // Se fichaForm já está inicializado, evita recriação (mantém os dados existentes).
         if (this.fichaForm) {
             return;
         }
 
+        // Cria o objeto com os controles de formulário para cada campo definido
         const formControls = this.campos.reduce((acc, campo) => {
             acc[campo.nome] = new FormControl('');
             return acc;
         }, {});
 
+        // Se houver pelo menos um campo, inicializa o FormGroup com os controles criados.
         if (Object.keys(formControls).length > 0) {
             this.fichaForm = this.fb.group(formControls);
             console.log('FormGroup criado com sucesso:', this.fichaForm);
@@ -77,27 +80,32 @@ export class FormService {
         }
     }
 
-
+    // Método que carrega os dados do registro principal da collection.
+    // Retorna uma Promise que permite encadear ações após o carregamento.
     loadRegistro(userId: string, collection: string, id: string, view_only: boolean): Promise<void> {
         return new Promise((resolve, reject) => {
             console.log('loadRegistro()');
 
+            // Armazena a collection e define o estado de carregamento.
             this.collection = collection;
             this.isLoading = true;
 
             if (userId && collection && id) {
+                // Define o caminho no Firestore para a collection principal.
                 const fichaPath = `users/${userId}/${collection}`;
                 console.log('Caminho para carregar ficha:', fichaPath);
 
+                // Primeiro carrega os campos do registro e, em seguida, faz a consulta ao Firestore.
                 this.carregarCamposRegistro(userId, collection).pipe(
                     switchMap(() => this.firestoreService.getRegistroById(fichaPath, id))
                 ).subscribe(ficha => {
                     if (ficha) {
                         console.log('Ficha carregada:', ficha);
+                        // Armazena o registro e extrai o nome para exibir posteriormente.
                         this.registro = ficha;
                         this.nome_in_collection = this.registro.nome;
 
-                        // Verifica e formata campos de data no registro
+                        // Realiza formatação para campos de data, se necessário.
                         const formattedData = { ...ficha };
                         for (const key in formattedData) {
                             if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
@@ -106,10 +114,12 @@ export class FormService {
                             }
                         }
 
-                        // Preenche o FormGroup com os dados formatados e adiciona campos dinâmicos
+                        // Adiciona campos dinâmicos ao formulário caso não estejam previamente definidos.
                         this.addDynamicFields(formattedData);
+                        // Preenche o formulário com os dados carregados.
                         this.fichaForm.patchValue(formattedData);
 
+                        // Desabilita o formulário se for somente visualização; caso contrário, habilita.
                         if (view_only) {
                             this.fichaForm.disable();
                             console.log("Formulário desabilitado.");
@@ -139,9 +149,7 @@ export class FormService {
         });
     }
 
-
-
-    // Função auxiliar para adicionar campos dinâmicos ao FormGroup
+    // Função auxiliar para adicionar controles dinâmicos ao formulário para campos não definidos inicialmente.
     private addDynamicFields(data: any) {
         for (const key in data) {
             if (data.hasOwnProperty(key) && !this.fichaForm.contains(key)) {
@@ -150,17 +158,13 @@ export class FormService {
         }
     }
 
-
-
-
-
-    // Função auxiliar para verificar se um campo é de data (ajuste conforme necessário)
+    // Verifica se o nome do campo corresponde a um campo de data.
+    // Pode ser expandido para incluir outros campos além de 'nascimento'.
     private isDateField(fieldName: string): boolean {
         return fieldName === 'nascimento';  // Adicione outros campos de data aqui se necessário
     }
 
-
-    // Função auxiliar para converter datas no formato dd/MM/yyyy para o formato yyyy-MM-dd
+    // Converte uma data no formato dd/MM/yyyy para o formato yyyy-MM-dd, adequado para inputs de data.
     private formatToDateInput(dateString: string): string | null {
         // Verifica se a data está no formato dd/MM/yyyy
         const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
@@ -177,8 +181,8 @@ export class FormService {
         return null;
     }
 
-
-
+    // Método para carregar os dados de uma ficha (subcollection) específica.
+    // Retorna uma Promise para possibilitar ações after load.
     loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view_only: boolean): Promise<void> {
         return new Promise((resolve, reject) => {
             console.log('loadFicha()');
@@ -190,25 +194,28 @@ export class FormService {
             console.log('fichaId: ' + fichaId);
             console.log('view (visualizar registro): ', view_only);
 
+            // Verifica se os parâmetros de subcollection e fichaId foram informados.
             if (subcollection && fichaId) {
                 this.subcollection = subcollection;
 
+                // Define o caminho para acessar a ficha dentro da subcollection.
                 const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
                 console.log('Caminho para carregar ficha:', fichaPath);
 
-                // Define o formulário como carregando
+                // Define o carregamento do formulário.
                 this.isLoading = true;
 
-                // Carrega os campos do formulário antes de tentar carregar a ficha
+                // Primeiro carrega os campos específicos da ficha (subcollection).
                 this.carregarCamposFichas(userId, subcollection);
 
-                // Carrega os dados da ficha do Firestore
+                // Realiza a consulta ao Firestore para obter os dados da ficha.
                 this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
                     if (ficha) {
                         console.log('Ficha carregada:', ficha);
-                        this.registro = ficha;  // Para o view-ficha, se necessário
+                        // Armazena o registro carregado para utilização futura.
+                        this.registro = ficha;
 
-                        // Formata os campos de data e adiciona campos dinâmicos
+                        // Formata os campos de data e adiciona campos dinâmicos se necessário.
                         const formattedData = { ...ficha };
                         for (const key in formattedData) {
                             if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
@@ -217,21 +224,21 @@ export class FormService {
                             }
                         }
 
-                        // Adiciona campos dinâmicos e preenche o FormGroup com os dados formatados
+                        // Adiciona controles dinâmicos e preenche o FormGroup com os dados da ficha.
                         this.addDynamicFields(formattedData);
                         this.fichaForm.patchValue(formattedData);
 
-                        // Condicional para desabilitar o formulário se estiver na view (visualização)
+                        // Desabilita o formulário se for apenas visualização.
                         if (view_only) {
-                            this.fichaForm.disable();  // Desabilita o formulário
+                            this.fichaForm.disable();
                             console.log("Formulário desabilitado.");
                         } else {
-                            this.fichaForm.enable();  // Habilita o formulário
+                            this.fichaForm.enable();
                             console.log("Formulário habilitado.");
                         }
-                        console.log('Estado do formulário (disabled):', this.fichaForm.disabled);  // Deve retornar "true" se estiver desabilitado
+                        console.log('Estado do formulário (disabled):', this.fichaForm.disabled);
 
-                        // Marca como carregado (isLoading = false)
+                        // Carregamento concluído.
                         this.isLoading = false;
                         console.log('isLoading == false');
                         resolve();
@@ -253,11 +260,12 @@ export class FormService {
         });
     }
 
-
+    // Função de callback para tratar mudanças em um campo específico do formulário.
+    // Realiza transformações, como a capitalização do valor, e atualiza o controle do FormGroup.
     onFieldChange(event: any, campoNome: string): void {
         console.log(`onFieldChange(event, campoNome = ${campoNome})`);
         console.log(campoNome);
-        // Verifica se o formGroup está inicializado e o controle existe
+        // Verifica e loga os controles atuais do formulário.
         if (this.fichaForm) {
             console.log('fichaForm controls:', this.fichaForm.controls);
         }
@@ -265,21 +273,20 @@ export class FormService {
         if (this.fichaForm && this.fichaForm.get(campoNome)) {
             const valorAtual = event.target.value;
 
-            // Capitaliza o valor ou aplica outras transformações
+            // Aplica transformação (capitalização) no valor recebido.
             const valorCapitalizado = this.util.capitalizar(valorAtual);
             console.log("Valor capitalizado:", valorCapitalizado);
 
-            // Atualiza o valor no FormGroup
+            // Atualiza o valor do campo no FormGroup.
             this.fichaForm.get(campoNome)?.setValue(valorCapitalizado);
         } else {
             console.error(`O campo ${campoNome} não foi encontrado no FormGroup ou o FormGroup não está pronto.`);
         }
     }
 
-
-
+    // Método para salvar as alterações na collection principal.
+    // Verifica se o formulário é válido e atualiza o registro no Firestore.
     salvarCollection(userId: string, collection: string, id: string) {
-
         if (this.fichaForm.valid) {
             const fichaAtualizada = this.fichaForm.value; // Obtém os valores do formulário
             const fichaPath = `users/${userId}/${collection}`;
@@ -289,12 +296,8 @@ export class FormService {
             console.log('id da coleção:', id);
             console.log('Dados da ficha a serem salvos:', fichaAtualizada);
 
-            // this.firestore.collection(fichaPath).add(fichaAtualizada).then(docRef => {
-            //     console.log('Nova ficha criada com sucesso com ID:', docRef.id);
-            //     this.router.navigate([`/view-ficha/${collection}/${id}/fichas/${subcollection}/itens/${docRef.id}`]);
-            // }).catch(error => {
-            //     console.error('Erro ao criar nova ficha:', error);
-            // });
+            // Exemplo comentado de criação de nova ficha.
+            // ...existing code...
 
             if (id) {
                 this.firestoreService.updateRegistro(fichaPath, id, fichaAtualizada).then(() => {
@@ -304,13 +307,12 @@ export class FormService {
                     console.error('Erro ao atualizar a ficha:', error);
                 });
             }
-
         }
     }
 
-
+    // Método para salvar alterações em uma subcollection (ficha interna).
+    // Opera de forma análoga ao salvarCollection, ajustando o caminho e a rota.
     salvarSubcollection(userId: string, collection: string, id: string, subcollection: string, fichaId: string) {
-
         if (this.fichaForm.valid) {
             const fichaAtualizada = this.fichaForm.value; // Obtém os valores do formulário
             const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
@@ -335,6 +337,4 @@ export class FormService {
             console.log('Erros no formulário:', this.fichaForm.errors);
         }
     }
-
-
 }
