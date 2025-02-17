@@ -193,14 +193,25 @@ export class ListComponent implements OnInit {
         novoRegistro.codigo = novoCodigo;
     
         if (this.userId && this.subcollection) {
-            this.FormService.carregarCamposFichas(this.userId, this.subcollection);
+          // O registro está em uma subcollection
+
+          this.FormService.carregarCamposFichas(this.userId, this.subcollection);
           
           novoRegistro.ficha_id = this.id;
           this.FormService.campos.forEach(campo => {
             novoRegistro[campo.nome] = '';
           });
+
+          // Gera a data atual no formato dd/mm/yyyy e inicializa o campo data do novo registro de subcollection
+          const now = new Date();
+          const day = String(now.getDate()).padStart(2, '0');
+          const month = String(now.getMonth() + 1).padStart(2, '0');
+          const year = now.getFullYear();
+          // Ajusta o formato de data para "yyyy-MM-dd" por ser um campo 'date'no formulario
+          novoRegistro['data'] = `${year}-${month}-${day}`;
         }
         else {
+          // O registro está em uma collection
           this.FormService.campos.forEach(campo => {
             novoRegistro[campo.nome] = '';
           });
