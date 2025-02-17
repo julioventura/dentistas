@@ -18,7 +18,7 @@ export class FichasComponent implements OnInit {
 
 
   constructor(
-    private CamposFichaService: CamposFichaService,
+    private camposFichaService: CamposFichaService,
     private navegacaoService: NavegacaoService,
     private userService: UserService,
     public util: UtilService,
@@ -42,7 +42,7 @@ export class FichasComponent implements OnInit {
   }
 
   carregarColecoes() {
-    this.CamposFichaService.getColecoes(this.userId).subscribe(
+    this.camposFichaService.getColecoes(this.userId).subscribe(
       (colecoes) => {
         this.colecoes = ['padrao', ...colecoes]; // 'padrao' aparece primeiro na lista de coleções
       },
@@ -55,7 +55,7 @@ export class FichasComponent implements OnInit {
 
   carregarCampos() {
     // Carrega os campos da coleção selecionada
-    this.CamposFichaService.getCamposRegistro(this.userId, this.colecaoSelecionada).subscribe(
+    this.camposFichaService.getCamposFichaRegistro(this.userId, this.colecaoSelecionada).subscribe(
       (campos) => {
         this.campos = campos;
         this.camposIniciais = JSON.parse(JSON.stringify(campos)); // Faz uma cópia dos campos iniciais
@@ -69,7 +69,7 @@ export class FichasComponent implements OnInit {
 
   salvar() {
     // Salva as configurações da coleção atual
-    this.CamposFichaService.setCamposRegistro(this.userId, this.colecaoSelecionada, this.campos).then(() => {
+    this.camposFichaService.setCamposFichaRegistro(this.userId, this.colecaoSelecionada, this.campos).then(() => {
       alert('Configurações salvas com sucesso!');
       this.camposIniciais = JSON.parse(JSON.stringify(this.campos)); // Atualiza os campos iniciais após salvar
     });
@@ -92,7 +92,7 @@ export class FichasComponent implements OnInit {
   adicionarColecao() {
     const novaColecao = prompt('Digite o nome da nova coleção em uma palavra:');
     if (novaColecao && /^[a-zA-Z0-9_]+$/.test(novaColecao.trim())) {
-      this.CamposFichaService.setCamposRegistro(this.userId, novaColecao, [...this.CamposFichaService.camposPadrao])
+      this.camposFichaService.setCamposFichaRegistro(this.userId, novaColecao, [...this.camposFichaService.camposPadrao])
         .then(() => {
           this.colecaoSelecionada = novaColecao;
           this.carregarColecoes();

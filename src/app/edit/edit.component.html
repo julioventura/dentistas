@@ -18,7 +18,7 @@
 
 
   <!-- Formulário Dinâmico -->
-  <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
+  <div class="dynamic-form-container" *ngIf="formReady && FormService.fichaForm">
 
     <div *ngIf="FormService.isLoading" class="aviso">
       Carregando dados do registro...

@@ -79,6 +79,11 @@ export class ListComponent implements OnInit {
         this.loadRegistros();
       }
     });
+
+    this.registroForm = this.fb.group({
+      nome: [''],
+      id: ['']
+    });
   }
 
   /**
@@ -145,40 +150,53 @@ export class ListComponent implements OnInit {
    */
   incluir() {
     console.log("incluir()");
-    if (!this.userId) return;
+    if (this.userId) {
 
-    const collectionPath = this.subcollection ?
-      `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
-      `users/${this.userId}/${this.collection}`;
-    console.log("collectionPath " + collectionPath);
+      const collectionPath = this.subcollection ?
+        `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
+        `users/${this.userId}/${this.collection}`;
+      console.log("collectionPath " + collectionPath);
 
-    const collectionRoute = this.subcollection ?
-      `/edit-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
-      `/edit/${this.collection}`;
-    console.log("collectionRoute ", collectionRoute);
+      const collectionRoute = this.subcollection ?
+        `/edit-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
+        `/edit/${this.collection}`;
+      console.log("collectionRoute ", collectionRoute);
 
-    this.firestoreService.gerarProximoCodigo(collectionPath).then((novoCodigo) => {
-      // Criação dinâmica do objeto novoRegistro:
-      // - Gera um id único e atribui o código gerado.
-      // - Itera sobre os campos personalizados configurados (por ex.: via CamposRegistro)
-      //   para inicializar, dinamicamente, cada campo com valor padrão (neste caso, uma string vazia).
-      const novoRegistro: any = {};
-      novoRegistro.id = this.firestoreService.createId();
-      novoRegistro.codigo = novoCodigo;
-      this.FormService.campos.forEach(campo => {
-        novoRegistro[campo.nome] = '';
+      this.firestoreService.gerarProximoCodigo(collectionPath).then((novoCodigo) => {
+        // Criação dinâmica do objeto novoRegistro:
+        // - Gera um id único e atribui o código gerado.
+        // - Itera sobre os campos personalizados configurados (por ex.: via CamposRegistro)
+        //   para inicializar, dinamicamente, cada campo com valor padrão (neste caso, uma string vazia).
+        const novoRegistro: any = {};
+        novoRegistro.id = this.firestoreService.createId();
+        novoRegistro.codigo = novoCodigo;
+    
+        if (this.userId && this.subcollection) {
+            this.FormService.carregarCamposFichas(this.userId, this.subcollection);
+          
+          novoRegistro.ficha_id = this.id;
+          this.FormService.campos.forEach(campo => {
+            novoRegistro[campo.nome] = '';
+          });
+        }
+        else {
+          this.FormService.campos.forEach(campo => {
+            novoRegistro[campo.nome] = '';
+          });
+        }
+
+        // Fim da inicialização dinâmica do registro que reflete a personalização de campos
+
+        this.firestoreService.addRegistro(collectionPath, novoRegistro).then(() => {
+          console.log("Criou registro " + novoRegistro.id);
+          this.router.navigate([collectionRoute, novoRegistro.id]);
+        })
+        .catch((error) => {
+          console.error('Erro ao incluir novo registro:', error);
+          alert('Erro ao incluir novo registro.');
+        });
       });
-      // Fim da inicialização dinâmica do registro que reflete a personalização de campos
-
-      this.firestoreService.addRegistro(collectionPath, novoRegistro).then(() => {
-        console.log("Criou registro " + novoRegistro.id);
-        this.router.navigate([collectionRoute, novoRegistro.id]);
-      })
-      .catch((error) => {
-        console.error('Erro ao incluir novo registro:', error);
-        alert('Erro ao incluir novo registro.');
-      });
-    });
+    }
   }
 
   /**

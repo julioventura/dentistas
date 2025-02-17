@@ -25,8 +25,8 @@ export class FormService {
     constructor(
         private firestoreService: FirestoreService<any>,
         private fb: FormBuilder,
-        private CamposService: CamposService,
-        private CamposFichaService: CamposFichaService,
+        private camposService: CamposService,
+        private camposFichaService: CamposFichaService,
         private router: Router,
         public util: UtilService
     ) { 
@@ -35,8 +35,8 @@ export class FormService {
     }
 
     // Método para carregar os campos da ficha (subcollection) e criar o formulário a partir deles.
-    carregarCamposFichas(userId: string, collection: string) {
-        return this.CamposFichaService.getCamposRegistro(userId, collection).pipe(
+    carregarCamposFichas(userId: string, subcollection: string) {
+        return this.camposFichaService.getCamposFichaRegistro(userId, subcollection).pipe(
             tap((campos: any[]) => {
                 this.campos = campos || [];
                 console.log('Campos carregados:', this.campos);
@@ -47,7 +47,7 @@ export class FormService {
 
     // Método semelhante ao carregarCamposFichas, mas para a collection principal.
     carregarCamposRegistro(userId: string, collection: string) {
-        return this.CamposService.getCamposRegistro(userId, collection).pipe(
+        return this.camposService.getCamposRegistro(userId, collection).pipe(
             tap((campos: any[]) => {
                 this.campos = campos || [];
                 console.log('Campos carregados:', this.campos);
@@ -77,7 +77,7 @@ export class FormService {
             this.campos.forEach(campo => {
                 if (!this.fichaForm.contains(campo.nome)) {
                     this.fichaForm.addControl(campo.nome, new FormControl(''));
-                    console.log(`Controle adicionado para o campo: ${campo.nome}`);
+                    // console.log(`Controle adicionado para o campo: ${campo.nome}`);
                 }
             });
         }
@@ -209,51 +209,51 @@ export class FormService {
                 this.isLoading = true;
 
                 // Primeiro carrega os campos específicos da ficha (subcollection).
-                this.carregarCamposFichas(userId, subcollection);
+                this.carregarCamposFichas(userId, subcollection).subscribe(() => {
+                    // Realiza a consulta ao Firestore para obter os dados da ficha.
+                    this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
+                        if (ficha) {
+                            console.log('Ficha carregada:', ficha);
+                            // Armazena o registro carregado para utilização futura.
+                            this.registro = ficha;
 
-                // Realiza a consulta ao Firestore para obter os dados da ficha.
-                this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
-                    if (ficha) {
-                        console.log('Ficha carregada:', ficha);
-                        // Armazena o registro carregado para utilização futura.
-                        this.registro = ficha;
-
-                        // Formata os campos de data e adiciona campos dinâmicos se necessário.
-                        const formattedData = { ...ficha };
-                        for (const key in formattedData) {
-                            if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
-                                const formattedDate = this.formatToDateInput(formattedData[key]);
-                                formattedData[key] = formattedDate ? formattedDate : formattedData[key];
+                            // Formata os campos de data e adiciona campos dinâmicos se necessário.
+                            const formattedData = { ...ficha };
+                            for (const key in formattedData) {
+                                if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
+                                    const formattedDate = this.formatToDateInput(formattedData[key]);
+                                    formattedData[key] = formattedDate ? formattedDate : formattedData[key];
+                                }
                             }
-                        }
 
-                        // Adiciona controles dinâmicos e preenche o FormGroup com os dados da ficha.
-                        this.addDynamicFields(formattedData);
-                        this.fichaForm.patchValue(formattedData);
+                            // Adiciona controles dinâmicos e preenche o FormGroup com os dados da ficha.
+                            this.addDynamicFields(formattedData);
+                            this.fichaForm.patchValue(formattedData);
 
-                        // Desabilita o formulário se for apenas visualização.
-                        if (view_only) {
-                            this.fichaForm.disable();
-                            console.log("Formulário desabilitado.");
+                            // Desabilita o formulário se for apenas visualização.
+                            if (view_only) {
+                                this.fichaForm.disable();
+                                console.log("Formulário desabilitado.");
+                            } else {
+                                this.fichaForm.enable();
+                                console.log("Formulário habilitado.");
+                            }
+                            console.log('Estado do formulário (disabled):', this.fichaForm.disabled);
+
+                            // Carregamento concluído.
+                            this.isLoading = false;
+                            console.log('isLoading == false');
+                            resolve();
                         } else {
-                            this.fichaForm.enable();
-                            console.log("Formulário habilitado.");
+                            // console.error('Ficha não encontrada no caminho:', fichaPath);
+                            this.isLoading = false;
+                            reject('Ficha não encontrada');
                         }
-                        console.log('Estado do formulário (disabled):', this.fichaForm.disabled);
-
-                        // Carregamento concluído.
+                    }, error => {
+                        console.error('Erro ao carregar ficha para edição:', error);
                         this.isLoading = false;
-                        console.log('isLoading == false');
-                        resolve();
-                    } else {
-                        console.error('Ficha não encontrada no caminho:', fichaPath);
-                        this.isLoading = false;
-                        reject('Ficha não encontrada');
-                    }
-                }, error => {
-                    console.error('Erro ao carregar ficha para edição:', error);
-                    this.isLoading = false;
-                    reject(error);
+                        reject(error);
+                    });
                 });
             } else {
                 console.error('subcollection ou fichaId não definidos corretamente.');

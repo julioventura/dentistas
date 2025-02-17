@@ -40,14 +40,20 @@ export class CamposService {
   constructor(private firestore: AngularFirestore) { }
 
   // Método para obter os campos de uma coleção específica do Firestore ou carregar os padrões
+  
   getCamposRegistro(userId: string, colecao: string): Observable<any[]> {
+    console.log('getCamposRegistro called with', { userId, colecao });
     this.configPath = 'users/' + userId + '/configuracoesCampos';
     console.log("configPath = ", this.configPath);
 
     if (colecao === 'padrao') {
       return of([...this.camposPadrao]); // Retorna os campos padrão se a coleção for "padrao"
     } else {
-      return this.firestore.collection(this.configPath).doc(colecao).valueChanges().pipe(
+      return this.firestore
+      .collection(this.configPath)
+      .doc(colecao)
+      .valueChanges()
+      .pipe(
         switchMap((configuracaoFirestore: any) => {
           if (configuracaoFirestore && configuracaoFirestore.campos) {
             return of(configuracaoFirestore.campos); // Se existir configuração no Firestore, use-a

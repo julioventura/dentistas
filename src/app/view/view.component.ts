@@ -13,8 +13,8 @@ import { FormService } from '../shared/form.service';
 })
 export class ViewComponent implements OnInit {
   // Declaração de variáveis para armazenar dados do usuário, coleção, registro, etc.
-  userId: string | null = null; // Armazena o ID autenticado do usuário
-  collection!: string; // Armazena o nome da coleção (por exemplo, "pacientes", "alunos", etc)
+  userId: string | null = null; // Armazena o ID do usuário autenticado
+  collection!: string; // Corrigida a declaração removendo os pontos-e-vírgula extras
   subcollection!: string; // Armazena o nome da subcollection (ou ficha interna)
   registro: any = null; // Armazena os dados do registro carregado
   id!: string; // ID do registro principal da coleção
@@ -102,9 +102,9 @@ export class ViewComponent implements OnInit {
               console.log("this.FormService.registro", this.FormService.registro);
             } else {
               // Emite um aviso caso os dados do registro ou nome não estejam disponíveis
-              console.warn('********************************');
-              console.warn('Registro ou nome não disponível.');
-              console.warn('********************************');
+              // console.warn('********************************');
+              // console.warn('Registro ou nome não disponível.');
+              // console.warn('********************************');
             }
           }
 
@@ -178,7 +178,7 @@ export class ViewComponent implements OnInit {
       this.firestoreService.deleteRegistro(this.registroPath, registro_id)
         .then(() => {
           // Emite um alert e redireciona após a exclusão bem-sucedida
-          alert('Registro excluido.');
+          // alert('Registro excluido.');
           this.router.navigate([this.routePath]);
         })
         .catch((error) => {

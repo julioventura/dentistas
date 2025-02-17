@@ -4,6 +4,9 @@ import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
+import { CamposFichaService } from '../shared/campos-ficha.service';  // NOVA IMPORTAÇÃO
+import { FormControl, FormGroup } from '@angular/forms';
+import { CamposService } from '../shared/campos.service'; // NOVA IMPORTAÇÃO
 
 @Component({
   selector: 'app-edit',
@@ -26,6 +29,7 @@ export class EditComponent implements OnInit, AfterViewInit {
   registroPath: string = '';
   routePath: string = '';
   arquivos: { [key: string]: File } = {};
+  formReady: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,6 +38,8 @@ export class EditComponent implements OnInit, AfterViewInit {
     private afAuth: AngularFireAuth,
     public util: UtilService,
     public FormService: FormService,
+    private camposFichaService: CamposFichaService,  // INJEÇÃO para subcollections
+    private camposService: CamposService              // INJEÇÃO para collections
   ) { }
 
   /**
@@ -70,18 +76,27 @@ export class EditComponent implements OnInit, AfterViewInit {
         }
         else {
           if (this.subcollection) {
+            console.log('Colledction :', this.collection);
+            console.log('Subcolledction :', this.subcollection);
+            console.log('loadFicha()');
+
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
               .then(() => {
                 this.subtitulo_da_pagina = this.FormService.registro.nome;
+                this.loadCustomFields();  // CHAMADA PARA CARREGAR CAMPOS CUSTOMIZADOS
               })
               .catch(error => {
                 console.error('Erro ao carregar ficha:', error);
               });
           }
           else {
+            console.log('Colledction :', this.collection);
+            console.log('loadRegistro()');
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
               .then(() => {
                 this.subtitulo_da_pagina = this.FormService.registro.nome;
+                // Se necessário, chamar customizações para registro principal 
+                this.loadCustomFields();
               })
               .catch(error => {
                 console.error('Erro ao carregar registro:', error);
@@ -116,7 +131,7 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.nomeInput?.nativeElement.focus();
       }, 0);
     } else {
-      console.warn('Campo "Nome" não encontrado ao inicializar. Verifique se o campo foi carregado.');
+      // console.warn('Campo "Nome" não encontrado ao inicializar. Verifique se o campo foi carregado.');
     }
   }
 
@@ -235,6 +250,53 @@ export class EditComponent implements OnInit, AfterViewInit {
       `view/${this.collection}/${this.id}`;
 
     this.router.navigate([viewPath]);
+  }
+
+  // NOVO MÉTODO para carregar campos personalizados, recriando o FormGroup
+  loadCustomFields() {
+    console.log("loadCustomFields()");
+    console.log("this.userId =", this.userId);
+    console.log("this.collection =", this.collection);
+    console.log("this.subcollection =", this.subcollection);
+    
+    if (this.userId) {
+      // Recria o FormGroup para evitar conflitos com controles antigos
+      this.FormService.fichaForm = new FormGroup({});
+      
+      if (this.subcollection) {
+        console.log("Carregando campos personalizados (subcollection)...", this.subcollection);
+        this.camposFichaService.getCamposFichaRegistro(this.userId, this.subcollection).subscribe(
+          (campos: any[]) => {
+            campos.forEach(campo => {
+              // Define valor inicial a partir do registro carregado
+              this.FormService.fichaForm.addControl(campo.nome, new FormControl(this.FormService.registro[campo.nome] || ''));
+              console.log(`Controle customizado adicionado (subcollection) para o campo: ${campo.nome}`);
+            });
+            // Preenche o formulário com os dados existentes
+            this.FormService.fichaForm.patchValue(this.FormService.registro);
+            this.formReady = true;
+          },
+          error => {
+            console.error('Erro ao carregar campos personalizados (subcollection):', error);
+          }
+        );
+      } else {
+        console.log("Carregando campos personalizados (collection)...", this.collection);
+        this.camposService.getCamposRegistro(this.userId, this.collection).subscribe(
+          (campos: any[]) => {
+            campos.forEach(campo => {
+              this.FormService.fichaForm.addControl(campo.nome, new FormControl(this.FormService.registro[campo.nome] || ''));
+              console.log(`Controle customizado adicionado (collection) para o campo: ${campo.nome}`);
+            });
+            this.FormService.fichaForm.patchValue(this.FormService.registro);
+            this.formReady = true;
+          },
+          error => {
+            console.error('Erro ao carregar campos personalizados (collection):', error);
+          }
+        );
+      }
+    }
   }
 
 }
