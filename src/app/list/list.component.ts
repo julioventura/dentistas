@@ -1,3 +1,22 @@
+/* 
+  Métodos do componente ListComponent:
+  1. ngOnInit() - Inicializa o componente, obtendo parâmetros de rota, autenticando o usuário e chamando as funções de configuração e carregamento dos registros.
+  2. loadRegistros() - Constrói o caminho da coleção e consulta o Firestore para recuperar os registros, além de inicializar a paginação.
+  3. verFicha(fichaId: string) - Monta o caminho para a visualização do registro (ou ficha interna) e realiza a navegação.
+  4. incluir() - Cria dinamicamente um novo registro, gerando seu ID e código, e inicializando seus campos conforme a configuração personalizada.
+  5. filtrarRegistros() - Filtra os registros com base na query de busca (nome ou código) e atualiza a paginação.
+  6. atualizarPaginacao() - Recalcula o total de páginas e atualiza os registros exibidos na página atual.
+  7. atualizarRegistrosPaginados() - Determina o slice dos registros que serão exibidos conforme a página atual.
+  8. setPage(page: number) - Define a página atual e atualiza os registros paginados.
+  9. previousPage() - Retrocede para a página anterior se possível.
+  10. nextPage() - Avança para a próxima página se houver.
+  11. verificarOuCriarConfiguracao() - Verifica se já existe uma configuração de campos para a coleção e cria uma padrão se necessário.
+  12. getMenusPadraoPorCollection(colecao: string) - Retorna os menus padrão para a coleção informada.
+  13. getCamposPadraoPorCollection() - Retorna os campos padrão (objetos) para a coleção.
+  14. showbusca() - Alterna a exibição da barra de pesquisa.
+  15. voltar() - Navega de volta à lista de registros ou fichas internas.
+*/
+
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
@@ -40,6 +59,7 @@ export class ListComponent implements OnInit {
   nome_in_collection: string = '';
   fichas: any[] = []; // Lista de fichas (exames, atendimentos, etc.)
   show_busca: boolean = false;
+  userEmail: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -73,6 +93,7 @@ export class ListComponent implements OnInit {
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
+        this.userEmail = user.email;
         // Chamada interna para verificar configuração de campos (d)
         this.verificarOuCriarConfiguracao();
         // Chamada interna para carregar registros (d)

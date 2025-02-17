@@ -1,3 +1,14 @@
+/* 
+  Métodos do componente EditComponent:
+  1. ngOnInit() - Inicializa o componente, autenticando o usuário, obtendo os parâmetros de rota e carregando o registro.
+  2. ngAfterViewInit() - Após a renderização da view, foca o campo "Nome".
+  3. salvar() - Invocado via template para salvar o registro; direciona para salvar em collection ou subcollection.
+  4. salvar_collection_anterior() - Persiste as alterações no registro principal (collection) validando o formulário.
+  5. verFicha() - Navega para a visualização do registro ou ficha, conforme os parâmetros.
+  6. voltar() - Retorna à rota de visualização do registro.
+  7. loadCustomFields() - Recria e preenche o FormGroup com os controles personalizados com base nos dados carregados.
+*/
+
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
