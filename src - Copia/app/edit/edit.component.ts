@@ -1,0 +1,313 @@
+/* 
+  Métodos do componente EditComponent:
+  1. ngOnInit() - Inicializa o componente, autenticando o usuário, obtendo os parâmetros de rota e carregando o registro.
+  2. ngAfterViewInit() - Após a renderização da view, foca o campo "Nome".
+  3. salvar() - Invocado via template para salvar o registro; direciona para salvar em collection ou subcollection.
+  4. salvar_collection_anterior() - Persiste as alterações no registro principal (collection) validando o formulário.
+  5. verFicha() - Navega para a visualização do registro ou ficha, conforme os parâmetros.
+  6. voltar() - Retorna à rota de visualização do registro.
+  7. loadCustomFields() - Recria e preenche o FormGroup com os controles personalizados com base nos dados carregados.
+*/
+
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FirestoreService } from '../shared/firestore.service';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { UtilService } from '../shared/utils/util.service';
+import { FormService } from '../shared/form.service';
+import { CamposFichaService } from '../shared/campos-ficha.service';  // NOVA IMPORTAÇÃO
+import { FormControl, FormGroup } from '@angular/forms';
+import { CamposService } from '../shared/campos.service'; // NOVA IMPORTAÇÃO
+
+@Component({
+  selector: 'app-edit',
+  templateUrl: './edit.component.html',
+  styleUrls: ['./edit.component.scss'],
+})
+export class EditComponent implements OnInit, AfterViewInit {
+  @ViewChild('nomeInput') nomeInput?: ElementRef;
+
+  userId: string | null = null;
+  collection!: string;
+  subcollection!: string;
+  registro: any = {};
+  id!: string;
+  view_only: boolean = false;
+  fichaId: string = '';
+  titulo_da_pagina: string = '';
+  subtitulo_da_pagina: string = '';
+  isLoading = true;
+  registroPath: string = '';
+  routePath: string = '';
+  arquivos: { [key: string]: File } = {};
+  formReady: boolean = false;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private firestoreService: FirestoreService<any>,
+    private afAuth: AngularFireAuth,
+    public util: UtilService,
+    public FormService: FormService,
+    private camposFichaService: CamposFichaService,  // INJEÇÃO para subcollections
+    private camposService: CamposService              // INJEÇÃO para collections
+  ) { }
+
+  /**
+   * Método Angular OnInit (a)
+   * - Ação automática (pelo framework).
+   * - Executado ao criar o componente. 
+   *   Checa autenticação do usuário, carrega dados do registro e ajusta foco no campo "Nome".
+   */
+  ngOnInit() {
+    console.log('ngOnInit()');
+
+    this.afAuth.authState.subscribe(user => {
+      if (user && user.uid) {
+        this.userId = user.uid;
+        const id = this.route.snapshot.paramMap.get('id');
+        if (id) { this.id = id; }
+        this.collection = this.route.snapshot.paramMap.get('collection')!;
+        this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
+        this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
+
+        this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection || this.collection);
+
+        console.log('userId:', this.userId);
+        console.log('collection:', this.collection);
+        console.log('id:', id);
+        console.log('titulo_da_pagina:', this.titulo_da_pagina);
+        console.log('subcollection:', this.subcollection);
+        console.log('fichaId:', this.fichaId);
+        console.log("subtitulo_da_pagina =", this.subtitulo_da_pagina);
+
+        if (!this.id) {
+          console.error('Registro não identificado.');
+          this.voltar();
+        }
+        else {
+          if (this.subcollection) {
+            console.log('Colledction :', this.collection);
+            console.log('Subcolledction :', this.subcollection);
+            console.log('loadFicha()');
+
+            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
+              .then(() => {
+                this.subtitulo_da_pagina = this.FormService.registro.nome;
+                this.loadCustomFields();  // CHAMADA PARA CARREGAR CAMPOS CUSTOMIZADOS
+              })
+              .catch(error => {
+                console.error('Erro ao carregar ficha:', error);
+              });
+          }
+          else {
+            console.log('Colledction :', this.collection);
+            console.log('loadRegistro()');
+            this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
+              .then(() => {
+                this.subtitulo_da_pagina = this.FormService.registro.nome;
+                // Se necessário, chamar customizações para registro principal 
+                this.loadCustomFields();
+              })
+              .catch(error => {
+                console.error('Erro ao carregar registro:', error);
+              });
+          }
+        }
+
+        // Usando setTimeout para garantir que o campo "Nome" esteja disponível após o carregamento
+        setTimeout(() => {
+          if (this.nomeInput) {
+            this.nomeInput.nativeElement.focus();
+          }
+        }, 1000);
+
+      } else {
+        console.error('Usuário não autenticado.');
+        this.util.goHome();
+      }
+    });
+    console.log('Formulário de visualização inicializado.');
+  }
+
+  /**
+   * Método Angular AfterViewInit (a)
+   * - Ação automática (pelo framework).
+   * - Chamado após a view do componente ser inicializada.
+   *   Aqui, tenta focar o campo "Nome".
+   */
+  ngAfterViewInit() {
+    if (this.nomeInput) {
+      setTimeout(() => {
+        this.nomeInput?.nativeElement.focus();
+      }, 0);
+    } else {
+      // console.warn('Campo "Nome" não encontrado ao inicializar. Verifique se o campo foi carregado.');
+    }
+  }
+
+  /**
+   * Função salvar() (b)
+   * - É chamada no template (arquivo edit.component.html) quando o usuário clica para salvar.
+   * - Verifica se é uma subcollection para chamar outro método ou 
+   *   usa salvar_collection_anterior() para atualizar o registro.
+   */
+  salvar() {
+    console.log('salvar()');
+    if (this.userId) {
+
+      console.log('userId:', this.userId);
+      console.log('collection:', this.collection);
+      console.log('id:', this.id);
+      console.log('subcollection:', this.subcollection);
+      console.log('fichaId:', this.fichaId);
+
+      if (this.subcollection) {
+        console.log("Salvar uma subcollection: ", this.subcollection);
+        if (this.fichaId) {
+          this.FormService.salvarSubcollection(this.userId, this.collection, this.id, this.subcollection, this.fichaId);
+        }
+      }
+      else {
+        console.log("Salvar uma collection: ", this.collection);
+        this.salvar_collection_anterior();
+      }
+      this.verFicha();
+    }
+  }
+
+  /**
+   * Função salvar_collection_anterior() (d)
+   * - Chamada apenas internamente (no próprio arquivo) dentro de salvar().
+   * - Manipula o formulário e chama o serviço para persistir atualização do registro.
+   */
+  salvar_collection_anterior() {
+    if (this.FormService.fichaForm.valid && this.userId) {
+        // Converte o valor do campo email para minúsculas, se existir.
+        const formValues = { ...this.FormService.fichaForm.value };
+        if (formValues.email) {
+            formValues.email = formValues.email.toLowerCase();
+        }
+
+        // Atualiza o registro com todos os valores do formulário, incluindo novos campos.
+        const registroAtualizado = { ...this.FormService.registro, ...formValues };
+
+        // Verifique se o ID está presente antes de salvar
+        if (!this.FormService.registro.id) {
+            console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
+            alert('Erro ao atualizar o registro. O ID está indefinido.');
+            return;
+        }
+
+        const registroPath = `users/${this.userId}/${this.collection}`;
+        console.log('registroPath =', registroPath);
+
+        console.log('Tentando salvar o registro:');
+        console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
+        console.log('Dados do registro a serem atualizados:', registroAtualizado);
+
+        const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
+            const file = this.arquivos[campoNome];
+            const url = prompt('Insira a URL do arquivo ou imagem:');
+            return new Promise<void>((resolve) => {
+                registroAtualizado[campoNome] = url;
+                resolve();
+            });
+        });
+
+        Promise.all(uploadPromises).then(() => {
+            this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
+                .then(() => {
+                    this.router.navigate([`/view/${this.collection}`, this.FormService.registro.id]);
+                })
+                .catch(error => {
+                    console.error('Erro ao salvar o registro:', error);
+                    alert('Erro ao salvar o registro. Por favor, tente novamente.');
+                });
+        });
+    } else {
+        console.error('Registro inválido ou sem ID:', this.FormService.registro);
+        alert('Registro inválido ou sem ID. Não é possível salvar.');
+    }
+  }
+
+  /**
+   * Função verFicha() (d)
+   * - Chamada apenas internamente (no próprio arquivo) no final de salvar().
+   * - Responsável por navegar para o caminho de visualização (view) do registro ou da ficha.
+   */
+  verFicha() {
+    console.log("verFicha()");
+
+    const fichaPath = this.subcollection ?
+      `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
+      `view/${this.collection}/${this.id}`;
+
+    this.router.navigate([fichaPath]);
+  }
+
+  /**
+   * Função voltar() (b / também interna)
+   * - Geralmente é chamada via (click)="voltar()" no template (se houver) 
+   *   ou internamente (por exemplo, quando o registro não é encontrado).
+   * - Retorna à rota de visualização do registro.
+   */
+  voltar() {
+    console.log("voltar()");
+    console.log("subcollection =", this.subcollection);
+
+    const viewPath = this.subcollection ?
+      `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
+      `view/${this.collection}/${this.id}`;
+
+    this.router.navigate([viewPath]);
+  }
+
+  // NOVO MÉTODO para carregar campos personalizados, recriando o FormGroup
+  loadCustomFields() {
+    console.log("loadCustomFields()");
+    console.log("this.userId =", this.userId);
+    console.log("this.collection =", this.collection);
+    console.log("this.subcollection =", this.subcollection);
+    
+    if (this.userId) {
+      // Recria o FormGroup para evitar conflitos com controles antigos
+      this.FormService.fichaForm = new FormGroup({});
+      
+      if (this.subcollection) {
+        console.log("Carregando campos personalizados (subcollection)...", this.subcollection);
+        this.camposFichaService.getCamposFichaRegistro(this.userId, this.subcollection).subscribe(
+          (campos: any[]) => {
+            campos.forEach(campo => {
+              // Define valor inicial a partir do registro carregado
+              this.FormService.fichaForm.addControl(campo.nome, new FormControl(this.FormService.registro[campo.nome] || ''));
+              console.log(`Controle customizado adicionado (subcollection) para o campo: ${campo.nome}`);
+            });
+            // Preenche o formulário com os dados existentes
+            this.FormService.fichaForm.patchValue(this.FormService.registro);
+            this.formReady = true;
+          },
+          error => {
+            console.error('Erro ao carregar campos personalizados (subcollection):', error);
+          }
+        );
+      } else {
+        console.log("Carregando campos personalizados (collection)...", this.collection);
+        this.camposService.getCamposRegistro(this.userId, this.collection).subscribe(
+          (campos: any[]) => {
+            campos.forEach(campo => {
+              this.FormService.fichaForm.addControl(campo.nome, new FormControl(this.FormService.registro[campo.nome] || ''));
+              console.log(`Controle customizado adicionado (collection) para o campo: ${campo.nome}`);
+            });
+            this.FormService.fichaForm.patchValue(this.FormService.registro);
+            this.formReady = true;
+          },
+          error => {
+            console.error('Erro ao carregar campos personalizados (collection):', error);
+          }
+        );
+      }
+    }
+  }
+
+}
