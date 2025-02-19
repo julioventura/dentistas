@@ -14,109 +14,76 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Campo } from './models/campo.model';
+import {
+  DEFAULT_CAMPOS_PADRAO,
+  DEFAULT_CAMPOS_PADRAO_FICHAS,
+  CAMPOS_FICHAS_EXAMES,
+  CAMPOS_FICHAS_PAGAMENTOS,
+  CAMPOS_FICHAS_ATENDIMENTOS,
+  CAMPOS_FICHAS_DENTES,
+  CAMPOS_FICHAS_DENTES_ENDO,
+  CAMPOS_FICHAS_DENTES_PERIO,
+  CAMPOS_FICHAS_ANAMNESE,
+  CAMPOS_FICHAS_DIAGNOSTICOS,
+  CAMPOS_FICHAS_RISCO_CARIE
+} from './constants/campos-ficha.constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CamposFichaService {
-  // Array contendo os campos padrão para registros gerais (ex.: pacientes).
-  public camposPadrao: any[] = [
-    { nome: 'nome', tipo: 'text', label: 'Nome' },
-    { nome: 'codigo', tipo: 'text', label: 'Código' },
-    { nome: 'data', tipo: 'text', label: 'Data' },
-    { nome: 'valor', tipo: 'text', label: 'Valor' },
-    { nome: 'obs', tipo: 'textarea', label: 'Obs' },
-    { nome: 'nuvem', tipo: 'url', label: 'Arquivos' },
-  ];
 
-  // Array padrão para fichas (como exames)
-  public camposPadraoFichas: any[] = [
-    { nome: 'nome', tipo: 'text', label: 'Titulo' },
-    { nome: 'data', tipo: 'date', label: 'Data do Exame' },
-    { nome: 'obs', tipo: 'textarea', label: 'Observações' },
-    { nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-    { nome: 'resultado', tipo: 'textarea', label: 'Resultado' },
-  ];
+  constructor(private firestore: AngularFirestore) { }
 
-  // Mapeamento dos campos padrão para subcollections específicas
-  public defaultCampos: { [key: string]: any[] } = {
-    exames: [
-      { nome: 'titulo', tipo: 'text', label: 'Titulo' },
-      { nome: 'data', tipo: 'date', label: 'Data do Exame' },
-      { nome: 'resultado', tipo: 'textarea', label: 'Resultado' },
-      { nome: 'nome', tipo: 'text', label: 'Nome' },
-      { nome: 'codigo', tipo: 'text', label: 'Código' }
-    ]
-    // ...adicione outras subcollections se necessário...
-  };
-
-  // Caminho de configuração para acessar subcollections no Firestore
-  private configPath: string = '';
-
-  // Construtor: Injeção do AngularFirestore
-  constructor(private firestore: AngularFirestore) { 
-    console.log('CamposFichaService constructor called');
-  }
-
-  // Retorna os campos de configuração para uma subcollection.
-  // Se a subcollection for "padrao", retorna os camposPadraoFichas.
-  // Caso contrário, tenta buscar a configuração personalizada no Firestore.
-  // Se não houver configuração, usa os campos padrão definidos em defaultCampos ou revertendo para camposPadraoFichas.
-  getCamposFichaRegistro(userId: string, subcollection: string): Observable<any[]> {
-    console.log('getCamposFichaRegistro called with', { userId, subcollection });
-    this.configPath = `users/${userId}/configuracoesFichas`;
-    console.log("configPath = ", this.configPath);
-    console.log("subcollection = ", subcollection);
-
-    if (subcollection === 'padrao') {
-      return of([...this.camposPadraoFichas]); // Retorna uma cópia dos campos padrão para fichas
-    } else {
-      console.log("else... (subcollection diferente de padrao)");
-      return this.firestore
-        .collection(this.configPath)
-        .doc(subcollection)
-        .valueChanges()
-        .pipe(
-          switchMap((configuracaoFirestore: any) => {
-            if (configuracaoFirestore && configuracaoFirestore.campos) {
-              console.log("configuracaoFirestore.campos = ", configuracaoFirestore.campos);
-              return of(configuracaoFirestore.campos);
-            } else if (this.defaultCampos[subcollection]) {
-              console.log("else if... (usando campos padrão para a subcollection)");
-              return of([...this.defaultCampos[subcollection]]);
-            } else {
-              console.log("else... (usando campos padrão gerais)");
-              return of([...this.camposPadraoFichas]);
-            }
-          })
-        );
+  // Retorna os campos fixos conforme a coleção (subcollection) selecionada
+  getCamposFichaRegistro(userId: string, subcollection: string): Observable<Campo[]> {
+    switch (subcollection) {
+      case 'padrao':
+        return of([...DEFAULT_CAMPOS_PADRAO]);
+      case 'exames':
+        return of([...CAMPOS_FICHAS_EXAMES]);
+      case 'pagamentos':
+        return of([...CAMPOS_FICHAS_PAGAMENTOS]);
+      case 'atendimentos':
+        return of([...CAMPOS_FICHAS_ATENDIMENTOS]);
+      case 'dentes':
+        return of([...CAMPOS_FICHAS_DENTES]);
+      case 'dentesEndo':
+        return of([...CAMPOS_FICHAS_DENTES_ENDO]);
+      case 'dentesPerio':
+        return of([...CAMPOS_FICHAS_DENTES_PERIO]);
+      case 'anamnese':
+        return of([...CAMPOS_FICHAS_ANAMNESE]);
+      case 'diagnosticos':
+        return of([...CAMPOS_FICHAS_DIAGNOSTICOS]);
+      case 'riscoCarie':
+        return of([...CAMPOS_FICHAS_RISCO_CARIE]);
+      default:
+        return of([...DEFAULT_CAMPOS_PADRAO_FICHAS]);
     }
   }
 
-  // Atualiza os campos de configuração para uma subcollection.
-  // Se a collection for 'padrao', atualiza localmente; caso contrário, grava os campos no Firestore.
-  setCamposFichaRegistro(userId: string, collection: string, campos: any[]): Promise<void> {
-    console.log('setCamposRegistro called with', { userId, collection, campos });
-    this.configPath = `users/${userId}/configuracoesFichas`;
-    if (collection === 'padrao') {
-      this.camposPadrao = campos;
-      return Promise.resolve();
-    } else {
-      return this.firestore.collection(this.configPath).doc(collection).set({ campos });
-    }
+  // A função de setCamposFichaRegistro pode ser mantida ou removida, se não houver atualização
+  setCamposFichaRegistro(userId: string, collection: string, campos: Campo[]): Promise<void> {
+    const path = `users/${userId}/configuracoesFichas`;
+    return this.firestore.collection(path).doc(collection).set({ campos });
   }
 
-  // Recupera uma lista de subcollections (configurações de fichas) do Firestore para o usuário.
-  // Utiliza snapshotChanges para extrair os IDs dos documentos.
-  getColecoes(userId: string): Observable<any[]> {
-    console.log('getColecoes called with', { userId });
-    this.configPath = `users/${userId}/configuracoesFichas`;
-    return this.firestore.collection(this.configPath).snapshotChanges().pipe(
-      switchMap(actions => {
-        const colecoes = actions.map(a => a.payload.doc.id);
-        return of(colecoes);
-      })
-    );
+  // Obtenção das coleções fixas disponíveis
+  getColecoes(userId: string): Observable<string[]> {
+    const colecoesFixas = [
+      'padrao',
+      'exames',
+      'pagamentos',
+      'atendimentos',
+      'dentes',
+      'dentesEndo',
+      'dentesPerio',
+      'anamnese',
+      'diagnosticos',
+      'riscoCarie'
+    ];
+    return of(colecoesFixas);
   }
 }
