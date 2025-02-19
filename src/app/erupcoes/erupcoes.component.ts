@@ -12,7 +12,8 @@ import { dentesTabela, Dente } from '../shared/dentes-tabela'; // Importa a tabe
 @Component({
   selector: 'app-erupcoes',
   templateUrl: './erupcoes.component.html',
-  styleUrls: ['./erupcoes.component.scss']
+  styleUrls: ['./erupcoes.component.scss'],
+  standalone: false
 })
 export class ErupcoesComponent implements OnInit {
   userId: string | null = null;

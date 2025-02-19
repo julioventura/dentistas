@@ -23,6 +23,7 @@ import { CamposService } from '../shared/campos.service'; // NOVA IMPORTAÇÃO
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
+  standalone: false
 })
 export class EditComponent implements OnInit, AfterViewInit {
   @ViewChild('nomeInput') nomeInput?: ElementRef;

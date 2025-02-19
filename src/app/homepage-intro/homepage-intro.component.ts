@@ -5,7 +5,8 @@ import { NavegacaoService } from '../shared/navegacao.service';
 @Component({
   selector: 'app-homepage-intro',
   templateUrl: './homepage-intro.component.html',
-  styleUrls: ['./homepage-intro.component.scss']
+  styleUrls: ['./homepage-intro.component.scss'],
+  standalone: false
 })
 export class HomepageIntroComponent implements OnInit {
   public username: string | null = null;

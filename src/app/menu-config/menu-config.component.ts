@@ -13,7 +13,8 @@ interface Subcolecao {
 @Component({
   selector: 'app-menu-config',
   templateUrl: './menu-config.component.html',
-  styleUrls: ['./menu-config.component.scss']
+  styleUrls: ['./menu-config.component.scss'],
+  standalone: false
 })
 export class MenuConfigComponent implements OnInit {
   colecoesDisponiveis = [

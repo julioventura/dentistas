@@ -8,7 +8,8 @@ import { UtilService } from '../shared/utils/util.service';
 @Component({
   selector: 'app-home-config',
   templateUrl: './home-config.component.html',
-  styleUrls: ['./home-config.component.scss']
+  styleUrls: ['./home-config.component.scss'],
+  standalone: false
 })
 export class HomeConfigComponent implements OnInit {
   colecoesAtivas = ['Pacientes', 'Alunos', 'Professores', 'Dentistas', 'Equipe', 'Protéticos']; // Exemplo de coleções ativas

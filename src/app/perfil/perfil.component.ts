@@ -7,7 +7,8 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.component.html',
-  styleUrls: ['./perfil.component.scss']
+  styleUrls: ['./perfil.component.scss'],
+  standalone: false
 })
 export class PerfilComponent implements OnInit {
   user: any = {}; // Dados do perfil

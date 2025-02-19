@@ -12,7 +12,8 @@ interface Subcolecao {
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+  styleUrls: ['./menu.component.scss'],
+  standalone: false
 })
 export class MenuComponent implements OnInit {
   // Recebe a coleção e ID para uso no carregamento de subcoleções e navegação

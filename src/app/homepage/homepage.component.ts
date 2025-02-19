@@ -7,7 +7,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth'; // Usando AngularFi
 @Component({
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.scss']
+  styleUrls: ['./homepage.component.scss'],
+  standalone: false,
 })
 export class HomepageComponent implements OnInit {
   public userProfile: any = {}; // Dados do perfil público

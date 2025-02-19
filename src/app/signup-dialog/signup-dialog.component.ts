@@ -10,7 +10,8 @@ export interface SignupDialogData {
 @Component({
   selector: 'app-signup-dialog',
   templateUrl: './signup-dialog.component.html',
-  styleUrls: ['./signup-dialog.component.scss']
+  styleUrls: ['./signup-dialog.component.scss'],
+  standalone: false
 })
 export class SignupDialogComponent {
   name: string = '';

@@ -109,6 +109,7 @@ const routes: Routes = [
     HomeConfigComponent,
     ImportarCadastroComponent,
     ErupcoesComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,

@@ -16,7 +16,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth'; // Importa o servi√
         animate('0.4s ease-in-out', style({ opacity: 1 }))  
       ])
     ])
-  ]
+  ],
+  standalone: false
 })
 
 export class AppComponent implements OnInit {

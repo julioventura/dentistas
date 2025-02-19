@@ -7,7 +7,8 @@ import { UtilService } from '../shared/utils/util.service';
 @Component({
   selector: 'app-camposRegistro',
   templateUrl: './camposRegistro.component.html',
-  styleUrls: ['../fichas/fichas.component.scss']
+  styleUrls: ['../fichas/fichas.component.scss'],
+  standalone: false
 })
 export class CamposRegistroComponent implements OnInit {
   colecaoSelecionada: string = 'padrao'; // Seleciona "padrao" inicialmente

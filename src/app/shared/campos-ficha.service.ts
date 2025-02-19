@@ -28,14 +28,15 @@ export class CamposFichaService {
     { nome: 'valor', tipo: 'text', label: 'Valor' },
     { nome: 'obs', tipo: 'textarea', label: 'Obs' },
     { nome: 'nuvem', tipo: 'url', label: 'Arquivos' },
-    { nome: 'id', tipo: 'text', label: 'ID' }
   ];
 
   // Array padrão para fichas (como exames)
   public camposPadraoFichas: any[] = [
-    { nome: 'titulo', tipo: 'text', label: 'Titulo' },
+    { nome: 'nome', tipo: 'text', label: 'Titulo' },
     { nome: 'data', tipo: 'date', label: 'Data do Exame' },
-    { nome: 'resultado', tipo: 'textarea', label: 'Resultado' }
+    { nome: 'obs', tipo: 'textarea', label: 'Observações' },
+    { nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+    { nome: 'resultado', tipo: 'textarea', label: 'Resultado' },
   ];
 
   // Mapeamento dos campos padrão para subcollections específicas

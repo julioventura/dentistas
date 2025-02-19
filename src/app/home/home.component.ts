@@ -9,7 +9,8 @@ import { ConfigService } from '../shared/config.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  standalone: false
 })
 export class HomeComponent implements OnInit {
   nome: string = '';  // Variável para armazenar o nome do usuário logado

@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';  // Importando FormsModule
 @Component({
   selector: 'app-reset-password',
   templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.scss']
+  styleUrls: ['./reset-password.component.scss'],
+  standalone: false
 })
 export class ResetPasswordComponent {
   email: string = '';

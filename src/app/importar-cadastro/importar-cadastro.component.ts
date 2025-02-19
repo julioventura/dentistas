@@ -8,7 +8,8 @@ import { UtilService } from '../shared/utils/util.service';
 @Component({
   selector: 'app-importar-cadastro',
   templateUrl: './importar-cadastro.component.html',
-  styleUrls: ['./importar-cadastro.component.scss']
+  styleUrls: ['./importar-cadastro.component.scss'],
+  standalone: false
 })
 export class ImportarCadastroComponent {
   userId: string | null = null;
@@ -39,7 +40,7 @@ export class ImportarCadastroComponent {
           this.importData(result.data);
           console.log('Dados CSV carregados:', result.data);
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Erro ao processar o arquivo:', error);
         }
       });

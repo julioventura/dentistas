@@ -13,11 +13,13 @@ import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
+import { MenuComponent } from "../menu/menu.component";
 
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
+  standalone: false
 })
 export class ViewComponent implements OnInit {
   userId: string | null = null; // ID do usuário autenticado

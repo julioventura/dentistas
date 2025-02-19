@@ -5,11 +5,13 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { NavegacaoService } from '../navegacao.service';
 import { ConfigService } from '../config.service';  
 import { UtilService } from '../utils/util.service';
+import { SubcolecaoService, Subcolecao } from '../subcolecao.service';
 
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
-  styleUrls: ['./config.component.scss']
+  styleUrls: ['./config.component.scss'],
+  standalone: false
 })
 
 export class ConfigComponent implements OnInit {
@@ -25,23 +27,17 @@ export class ConfigComponent implements OnInit {
     'Sua homepage',
   ];
 
-  subcolecoesDisponiveis = [
-    { nome: 'exames', selecionado: true },
-    { nome: 'planos', selecionado: false },
-    { nome: 'atendimentos', selecionado: false },
-    { nome: 'pagamentos', selecionado: false },
-    { nome: 'erupcoes', selecionado: false },
-    { nome: 'risco', selecionado: false },
-    { nome: 'retornos', selecionado: false },
-    { nome: 'historico', selecionado: false }
-  ];
+ // A array agora será carregada dinamicamente pelo serviço
+ subcolecoesDisponiveis: { nome: string; selecionado: boolean }[] = [];
+
 
   constructor(
     public config: ConfigService,
     private router: Router,
     private navegacaoService: NavegacaoService,
     public util: UtilService,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private subcolecaoService: SubcolecaoService
   ) { }
 
   ngOnInit(): void {
@@ -49,8 +45,19 @@ export class ConfigComponent implements OnInit {
     // Pegando as configurações do ConfigService
 
     this.ambiente = this.config.getAmbiente();
+
+    // Carregar a lista de subcoleções dinamicamente a partir do SubcolecaoService
+    this.carregarSubcolecoesDisponiveis();
   }
 
+  carregarSubcolecoesDisponiveis() {
+    // Obter as subcoleções definidas no serviço e mapear para incluir o campo "selecionado"
+    this.subcolecoesDisponiveis = this.subcolecaoService.getSubcolecoesDisponiveis().map(sub => ({
+      nome: sub.nome,
+      // Definir true para 'exames' ou como padrão false
+      selecionado: sub.nome === 'exames' ? true : false
+    }));
+  }
 
   selecionarColecao(colecao: string) {
     // Toggle entre a coleção e uma string vazia para "desselecionar"
@@ -87,8 +94,10 @@ export class ConfigComponent implements OnInit {
 
   
   
-  salvar() {
-  }
+  // salvar() {
+  // }
+
+
   salvarConfiguracoes() {
     const subcolecoesSelecionadas = this.subcolecoesDisponiveis
       .filter(sub => sub.selecionado)

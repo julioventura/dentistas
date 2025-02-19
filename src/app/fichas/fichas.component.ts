@@ -7,7 +7,8 @@ import { UtilService } from '../shared/utils/util.service';
 @Component({
   selector: 'app-fichas',
   templateUrl: './fichas.component.html',
-  styleUrls: ['./fichas.component.scss']
+  styleUrls: ['./fichas.component.scss'],
+  standalone: false
 })
 export class FichasComponent implements OnInit {
   colecaoSelecionada: string = 'padrao'; // Seleciona "padrao" inicialmente

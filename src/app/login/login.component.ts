@@ -9,7 +9,8 @@ import { SignupDialogComponent } from '../signup-dialog/signup-dialog.component'
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  standalone: false
 })
 export class LoginComponent {
   email: string = '';
