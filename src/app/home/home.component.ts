@@ -1,3 +1,14 @@
+/* 
+  Métodos do componente HomeComponent:
+  1. ngOnInit() - Inicializa o componente, autenticando o usuário, carregando dados do usuário (username) e configuração de ícones.
+  2. capitalize(text: string): string - Formata um texto capitalizando a primeira letra de cada palavra.
+  3. loadIconConfig() - Carrega as configurações de ícones personalizadas do usuário a partir do Firestore.
+  4. saveIconConfig() - Salva as configurações de ícones do usuário no Firestore.
+  5. loadUserData(email: string): void - Carrega os dados do usuário (como o username) a partir do FirestoreService.
+  6. mostrarAlerta(): void - Exibe um alerta informando que o acesso é reservado ao administrador.
+  7. go(component: string, new_window: boolean) - Realiza a navegação para o componente informado, podendo abrir em nova janela se especificado.
+*/
+
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';  // Usando AngularFireAuth
 import { Router } from '@angular/router';
@@ -13,9 +24,9 @@ import { ConfigService } from '../shared/config.service';
   standalone: false
 })
 export class HomeComponent implements OnInit {
-  nome: string = '';  // Variável para armazenar o nome do usuário logado
-  username: string | null = null;  // Variável para armazenar o username do usuário logado
-  new_window: boolean = false;
+  nome: string = '';  // Armazena o nome do usuário logado (capitalizado)
+  username: string | null = null;  // Armazena o username do usuário logado
+  new_window: boolean = false;  // Controla se a navegação ocorrerá em nova janela
 
   // Lista de ícones visíveis
   visibleIcons: { [key: string]: boolean } = {
@@ -34,30 +45,37 @@ export class HomeComponent implements OnInit {
 
   private userId: string | null = null;
 
-
-  // Controle de visibilidade do menu de configuração
-  // showConfig = false;
-
   constructor(
     private auth: AngularFireAuth,  
     private router: Router,
     public config: ConfigService,
     private firestore: AngularFirestore, 
-    private firestoreService: FirestoreService<any>, // Usando FirestoreService para buscar o username
+    private firestoreService: FirestoreService<any> // Usado para buscar o username
   ) { }
 
-  ngOnInit() {
-    // Uso do AngularFireAuth para obter o usuário logado
+  /**
+   * ngOnInit()
+   * @description Inicializa o componente:
+   *  - Subscreve no AngularFireAuth para obter o usuário logado.
+   *  - Se o usuário estiver autenticado, capitaliza o nome e carrega seus dados (username) e configuração de ícones.
+   *  - Configura a propriedade is_admin se o email corresponder ao do administrador.
+   *  - Caso nenhum usuário esteja logado, redireciona para a página de login.
+   */
+  ngOnInit(): void {
     this.auth.user.subscribe(user => {
       if (user && user.email) {
+        // Define o nome do usuário utilizando a função capitalize para deixar a primeira letra de cada palavra em maiúsculo.
         this.nome = this.capitalize(user.displayName || user.email || 'Usuário');
         this.userId = user.uid;
-        this.loadUserData(user.email);  // Carregar os dados do usuário pelo email
+        // Carrega dados adicionais do usuário
+        this.loadUserData(user.email);
 
+        // Define o usuário como administrador, se o email corresponder
         if (user.email == 'julio@dentistas.com.br') {
           this.config.is_admin = true;
         }
 
+        // Carrega as configurações de ícones a partir do Firestore
         this.loadIconConfig();
 
       } else {
@@ -68,21 +86,25 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // Função para capitalizar a primeira letra de cada palavra
+  /**
+   * capitalize(text: string): string
+   * @param text - Texto a ser formatado.
+   * @returns O mesmo texto com a primeira letra de cada palavra em maiúsculo.
+   * @description Essa função utiliza expressão regular para capitalizar a primeira letra de cada palavra.
+   */
   capitalize(text: string): string {
     return text.replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  // toggleConfig() {
-  //   this.showConfig = !this.showConfig;
-  // }
-
-
-  // Carrega as configurações de ícones do Firestore
-  loadIconConfig() {
+  /**
+   * loadIconConfig()
+   * @description Carrega as configurações de ícones personalizadas do usuário a partir do Firestore.
+   * Caso não haja uma configuração personalizada, mantém os valores padrão.
+   */
+  loadIconConfig(): void {
     if (!this.userId) return;
 
-    // Obtém o documento com as configurações do usuário no Firestore
+    // Solicita o documento de configurações do usuário no Firestore
     this.firestore.doc(`/users/${this.userId}/settings/HomeConfig`).get().subscribe(doc => {
       if (doc.exists) {
         this.visibleIcons = doc.data() as { [key: string]: boolean };
@@ -92,8 +114,12 @@ export class HomeComponent implements OnInit {
     });
   }
 
-
- saveIconConfig() {
+  /**
+   * saveIconConfig()
+   * @description Salva as configurações de ícones do usuário no Firestore.
+   * Caso a operação seja bem-sucedida, exibe uma mensagem no console; se não, loga o erro.
+   */
+  saveIconConfig(): void {
     if (this.userId) {
       this.firestore.doc(`/users/${this.userId}/settings/HomeConfig`).set(this.visibleIcons)
         .then(() => console.log("Configurações salvas com sucesso!"))
@@ -101,8 +127,11 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  
-// Função para carregar os dados do usuário, incluindo o username
+  /**
+   * loadUserData(email: string): void
+   * @param email - Email do usuário para buscar os dados.
+   * @description Carrega os dados do usuário, como o username, utilizando o FirestoreService.
+   */
   loadUserData(email: string): void {
     this.firestoreService.getRegistroById('usuarios/dentistascombr/users', email).subscribe(userData => {
       if (userData && userData.username) {
@@ -114,12 +143,21 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  /**
+   * mostrarAlerta(): void
+   * @description Exibe um alerta informando que o acesso é reservado ao administrador.
+   */
   mostrarAlerta(): void {
     alert('Acesso reservado ao administrador');
   }
 
-  // Método para navegação dinâmica
-  go(component: string, new_window: boolean = false) {
+  /**
+   * go(component: string, new_window: boolean = false): void
+   * @param component - O nome do componente para o qual deve navegar.
+   * @param new_window - Se verdadeiro, indica que a navegação deve ocorrer em uma nova janela.
+   * @description Navega para o componente especificado. Caso new_window seja true, navega para uma rota de introdução usando o template "/{component}/intro".
+   */
+  go(component: string, new_window: boolean = false): void {
     this.new_window = new_window;
     if (new_window) {
       const introUrl = `/${component}/intro`;

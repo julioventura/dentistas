@@ -280,8 +280,15 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.camposFichaService.getCamposFichaRegistro(this.userId, this.subcollection).subscribe(
           (campos: any[]) => {
             campos.forEach(campo => {
-              // Define valor inicial a partir do registro carregado
-              this.FormService.fichaForm.addControl(campo.nome, new FormControl(this.FormService.registro[campo.nome] || ''));
+              let defaultValue;
+              if(campo.tipo === 'checkbox' || campo.tipo === 'boolean'){
+                defaultValue = (this.FormService.registro && this.FormService.registro[campo.nome] !== undefined)
+                  ? this.FormService.registro[campo.nome] : false;
+              } else {
+                defaultValue = (this.FormService.registro && this.FormService.registro[campo.nome])
+                  ? this.FormService.registro[campo.nome] : '';
+              }
+              this.FormService.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
               console.log(`Controle customizado adicionado (subcollection) para o campo: ${campo.nome}`);
             });
             // Preenche o formulário com os dados existentes
@@ -297,7 +304,15 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.camposService.getCamposRegistro(this.userId, this.collection).subscribe(
           (campos: any[]) => {
             campos.forEach(campo => {
-              this.FormService.fichaForm.addControl(campo.nome, new FormControl(this.FormService.registro[campo.nome] || ''));
+              let defaultValue;
+              if(campo.tipo === 'checkbox' || campo.tipo === 'boolean'){
+                defaultValue = (this.FormService.registro && this.FormService.registro[campo.nome] !== undefined)
+                  ? this.FormService.registro[campo.nome] : false;
+              } else {
+                defaultValue = (this.FormService.registro && this.FormService.registro[campo.nome])
+                  ? this.FormService.registro[campo.nome] : '';
+              }
+              this.FormService.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
               console.log(`Controle customizado adicionado (collection) para o campo: ${campo.nome}`);
             });
             this.FormService.fichaForm.patchValue(this.FormService.registro);

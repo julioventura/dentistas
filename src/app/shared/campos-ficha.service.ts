@@ -19,14 +19,15 @@ import {
   DEFAULT_CAMPOS_PADRAO,
   DEFAULT_CAMPOS_PADRAO_FICHAS,
   CAMPOS_FICHAS_EXAMES,
-  CAMPOS_FICHAS_PAGAMENTOS,
+  CAMPOS_FICHAS_PLANOS,
   CAMPOS_FICHAS_ATENDIMENTOS,
+  CAMPOS_FICHAS_PAGAMENTOS,
   CAMPOS_FICHAS_DENTES,
   CAMPOS_FICHAS_DENTES_ENDO,
   CAMPOS_FICHAS_DENTES_PERIO,
   CAMPOS_FICHAS_ANAMNESE,
   CAMPOS_FICHAS_DIAGNOSTICOS,
-  CAMPOS_FICHAS_RISCO_CARIE
+  CAMPOS_FICHAS_RISCO
 } from './constants/campos-ficha.constants';
 
 @Injectable({
@@ -43,22 +44,24 @@ export class CamposFichaService {
         return of([...DEFAULT_CAMPOS_PADRAO]);
       case 'exames':
         return of([...CAMPOS_FICHAS_EXAMES]);
+      case 'planos':
+        return of([...CAMPOS_FICHAS_PLANOS]);        
+        case 'atendimentos':
+          return of([...CAMPOS_FICHAS_ATENDIMENTOS]);
       case 'pagamentos':
         return of([...CAMPOS_FICHAS_PAGAMENTOS]);
-      case 'atendimentos':
-        return of([...CAMPOS_FICHAS_ATENDIMENTOS]);
       case 'dentes':
         return of([...CAMPOS_FICHAS_DENTES]);
-      case 'dentesEndo':
+      case 'dentesendo':
         return of([...CAMPOS_FICHAS_DENTES_ENDO]);
-      case 'dentesPerio':
+      case 'dentesperio':
         return of([...CAMPOS_FICHAS_DENTES_PERIO]);
       case 'anamnese':
         return of([...CAMPOS_FICHAS_ANAMNESE]);
       case 'diagnosticos':
         return of([...CAMPOS_FICHAS_DIAGNOSTICOS]);
-      case 'riscoCarie':
-        return of([...CAMPOS_FICHAS_RISCO_CARIE]);
+      case 'risco':
+        return of([...CAMPOS_FICHAS_RISCO]);
       default:
         return of([...DEFAULT_CAMPOS_PADRAO_FICHAS]);
     }
@@ -70,20 +73,4 @@ export class CamposFichaService {
     return this.firestore.collection(path).doc(collection).set({ campos });
   }
 
-  // Obtenção das coleções fixas disponíveis
-  getColecoes(userId: string): Observable<string[]> {
-    const colecoesFixas = [
-      'padrao',
-      'exames',
-      'pagamentos',
-      'atendimentos',
-      'dentes',
-      'dentesEndo',
-      'dentesPerio',
-      'anamnese',
-      'diagnosticos',
-      'riscoCarie'
-    ];
-    return of(colecoesFixas);
-  }
 }

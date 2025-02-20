@@ -1,15 +1,15 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FirestoreService } from '../shared/firestore.service';
-import { NavegacaoService } from '../shared/navegacao.service';
+import { FirestoreService } from '../../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { UtilService } from '../shared/utils/util.service';
-import { FormService } from '../shared/form.service';
+import { UtilService } from '../../shared/utils/util.service';
+import { FormService } from '../../shared/form.service';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
+  standalone: false
 })
 export class EditComponent implements OnInit, AfterViewInit {
   @ViewChild('nomeInput') nomeInput?: ElementRef;
@@ -32,7 +32,6 @@ export class EditComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private router: Router,
     private firestoreService: FirestoreService<any>,
-    private navegacaoService: NavegacaoService,
     private afAuth: AngularFireAuth,
     public util: UtilService,
     public FormService: FormService,

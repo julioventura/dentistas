@@ -26,6 +26,7 @@ import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
 import { UtilService } from '../shared/utils/util.service';
 import { switchMap, tap } from 'rxjs/operators';
+import { Campo } from './models/campo.model';
 
 @Injectable({
     providedIn: 'root'
@@ -81,28 +82,40 @@ export class FormService {
     // Cria ou atualiza o FormGroup com os controles definidos nos campos carregados
     createForm() {
         console.log('createForm()');
-        
         if (!this.fichaForm) {
-            // Inicialmente cria um objeto de controles a partir dos campos carregados
-            const formControls = this.campos.reduce((acc, campo) => {
-                acc[campo.nome] = new FormControl('');
-                return acc;
-            }, {});
-            if (Object.keys(formControls).length > 0) {
-                this.fichaForm = this.fb.group(formControls);
-                console.log('FormGroup criado com sucesso:', this.fichaForm);
+          // Cria controles a partir de cada campo
+          const formControls = this.campos.reduce((acc, campo) => {
+            let defaultValue;
+            if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
+              defaultValue = (this.registro && this.registro[campo.nome] !== undefined) ? this.registro[campo.nome] : false;
             } else {
-                console.error('Nenhum campo foi adicionado ao FormGroup.');
+              defaultValue = (this.registro && this.registro[campo.nome]) ? this.registro[campo.nome] : '';
             }
+            acc[campo.nome] = new FormControl(defaultValue);
+            return acc;
+          }, {} as { [key: string]: any });
+          if (Object.keys(formControls).length > 0) {
+            this.fichaForm = this.fb.group(formControls);
+            console.log('FormGroup criado com sucesso:', this.fichaForm);
+          } else {
+            console.error('Nenhum campo foi adicionado ao FormGroup.');
+          }
         } else {
-            // Se o FormGroup já existe, adiciona controles para os novos campos que não estão presentes
-            this.campos.forEach(campo => {
-                if (!this.fichaForm.contains(campo.nome)) {
-                    this.fichaForm.addControl(campo.nome, new FormControl(''));
-                }
-            });
+          // Se o FormGroup já existe, adiciona controles dinâmicos para os campos ausentes
+          this.campos.forEach(campo => {
+            if (!this.fichaForm.contains(campo.nome)) {
+              let defaultValue;
+              if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
+                defaultValue = (this.registro && this.registro[campo.nome] !== undefined) ? this.registro[campo.nome] : false;
+              } else {
+                defaultValue = (this.registro && this.registro[campo.nome]) ? this.registro[campo.nome] : '';
+              }
+              this.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
+              console.log(`Controle customizado adicionado para o campo: ${campo.nome}`);
+            }
+          });
         }
-    }
+      }
 
     // Carrega os dados de um registro principal; formata datas, adiciona controles dinâmicos e atualiza o FormGroup
     loadRegistro(userId: string, collection: string, id: string, view_only: boolean): Promise<void> {
@@ -252,11 +265,13 @@ export class FormService {
         });
     }
 
-    // Processa alterações em um campo do formulário, aplicando capitalização e atualizando o controle
+    // Processa alterações em um campo do formulário, aplicando capitalização para campos de texto e atualizando o controle
     onFieldChange(event: any, campoNome: string): void {
         console.log(`onFieldChange(event, campoNome = ${campoNome})`);
-        if (this.fichaForm) {
-            console.log('fichaForm controls:', this.fichaForm.controls);
+        // Se o input for do tipo checkbox, use o valor booleano e não aplique capitalização
+        if (event.target && event.target.type === 'checkbox') {
+            this.fichaForm.get(campoNome)?.setValue(event.target.checked);
+            return;
         }
         if (this.fichaForm && this.fichaForm.get(campoNome)) {
             const valorAtual = event.target.value;

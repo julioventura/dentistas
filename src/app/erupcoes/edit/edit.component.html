@@ -55,6 +55,15 @@
               </div>
             </div>
 
+            <!-- Campo Checkbox -->
+            <div *ngIf="campo.tipo === 'checkbox'" class="detail-container">
+              <input
+                type="checkbox"
+                [formControlName]="campo.nome"
+                (change)="FormService.onFieldChange($event, campo.nome)"
+              />
+              <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+            </div>
 
           <input
             *ngIf="campo.nome != 'nome' && campo.nome != 'sexo' && campo.tipo !== 'date' && campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'"

@@ -33,6 +33,7 @@ import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { HomeConfigComponent } from './home-config/home-config.component';
 import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
+import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';
 
 // Serviços
 
@@ -109,7 +110,8 @@ const routes: Routes = [
     HomeConfigComponent,
     ImportarCadastroComponent,
     ErupcoesComponent,
-    MenuComponent
+    MenuComponent,
+    ErupcoesEditComponent
   ],
   imports: [
     BrowserModule,

@@ -28,14 +28,19 @@ export class MenuConfigComponent implements OnInit {
   ];
 
   todasSubcolecoes = [
+    'padrao',
     'exames',
     'planos',
     'atendimentos',
     'pagamentos',
+    'dentes',
+    'dentesendo',
+    'dentesperio',
     'erupcoes',
+    'anamnese',
+    'diagnosticos',
     'risco',
-    'retornos',
-    'historico'
+    'retornos'
   ];
 
   subcolecoesDisponiveis: Subcolecao[] = this.todasSubcolecoes.map(nome => ({
@@ -76,15 +81,30 @@ export class MenuConfigComponent implements OnInit {
 
   carregarConfiguracoes() {
     if (this.colecaoSelecionada) {
-      this.firestore.collection('users').doc(this.userId).collection('configuracoesMenu').doc(this.colecaoSelecionada).get().subscribe(doc => {
-        const dados = doc.data() as { subcolecoes: string[] } | undefined;
-        if (dados && dados.subcolecoes) {
-          this.subcolecoesDisponiveis = this.subcolecoesDisponiveis.map(sub => ({
-            ...sub,
-            selecionado: dados.subcolecoes.includes(sub.nome)
-          }));
-        }
-      });
+      this.firestore.collection('users').doc(this.userId)
+        .collection('configuracoesMenu').doc(this.colecaoSelecionada).get()
+        .subscribe(doc => {
+          if (doc.exists) {
+            const dados = doc.data() as { subcolecoes: string[] } | undefined;
+            // Recria a lista utilizando todasSubcolecoes como base
+            this.subcolecoesDisponiveis = this.todasSubcolecoes.map(nome => ({
+              nome,
+              selecionado: dados?.subcolecoes.includes(nome) || false
+            }));
+          } else {
+            // Se não houver configuração, define como todas não selecionadas
+            this.subcolecoesDisponiveis = this.todasSubcolecoes.map(nome => ({
+              nome,
+              selecionado: false
+            }));
+          }
+        });
+    } else {
+      // Se nenhuma coleção estiver selecionada, reinicia a lista padrão
+      this.subcolecoesDisponiveis = this.todasSubcolecoes.map(nome => ({
+        nome,
+        selecionado: false
+      }));
     }
   }
 
@@ -103,8 +123,8 @@ export class MenuConfigComponent implements OnInit {
   }
 
   selecionarColecao(colecao: string) {
-    // Toggle entre a coleção e uma string vazia para "desselecionar"
-    this.colecaoSelecionada = this.colecaoSelecionada === colecao ? '' : colecao;
+    // Define a coleção selecionada e atualiza as subcoleções
+    this.colecaoSelecionada = colecao;
     this.carregarConfiguracoes();
   }
 

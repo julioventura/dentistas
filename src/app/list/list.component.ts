@@ -28,6 +28,8 @@ import { AngularFirestore } from '@angular/fire/compat/firestore'; // Importar o
 import { FormService } from '../shared/form.service';
 import { ExportService } from '../shared/export.service';
 import { PdfExportService } from '../shared/pdf-export.service';
+import { SubcolecaoService } from '../shared/subcolecao.service';
+import { CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS } from '../shared/constants/campos-ficha.constants';
 
 @Component({
   selector: 'app-list',
@@ -72,7 +74,8 @@ export class ListComponent implements OnInit {
     private firestore: AngularFirestore,
     public FormService: FormService,
     private exportService: ExportService,
-    private pdfExportService: PdfExportService
+    private pdfExportService: PdfExportService,
+    private subcolecaoService: SubcolecaoService
   ) { }
 
   /**
@@ -381,14 +384,15 @@ export class ListComponent implements OnInit {
    * Retorna um array com os menus padrão para a coleção informada.
    */
   getMenusPadraoPorCollection(colecao: string): any {
+    const subcolecoes = this.subcolecaoService.getSubcolecoesDisponiveis();
     const menusPadrao: { [key: string]: any[] } = {
-      pacientes: ['exames', 'planos', 'atendimentos', 'pagamentos', 'historico'],
-      clientes: ['planos', 'atendimentos', 'pagamentos', 'historico'],
-      alunos: ['planos', 'atendimentos', 'historico'],
-      professores: ['planos', 'atendimentos', 'historico'],
-      dentistas: ['planos', 'atendimentos', 'pagamentos', 'historico'],
-      equipe: ['planos', 'atendimentos', 'pagamentos', 'historico'],
-      proteticos: ['planos', 'atendimentos', 'pagamentos', 'historico']
+      pacientes: [CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
+      clientes: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
+      alunos: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS],
+      professores: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS],
+      dentistas: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
+      equipe: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
+      proteticos: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS]
     };
     return menusPadrao[colecao] || [];
   }

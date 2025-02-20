@@ -1,3 +1,24 @@
+/*
+  Métodos do arquivo UtilService:
+  1. formata_email(email: string): string - Formata o email removendo espaços extras e convertendo para minúsculas.
+  2. formata_cpf(cpf: string): string - Remove caracteres não numéricos e formata o CPF no padrão xxx.xxx.xxx-xx.
+  3. pad(num: any, size: number): string - Preenche com zeros à esquerda o número para atingir o tamanho especificado.
+  4. isNumeric(n: any): boolean - Verifica se o valor é numérico.
+  5. clone(object: any): any - Realiza uma cópia profunda de um objeto.
+  6. formata_valor(x: any, decimais?: number): string - Formata um valor numérico com separador de milhar e casas decimais.
+  7. capitalizar(str: string): string - Converte a string para minúsculas e capitaliza a primeira letra de cada palavra, com exceções.
+  8. isValidUrl(url: string): boolean - Verifica se a URL passada é válida.
+  9. isImageUrl(url: string): boolean - Verifica se a URL corresponde a uma imagem (com base na extensão).
+  10. titulo_ajuste_plural(titulo: string): string - Retorna o título no formato plural conforme regras definidas.
+  11. titulo_ajuste_singular(titulo: string): string - Retorna o título no formato singular conforme regras definidas.
+  12. calcularDigitoVerificador(codigo: string): number - Calcula o dígito verificador de um código.
+  13. goHome(): void - Navega para a rota '/home'.
+  14. go(route: string): void - Navega para a rota informada.
+  15. go_url(url: string): void - Abre a URL em uma nova aba ou janela.
+  16. voltar(): void - Retorna à rota anterior utilizando o NavegacaoService.
+*/
+
+
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavegacaoService } from '../navegacao.service';
@@ -227,15 +248,20 @@ export class UtilService {
         return 'Atendimentos';
       case 'pagamentos':
         return 'Pagamentos';
-       
+      case 'dentes':
+        return 'Dentes';
+      case 'dentesendo':
+        return 'Endodontia';;
+      case 'dentesperio':
+        return 'Periodontia';
+      case 'anamnese':
+        return 'Anamneses';
+      case 'diagnosticos':
+        return 'Diagnósticos';
+      case 'risco':
+        return 'Riscos de Cárie';
       case 'erupcoes':
         return 'Erupções Dentárias';
-      case 'risco':
-        return 'Risco de Cárie';
-      case 'retornos':
-        return 'Retornos';
-      case 'historico':
-        return 'Histórico de Avisos';
 
       default:
         return 'Registros';
@@ -273,21 +299,25 @@ export class UtilService {
         return 'Atendimento';
       case 'pagamentos':
         return 'Pagamento';
-
-      case 'erupcoes':
-        return 'Erupções Dentárias';
+      case 'dentes':
+        return 'Dente';
+      case 'dentesendo':
+        return 'Endodontia';;
+      case 'dentesperio':
+        return 'Periodontia';
+      case 'anamnese':
+        return 'Anamnese';
+      case 'diagnosticos':
+        return 'Diagnóstico';
       case 'risco':
         return 'Risco de Cárie';
-      case 'retornos':
-        return 'Retornos';
-      case 'historico':
-        return 'Histórico de Avisos';
+      case 'erupcoes':
+        return 'Erupção Dentária';
 
       default:
-        return 'Registro';
+        return 'Registros';
     }
   }
-
 
   // Função para calcular o dígito verificador
   calcularDigitoVerificador(codigo: string): number {
@@ -295,7 +325,7 @@ export class UtilService {
   }
 
 
-  
+
   // Método para ir para a página home
   goHome() {
     this.router.navigate(['/home']);

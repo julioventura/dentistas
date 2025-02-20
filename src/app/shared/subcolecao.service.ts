@@ -14,10 +14,12 @@ export class SubcolecaoService {
     { nome: 'planos' },
     { nome: 'atendimentos' },
     { nome: 'pagamentos' },
-    { nome: 'erupcoes' },
+    { nome: 'dentes' },
+    { nome: 'dentesendo' },
+    { nome: 'dentesperio' },
+    { nome: 'anamnese' },
+    { nome: 'diagnosticos' },
     { nome: 'risco' },
-    { nome: 'retornos' },
-    { nome: 'historico' }
   ];
 
   getSubcolecoesDisponiveis(): Subcolecao[] {
