@@ -56,8 +56,11 @@ export const CAMPOS_FICHAS_DENTES: Campo[] = [
 ];
 
 export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
-  // Dados do Paciente
+  // Dados principais 
   { nome: 'nome', tipo: 'number', label: 'Dente' },
+  { nome: 'data', tipo: 'date', label: 'Criado em' },
+  { nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { nome: 'obs', tipo: 'textarea', label: 'Observações' },
 
 // { nome: 'pressaoArterial', tipo: 'text', label: 'Pressão Arterial (PA)' },
   
@@ -181,11 +184,6 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
 
   // Procedimentos
   { nome: 'procedimentos', tipo: 'textarea', label: 'Procedimentos realizados' },
-
-  // Dados adicionais do registro
-  { nome: 'data', tipo: 'date', label: 'Criado em' },
-  { nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-  { nome: 'obs', tipo: 'textarea', label: 'Observações' },
 ];
 
 export const CAMPOS_FICHAS_DENTES_PERIO: Campo[] = [

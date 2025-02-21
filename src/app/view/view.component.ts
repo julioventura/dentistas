@@ -7,7 +7,7 @@
   5. getDynamicFields() - Retorna os nomes dos campos dinâmicos (que não fazem parte dos campos predefinidos) presentes no FormGroup.
 */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -19,7 +19,8 @@ import { MenuComponent } from "../menu/menu.component";
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
-  standalone: false
+  standalone: false,
+  encapsulation: ViewEncapsulation.None // desativa o encapsulamento para permitir o uso global de variáveis CSS
 })
 export class ViewComponent implements OnInit {
   userId: string | null = null; // ID do usuário autenticado
@@ -36,9 +37,12 @@ export class ViewComponent implements OnInit {
   routePath: string = '';       // Caminho da rota para redirecionamentos
   show_menu: boolean = false;   // Controla exibição de menus adicionais
   menu_exame: boolean = false;  // Flag específica para exame (se necessário)
+  // Propriedade usada no binding CSS para definir a largura do label
+  customLabelWidthValue: number = 200;
+  customLabelWidth: string = `${this.customLabelWidthValue}px`;
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
     private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
@@ -46,7 +50,6 @@ export class ViewComponent implements OnInit {
     public FormService: FormService
   ) { }
 
-  // ngOnInit(): Inicializa o componente, configura os parâmetros e carrega os dados do registro
   ngOnInit() {
     console.log('ngOnInit()');
 
@@ -65,7 +68,7 @@ export class ViewComponent implements OnInit {
         }
 
         // Define o título da página conforme a existência de subcollection
-        this.titulo_da_pagina = this.subcollection 
+        this.titulo_da_pagina = this.subcollection
           ? this.util.titulo_ajuste_singular(this.subcollection)
           : this.util.titulo_ajuste_singular(this.collection);
 
@@ -81,11 +84,9 @@ export class ViewComponent implements OnInit {
           this.voltar();
         } else {
           if (this.subcollection) {
-            // Se estiver visualizando uma ficha interna
             console.log('Carregando ficha interna...');
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
           } else {
-            // Carrega o registro principal
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
           }
           // Define o subtítulo da página com base no nome do registro
@@ -95,6 +96,13 @@ export class ViewComponent implements OnInit {
           // Exibe o menu se estiver na visualização do registro principal
           this.show_menu = !!(this.collection && this.id && !this.subcollection);
         }
+        // Ajuste da largura dos labels baseado em critério (ex.: coleção "dentesendo")
+        if (this.subcollection === 'dentesendo') {
+          this.customLabelWidthValue = 400;
+        } else {
+          this.customLabelWidthValue = 150;
+        }
+        this.updateCustomLabelWidth();
       } else {
         console.error('Usuário não autenticado.');
         this.util.goHome();
@@ -103,7 +111,38 @@ export class ViewComponent implements OnInit {
     console.log('ViewComponent inicializado.');
   }
 
-  // editar(): Redireciona para a rota de edição (registro principal ou ficha interna)
+  updateCustomLabelWidth() {
+    this.customLabelWidth = `${this.customLabelWidthValue}px`;
+  }
+
+  // Retorna os campos fixos para o container 1 (apenas se preenchidos, exceto 'nome' que é exibido sempre)
+  get fixedFields(): any[] {
+    const fixed = ['nome', 'data', 'nuvem', 'obs'];
+    return this.FormService.campos.filter(campo => {
+      if (fixed.includes(campo.nome)) {
+        if (campo.nome === 'nome') {
+          return true; // Exibe sempre o campo "nome"
+        }
+        const valor = this.FormService.registro[campo.nome];
+        return valor != null && String(valor).trim().length > 0;
+      }
+      return false;
+    });
+  }
+
+
+  // Retorna os demais campos para o container 2 (apenas se preenchidos)
+  get adjustableFields(): any[] {
+    const fixed = ['nome', 'data', 'nuvem', 'obs'];
+    return this.FormService.campos.filter(campo => {
+      if (!fixed.includes(campo.nome)) {
+        const valor = this.FormService.registro[campo.nome];
+        return valor != null && String(valor).trim().length > 0;
+      }
+      return false;
+    });
+  }
+
   editar() {
     console.log('editar()');
     if (this.subcollection) {
@@ -119,7 +158,6 @@ export class ViewComponent implements OnInit {
     }
   }
 
-  // excluir(): Exclui o registro ou ficha interna após confirmação do usuário
   excluir() {
     console.log("excluir()");
     if (confirm('Você tem certeza que deseja excluir este registro?')) {
@@ -143,7 +181,6 @@ export class ViewComponent implements OnInit {
     }
   }
 
-  // voltar(): Redireciona para a lista de registros ou fichas internas
   voltar() {
     console.log("voltar()");
     const listaPath = this.subcollection ?
@@ -152,12 +189,19 @@ export class ViewComponent implements OnInit {
     this.router.navigate([listaPath]);
   }
 
-  // getDynamicFields(): Retorna os nomes dos campos dinâmicos adicionados no FormGroup
   getDynamicFields(): string[] {
     const predefinedFields = this.FormService.campos.map(campo => campo.nome);
     return Object.keys(this.FormService.fichaForm.controls).filter(
       campoNome => !predefinedFields.includes(campoNome)
     );
   }
-}
 
+  
+  openUrl(url: string): void {
+    console.log("openUrl()");
+    if (url && url.trim().length > 0) {
+      window.open(url, '_blank');
+    }
+  }
+
+}
