@@ -100,7 +100,7 @@ export class ViewComponent implements OnInit {
         if (this.subcollection === 'dentesendo') {
           this.customLabelWidthValue = 400;
         } else {
-          this.customLabelWidthValue = 150;
+          this.customLabelWidthValue = 200;
         }
         this.updateCustomLabelWidth();
       } else {

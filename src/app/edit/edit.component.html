@@ -76,7 +76,7 @@
     
           <!-- Textarea para campos longos -->
           <textarea *ngIf="campo.tipo === 'textarea'" [formControlName]="campo.nome" [id]="campo.nome"
-            class="detail-value" rows="5" placeholder="Digite com quebras de linhas"></textarea>
+            class="detail-value" rows="3" placeholder="Digite com quebras de linhas"></textarea>
     
           <!-- Input para URL -->
           <input *ngIf="campo.tipo === 'url'" type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url"
