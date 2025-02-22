@@ -1,21 +1,23 @@
-/* 
-  Métodos do componente ListComponent:
-  1. ngOnInit() - Inicializa o componente, obtendo parâmetros de rota, autenticando o usuário e chamando as funções de configuração e carregamento dos registros.
-  2. loadRegistros() - Constrói o caminho da coleção e consulta o Firestore para recuperar os registros, além de inicializar a paginação.
-  3. verFicha(fichaId: string) - Monta o caminho para a visualização do registro (ou ficha interna) e realiza a navegação.
-  4. incluir() - Cria dinamicamente um novo registro, gerando seu ID e código, e inicializando seus campos conforme a configuração personalizada.
-  5. filtrarRegistros() - Filtra os registros com base na query de busca (nome ou código) e atualiza a paginação.
-  6. atualizarPaginacao() - Recalcula o total de páginas e atualiza os registros exibidos na página atual.
-  7. atualizarRegistrosPaginados() - Determina o slice dos registros que serão exibidos conforme a página atual.
-  8. setPage(page: number) - Define a página atual e atualiza os registros paginados.
-  9. previousPage() - Retrocede para a página anterior se possível.
-  10. nextPage() - Avança para a próxima página se houver.
-  11. verificarOuCriarConfiguracao() - Verifica se já existe uma configuração de campos para a coleção e cria uma padrão se necessário.
-  12. getMenusPadraoPorCollection(colecao: string) - Retorna os menus padrão para a coleção informada.
-  13. getCamposPadraoPorCollection() - Retorna os campos padrão (objetos) para a coleção.
-  14. showbusca() - Alterna a exibição da barra de pesquisa.
-  15. voltar() - Navega de volta à lista de registros ou fichas internas.
-*/
+/**
+ * ListComponent
+ * 
+ * Métodos:
+ * 1. ngOnInit: Inicializa o componente, obtém parâmetros de rota e autentica o usuário, chamando funções para carregar registros e configurações.
+ * 2. loadRegistros: Constrói o caminho da coleção e consulta o Firestore para recuperar os registros, inicializando a paginação.
+ * 3. verFicha: Monta o caminho para a visualização de um registro ou ficha e realiza a navegação.
+ * 4. incluir: Cria dinamicamente um novo registro, gerando ID e código, e inicializando os campos customizados.
+ * 5. filtrarRegistros: Filtra os registros com base na query de busca (nome ou código) e atualiza a paginação.
+ * 6. atualizarPaginacao: Recalcula total de páginas e chama atualizarRegistrosPaginados para definir os registros exibidos na página atual.
+ * 7. atualizarRegistrosPaginados: Determina o slice dos registros a serem exibidos conforme a página atual.
+ * 8. setPage: Define a página atual e atualiza os registros exibidos.
+ * 9. previousPage: Retrocede para a página anterior se possível e atualiza os registros paginados.
+ * 10. nextPage: Avança para a próxima página se houver e atualiza os registros paginados.
+ * 11. verificarOuCriarConfiguracao: Verifica ou cria uma configuração padrão de campos para a coleção.
+ * 12. getMenusPadraoPorCollection: Retorna os menus padrão para a coleção informada.
+ * 13. getCamposPadraoPorCollection: Retorna os campos padrão para a coleção.
+ * 14. showbusca: Alterna a exibição da barra de pesquisa.
+ * 15. voltar: Navega de volta à listagem de registros ou fichas internas.
+ */
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,12 +26,13 @@ import { Registro } from './registro.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UtilService } from '../shared/utils/util.service';
-import { AngularFirestore } from '@angular/fire/compat/firestore'; // Importar o AngularFirestore
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormService } from '../shared/form.service';
 import { ExportService } from '../shared/export.service';
 import { PdfExportService } from '../shared/pdf-export.service';
 import { SubcolecaoService } from '../shared/subcolecao.service';
 import { CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS } from '../shared/constants/campos-ficha.constants';
+import { SUBCOLLECTION_FIELDS } from '../config/subcollection-fields.config';
 
 @Component({
   selector: 'app-list',
@@ -38,6 +41,7 @@ import { CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS,
   standalone: false,
 })
 export class ListComponent implements OnInit {
+
   // Propriedades do componente
   collection!: string;
   subcollection?: string;
@@ -60,9 +64,17 @@ export class ListComponent implements OnInit {
   subtitulo_da_pagina: string = '';
   id!: string;
   nome_in_collection: string = '';
-  fichas: any[] = []; // Lista de fichas (exames, atendimentos, etc.)
+  fichas: any[] = [];
   show_busca: boolean = false;
   userEmail: string | null = null;
+
+  // Propriedades para customizar os campos na listagem de subcoleções
+  firstField: string = 'nome';
+  firstHeader: string = 'Registro';
+
+  // Adicione as propriedades para controlar a ordem de classificação:
+  firstSortOrder: string = 'asc';
+  dataSortOrder: string = 'asc';
 
   constructor(
     private route: ActivatedRoute,
@@ -79,28 +91,32 @@ export class ListComponent implements OnInit {
   ) { }
 
   /**
-   * ngOnInit() - (a) Ação automática (hook do Angular)
-   * Executado quando o componente é inicializado.
-   * Responsável por obter parâmetros de rota, definir títulos e carregar registros.
+   * ngOnInit()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Obtém parâmetros da rota (collection, id, subcollection) e define os títulos.
+   * - Subscreve o estado de autenticação para obter o usuário e chama métodos para verificar configuração e carregar os registros.
+   * - Inicializa o registro de formulário.
+   * Retorna: void.
    */
   ngOnInit() {
     console.log("ngOnInit()");
-
     this.collection = this.route.snapshot.paramMap.get('collection')!;
     this.id = this.route.snapshot.paramMap.get('id')!;
     this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
 
-    // Define os títulos conforme se há subcollection ou não
-    this.titulo_da_pagina = this.subcollection ? this.util.titulo_ajuste_plural(this.subcollection) : this.util.titulo_ajuste_plural(this.collection);
+    // Define os títulos conforme existência de subcollection
+    this.titulo_da_pagina = this.subcollection ?
+      this.util.titulo_ajuste_plural(this.subcollection) :
+      this.util.titulo_ajuste_plural(this.collection);
     this.subtitulo_da_pagina = this.subcollection ? this.FormService.nome_in_collection : '';
 
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
         this.userEmail = user.email;
-        // Chamada interna para verificar configuração de campos (d)
         this.verificarOuCriarConfiguracao();
-        // Chamada interna para carregar registros (d)
         this.loadRegistros();
       }
     });
@@ -109,12 +125,30 @@ export class ListComponent implements OnInit {
       nome: [''],
       id: ['']
     });
+
+    // Utilize somente uma verificação com a chave normalizada:
+    if (this.subcollection) {
+      const normalizedKey = this.subcollection.replace(/_/g, '').toLowerCase();
+      console.log("Subcollection normalized key:", normalizedKey);
+      if (SUBCOLLECTION_FIELDS[normalizedKey]) {
+        this.firstField = SUBCOLLECTION_FIELDS[normalizedKey].firstField;
+        this.firstHeader = SUBCOLLECTION_FIELDS[normalizedKey].firstHeader;
+      } else {
+        console.warn("Nenhuma configuração encontrada para:", normalizedKey);
+        this.firstHeader = this.subcollection; // valor padrão
+      }
+    }
   }
 
   /**
-   * loadRegistros() - (d) Chamada apenas internamente no componente.
-   * Responsável por construir o caminho da coleção e consultar o Firestore
-   * para recuperar e armazenar os registros, bem como inicializar a paginação.
+   * loadRegistros()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Constrói o caminho da coleção baseado na presença de subcollection.
+   * - Consulta o Firestore para recuperar os registros, os armazena e inicializa a paginação.
+   * - Em caso de erro, exibe o erro no console.
+   * Retorna: void.
    */
   loadRegistros() {
     console.log('loadRegistros()');
@@ -135,7 +169,6 @@ export class ListComponent implements OnInit {
           this.totalRegistros = this.registros.length;
           this.page = 1;
           this.searchQuery = '';
-          // Inicializa a listagem filtrada e atualiza a paginação
           this.registrosFiltrados = [...this.registros];
           this.atualizarPaginacao();
           this.isLoading = false;
@@ -151,8 +184,14 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * verFicha(fichaId: string) - (b) É chamada a partir do template (por clique, por exemplo)
-   * Responsável por montar o caminho para a visualização do registro ou ficha e realizar a navegação.
+   * verFicha(fichaId: string)
+   * 
+   * Parâmetros:
+   * - fichaId: string - Identificador da ficha interna.
+   * Funcionalidade:
+   * - Monta o caminho para visualização do registro ou ficha com base na existência de subcollection.
+   * - Navega para a rota construída.
+   * Retorna: void.
    */
   verFicha(fichaId: string) {
     console.log("verFicha(fichaId)");
@@ -165,18 +204,18 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * incluir() - (b) Invocada a partir do template (ex: clique em "Novo")
-   * Cria dinamicamente um novo registro, gerando seu ID e código, e inicializando
-   * seus campos com base na configuração personalizada definida pelo usuário.
-   *
-   * Essa abordagem evita a inicialização fixa do objeto Registro e reflete as personalizações
-   * realizadas no componente CamposRegistro, permitindo que campos customizados sejam
-   * considerados automaticamente na criação do objeto.
+   * incluir()
+   * 
+   * Parâmetros: N/A. (Invocado via template)
+   * Funcionalidade:
+   * - Cria dinamicamente um novo registro, gerando um ID único e um código.
+   * - Inicializa os campos do registro com valores padrão (vazio ou data atual) conforme a configuração.
+   * - Adiciona o registro ao Firestore e navega para a rota de edição do registro recém-criado.
+   * Retorna: void.
    */
   incluir() {
     console.log("incluir()");
     if (this.userId) {
-
       const collectionPath = this.subcollection ?
         `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
         `users/${this.userId}/${this.collection}`;
@@ -188,40 +227,26 @@ export class ListComponent implements OnInit {
       console.log("collectionRoute ", collectionRoute);
 
       this.firestoreService.gerarProximoCodigo(collectionPath).then((novoCodigo) => {
-        // Criação dinâmica do objeto novoRegistro:
-        // - Gera um id único e atribui o código gerado.
-        // - Itera sobre os campos personalizados configurados (por ex.: via CamposRegistro)
-        //   para inicializar, dinamicamente, cada campo com valor padrão (neste caso, uma string vazia).
         const novoRegistro: any = {};
         novoRegistro.id = this.firestoreService.createId();
         novoRegistro.codigo = novoCodigo;
     
         if (this.userId && this.subcollection) {
-          // O registro está em uma subcollection
-
           this.FormService.carregarCamposFichas(this.userId, this.subcollection);
-          
           novoRegistro.ficha_id = this.id;
           this.FormService.campos.forEach(campo => {
             novoRegistro[campo.nome] = '';
           });
-
-          // Gera a data atual no formato dd/mm/yyyy e inicializa o campo data do novo registro de subcollection
           const now = new Date();
           const day = String(now.getDate()).padStart(2, '0');
           const month = String(now.getMonth() + 1).padStart(2, '0');
           const year = now.getFullYear();
-          // Ajusta o formato de data para "yyyy-MM-dd" por ser um campo 'date'no formulario
           novoRegistro['data'] = `${year}-${month}-${day}`;
-        }
-        else {
-          // O registro está em uma collection
+        } else {
           this.FormService.campos.forEach(campo => {
             novoRegistro[campo.nome] = '';
           });
         }
-
-        // Fim da inicialização dinâmica do registro que reflete a personalização de campos
 
         this.firestoreService.addRegistro(collectionPath, novoRegistro).then(() => {
           console.log("Criou registro " + novoRegistro.id);
@@ -236,8 +261,13 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * filtrarRegistros() - (b) É chamada a partir do template (por exemplo, no evento input da barra de busca)
-   * Filtra o array de registros com base na query de busca (nome ou código) e atualiza a paginação.
+   * filtrarRegistros()
+   * 
+   * Parâmetros: N/A. (Invocado via template, ex: evento input na barra de busca)
+   * Funcionalidade:
+   * - Filtra o array de registros com base na query de busca (nome ou código).
+   * - Atualiza o array de registros filtrados e reinicia a paginação.
+   * Retorna: void.
    */
   filtrarRegistros() {
     const query = this.searchQuery.toLowerCase();
@@ -255,8 +285,13 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * atualizarPaginacao() - (d) Chamada internamente para atualizar a paginação.
-   * Recalcula o total de páginas e chama atualizarRegistrosPaginados() para definir o slice de registros da página atual.
+   * atualizarPaginacao()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Recalcula o total de páginas com base no total de registros filtrados e no tamanho da página.
+   * - Atualiza o array de páginas e chama atualizarRegistrosPaginados para definir os registros da página atual.
+   * Retorna: void.
    */
   atualizarPaginacao() {
     this.filteredTotal = this.registrosFiltrados.length;
@@ -266,8 +301,13 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * atualizarRegistrosPaginados() - (d) Chamada internamente para atualizar os registros exibidos na página atual.
-   * Calcula o índice de início e fim com base na página atual e no tamanho da página, e atualiza o array de registros paginados.
+   * atualizarRegistrosPaginados()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Calcula os índices de início e fim com base na página atual e no tamanho da página.
+   * - Atualiza o array de registros paginados para exibição.
+   * Retorna: void.
    */
   atualizarRegistrosPaginados() {
     const startIndex = (this.page - 1) * this.pageSize;
@@ -276,8 +316,13 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * setPage(page: number) - (b) Geralmente chamada a partir do template (por controle de paginação)
-   * Ajusta a página atual para o número informado e atualiza os registros exibidos.
+   * setPage(page: number)
+   * 
+   * Parâmetros:
+   * - page: number - O número da página a ser exibida.
+   * Funcionalidade:
+   * - Define a página atual e atualiza os registros paginados.
+   * Retorna: void.
    */
   setPage(page: number) {
     this.page = page;
@@ -285,8 +330,12 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * previousPage() - (b) Chamada a partir do template (por exemplo, botão "Página Anterior")
-   * Decrementa a página atual se não for a primeira e atualiza os registros paginados.
+   * previousPage()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Decrementa a página atual se não for a primeira e atualiza os registros exibidos.
+   * Retorna: void.
    */
   previousPage() {
     console.log("previousPage()");
@@ -297,8 +346,12 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * nextPage() - (b) Chamada a partir do template (por exemplo, botão "Próxima Página")
-   * Incrementa a página atual se houver páginas posteriores e atualiza os registros paginados.
+   * nextPage()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Incrementa a página atual se houver páginas posteriores e atualiza os registros exibidos.
+   * Retorna: void.
    */
   nextPage() {
     console.log("nextPage()");
@@ -309,8 +362,13 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * verificarOuCriarConfiguracao() - (d) Chamada internamente (por ngOnInit) para garantir configurações de campos.
-   * Verifica se existe uma configuração de campos para a coleção do usuário e, se não existir, cria uma padrão.
+   * verificarOuCriarConfiguracao()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Verifica se já existe uma configuração de campos para a coleção do usuário.
+   * - Se não existir, cria uma configuração padrão utilizando getCamposPadraoPorCollection().
+   * Retorna: void.
    */
   verificarOuCriarConfiguracao() {
     console.log("verificarOuCriarConfiguracao()");
@@ -337,51 +395,14 @@ export class ListComponent implements OnInit {
     }
   }
 
-  // A função verificarOuCriarMenus() está comentada e não é utilizada atualmente no codebase.
-  // Ela seria classificada como (c) não usada, conforme a análise prévia.
-  /*
-  verificarOuCriarMenus() {
-    console.log("verificarOuCriarMenus()");
-    if (this.userId) {
-      const configPath = `users/${this.userId}/configuracoesMenus`;
-      const colecoes = [
-        'pacientes',
-        'clientes',
-        'alunos',
-        'professores',
-        'dentistas',
-        'equipe',
-        'proteticos'
-      ];
-      colecoes.forEach((colecao) => {
-        this.firestore.collection(configPath).doc(colecao).get()
-          .subscribe((doc) => {
-            if (doc.exists) {
-              console.log(`Configuração de menu já existe para a coleção "${colecao}".`);
-            } else {
-              const menuPadrao = this.getMenusPadraoPorCollection(colecao);
-              this.firestore.collection(configPath).doc(colecao).set({ menus: menuPadrao })
-                .then(() => {
-                  console.log(`Configuração de menu criada para a coleção "${colecao}".`);
-                  alert(`Configuração de menu padrão criada para a coleção "${colecao}". Você pode personalizar os menus em "Configurações".`);
-                })
-                .catch((error) => {
-                  console.error('Erro ao criar configuração de menu padrão:', error);
-                });
-            }
-          }, (error) => {
-            console.error('Erro ao verificar configuração de menu:', error);
-          });
-      });
-    } else {
-      console.warn("User ID não definido. Não é possível verificar ou criar configurações de menu.");
-    }
-  }
-  */
-
   /**
-   * getMenusPadraoPorCollection(colecao: string) - (d) Chamada internamente (por verificarOuCriarMenus, se fosse usado)
-   * Retorna um array com os menus padrão para a coleção informada.
+   * getMenusPadraoPorCollection(colecao: string)
+   * 
+   * Parâmetros:
+   * - colecao: string - Nome da coleção para a qual se deseja obter os menus padrão.
+   * Funcionalidade:
+   * - Retorna um array com os menus padrão definidos para a coleção informada.
+   * Retorna: any - Array com os menus padrão.
    */
   getMenusPadraoPorCollection(colecao: string): any {
     const subcolecoes = this.subcolecaoService.getSubcolecoesDisponiveis();
@@ -398,8 +419,12 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * getCamposPadraoPorCollection() - (d) Chamada apenas internamente (por verificarOuCriarConfiguracao)
-   * Retorna um array de objetos definindo os campos padrão para a coleção de registros.
+   * getCamposPadraoPorCollection()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Retorna um array de objetos que define os campos padrão para uma coleção.
+   * Retorna: Array de objetos com os campos padrão.
    */
   getCamposPadraoPorCollection() {
     console.log("getCamposPadraoPorCollection()");
@@ -429,16 +454,25 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * showbusca() - (b) Chamado a partir do template (por exemplo, ao clicar num botão para alternar a busca)
-   * Inverte o estado booleano que controla a exibição da barra de pesquisa.
+   * showbusca()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Alterna o estado booleano que controla a exibição da barra de pesquisa.
+   * Retorna: void.
    */
   showbusca() {
     this.show_busca = !this.show_busca;
   }
 
   /**
-   * voltar() - (b) Chamado a partir do template (por exemplo, ao clicar num botão "voltar")
-   * Navega para a rota determinada, conforme se há subcoleção ou não.
+   * voltar()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Define a rota de retorno para a listagem de registros ou fichas internas, dependendo da existência de subcollection.
+   * - Navega para a rota determinada.
+   * Retorna: void.
    */
   voltar() {
     console.log("voltar()");
@@ -450,22 +484,42 @@ export class ListComponent implements OnInit {
   }
 
   /**
-   * exportAsCSV() - (b) Chamado a partir do template (por exemplo, botão "Exportar CSV")
-   * Converte os registros (filtrados ou todos) para CSV e inicia o download.
+   * sortBy(field: string): void
+   * 
+   * Parâmetros:
+   * - field: string - O campo pelo qual os registros devem ser ordenados.
+   * Funcionalidade:
+   * - Implementa a lógica de ordenação dos registros com base no campo fornecido.
+   * Retorna: void.
    */
-  // exportAsCSV() {
-  //   const csvData = this.exportService.convertToCSV(
-  //     this.registrosFiltrados.length ? this.registrosFiltrados : this.registros
-  //   );
-  //   this.exportService.downloadCSV('registros.csv', csvData);
-  // }
+  sortBy(field: string): void {
+    if (field === this.firstField) {
+      this.firstSortOrder = this.firstSortOrder === 'asc' ? 'desc' : 'asc';
+      this.sortRegistros(field, this.firstSortOrder);
+    } else if (field === 'data') {
+      this.dataSortOrder = this.dataSortOrder === 'asc' ? 'desc' : 'asc';
+      this.sortRegistros(field, this.dataSortOrder);
+    } else {
+      console.log(`No sorting defined for field: ${field}`);
+    }
+  }
 
-  /**
-   * exportAsPDF() - (b) Chamado a partir do template (por exemplo, botão "Exportar PDF")
-   * Seleciona os registros (filtrados ou todos) e aciona a exportação para PDF.
-   */
-  // exportAsPDF() {
-  //   const dataToExport = this.registrosFiltrados.length ? this.registrosFiltrados : this.registros;
-  //   this.pdfExportService.exportDataAsPDF(dataToExport, 'Registros');
-  // }
+  // Crie o método auxiliar que ordena os registros:
+  private sortRegistros(field: string, order: string): void {
+    this.registrosFiltrados.sort((a, b) => {
+      if (field === 'data') {
+        const dateA = new Date((a as any)[field]);
+        const dateB = new Date((b as any)[field]);
+        return order === 'asc'
+          ? dateA.getTime() - dateB.getTime()
+          : dateB.getTime() - dateA.getTime();
+      }
+      const valA = (a as any)[field] ? (a as any)[field].toString().toLowerCase() : '';
+      const valB = (b as any)[field] ? (b as any)[field].toString().toLowerCase() : '';
+      if (valA < valB) return order === 'asc' ? -1 : 1;
+      if (valA > valB) return order === 'asc' ? 1 : -1;
+      return 0;
+    });
+    this.atualizarRegistrosPaginados();
+  }
 }

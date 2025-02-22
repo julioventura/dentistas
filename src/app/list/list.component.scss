@@ -1,6 +1,5 @@
 @import '../../styles.scss';
 
-
 // Paginação com botões
 .pagination {
     display: flex;
@@ -45,7 +44,6 @@
     height: 1.7rem;
 }
 
-
 // Barra de pesquisa da listagem
 .search-bar {
     display: flex;
@@ -71,6 +69,26 @@
     }
 }
 
+.btn-sort {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: background-color 0.3s ease;
+  
+  .sort-icon {
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+  }
+}
+
+.btn-sort:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
 
 .rodape {
     padding-top: 10px;

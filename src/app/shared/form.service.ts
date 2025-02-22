@@ -1,48 +1,36 @@
-/* 
-  Métodos do service FormService:
-  1. carregarCamposFichas(userId: string, subcollection: string): Observable<any[]>
-     - Carrega os campos personalizados para uma ficha (subcollection) por meio do CamposFichaService e invoca createForm().
-  2. carregarCamposRegistro(userId: string, collection: string): Observable<any[]>
-     - Carrega os campos personalizados para o registro principal de uma coleção usando o CamposService e invoca createForm().
-  3. createForm(): void
-     - Cria ou atualiza o FormGroup (fichaForm) com base na definição dos campos carregados.
-  4. loadRegistro(userId: string, collection: string, id: string, view_only: boolean): Promise<void>
-     - Carrega do Firestore os dados do registro principal, formata campos de data, adiciona controles dinâmicos e preenche o FormGroup.
-  5. loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view_only: boolean): Promise<void>
-     - Carrega os dados de uma ficha interna (subcollection) do Firestore, aplica formatação em campos de data, adiciona campos faltantes e preenche o FormGroup.
-  6. onFieldChange(event: any, campoNome: string): void
-     - Processa a mudança de valor em um campo do formulário, aplicando transformações (como capitalização) e atualizando o controle.
-  7. salvarCollection(userId: string, collection: string, id: string): void
-     - Salva alterações no registro principal do Firestore, validando o formulário e atualizando os dados.
-  8. salvarSubcollection(userId: string, collection: string, id: string, subcollection: string, fichaId: string): void
-     - Salva as alterações de uma ficha interna (subcollection) no Firestore após validação do formulário.
-*/
+/**
+ * FormService
+ * 
+ * Métodos:
+ * 1. carregarCamposFichas: Carrega os campos personalizados para uma ficha (subcollection) por meio do CamposFichaService e invoca createForm().
+ * 2. carregarCamposRegistro: Carrega os campos personalizados para o registro principal de uma coleção usando o CamposService e invoca createForm().
+ * 3. createForm: Cria ou atualiza o FormGroup (fichaForm) com base na definição dos campos carregados.
+ * 4. loadRegistro: Carrega do Firestore os dados do registro principal, formata campos de data, adiciona controles dinâmicos e preenche o FormGroup.
+ * 5. loadFicha: Carrega os dados de uma ficha interna (subcollection) do Firestore, aplica formatação em campos de data, adiciona campos faltantes e preenche o FormGroup.
+ * 6. onFieldChange: Processa a mudança de valor em um campo do formulário, aplicando transformações (como capitalização) e atualizando o controle.
+ * 7. salvarCollection: Salva alterações no registro principal do Firestore, validando o formulário e atualizando os dados.
+ * 8. salvarSubcollection: Salva as alterações de uma ficha interna (subcollection) no Firestore após validação do formulário.
+ */
 
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FirestoreService } from './firestore.service';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { CamposService } from './campos.service';
 import { CamposFichaService } from './campos-ficha.service';
 import { UtilService } from '../shared/utils/util.service';
 import { switchMap, tap } from 'rxjs/operators';
-import { Campo } from './models/campo.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FormService {
 
-    // FormGroup que armazena os controles do formulário dinâmico
-    fichaForm!: FormGroup;
-    // Vetor que contem a definição dos campos a serem exibidos no formulário
-    campos: any[] = [];
-    // Flag indicando o estado de carregamento dos dados
-    isLoading: boolean = true;
-    // Registro carregado do Firestore
-    public registro: any = null;
-    // Nome extraído do registro, usado na interface
-    public nome_in_collection: string = '';
+    fichaForm!: FormGroup; // FormGroup que armazena os controles do formulário dinâmico
+    campos: any[] = []; // Vetor que contém a definição dos campos a serem exibidos no formulário
+    isLoading: boolean = true; // Flag indicando o estado de carregamento dos dados
+    public registro: any = null; // Registro carregado do Firestore
+    public nome_in_collection: string = ''; // Nome extraído do registro, usado na interface
     public collection: string = '';
     public subcollection: string = '';
 
@@ -53,11 +41,19 @@ export class FormService {
         private camposFichaService: CamposFichaService,
         private router: Router,
         public util: UtilService
-    ) { 
-        // Injeção de dependências e inicialização do serviço
-    }
+    ) { }
 
-    // Carrega os campos da ficha (subcollection) e cria/atualiza o formulário
+    /**
+     * carregarCamposFichas(userId: string, subcollection: string)
+     * 
+     * Parâmetros:
+     * - userId: string - ID do usuário autenticado.
+     * - subcollection: string - Nome da subcollection.
+     * Funcionalidade:
+     * - Carrega os campos personalizados para uma ficha (subcollection) por meio do CamposFichaService.
+     * - Invoca createForm() para criar ou atualizar o FormGroup.
+     * Retorna: Observable<any[]>.
+     */
     carregarCamposFichas(userId: string, subcollection: string) {
         return this.camposFichaService.getCamposFichaRegistro(userId, subcollection).pipe(
             tap((campos: any[]) => {
@@ -69,7 +65,17 @@ export class FormService {
         );
     }
 
-    // Carrega os campos do registro principal para a collection e cria/atualiza o formulário
+    /**
+     * carregarCamposRegistro(userId: string, collection: string)
+     * 
+     * Parâmetros:
+     * - userId: string - ID do usuário autenticado.
+     * - collection: string - Nome da coleção.
+     * Funcionalidade:
+     * - Carrega os campos personalizados para o registro principal de uma coleção usando o CamposService.
+     * - Invoca createForm() para criar ou atualizar o FormGroup.
+     * Retorna: Observable<any[]>.
+     */
     carregarCamposRegistro(userId: string, collection: string) {
         return this.camposService.getCamposRegistro(userId, collection).pipe(
             tap((campos: any[]) => {
@@ -81,45 +87,62 @@ export class FormService {
         );
     }
 
-    // Cria ou atualiza o FormGroup com os controles definidos nos campos carregados
+    /**
+     * createForm()
+     * 
+     * Parâmetros: N/A.
+     * Funcionalidade:
+     * - Cria ou atualiza o FormGroup (fichaForm) com base na definição dos campos carregados.
+     * - Adiciona controles dinâmicos para os campos ausentes.
+     * Retorna: void.
+     */
     createForm() {
         console.log('createForm()');
         if (!this.fichaForm) {
-          // Cria controles a partir de cada campo
-          const formControls = this.campos.reduce((acc, campo) => {
-            let defaultValue;
-            if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
-              defaultValue = (this.registro && this.registro[campo.nome] !== undefined) ? this.registro[campo.nome] : false;
+            const formControls = this.campos.reduce((acc, campo) => {
+                let defaultValue;
+                if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
+                    defaultValue = (this.registro && this.registro[campo.nome] !== undefined) ? this.registro[campo.nome] : false;
+                } else {
+                    defaultValue = (this.registro && this.registro[campo.nome]) ? this.registro[campo.nome] : '';
+                }
+                acc[campo.nome] = new FormControl(defaultValue);
+                return acc;
+            }, {} as { [key: string]: any });
+            if (Object.keys(formControls).length > 0) {
+                this.fichaForm = this.fb.group(formControls);
+                console.log('FormGroup criado com sucesso:', this.fichaForm);
             } else {
-              defaultValue = (this.registro && this.registro[campo.nome]) ? this.registro[campo.nome] : '';
+                console.error('Nenhum campo foi adicionado ao FormGroup.');
             }
-            acc[campo.nome] = new FormControl(defaultValue);
-            return acc;
-          }, {} as { [key: string]: any });
-          if (Object.keys(formControls).length > 0) {
-            this.fichaForm = this.fb.group(formControls);
-            console.log('FormGroup criado com sucesso:', this.fichaForm);
-          } else {
-            console.error('Nenhum campo foi adicionado ao FormGroup.');
-          }
         } else {
-          // Se o FormGroup já existe, adiciona controles dinâmicos para os campos ausentes
-          this.campos.forEach(campo => {
-            if (!this.fichaForm.contains(campo.nome)) {
-              let defaultValue;
-              if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
-                defaultValue = (this.registro && this.registro[campo.nome] !== undefined) ? this.registro[campo.nome] : false;
-              } else {
-                defaultValue = (this.registro && this.registro[campo.nome]) ? this.registro[campo.nome] : '';
-              }
-              this.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
-            //   console.log(`Controle customizado adicionado para o campo: ${campo.nome}`);
-            }
-          });
+            this.campos.forEach(campo => {
+                if (!this.fichaForm.contains(campo.nome)) {
+                    let defaultValue;
+                    if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
+                        defaultValue = (this.registro && this.registro[campo.nome] !== undefined) ? this.registro[campo.nome] : false;
+                    } else {
+                        defaultValue = (this.registro && this.registro[campo.nome]) ? this.registro[campo.nome] : '';
+                    }
+                    this.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
+                }
+            });
         }
-      }
+    }
 
-    // Carrega os dados de um registro principal; formata datas, adiciona controles dinâmicos e atualiza o FormGroup
+    /**
+     * loadRegistro(userId: string, collection: string, id: string, view_only: boolean): Promise<void>
+     * 
+     * Parâmetros:
+     * - userId: string - ID do usuário autenticado.
+     * - collection: string - Nome da coleção.
+     * - id: string - ID do registro.
+     * - view_only: boolean - Indica se o formulário deve ser apenas visualizado (readonly).
+     * Funcionalidade:
+     * - Carrega do Firestore os dados do registro principal.
+     * - Formata campos de data, adiciona controles dinâmicos e preenche o FormGroup.
+     * Retorna: Promise<void>.
+     */
     loadRegistro(userId: string, collection: string, id: string, view_only: boolean): Promise<void> {
         return new Promise((resolve, reject) => {
             console.log('loadRegistro()');
@@ -137,7 +160,6 @@ export class FormService {
                         this.registro = ficha;
                         this.nome_in_collection = this.registro.nome;
 
-                        // Realiza a formatação dos campos de data, se necessário
                         const formattedData = { ...ficha };
                         for (const key in formattedData) {
                             if (formattedData.hasOwnProperty(key) && this.isDateField(key)) {
@@ -146,11 +168,9 @@ export class FormService {
                             }
                         }
 
-                        // Adiciona controles para campos não definidos inicialmente e preenche o formulário
                         this.addDynamicFields(formattedData);
                         this.fichaForm.patchValue(formattedData);
 
-                        // Se for somente visualização, desabilita o formulário
                         if (view_only) {
                             this.fichaForm.disable();
                             console.log("Formulário desabilitado.");
@@ -180,7 +200,15 @@ export class FormService {
         });
     }
 
-    // Adiciona controles dinâmicos ao formulário para quaisquer campos que não estejam previamente definidos
+    /**
+     * addDynamicFields(data: any)
+     * 
+     * Parâmetros:
+     * - data: any - Dados do registro carregado.
+     * Funcionalidade:
+     * - Adiciona controles dinâmicos ao formulário para quaisquer campos que não estejam previamente definidos.
+     * Retorna: void.
+     */
     private addDynamicFields(data: any) {
         for (const key in data) {
             if (data.hasOwnProperty(key) && !this.fichaForm.contains(key)) {
@@ -189,12 +217,28 @@ export class FormService {
         }
     }
 
-    // Verifica se o nome do campo corresponde a um campo de data (ex.: 'nascimento')
+    /**
+     * isDateField(fieldName: string): boolean
+     * 
+     * Parâmetros:
+     * - fieldName: string - Nome do campo.
+     * Funcionalidade:
+     * - Verifica se o nome do campo corresponde a um campo de data (ex.: 'nascimento').
+     * Retorna: boolean.
+     */
     private isDateField(fieldName: string): boolean {
         return fieldName === 'nascimento';
     }
 
-    // Converte uma data do formato dd/MM/yyyy para yyyy-MM-dd, para uso em inputs de data
+    /**
+     * formatToDateInput(dateString: string): string | null
+     * 
+     * Parâmetros:
+     * - dateString: string - Data no formato dd/MM/yyyy.
+     * Funcionalidade:
+     * - Converte uma data do formato dd/MM/yyyy para yyyy-MM-dd, para uso em inputs de data.
+     * Retorna: string | null.
+     */
     private formatToDateInput(dateString: string): string | null {
         const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
         const match = dateString.match(dateRegex);
@@ -207,7 +251,21 @@ export class FormService {
         return null;
     }
 
-    // Carrega os dados de uma ficha (subcollection); formata datas e atualiza o FormGroup com controles dinâmicos
+    /**
+     * loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view_only: boolean): Promise<void>
+     * 
+     * Parâmetros:
+     * - userId: string - ID do usuário autenticado.
+     * - collection: string - Nome da coleção.
+     * - id: string - ID do registro principal.
+     * - subcollection: string - Nome da subcollection.
+     * - fichaId: string - ID da ficha interna.
+     * - view_only: boolean - Indica se o formulário deve ser apenas visualizado (readonly).
+     * Funcionalidade:
+     * - Carrega os dados de uma ficha interna (subcollection) do Firestore.
+     * - Aplica formatação em campos de data, adiciona campos faltantes e preenche o FormGroup.
+     * Retorna: Promise<void>.
+     */
     loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view_only: boolean): Promise<void> {
         return new Promise((resolve, reject) => {
             console.log('loadFicha()');
@@ -267,10 +325,19 @@ export class FormService {
         });
     }
 
-    // Processa alterações em um campo do formulário, aplicando capitalização para campos de texto e atualizando o controle
+    /**
+     * onFieldChange(event: any, campoNome: string): void
+     * 
+     * Parâmetros:
+     * - event: any - Evento de mudança de valor no campo.
+     * - campoNome: string - Nome do campo.
+     * Funcionalidade:
+     * - Processa a mudança de valor em um campo do formulário.
+     * - Aplica transformações (como capitalização) e atualiza o controle.
+     * Retorna: void.
+     */
     onFieldChange(event: any, campoNome: string): void {
         console.log(`onFieldChange(event, campoNome = ${campoNome})`);
-        // Se o input for do tipo checkbox, use o valor booleano e não aplique capitalização
         if (event.target && event.target.type === 'checkbox') {
             this.fichaForm.get(campoNome)?.setValue(event.target.checked);
             return;
@@ -285,7 +352,17 @@ export class FormService {
         }
     }
 
-    // Salva as alterações do registro principal no Firestore se o formulário for válido
+    /**
+     * salvarCollection(userId: string, collection: string, id: string)
+     * 
+     * Parâmetros:
+     * - userId: string - ID do usuário autenticado.
+     * - collection: string - Nome da coleção.
+     * - id: string - ID do registro.
+     * Funcionalidade:
+     * - Salva alterações no registro principal do Firestore, validando o formulário e atualizando os dados.
+     * Retorna: void.
+     */
     salvarCollection(userId: string, collection: string, id: string) {
         if (this.fichaForm.valid) {
             const fichaAtualizada = this.fichaForm.value;
@@ -305,7 +382,19 @@ export class FormService {
         }
     }
 
-    // Salva alterações na ficha (subcollection) no Firestore se o formulário for válido
+    /**
+     * salvarSubcollection(userId: string, collection: string, id: string, subcollection: string, fichaId: string)
+     * 
+     * Parâmetros:
+     * - userId: string - ID do usuário autenticado.
+     * - collection: string - Nome da coleção.
+     * - id: string - ID do registro principal.
+     * - subcollection: string - Nome da subcollection.
+     * - fichaId: string - ID da ficha interna.
+     * Funcionalidade:
+     * - Salva as alterações de uma ficha interna (subcollection) no Firestore após validação do formulário.
+     * Retorna: void.
+     */
     salvarSubcollection(userId: string, collection: string, id: string, subcollection: string, fichaId: string) {
         if (this.fichaForm.valid) {
             const fichaAtualizada = this.fichaForm.value;

@@ -1,13 +1,22 @@
-/* 
-  Métodos do componente EditComponent:
-  1. ngOnInit() - Inicializa o componente, autenticando o usuário, obtendo os parâmetros de rota e carregando o registro.
-  2. ngAfterViewInit() - Após a renderização da view, foca o campo "Nome".
-  3. salvar() - Invocado via template para salvar o registro; direciona para salvar em collection ou subcollection.
-  4. salvar_collection_anterior() - Persiste as alterações no registro principal (collection) validando o formulário.
-  5. verFicha() - Navega para a visualização do registro ou ficha, conforme os parâmetros.
-  6. voltar() - Retorna à rota de visualização do registro.
-  7. loadCustomFields() - Recria e preenche o FormGroup com os controles personalizados com base nos dados carregados.
-*/
+/**
+ * EditComponent
+ * 
+ * Métodos:
+ * 1. ngOnInit: Inicializa o componente, autentica o usuário, obtém parâmetros da rota e carrega o registro.
+ * 2. ngAfterViewInit: Após a renderização da view, foca o campo "Nome".
+ * 3. salvar: Invocado via template para salvar o registro; decide entre salvar collection ou subcollection.
+ * 4. salvar_collection_anterior: Persiste alterações no registro principal (collection); 
+ *    - Parâmetros: N/A (usa propriedades internas como FormService.fichaForm e FormService.registro)
+ *    - Executa a atualização do registro e, após upload de arquivos, navega para a view do registro.
+ * 5. verFicha: Navega para a visualização (view) do registro ou ficha.
+ * 6. voltar: Retorna à rota de visualização do registro.
+ * 7. loadCustomFields: Recria e preenche o FormGroup com os controles personalizados a partir dos dados carregados;
+ *    - Parâmetros: Usa userId, collection, subcollection.
+ * 8. updateCustomLabelWidth: Atualiza a propriedade customLabelWidth com base no valor customLabelWidthValue.
+ * 9. fixedFields (getter): Retorna os campos fixos (por exemplo, 'nome', 'data', 'nuvem', 'obs').
+ * 10. adjustableFields (getter): Retorna os campos que não são fixos.
+ * 11. onSubmit: Processa o submit do formulário e exibe os dados para depuração (continua o fluxo de salvamento).
+ */
 
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
@@ -16,17 +25,16 @@ import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
-
-import { CamposFichaService } from '../shared/campos-ficha.service';  // NOVA IMPORTAÇÃO
+import { CamposFichaService } from '../shared/campos-ficha.service';  // Serviço para carregar campos de subcollections
 import { FormControl, FormGroup } from '@angular/forms';
-import { CamposService } from '../shared/campos.service'; // NOVA IMPORTAÇÃO
+import { CamposService } from '../shared/campos.service'; // Serviço para carregar campos de coleções
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
   standalone: false,
-  encapsulation: ViewEncapsulation.None // desativa o encapsulamento para permitir o uso global de variáveis CSS
+  encapsulation: ViewEncapsulation.None // Desativa encapsulamento para permitir uso global de variáveis CSS
 })
 export class EditComponent implements OnInit, AfterViewInit {
   @ViewChild('nomeInput') nomeInput?: ElementRef;
@@ -54,19 +62,23 @@ export class EditComponent implements OnInit, AfterViewInit {
     private afAuth: AngularFireAuth,
     public util: UtilService,
     public FormService: FormService,
-    private camposFichaService: CamposFichaService,  // INJEÇÃO para subcollections
-    private camposService: CamposService              // INJEÇÃO para collections
+    private camposFichaService: CamposFichaService,  // Injeção para subcollections
+    private camposService: CamposService              // Injeção para collections
   ) { }
 
   /**
-   * Método Angular OnInit (a)
-   * - Ação automática (pelo framework).
-   * - Executado ao criar o componente. 
-   *   Checa autenticação do usuário, carrega dados do registro e ajusta foco no campo "Nome".
+   * ngOnInit()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade: 
+   * - Subscrição do authState para obter o usuário autenticado.
+   * - Obtém parâmetros da rota (id, collection, subcollection, fichaId).
+   * - Carrega o registro: se for subcollection, chama loadFicha; caso contrário, loadRegistro.
+   * - Define o subtítulo com base no nome do registro e ajusta a largura dos labels.
+   * Retorna: void.
    */
   ngOnInit() {
     console.log('ngOnInit()');
-
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
@@ -88,36 +100,24 @@ export class EditComponent implements OnInit, AfterViewInit {
         if (!this.id) {
           console.error('Registro não identificado.');
           this.voltar();
-        }
-        else {
+        } else {
           if (this.subcollection) {
             console.log('Carregando ficha interna...');
             console.log('loadFicha()');
             console.log('Colledction :', this.collection);
             console.log('Subcolledction :', this.subcollection);
-
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
-          }
-          else {
+          } else {
             console.log('Colledction :', this.collection);
             console.log('loadRegistro()');
-
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
               .then(() => console.log('Formulário carregado para edição.'))
               .catch(erro => console.error('Erro ao carregar registro:', erro));
           }
         }
-
-        // Define o subtítulo da página com base no nome do registro
+        // Define o subtítulo com base no nome do registro (obtido via FormService)
         this.subtitulo_da_pagina = this.FormService.nome_in_collection;
         console.log('subtitulo_da_pagina:', this.subtitulo_da_pagina);
-
-        // Usando setTimeout para garantir que o campo "Nome" esteja disponível após o carregamento
-        // setTimeout(() => {
-        //   if (this.nomeInput) {
-        //     this.nomeInput.nativeElement.focus();
-        //   }
-        // }, 1000);
 
         // Ajuste da largura dos labels baseado em critério (ex.: coleção "dentesendo")
         if (this.subcollection === 'dentesendo') {
@@ -135,17 +135,24 @@ export class EditComponent implements OnInit, AfterViewInit {
     console.log('Formulário de visualização inicializado.');
   }
 
-
+  /**
+   * updateCustomLabelWidth()
+   * 
+   * Funcionalidade:
+   * - Atualiza a propriedade customLabelWidth (string) baseada em customLabelWidthValue.
+   * Retorna: void.
+   */
   updateCustomLabelWidth() {
     this.customLabelWidth = `${this.customLabelWidthValue}px`;
   }
 
-
   /**
-   * Método Angular AfterViewInit (a)
-   * - Ação automática (pelo framework).
-   * - Chamado após a view do componente ser inicializada.
-   *   Aqui, tenta focar o campo "Nome".
+   * ngAfterViewInit()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Tenta focar o campo "nome" logo após a renderização da view.
+   * Retorna: void.
    */
   ngAfterViewInit() {
     if (this.nomeInput) {
@@ -153,33 +160,36 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.nomeInput?.nativeElement.focus();
       }, 0);
     } else {
-      // console.warn('Campo "Nome" não encontrado ao inicializar. Verifique se o campo foi carregado.');
+      // O campo "nome" não foi encontrado; verificar se o template carrega corretamente.
     }
   }
 
   /**
-   * Função salvar() (b)
-   * - É chamada no template (arquivo edit.component.html) quando o usuário clica para salvar.
-   * - Verifica se é uma subcollection para chamar outro método ou 
-   *   usa salvar_collection_anterior() para atualizar o registro.
+   * salvar()
+   * 
+   * Parâmetros: N/A. (Invocado via template)
+   * Funcionalidade:
+   * - Valida se há usuário autenticado.
+   * - Dependendo se o registro é uma subcollection, chama:
+   *    - FormService.salvarSubcollection() para subcollections, ou
+   *    - salvar_collection_anterior() para coleções principais.
+   * - Após salvar, chama verFicha() para navegar à view.
+   * Retorna: void.
    */
   salvar() {
     console.log('salvar()');
     if (this.userId) {
-
       console.log('userId:', this.userId);
       console.log('collection:', this.collection);
       console.log('id:', this.id);
       console.log('subcollection:', this.subcollection);
       console.log('fichaId:', this.fichaId);
-
       if (this.subcollection) {
         console.log("Salvar uma subcollection: ", this.subcollection);
         if (this.fichaId) {
           this.FormService.salvarSubcollection(this.userId, this.collection, this.id, this.subcollection, this.fichaId);
         }
-      }
-      else {
+      } else {
         console.log("Salvar uma collection: ", this.collection);
         this.salvar_collection_anterior();
       }
@@ -188,35 +198,35 @@ export class EditComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Função salvar_collection_anterior() (d)
-   * - Chamada apenas internamente (no próprio arquivo) dentro de salvar().
-   * - Manipula o formulário e chama o serviço para persistir atualização do registro.
+   * salvar_collection_anterior()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Valida o formulário (FormService.fichaForm).
+   * - Converte email para minúsculas (caso exista).
+   * - Atualiza o objeto registro com os valores do formulário.
+   * - Executa upload de arquivos (se necessário) e, após o upload, chama o serviço
+   *   firestoreService.updateRegistro() para persistir as alterações.
+   * - Navega para a view do registro após salvar.
+   * Retorna: void.
    */
   salvar_collection_anterior() {
     if (this.FormService.fichaForm.valid && this.userId) {
-      // Converte o valor do campo email para minúsculas, se existir.
       const formValues = { ...this.FormService.fichaForm.value };
       if (formValues.email) {
         formValues.email = formValues.email.toLowerCase();
       }
-
-      // Atualiza o registro com todos os valores do formulário, incluindo novos campos.
       const registroAtualizado = { ...this.FormService.registro, ...formValues };
-
-      // Verifique se o ID está presente antes de salvar
       if (!this.FormService.registro.id) {
         console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
         alert('Erro ao atualizar o registro. O ID está indefinido.');
         return;
       }
-
       const registroPath = `users/${this.userId}/${this.collection}`;
       console.log('registroPath =', registroPath);
-
       console.log('Tentando salvar o registro:');
       console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
       console.log('Dados do registro a serem atualizados:', registroAtualizado);
-
       const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
         const file = this.arquivos[campoNome];
         const url = prompt('Insira a URL do arquivo ou imagem:');
@@ -225,7 +235,6 @@ export class EditComponent implements OnInit, AfterViewInit {
           resolve();
         });
       });
-
       Promise.all(uploadPromises).then(() => {
         this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
           .then(() => {
@@ -243,48 +252,60 @@ export class EditComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Função verFicha() (d)
-   * - Chamada apenas internamente (no próprio arquivo) no final de salvar().
-   * - Responsável por navegar para o caminho de visualização (view) do registro ou da ficha.
+   * verFicha()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Define o caminho (rota) para visualizar o registro ou ficha, dependendo de subcollection.
+   * - Navega para a rota definida.
+   * Retorna: void.
    */
   verFicha() {
     console.log("verFicha()");
-
     const fichaPath = this.subcollection ?
       `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
       `view/${this.collection}/${this.id}`;
-
     this.router.navigate([fichaPath]);
   }
 
   /**
-   * Função voltar() (b / também interna)
-   * - Geralmente é chamada via (click)="voltar()" no template (se houver) 
-   *   ou internamente (por exemplo, quando o registro não é encontrado).
-   * - Retorna à rota de visualização do registro.
+   * voltar()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Define a rota de retorno para a visualização do registro.
+   * - Navega à rota definida.
+   * Retorna: void.
    */
   voltar() {
     console.log("voltar()");
     console.log("subcollection =", this.subcollection);
-
     const viewPath = this.subcollection ?
       `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
       `view/${this.collection}/${this.id}`;
-
     this.router.navigate([viewPath]);
   }
 
-  // NOVO MÉTODO para carregar campos personalizados, recriando o FormGroup
+  /**
+   * loadCustomFields()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Recria o FormGroup (FormService.fichaForm) para evitar conflitos.
+   * - Chama o serviço adequado (camposFichaService para subcollections ou camposService para collections)
+   *   para obter os campos personalizados.
+   * - Para cada campo, adiciona um controle ao FormGroup com valor padrão (true/false para checkboxes, string para outros).
+   * - Atualiza o formulário com os dados existentes e marca formReady como true.
+   * Retorna: void.
+   */
   loadCustomFields() {
     console.log("loadCustomFields()");
     console.log("this.userId =", this.userId);
     console.log("this.collection =", this.collection);
     console.log("this.subcollection =", this.subcollection);
-
     if (this.userId) {
-      // Recria o FormGroup para evitar conflitos com controles antigos
+      // Recria o FormGroup para evitar conflitos
       this.FormService.fichaForm = new FormGroup({});
-
       if (this.subcollection) {
         console.log("Carregando campos personalizados (subcollection)...", this.subcollection);
         this.camposFichaService.getCamposFichaRegistro(this.userId, this.subcollection).subscribe(
@@ -335,28 +356,43 @@ export class EditComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Campos fixos para o container 1. Todos os campos.
+  /**
+   * fixedFields (getter)
+   * 
+   * Funcionalidade:
+   * - Retorna os campos fixos, definidos como ['nome', 'data', 'nuvem', 'obs'].
+   * Retorna: Array de objetos de campo.
+   */
   get fixedFields(): any[] {
     const fixed = ['nome', 'data', 'nuvem', 'obs'];
-    return this.FormService.campos.filter(campo => {
-      if (fixed.includes(campo.nome)) {
-        return true;
-      }
-      return false;
-    });
+    return this.FormService.campos.filter(campo => fixed.includes(campo.nome));
   }
 
-  // Getter para os demais campos (Container 2) - atualizado para carregar todos os campos não fixos
+  /**
+   * adjustableFields (getter)
+   * 
+   * Funcionalidade:
+   * - Retorna os campos que não são fixos.
+   * Retorna: Array de objetos de campo.
+   */
   get adjustableFields(): any[] {
     const fixed = ['nome', 'data', 'nuvem', 'obs'];
     return this.FormService.campos.filter(campo => !fixed.includes(campo.nome));
   }
 
+  /**
+   * onSubmit()
+   * 
+   * Parâmetros: N/A.
+   * Funcionalidade:
+   * - Evento de submit do formulário.
+   * - Se o formulário for válido, imprime os dados do formulário para depuração.
+   * Retorna: void.
+   */
   onSubmit() {
     if (this.FormService.fichaForm.valid) {
       console.log('Dados do formulário:', this.FormService.fichaForm.value);
-      // Continue o fluxo para salvar o registro
+      // Continuação do fluxo para salvar o registro (pode ser expandido conforme necessidade)
     }
   }
-
 }
