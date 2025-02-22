@@ -24,25 +24,38 @@
     <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm"
       class="record-details borda_reta_topo">
       <div *ngFor="let campo of FormService.campos">
-        <!-- Exibe se for checkbox/boolean OU se houver valor preenchido -->
-        <div
-          class="detail-container">
+
+        <div *ngIf="campo.nome !== 'id'" class="detail-container">
+
           <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+
           <ng-container [ngSwitch]="campo.tipo">
+
             <!-- Campos booleanos: checkbox -->
             <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
             <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+            
             <!-- Para URL: input editável -->
             <ng-container *ngSwitchCase="'url'">
               <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value url">
             </ng-container>
+
+           
             <!-- Textarea -->
             <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-              rows="5" placeholder="Digite o conteúdo"></textarea>
+              rows="3" placeholder="Digite o conteúdo"></textarea>
+
+            <!-- Campo Texto com autofocus condicional para o campo 'nome' -->
+            <input *ngSwitchCase="'text'" type="text" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+              [attr.autofocus]="campo.nome === 'nome' ? true : null"
+              (change)="FormService.onFieldChange($event, campo.nome)" />
+
             <!-- Demais tipos -->
             <input *ngSwitchDefault [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome"
-              class="detail-value">
+              class="detail-value" /> 
+              
           </ng-container>
+
         </div>
       </div>
     </form>
@@ -57,6 +70,7 @@
         <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
           <div class="detail-container">
             <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+
             <ng-container [ngSwitch]="campo.tipo">
               <ng-container *ngSwitchCase="'url'">
                 <!-- Para URL: input readonly -->
