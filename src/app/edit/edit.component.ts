@@ -311,21 +311,26 @@ export class EditComponent implements OnInit, AfterViewInit {
       this.FormService.fichaForm = new FormGroup({});
       if (this.subcollection) {
         console.log("Carregando campos personalizados (subcollection)...", this.subcollection);
+        // Se estiver criando nova ficha, limpar registros armazenados
+        if (!this.fichaId) {
+          this.FormService.registro = {};
+        }
         this.camposFichaService.getCamposFichaRegistro(this.userId, this.subcollection).subscribe(
           (campos: any[]) => {
+            const registroData = this.fichaId ? this.FormService.registro : {};
             campos.forEach(campo => {
               let defaultValue;
               if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
-                defaultValue = (this.FormService.registro && this.FormService.registro[campo.nome] !== undefined)
-                  ? this.FormService.registro[campo.nome] : false;
+                defaultValue = registroData[campo.nome] !== undefined ? registroData[campo.nome] : false;
               } else {
-                defaultValue = (this.FormService.registro && this.FormService.registro[campo.nome])
-                  ? this.FormService.registro[campo.nome] : '';
+                defaultValue = registroData[campo.nome] ? registroData[campo.nome] : '';
               }
               this.FormService.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
             });
-            // Preenche o formulário com os dados existentes
-            this.FormService.fichaForm.patchValue(this.FormService.registro);
+            // Preenche somente em edição
+            if (this.fichaId) {
+              this.FormService.fichaForm.patchValue(this.FormService.registro);
+            }
             this.formReady = true;
           },
           error => {
