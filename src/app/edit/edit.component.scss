@@ -139,3 +139,42 @@
       /* Cor e espessura da borda */
     }
 }
+
+
+/* css do view */
+input {
+  border: 0;
+}
+
+.detail-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-label {
+  flex: 0 0 var(--label-width);
+  /* opcional: adicione padding/margem se desejar separar do conteúdo */
+  padding-right: 5px;
+}
+
+.detail-value {
+  flex: 1;
+}
+
+.slider-wrapper {
+  display: flex;
+  align-items: center; /* alinha todos os filhos ao centro verticalmente */
+  gap: 10px; /* espaço entre slider e texto */
+
+  /* Caso o texto esteja "baixo" em relação ao knob do slider, você pode:
+     1) aumentar o line-height do texto
+     2) ajustar a font-size ou 
+     3) usar um pequeno transform para subir o texto */
+
+  .small {
+    line-height: 1.2; 
+    /* ou */
+    /* transform: translateY(-1px); */
+  }
+}

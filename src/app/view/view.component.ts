@@ -7,13 +7,13 @@
   5. getDynamicFields() - Retorna os nomes dos campos dinâmicos (que não fazem parte dos campos predefinidos) presentes no FormGroup.
 */
 
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
-import { MenuComponent } from "../menu/menu.component";
 
 @Component({
   selector: 'app-view',
@@ -82,13 +82,23 @@ export class ViewComponent implements OnInit {
         if (!this.id) {
           console.error('Registro não identificado.');
           this.voltar();
-        } else {
+        } 
+        else {
           if (this.subcollection) {
             console.log('Carregando ficha interna...');
+            console.log('loadFicha()');
+            console.log('Colledction :', this.collection);
+            console.log('Subcolledction :', this.subcollection);
+
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
-          } else {
+          } 
+          else {
+            console.log('Colledction :', this.collection);
+            console.log('loadRegistro()');
+
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
           }
+
           // Define o subtítulo da página com base no nome do registro
           this.subtitulo_da_pagina = this.FormService.nome_in_collection;
           console.log('subtitulo_da_pagina:', this.subtitulo_da_pagina);
@@ -96,13 +106,15 @@ export class ViewComponent implements OnInit {
           // Exibe o menu se estiver na visualização do registro principal
           this.show_menu = !!(this.collection && this.id && !this.subcollection);
         }
+
         // Ajuste da largura dos labels baseado em critério (ex.: coleção "dentesendo")
         if (this.subcollection === 'dentesendo') {
           this.customLabelWidthValue = 400;
         } else {
-          this.customLabelWidthValue = 200;
+          this.customLabelWidthValue = 250;
         }
         this.updateCustomLabelWidth();
+
       } else {
         console.error('Usuário não autenticado.');
         this.util.goHome();
@@ -115,7 +127,8 @@ export class ViewComponent implements OnInit {
     this.customLabelWidth = `${this.customLabelWidthValue}px`;
   }
 
-  // Retorna os campos fixos para o container 1 (apenas se preenchidos, exceto 'nome' que é exibido sempre)
+  // Campos fixos para o container 1 
+  // (apenas se preenchidos, exceto 'nome' que é exibido sempre)
   get fixedFields(): any[] {
     const fixed = ['nome', 'data', 'nuvem', 'obs'];
     return this.FormService.campos.filter(campo => {
@@ -131,7 +144,8 @@ export class ViewComponent implements OnInit {
   }
 
 
-  // Retorna os demais campos para o container 2 (apenas se preenchidos)
+   // Getter para os demais campos (Container 2)
+   // Apenas se preenchidos.
   get adjustableFields(): any[] {
     const fixed = ['nome', 'data', 'nuvem', 'obs'];
     return this.FormService.campos.filter(campo => {

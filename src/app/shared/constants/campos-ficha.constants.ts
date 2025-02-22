@@ -69,30 +69,30 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   
   // Queixa e Histórico Clínico
   { nome: 'queixaPrincipal', tipo: 'text', label: 'Queixa Principal' },
-  { nome: 'emTratamentoMedico', tipo: 'checkbox', label: 'Está em tratamento médico?' },
+  { nome: 'emTratamentoMedico', tipo: 'boolean', label: 'Está em tratamento médico?' },
   { nome: 'motivoTratamentoMedico', tipo: 'text', label: 'Motivo do tratamento médico' },
-  { nome: 'usaMedicamento', tipo: 'checkbox', label: 'Está tomando algum medicamento?' },
+  { nome: 'usaMedicamento', tipo: 'boolean', label: 'Está tomando algum medicamento?' },
   { nome: 'quaisMedicamentos', tipo: 'text', label: 'Quais medicamentos?' },
   { nome: 'motivoMedicamentos', tipo: 'text', label: 'Motivo do uso de medicamentos' },
 
   // Aspectos Clínicos da Coroa
-  { nome: 'higido', tipo: 'checkbox', label: 'Coroa: Hígido' },
-  { nome: 'alteracaoCor', tipo: 'checkbox', label: 'Coroa: Alteração de cor' },
-  { nome: 'ausente', tipo: 'checkbox', label: 'Coroa: Ausente' },
-  { nome: 'carie', tipo: 'checkbox', label: 'Coroa: Cárie' },
-  { nome: 'fratura', tipo: 'checkbox', label: 'Coroa: Fratura' },
-  { nome: 'coroaPermanente', tipo: 'checkbox', label: 'Coroa: Permanente' },
-  { nome: 'restaurado', tipo: 'checkbox', label: 'Coroa: Restaurado' },
-  { nome: 'exposicaoPulpar', tipo: 'checkbox', label: 'Coroa: Exposição pulpar' },
-  { nome: 'coroaProvisoria', tipo: 'checkbox', label: 'Coroa: Provisória' },
-  { nome: 'selamentoProvisorio', tipo: 'checkbox', label: 'Coroa: Selamento provisório' },
+  { nome: 'higido', tipo: 'boolean', label: 'Coroa: Hígido' },
+  { nome: 'alteracaoCor', tipo: 'boolean', label: 'Coroa: Alteração de cor' },
+  { nome: 'ausente', tipo: 'boolean', label: 'Coroa: Ausente' },
+  { nome: 'carie', tipo: 'boolean', label: 'Coroa: Cárie' },
+  { nome: 'fratura', tipo: 'boolean', label: 'Coroa: Fratura' },
+  { nome: 'coroaPermanente', tipo: 'boolean', label: 'Coroa: Permanente' },
+  { nome: 'restaurado', tipo: 'boolean', label: 'Coroa: Restaurado' },
+  { nome: 'exposicaoPulpar', tipo: 'boolean', label: 'Coroa: Exposição pulpar' },
+  { nome: 'coroaProvisoria', tipo: 'boolean', label: 'Coroa: Provisória' },
+  { nome: 'selamentoProvisorio', tipo: 'boolean', label: 'Coroa: Selamento provisório' },
 
   // Aspectos Clínicos dos Tecidos Moles
-  { nome: 'edema', tipo: 'checkbox', label: 'Tecidos moles: Edema' },
-  { nome: 'fistula', tipo: 'checkbox', label: 'Tecidos moles: Fístula' },
+  { nome: 'edema', tipo: 'boolean', label: 'Tecidos moles: Edema' },
+  { nome: 'fistula', tipo: 'boolean', label: 'Tecidos moles: Fístula' },
 
   // Avaliação da Dor
-  { nome: 'dorPresente', tipo: 'checkbox', label: 'Dor: Presente?' },
+  { nome: 'dorPresente', tipo: 'boolean', label: 'Dor: Presente?' },
   { nome: 'nivelDor', tipo: 'number', label: 'Dor: Nível de intensidade (1-10)' },
   { nome: 'localizacaoDor', tipo: 'text', label: 'Dor: Localização (Localizada/Difusa)' },
   { nome: 'denteLocalizado', tipo: 'text', label: 'Dente(s) com dor (se localizada)' },
@@ -103,20 +103,20 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { nome: 'duracaoDor', tipo: 'text', label: 'Dor: Duração' },
 
   // Exame Radiográfico Inicial – Câmara Pulpar
-  { nome: 'radioCarie', tipo: 'checkbox', label: 'Câmara Pulpar: Cárie' },
-  { nome: 'radioRestauracao', tipo: 'checkbox', label: 'Câmara Pulpar: Restauração' },
-  { nome: 'radioComunicacao', tipo: 'checkbox', label: 'Câmara Pulpar: Comunicação com meio bucal' },
-  { nome: 'radioAcessadaProvisorio', tipo: 'checkbox', label: 'Câmara Pulpar: Acessada com provisório' },
-  { nome: 'radioDensInDente', tipo: 'checkbox', label: 'Câmara Pulpar: Dens in Dente' },
-  { nome: 'radioNoduloPulpar', tipo: 'checkbox', label: 'Câmara Pulpar: Nódulo pulpar' },
-  { nome: 'radioAtresica', tipo: 'checkbox', label: 'Câmara Pulpar: Atrésica' },
-  { nome: 'radioAmpla', tipo: 'checkbox', label: 'Câmara Pulpar: Ampla' },
+  { nome: 'radioCarie', tipo: 'boolean', label: 'Câmara Pulpar: Cárie' },
+  { nome: 'radioRestauracao', tipo: 'boolean', label: 'Câmara Pulpar: Restauração' },
+  { nome: 'radioComunicacao', tipo: 'boolean', label: 'Câmara Pulpar: Comunicação com meio bucal' },
+  { nome: 'radioAcessadaProvisorio', tipo: 'boolean', label: 'Câmara Pulpar: Acessada com provisório' },
+  { nome: 'radioDensInDente', tipo: 'boolean', label: 'Câmara Pulpar: Dens in Dente' },
+  { nome: 'radioNoduloPulpar', tipo: 'boolean', label: 'Câmara Pulpar: Nódulo pulpar' },
+  { nome: 'radioAtresica', tipo: 'boolean', label: 'Câmara Pulpar: Atrésica' },
+  { nome: 'radioAmpla', tipo: 'boolean', label: 'Câmara Pulpar: Ampla' },
 
   // Exame Radiográfico Inicial – Canais Radiculares
-  { nome: 'calcificado', tipo: 'checkbox', label: 'Canais: Calcificado' },
-  { nome: 'curvaturaAcentuada', tipo: 'checkbox', label: 'Canais: Curvatura acentuada' },
-  { nome: 'medicacaoIntracanal', tipo: 'checkbox', label: 'Canais: Medicação intracanal' },
-  { nome: 'presencaMaterialObturador', tipo: 'checkbox', label: 'Canais: Material obturador presente' },
+  { nome: 'calcificado', tipo: 'boolean', label: 'Canais: Calcificado' },
+  { nome: 'curvaturaAcentuada', tipo: 'boolean', label: 'Canais: Curvatura acentuada' },
+  { nome: 'medicacaoIntracanal', tipo: 'boolean', label: 'Canais: Medicação intracanal' },
+  { nome: 'presencaMaterialObturador', tipo: 'boolean', label: 'Canais: Material obturador presente' },
   { nome: 'linhaFraturaLocalizacao', tipo: 'text', label: 'Canais: Linha de fratura - Localização' },
   { nome: 'limaFraturadaLocalizacao', tipo: 'text', label: 'Canais: Lima fraturada - Localização' },
   { nome: 'perfuracaoLocalizacao', tipo: 'text', label: 'Canais: Perfuração - Localização' },
@@ -133,11 +133,11 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { nome: 'denteSuspeito', tipo: 'text', label: 'Dente suspeito (Sensibilidade)' },
 
   // Testes Clínicos
-  { nome: 'testeMobilidade', tipo: 'checkbox', label: 'Teste: Mobilidade' },
-  { nome: 'testePalpacao', tipo: 'checkbox', label: 'Teste: Palpação' },
-  { nome: 'testePercussao', tipo: 'checkbox', label: 'Teste: Percussão' },
-  { nome: 'testeSondagem', tipo: 'checkbox', label: 'Teste: Sondagem periodontal' },
-  { nome: 'respostaTeste', tipo: 'checkbox', label: 'Teste: Resposta' },
+  { nome: 'testeMobilidade', tipo: 'boolean', label: 'Teste: Mobilidade' },
+  { nome: 'testePalpacao', tipo: 'boolean', label: 'Teste: Palpação' },
+  { nome: 'testePercussao', tipo: 'boolean', label: 'Teste: Percussão' },
+  { nome: 'testeSondagem', tipo: 'boolean', label: 'Teste: Sondagem periodontal' },
+  { nome: 'respostaTeste', tipo: 'boolean', label: 'Teste: Resposta' },
   { nome: 'duracaoTeste', tipo: 'text', label: 'Teste: Duração' },
   { nome: 'intensidadeTeste', tipo: 'text', label: 'Teste: Intensidade' },
 
@@ -160,7 +160,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { nome: 'edta', tipo: 'text', label: 'EDTA (17%)' },
 
   // Potencialização da substância química
-  { nome: 'potencializacao', tipo: 'checkbox', label: 'Potencialização da substância química?' },
+  { nome: 'potencializacao', tipo: 'boolean', label: 'Potencialização da substância química?' },
   { nome: 'tecnicaPotencializacao', tipo: 'text', label: 'Técnica de potencialização' },
 
   // Medicação Intracanal
@@ -178,7 +178,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { nome: 'extras', tipo: 'text', label: 'Extras (ex.: remoção de retentor, instrumentação, etc.)' },
 
   // Tomografia
-  { nome: 'tomografiaNecessaria', tipo: 'checkbox', label: 'Tomografia necessária?' },
+  { nome: 'tomografiaNecessaria', tipo: 'boolean', label: 'Tomografia necessária?' },
   { nome: 'motivoTomografia', tipo: 'textarea', label: 'Motivo para tomografia' },
   { nome: 'resultadoTomografia', tipo: 'textarea', label: 'Resultado da tomografia' },
 

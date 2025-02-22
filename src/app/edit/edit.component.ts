@@ -10,11 +10,13 @@
 */
 
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
+
 import { CamposFichaService } from '../shared/campos-ficha.service';  // NOVA IMPORTAÇÃO
 import { FormControl, FormGroup } from '@angular/forms';
 import { CamposService } from '../shared/campos.service'; // NOVA IMPORTAÇÃO
@@ -23,11 +25,11 @@ import { CamposService } from '../shared/campos.service'; // NOVA IMPORTAÇÃO
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
-  standalone: false
+  standalone: false,
+  encapsulation: ViewEncapsulation.None // desativa o encapsulamento para permitir o uso global de variáveis CSS
 })
 export class EditComponent implements OnInit, AfterViewInit {
   @ViewChild('nomeInput') nomeInput?: ElementRef;
-
   userId: string | null = null;
   collection!: string;
   subcollection!: string;
@@ -42,6 +44,8 @@ export class EditComponent implements OnInit, AfterViewInit {
   routePath: string = '';
   arquivos: { [key: string]: File } = {};
   formReady: boolean = false;
+  customLabelWidthValue: number = 200;
+  customLabelWidth: string = `${this.customLabelWidthValue}px`;
 
   constructor(
     private route: ActivatedRoute,
@@ -80,7 +84,6 @@ export class EditComponent implements OnInit, AfterViewInit {
         console.log('titulo_da_pagina:', this.titulo_da_pagina);
         console.log('subcollection:', this.subcollection);
         console.log('fichaId:', this.fichaId);
-        console.log("subtitulo_da_pagina =", this.subtitulo_da_pagina);
 
         if (!this.id) {
           console.error('Registro não identificado.');
@@ -88,40 +91,41 @@ export class EditComponent implements OnInit, AfterViewInit {
         }
         else {
           if (this.subcollection) {
+            console.log('Carregando ficha interna...');
+            console.log('loadFicha()');
             console.log('Colledction :', this.collection);
             console.log('Subcolledction :', this.subcollection);
-            console.log('loadFicha()');
 
-            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
-              .then(() => {
-                this.subtitulo_da_pagina = this.FormService.registro.nome;
-                this.loadCustomFields();  // CHAMADA PARA CARREGAR CAMPOS CUSTOMIZADOS
-              })
-              .catch(error => {
-                console.error('Erro ao carregar ficha:', error);
-              });
+            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
           }
           else {
             console.log('Colledction :', this.collection);
             console.log('loadRegistro()');
+
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
-              .then(() => {
-                this.subtitulo_da_pagina = this.FormService.registro.nome;
-                // Se necessário, chamar customizações para registro principal 
-                this.loadCustomFields();
-              })
-              .catch(error => {
-                console.error('Erro ao carregar registro:', error);
-              });
+              .then(() => console.log('Formulário carregado para edição.'))
+              .catch(erro => console.error('Erro ao carregar registro:', erro));
           }
         }
 
+        // Define o subtítulo da página com base no nome do registro
+        this.subtitulo_da_pagina = this.FormService.nome_in_collection;
+        console.log('subtitulo_da_pagina:', this.subtitulo_da_pagina);
+
         // Usando setTimeout para garantir que o campo "Nome" esteja disponível após o carregamento
-        setTimeout(() => {
-          if (this.nomeInput) {
-            this.nomeInput.nativeElement.focus();
-          }
-        }, 1000);
+        // setTimeout(() => {
+        //   if (this.nomeInput) {
+        //     this.nomeInput.nativeElement.focus();
+        //   }
+        // }, 1000);
+
+        // Ajuste da largura dos labels baseado em critério (ex.: coleção "dentesendo")
+        if (this.subcollection === 'dentesendo') {
+          this.customLabelWidthValue = 400;
+        } else {
+          this.customLabelWidthValue = 250;
+        }
+        this.updateCustomLabelWidth();
 
       } else {
         console.error('Usuário não autenticado.');
@@ -130,6 +134,12 @@ export class EditComponent implements OnInit, AfterViewInit {
     });
     console.log('Formulário de visualização inicializado.');
   }
+
+
+  updateCustomLabelWidth() {
+    this.customLabelWidth = `${this.customLabelWidthValue}px`;
+  }
+
 
   /**
    * Método Angular AfterViewInit (a)
@@ -184,51 +194,51 @@ export class EditComponent implements OnInit, AfterViewInit {
    */
   salvar_collection_anterior() {
     if (this.FormService.fichaForm.valid && this.userId) {
-        // Converte o valor do campo email para minúsculas, se existir.
-        const formValues = { ...this.FormService.fichaForm.value };
-        if (formValues.email) {
-            formValues.email = formValues.email.toLowerCase();
-        }
+      // Converte o valor do campo email para minúsculas, se existir.
+      const formValues = { ...this.FormService.fichaForm.value };
+      if (formValues.email) {
+        formValues.email = formValues.email.toLowerCase();
+      }
 
-        // Atualiza o registro com todos os valores do formulário, incluindo novos campos.
-        const registroAtualizado = { ...this.FormService.registro, ...formValues };
+      // Atualiza o registro com todos os valores do formulário, incluindo novos campos.
+      const registroAtualizado = { ...this.FormService.registro, ...formValues };
 
-        // Verifique se o ID está presente antes de salvar
-        if (!this.FormService.registro.id) {
-            console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
-            alert('Erro ao atualizar o registro. O ID está indefinido.');
-            return;
-        }
+      // Verifique se o ID está presente antes de salvar
+      if (!this.FormService.registro.id) {
+        console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
+        alert('Erro ao atualizar o registro. O ID está indefinido.');
+        return;
+      }
 
-        const registroPath = `users/${this.userId}/${this.collection}`;
-        console.log('registroPath =', registroPath);
+      const registroPath = `users/${this.userId}/${this.collection}`;
+      console.log('registroPath =', registroPath);
 
-        console.log('Tentando salvar o registro:');
-        console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
-        console.log('Dados do registro a serem atualizados:', registroAtualizado);
+      console.log('Tentando salvar o registro:');
+      console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
+      console.log('Dados do registro a serem atualizados:', registroAtualizado);
 
-        const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
-            const file = this.arquivos[campoNome];
-            const url = prompt('Insira a URL do arquivo ou imagem:');
-            return new Promise<void>((resolve) => {
-                registroAtualizado[campoNome] = url;
-                resolve();
-            });
+      const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
+        const file = this.arquivos[campoNome];
+        const url = prompt('Insira a URL do arquivo ou imagem:');
+        return new Promise<void>((resolve) => {
+          registroAtualizado[campoNome] = url;
+          resolve();
         });
+      });
 
-        Promise.all(uploadPromises).then(() => {
-            this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
-                .then(() => {
-                    this.router.navigate([`/view/${this.collection}`, this.FormService.registro.id]);
-                })
-                .catch(error => {
-                    console.error('Erro ao salvar o registro:', error);
-                    alert('Erro ao salvar o registro. Por favor, tente novamente.');
-                });
-        });
+      Promise.all(uploadPromises).then(() => {
+        this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
+          .then(() => {
+            this.router.navigate([`/view/${this.collection}`, this.FormService.registro.id]);
+          })
+          .catch(error => {
+            console.error('Erro ao salvar o registro:', error);
+            alert('Erro ao salvar o registro. Por favor, tente novamente.');
+          });
+      });
     } else {
-        console.error('Registro inválido ou sem ID:', this.FormService.registro);
-        alert('Registro inválido ou sem ID. Não é possível salvar.');
+      console.error('Registro inválido ou sem ID:', this.FormService.registro);
+      alert('Registro inválido ou sem ID. Não é possível salvar.');
     }
   }
 
@@ -270,18 +280,18 @@ export class EditComponent implements OnInit, AfterViewInit {
     console.log("this.userId =", this.userId);
     console.log("this.collection =", this.collection);
     console.log("this.subcollection =", this.subcollection);
-    
+
     if (this.userId) {
       // Recria o FormGroup para evitar conflitos com controles antigos
       this.FormService.fichaForm = new FormGroup({});
-      
+
       if (this.subcollection) {
         console.log("Carregando campos personalizados (subcollection)...", this.subcollection);
         this.camposFichaService.getCamposFichaRegistro(this.userId, this.subcollection).subscribe(
           (campos: any[]) => {
             campos.forEach(campo => {
               let defaultValue;
-              if(campo.tipo === 'checkbox' || campo.tipo === 'boolean'){
+              if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
                 defaultValue = (this.FormService.registro && this.FormService.registro[campo.nome] !== undefined)
                   ? this.FormService.registro[campo.nome] : false;
               } else {
@@ -289,7 +299,6 @@ export class EditComponent implements OnInit, AfterViewInit {
                   ? this.FormService.registro[campo.nome] : '';
               }
               this.FormService.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
-              console.log(`Controle customizado adicionado (subcollection) para o campo: ${campo.nome}`);
             });
             // Preenche o formulário com os dados existentes
             this.FormService.fichaForm.patchValue(this.FormService.registro);
@@ -305,7 +314,7 @@ export class EditComponent implements OnInit, AfterViewInit {
           (campos: any[]) => {
             campos.forEach(campo => {
               let defaultValue;
-              if(campo.tipo === 'checkbox' || campo.tipo === 'boolean'){
+              if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
                 defaultValue = (this.FormService.registro && this.FormService.registro[campo.nome] !== undefined)
                   ? this.FormService.registro[campo.nome] : false;
               } else {
@@ -323,6 +332,30 @@ export class EditComponent implements OnInit, AfterViewInit {
           }
         );
       }
+    }
+  }
+
+  // Campos fixos para o container 1. Todos os campos.
+  get fixedFields(): any[] {
+    const fixed = ['nome', 'data', 'nuvem', 'obs'];
+    return this.FormService.campos.filter(campo => {
+      if (fixed.includes(campo.nome)) {
+        return true;
+      }
+      return false;
+    });
+  }
+
+  // Getter para os demais campos (Container 2) - atualizado para carregar todos os campos não fixos
+  get adjustableFields(): any[] {
+    const fixed = ['nome', 'data', 'nuvem', 'obs'];
+    return this.FormService.campos.filter(campo => !fixed.includes(campo.nome));
+  }
+
+  onSubmit() {
+    if (this.FormService.fichaForm.valid) {
+      console.log('Dados do formulário:', this.FormService.fichaForm.value);
+      // Continue o fluxo para salvar o registro
     }
   }
 

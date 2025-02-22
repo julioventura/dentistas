@@ -1,4 +1,5 @@
 <div class="container container_principal">
+
   <!-- HEADER -->
   <div class="header">
     <div class="left">
@@ -26,10 +27,10 @@
   <div class="dynamic-form-container" *ngIf="FormService.fichaForm && FormService.campos.length > 0">
 
     <div *ngIf="FormService.isLoading" class="aviso">
-      Carregando dados da ficha...
+      Carregando...
     </div>
 
-    <!-- Container 1: Exibe TODOS os campos preenchidos de collections -->
+    <!-- Container 1: Exibe todos os campos PREENCHIDOS de collections -->
     <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
       <div *ngFor="let campo of FormService.campos">
         <!-- Só exibe se estiver preenchido -->
@@ -68,7 +69,7 @@
       </div>
     </form>
 
-<!-- Container 1: Campos fixos (largura fixa) -->
+<!-- Container 1: Campos fixos (largura fixa) de subcollections -->
 <form *ngIf="!FormService.isLoading && subcollection" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
   <div *ngFor="let campo of fixedFields">
     <div class="detail-container">
@@ -112,7 +113,9 @@
       </div>
     </div>
 
-    <!-- Container 2: caso queira exibir “campos extras” para a subcollection -->
+
+
+    <!-- Container 2: campos extras para a subcollection -->
     <div class="width-control" *ngIf="subcollection && adjustableFields.length > 0">
       <div class="record-details" [style.--label-width]="customLabelWidth">
         <ng-container *ngFor="let campo of adjustableFields">

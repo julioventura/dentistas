@@ -62,6 +62,7 @@ export class FormService {
         return this.camposFichaService.getCamposFichaRegistro(userId, subcollection).pipe(
             tap((campos: any[]) => {
                 this.campos = campos || [];
+                console.log('Ficha carregada. Subcollection =', subcollection);
                 console.log('Campos carregados:', this.campos);
                 this.createForm();
             })
@@ -73,6 +74,7 @@ export class FormService {
         return this.camposService.getCamposRegistro(userId, collection).pipe(
             tap((campos: any[]) => {
                 this.campos = campos || [];
+                console.log('Ficha carregada. Collection =', collection);
                 console.log('Campos carregados:', this.campos);
                 this.createForm();
             })
@@ -111,7 +113,7 @@ export class FormService {
                 defaultValue = (this.registro && this.registro[campo.nome]) ? this.registro[campo.nome] : '';
               }
               this.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
-              console.log(`Controle customizado adicionado para o campo: ${campo.nome}`);
+            //   console.log(`Controle customizado adicionado para o campo: ${campo.nome}`);
             }
           });
         }
