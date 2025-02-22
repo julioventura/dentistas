@@ -16,6 +16,8 @@
  * 9. fixedFields (getter): Retorna os campos fixos (por exemplo, 'nome', 'data', 'nuvem', 'obs').
  * 10. adjustableFields (getter): Retorna os campos que não são fixos.
  * 11. onSubmit: Processa o submit do formulário e exibe os dados para depuração (continua o fluxo de salvamento).
+ * 12. groupByGrupo: Agrupa os campos com base na propriedade "grupo".
+ * 13. camposAgrupados (getter): Retorna os campos agrupados para utilização no template.
  */
 
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
@@ -28,6 +30,7 @@ import { FormService } from '../shared/form.service';
 import { CamposFichaService } from '../shared/campos-ficha.service';  // Serviço para carregar campos de subcollections
 import { FormControl, FormGroup } from '@angular/forms';
 import { CamposService } from '../shared/campos.service'; // Serviço para carregar campos de coleções
+import { KeyValue } from '@angular/common';
 
 @Component({
   selector: 'app-edit',
@@ -357,6 +360,31 @@ export class EditComponent implements OnInit, AfterViewInit {
   }
 
   /**
+   * groupByGrupo()
+   * 
+   * Agrupa os campos com base na propriedade "grupo".
+   * @param campos Array de campos.
+   * @returns Objeto onde a chave é o nome do grupo e o valor é o array de campos pertencentes a esse grupo.
+   */
+  groupByGrupo(campos: any[]): { [key: string]: any[] } {
+    return campos.reduce((acc, campo) => {
+      const grupo = campo.grupo || 'Outros';
+      if (!acc[grupo]) {
+        acc[grupo] = [];
+      }
+      acc[grupo].push(campo);
+      return acc;
+    }, {} as { [key: string]: any[] });
+  }
+
+  /**
+   * Getter para camposAgrupados, que retorna os campos agrupados por grupo.
+   */
+  get camposAgrupados(): { [key: string]: any[] } {
+    return this.groupByGrupo(this.FormService.campos);
+  }
+
+  /**
    * fixedFields (getter)
    * 
    * Funcionalidade:
@@ -395,4 +423,14 @@ export class EditComponent implements OnInit, AfterViewInit {
       // Continuação do fluxo para salvar o registro (pode ser expandido conforme necessidade)
     }
   }
+
+
+  trackByKey(index: number, item: KeyValue<string, any[]>): string {
+    return item.key;
+  }
+
+  trackByCampo(index: number, campo: any): string {
+    return campo.nome;
+  }
+  
 }

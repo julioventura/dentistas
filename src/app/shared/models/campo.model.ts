@@ -3,4 +3,5 @@ export interface Campo {
   tipo: string;
   label: string;
   options?: string[];
+  grupo?: string;
 }

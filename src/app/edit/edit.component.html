@@ -1,5 +1,4 @@
 <div class="container container_principal">
-
   <!-- HEADER -->
   <div class="header">
     <div class="actions">
@@ -10,134 +9,99 @@
       <img src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
     </div>
   </div>
-
   <div class="record-header">
     {{ subtitulo_da_pagina }}
   </div>
   <!-- /HEADER -->
 
-
   <!-- Formulário Dinâmico -->
   <div class="dynamic-form-container" *ngIf="FormService.fichaForm && FormService.campos.length > 0">
-
     <div *ngIf="FormService.isLoading" class="aviso">
       Carregando...
     </div>
 
-    <!-- Container 1: Exibe TODOS os campos preenchidos de collections (atualizado) -->
-    <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm"
-      class="record-details borda_reta_topo">
-      <div *ngFor="let campo of FormService.campos">
-        <!-- Exibe se for checkbox/boolean OU se houver valor preenchido -->
-        <div
-          *ngIf="(campo.tipo === 'checkbox' || campo.tipo === 'boolean') || (FormService.registro[campo.nome] && FormService.registro[campo.nome]?.length > 0)"
-          class="detail-container">
-          <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
-          <ng-container [ngSwitch]="campo.tipo">
-            <!-- Campos booleanos: checkbox -->
-            <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
-            <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
-            <!-- Para URL: input editável -->
-            <ng-container *ngSwitchCase="'url'">
-              <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value url">
+    <!-- Formulário para collections (quando não há subcollection) -->
+    <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
+      <!-- Utiliza o agrupamento pré-calculado (camposAgrupados) -->
+      <div *ngFor="let grupo of camposAgrupados | keyvalue; trackBy: trackByKey">
+        <div class="grupo-titulo">{{ grupo.key }}</div>
+        <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
+          <!-- Exibe o campo se for checkbox/boolean ou se o valor estiver preenchido -->
+          <div *ngIf="(campo.tipo === 'checkbox' || campo.tipo === 'boolean') || (FormService.registro[campo.nome] !== null && FormService.registro[campo.nome] !== undefined && FormService.registro[campo.nome] !== '' && FormService.registro[campo.nome] !== false)" class="detail-container">
+            <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+            <ng-container [ngSwitch]="campo.tipo">
+              <!-- Para checkbox/bool -->
+              <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+              <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+              <!-- Para URL: input editável -->
+              <ng-container *ngSwitchCase="'url'">
+                <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value url">
+              </ng-container>
+              <!-- For textarea -->
+              <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="5" placeholder="Digite o conteúdo"></textarea>
+              <!-- Demais tipos -->
+              <input *ngSwitchDefault [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
             </ng-container>
-            <!-- Textarea -->
-            <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-              rows="5" placeholder="Digite o conteúdo"></textarea>
-            <!-- Demais tipos -->
-            <input *ngSwitchDefault [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome"
-              class="detail-value">
-          </ng-container>
+          </div>
         </div>
       </div>
     </form>
 
-    <!-- Container 1: Campos fixos (largura fixa) de subcollections -->
-    <form *ngIf="!FormService.isLoading && subcollection" [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()"
-      class="record-details borda_reta_topo">
-      <div *ngFor="let campo of fixedFields">
-        <div class="detail-container">
-          <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
-          <ng-container [ngSwitch]="campo.tipo">
-            <ng-container *ngSwitchCase="'url'">
-              <input type="url" [value]="FormService.registro[campo.nome]" class="detail-value url">
+    <!-- Formulário para subcollections com agrupamento -->
+    <form *ngIf="!FormService.isLoading && subcollection" [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()" class="record-details borda_reta_topo">
+      <!-- Grupo de campos fixos -->
+      <div *ngFor="let grupo of groupByGrupo(fixedFields) | keyvalue; trackBy: trackByKey">
+        <div class="grupo-titulo">{{ grupo.key }}</div>
+        <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
+          <div class="detail-container">
+            <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+            <ng-container [ngSwitch]="campo.tipo">
+              <ng-container *ngSwitchCase="'url'">
+                <!-- Para URL: input readonly -->
+                <input type="url" [formControlName]="campo.nome" class="detail-value url" readonly>
+              </ng-container>
+              <ng-container *ngSwitchCase="'textarea'">
+                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3"></textarea>
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
+              </ng-container>
             </ng-container>
-            <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-              rows="3"></textarea>
-            <input *ngSwitchDefault [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome"
-              class="detail-value">
-          </ng-container>
+          </div>
         </div>
       </div>
 
-
       <br *ngIf="subcollection && adjustableFields.length > 0">
 
-      <!-- Só mostra o slider e container 2 se for subcollection E se tiver campos para exibir -->
+      <!-- Slider para ajuste de largura (apenas se houver campos ajustáveis) -->
       <div class="width-control" *ngIf="subcollection && adjustableFields.length > 0">
         <div class="slider-wrapper">
           <label for="labelWidthRange"></label>
-          <input type="range" id="labelWidthRange" min="100" max="500" [(ngModel)]="customLabelWidthValue"
-            [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()">
+          <input type="range" id="labelWidthRange" min="100" max="500" [(ngModel)]="customLabelWidthValue" [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()">
           <span class="small">{{ customLabelWidthValue }}px</span>
         </div>
       </div>
 
-
-
-      <!-- Container 2: campos extras para a subcollection (formulário ativo) -->
+      <!-- Grupo de campos ajustáveis -->
       <div class="width-control" *ngIf="subcollection && adjustableFields.length > 0">
         <div class="record-details" [style.--label-width]="customLabelWidth">
-          <ng-container *ngFor="let campo of adjustableFields">
-            <div class="detail-container">
-              <label [for]="campo.nome" class="detail-label">{{ campo.label }}:</label>
-              <ng-container [ngSwitch]="campo.tipo">
-                <!-- Campo URL editável -->
-                <input *ngSwitchCase="'url'" type="url" [formControlName]="campo.nome" [id]="campo.nome"
-                  class="detail-value">
-                <!-- Campo Textarea se necessário -->
-                <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nome" [id]="campo.nome"
-                  class="detail-value"></textarea>
-                <!-- Campos booleanos: checkbox -->
-                <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
-                <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
-                <!-- Demais tipos -->
-                <input *ngSwitchDefault [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome"
-                  class="detail-value">
-              </ng-container>
+          <div *ngFor="let grupo of groupByGrupo(adjustableFields) | keyvalue; trackBy: trackByKey">
+            <div class="grupo-titulo">{{ grupo.key }}</div>
+            <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
+              <div class="detail-container">
+                <label [for]="campo.nome" class="detail-label">{{ campo.label }}:</label>
+                <ng-container [ngSwitch]="campo.tipo">
+                  <input *ngSwitchCase="'url'" type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
+                  <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"></textarea>
+                  <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+                  <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+                  <input *ngSwitchDefault [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
+                </ng-container>
+              </div>
             </div>
-          </ng-container>
+          </div>
         </div>
       </div>
-
     </form>
-
-    <!-- <form [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()">
-  <div>
-    <label for="queixaPrincipal">Queixa Principal:</label>
-    <input type="text" id="queixaPrincipal" formControlName="queixaPrincipal">
-    <div *ngIf="FormService.fichaForm.get('queixaPrincipal')?.invalid && 
-                (FormService.fichaForm.get('queixaPrincipal')?.dirty || FormService.fichaForm.get('queixaPrincipal')?.touched)">
-      <div *ngIf="FormService.fichaForm.get('queixaPrincipal')?.errors?.['required']">
-        Queixa Principal é obrigatória.
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" formControlName="nome">
-    <div *ngIf="FormService.fichaForm.get('nome')?.invalid && 
-                (FormService.fichaForm.get('nome')?.dirty || FormService.fichaForm.get('nome')?.touched)">
-      <div *ngIf="FormService.fichaForm.get('nome')?.errors?.['required']">
-        Nome é obrigatório.
-      </div>
-    </div>
-  </div>
-
-  
-  <button type="submit">Salvar</button>
-</form> -->
-
   </div>
 </div>
