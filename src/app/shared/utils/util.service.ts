@@ -159,7 +159,7 @@ export class UtilService {
   }
 
   // ====================================
-  // NOVOS 2024 Dentistas.com.br versão 4
+  // NOVOS 2024
   // ====================================
   public capitalizar(str: string): string {
     console.log("capitalizar(" + str + ")");

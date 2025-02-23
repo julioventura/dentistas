@@ -158,6 +158,8 @@ export class HomeComponent implements OnInit {
    * @description Navega para o componente especificado. Caso new_window seja true, navega para uma rota de introdução usando o template "/{component}/intro".
    */
   go(component: string, new_window: boolean = false): void {
+    console.log('go() - Navegando para:', component);
+
     this.new_window = new_window;
     if (new_window) {
       const introUrl = `/${component}/intro`;

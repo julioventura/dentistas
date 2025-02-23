@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';  // Importe o CommonModule
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Firebase e Firestore
 import { AngularFireModule } from '@angular/fire/compat';
@@ -34,6 +35,7 @@ import { HomeConfigComponent } from './home-config/home-config.component';
 import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';
+import { BackupComponent } from './backup/backup.component'; // Import the standalone component
 
 // Serviços
 
@@ -79,6 +81,9 @@ const routes: Routes = [
   { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '8' } },
   { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent },
   
+    // Rota para o componente Backup
+    { path: 'backup', component: BackupComponent },
+  
   // HOMEPAGES
   { path: ':username/intro', component: HomepageIntroComponent },
   { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
@@ -111,7 +116,8 @@ const routes: Routes = [
     ImportarCadastroComponent,
     ErupcoesComponent,
     MenuComponent,
-    ErupcoesEditComponent
+    ErupcoesEditComponent,
+    // BackupComponent is standalone, no need to declare it here
   ],
   imports: [
     BrowserModule,
@@ -127,7 +133,9 @@ const routes: Routes = [
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule,
+    BackupComponent // Import the standalone component
   ],
   providers: [
     AuthGuard, DatePipe, provideAnimationsAsync()
