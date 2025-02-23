@@ -18,10 +18,10 @@ export const DEFAULT_CAMPOS_PADRAO_FICHAS: Campo[] = [
 ];
 
 export const CAMPOS_FICHAS_EXAMES: Campo[] = [
-  { grupo: 'Exames', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: 'Exames', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: 'Exames', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: 'Exames', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
+  { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 export const CAMPOS_FICHAS_PLANOS: Campo[] = [

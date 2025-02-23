@@ -10,6 +10,33 @@
   padding-bottom: 5px;
 }
 
+// styles.scss
+.header {
+  
+
+
+  .back-btn,
+  .add-btn {
+      background-color: $primary-color;
+      color: $white;
+      border: none;
+      padding: 0px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bolder;
+      width: 40px;
+      height: 40px;
+  }
+
+  .back-btn:hover,
+  .add-btn:hover {
+      background-color: $primary-hover;
+  }
+}
+
+
+
 // Header com título 
 .header {
   .title {
@@ -19,8 +46,8 @@
 
 // Linha com o nome do registro
 .record-header {
-  background-color: $red-dark;
-  color: $white;
+  background-color: $white;
+  color: $red-dark;
 }
 
 // Estilos dos detalhes do registro
@@ -79,16 +106,16 @@
     }
 
     // Botões de ação do formulário
-    .form-actions {
-      .btn {
-        background-color: $primary-color;
-        color: $white;
+    // .form-actions {
+    //   .btn {
+    //     background-color: $primary-color;
+    //     color: $white;
 
-        &:hover {
-          background-color: $primary-hover;
-        }
-      }
-    }
+    //     &:hover {
+    //       background-color: $primary-hover;
+    //     }
+    //   }
+    // }
 
     .detail-value {
       width: 100%; /* Ocupará 100% da largura disponível */
@@ -152,4 +179,40 @@ input {
     /* ou */
     /* transform: translateY(-1px); */
   }
+}
+
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: $red solid 1px;
+  border-radius: 8px;
+  margin-top: 14px;
+  padding: 0px 10px;
+}
+
+
+.record-details {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
+  border: 0px solid #fff;
+  margin: 10px 1px 0px 1px;
+}
+
+.mat-display-large, .mat-typography .mat-display-large, .mat-typography h1 {
+  font: 400 3.562rem / 4rem Roboto, sans-serif;
+  letter-spacing: -0.016rem;
+  margin: 0 0 0.0em;
+}
+
+.navegacao, .navegacao_direita {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  margin-top: 6px;
 }

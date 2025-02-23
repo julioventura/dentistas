@@ -1,18 +1,20 @@
 <div class="container container_principal">
-  <!-- HEADER -->
-  <div class="header">
-    <div class="actions">
-      <img src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
+  <div class="sticky-header">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="actions">
+        <img src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
+      </div>
+      <h1 class="title">{{ titulo_da_pagina }}</h1>
+      <div class="actions">
+        <img src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
+      </div>
     </div>
-    <h1 class="title">{{ titulo_da_pagina }}</h1>
-    <div class="actions">
-      <img src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
-    </div>
+    <!-- <div class="record-header">
+      {{ subtitulo_da_pagina }}
+    </div> -->
+    <!-- /HEADER -->
   </div>
-  <div class="record-header">
-    {{ subtitulo_da_pagina }}
-  </div>
-  <!-- /HEADER -->
 
   <!-- Formulário Dinâmico -->
   <div class="dynamic-form-container" *ngIf="FormService.fichaForm && FormService.campos.length > 0">
@@ -66,15 +68,14 @@
     <form *ngIf="!FormService.isLoading && subcollection" [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()" class="record-details borda_reta_topo">
       <!-- Grupo de campos fixos -->
       <div *ngFor="let grupo of groupByGrupo(fixedFields) | keyvalue; trackBy: trackByKey">
-        <div class="grupo-titulo">{{ grupo.key }}</div>
+        <!-- <div class="grupo-titulo">{{ grupo.key }}</div> -->
         <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
           <div class="detail-container">
             <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
 
             <ng-container [ngSwitch]="campo.tipo">
               <ng-container *ngSwitchCase="'url'">
-                <!-- Para URL: input readonly -->
-                <input type="url" [formControlName]="campo.nome" class="detail-value url" readonly>
+                <input type="url" [formControlName]="campo.nome" class="detail-value url">
               </ng-container>
               <ng-container *ngSwitchCase="'textarea'">
                 <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3"></textarea>
@@ -107,7 +108,7 @@
               <div class="detail-container">
                 <label [for]="campo.nome" class="detail-label">{{ campo.label }}:</label>
                 <ng-container [ngSwitch]="campo.tipo">
-                  <input *ngSwitchCase="'url'" type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
+                  <!-- <input *ngSwitchCase="'url'" type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"> -->
                   <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"></textarea>
                   <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
                   <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">

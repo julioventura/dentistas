@@ -373,7 +373,7 @@ export class EditComponent implements OnInit, AfterViewInit {
    */
   groupByGrupo(campos: any[]): { [key: string]: any[] } {
     return campos.reduce((acc, campo) => {
-      const grupo = campo.grupo || 'Outros';
+      const grupo = campo.grupo || '';
       if (!acc[grupo]) {
         acc[grupo] = [];
       }

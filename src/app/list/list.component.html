@@ -56,7 +56,6 @@
                 <img src="https://dentistas.com.br/assets/sort.png" alt="" class="sort-icon">
               </button>
             </th>
-            <th class="right">Código</th>
             <th (click)="sortBy('data')" class="right">
               Data
               <button class="btn-sort">
@@ -77,7 +76,6 @@
 
             <ng-container *ngIf="this.subcollection">
               <td>{{ registro.nome }}</td>
-              <td class="right">{{ registro.codigo }}</td>
               <td class="right">{{ registro.data }}</td>
             </ng-container>
 
