@@ -36,7 +36,6 @@ import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';
 import { BackupComponent } from './backup/backup.component'; // Import the standalone component
-import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 
 // Serviços
 
@@ -118,7 +117,7 @@ const routes: Routes = [
     ErupcoesComponent,
     MenuComponent,
     ErupcoesEditComponent,
-    AutoFocusDirective,
+    // BackupComponent is standalone, no need to declare it here
   ],
   imports: [
     BrowserModule,

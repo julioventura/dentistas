@@ -165,8 +165,7 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.nomeInput?.nativeElement.focus();
       }, 0);
     } else {
-      // O campo "nome" não foi encontrado; verificar se o template carrega corretamente..
-      console.warn('O campo "nome" não foi encontrado.');
+      // O campo "nome" não foi encontrado; verificar se o template carrega corretamente.
     }
   }
 
