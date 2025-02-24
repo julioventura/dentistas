@@ -82,95 +82,147 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: 'Dados principais', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: 'Dados principais', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
   { grupo: 'Dados principais', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  // Queixa e Histórico Clínico
+  { grupo: 'Dados principais', nome: 'queixaPrincipal', tipo: 'text', label: 'Queixa Principal' },
+  { grupo: 'Dados principais', nome: 'emTratamentoMedico', tipo: 'boolean', label: 'Está em tratamento médico?' },
+  { grupo: 'Dados principais', nome: 'motivoTratamentoMedico', tipo: 'text', label: 'Motivo do tratamento médico' },
+  { grupo: 'Dados principais', nome: 'usaMedicamento', tipo: 'boolean', label: 'Está tomando algum medicamento?' },
+  { grupo: 'Dados principais', nome: 'quaisMedicamentos', tipo: 'text', label: 'Quais medicamentos?' },
+  { grupo: 'Dados principais', nome: 'motivoMedicamentos', tipo: 'text', label: 'Motivo do uso de medicamentos' },
 
   // Encaminhamento e Dente (campos comentados não foram incluídos)
 
-  // Queixa e Histórico Clínico
-  { grupo: 'Queixa e Histórico Clínico', nome: 'queixaPrincipal', tipo: 'text', label: 'Queixa Principal' },
-  { grupo: 'Queixa e Histórico Clínico', nome: 'emTratamentoMedico', tipo: 'boolean', label: 'Está em tratamento médico?' },
-  { grupo: 'Queixa e Histórico Clínico', nome: 'motivoTratamentoMedico', tipo: 'text', label: 'Motivo do tratamento médico' },
-  { grupo: 'Queixa e Histórico Clínico', nome: 'usaMedicamento', tipo: 'boolean', label: 'Está tomando algum medicamento?' },
-  { grupo: 'Queixa e Histórico Clínico', nome: 'quaisMedicamentos', tipo: 'text', label: 'Quais medicamentos?' },
-  { grupo: 'Queixa e Histórico Clínico', nome: 'motivoMedicamentos', tipo: 'text', label: 'Motivo do uso de medicamentos' },
 
   // Aspectos Clínicos da Coroa
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'higido', tipo: 'boolean', label: 'Coroa: Hígido' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'alteracaoCor', tipo: 'boolean', label: 'Coroa: Alteração de cor' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'ausente', tipo: 'boolean', label: 'Coroa: Ausente' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'carie', tipo: 'boolean', label: 'Coroa: Cárie' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'fratura', tipo: 'boolean', label: 'Coroa: Fratura' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'coroaPermanente', tipo: 'boolean', label: 'Coroa: Permanente' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'restaurado', tipo: 'boolean', label: 'Coroa: Restaurado' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'exposicaoPulpar', tipo: 'boolean', label: 'Coroa: Exposição pulpar' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'coroaProvisoria', tipo: 'boolean', label: 'Coroa: Provisória' },
-  { grupo: 'Aspectos Clínicos da Coroa', nome: 'selamentoProvisorio', tipo: 'boolean', label: 'Coroa: Selamento provisório' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'higido', tipo: 'boolean', label: 'Coroa: Hígido' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'alteracaoCor', tipo: 'boolean', label: 'Coroa: Alteração de cor' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'ausente', tipo: 'boolean', label: 'Coroa: Ausente' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'carie', tipo: 'boolean', label: 'Coroa: Cárie' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'fratura', tipo: 'boolean', label: 'Coroa: Fratura' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'coroaPermanente', tipo: 'boolean', label: 'Coroa: Permanente' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'restaurado', tipo: 'boolean', label: 'Coroa: Restaurado' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'exposicaoPulpar', tipo: 'boolean', label: 'Coroa: Exposição pulpar' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'coroaProvisoria', tipo: 'boolean', label: 'Coroa: Provisória' },
+  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'selamentoProvisorio', tipo: 'boolean', label: 'Coroa: Selamento provisório' },
 
   // Aspectos Clínicos dos Tecidos Moles
-  { grupo: 'Aspectos Clínicos dos Tecidos Moles', nome: 'edema', tipo: 'boolean', label: 'Tecidos moles: Edema' },
-  { grupo: 'Aspectos Clínicos dos Tecidos Moles', nome: 'fistula', tipo: 'boolean', label: 'Tecidos moles: Fístula' },
+  { grupo: '02) Aspectos Clínicos dos Tecidos Moles', nome: 'edemaintraoral', tipo: 'boolean', label: 'Edema intra-oral' },
+  { grupo: '02) Aspectos Clínicos dos Tecidos Moles', nome: 'edemaextraoral', tipo: 'boolean', label: 'Edema extra-oral' },
+  { grupo: '02) Aspectos Clínicos dos Tecidos Moles', nome: 'fistula', tipo: 'boolean', label: 'Fístula' },
 
   // Avaliação da Dor
-  { grupo: 'Avaliação da Dor', nome: 'dorPresente', tipo: 'boolean', label: 'Dor: Presente?' },
-  { grupo: 'Avaliação da Dor', nome: 'nivelDor', tipo: 'number', label: 'Dor: Nível de intensidade (1-10)' },
-  { grupo: 'Avaliação da Dor', nome: 'localizacaoDor', tipo: 'text', label: 'Dor: Localização (Localizada/Difusa)' },
-  { grupo: 'Avaliação da Dor', nome: 'denteLocalizado', tipo: 'text', label: 'Dente(s) com dor (se localizada)' },
-  { grupo: 'Avaliação da Dor', nome: 'regiaoDor', tipo: 'text', label: 'Região da dor (se difusa)' },
-  { grupo: 'Avaliação da Dor', nome: 'frequenciaDor', tipo: 'text', label: 'Dor: Frequência' },
-  { grupo: 'Avaliação da Dor', nome: 'gatilhoDor', tipo: 'text', label: 'Dor: Iniciada por' },
-  { grupo: 'Avaliação da Dor', nome: 'alivioDor', tipo: 'text', label: 'Dor: Aliviada por' },
-  { grupo: 'Avaliação da Dor', nome: 'duracaoDor', tipo: 'text', label: 'Dor: Duração' },
+  { grupo: '03) Avaliação da Dor', nome: 'dorPresente', tipo: 'boolean', label: 'Dor: Presente?' },
+  { grupo: '03) Avaliação da Dor', nome: 'nivelDor', tipo: 'number', label: 'Dor: Intensidade (Escala: 1/leve - 10/severa)' },
+  { grupo: '03) Avaliação da Dor', nome: 'localizacaoDorLocalizada', tipo: 'boolean', label: 'Dor: Localizada' },
+  { grupo: '03) Avaliação da Dor', nome: 'localizacaoDorDifusa', tipo: 'boolean', label: 'Dor: Difusa' },
+  { grupo: '03) Avaliação da Dor', nome: 'denteLocalizado', tipo: 'text', label: 'Dente(s) com dor (se localizada)' },
+  { grupo: '03) Avaliação da Dor', nome: 'regiaoDor', tipo: 'text', label: 'Região da dor (se difusa)' },
+
+  // Frequência da Dor
+  { grupo: '04) Frequência da Dor', nome: 'frequenciaConstante', tipo: 'boolean', label: 'Dor: Constante' },
+  { grupo: '04) Frequência da Dor', nome: 'frequenciaIntermitente', tipo: 'boolean', label: 'Dor: Intermitente' },
+  { grupo: '04) Frequência da Dor', nome: 'frequenciaOcasional', tipo: 'boolean', label: 'Dor: Ocasional' },
+
+  { grupo: '05) Gatilho da Dor', nome: 'gatilhoDorFrio', tipo: 'boolean', label: 'Dor: Iniciada por frio' },
+  { grupo: '05) Gatilho da Dor', nome: 'gatilhoDorCalor', tipo: 'boolean', label: 'Dor: Iniciada por calor' },
+  { grupo: '05) Gatilho da Dor', nome: 'gatilhoDorMastigação', tipo: 'boolean', label: 'Dor: Iniciada por mastigação' },
+  { grupo: '05) Gatilho da Dor', nome: 'gatilhoDorDoce', tipo: 'boolean', label: 'Dor: Iniciada por doce' },
+  { grupo: '05) Gatilho da Dor', nome: 'gatilhoDorEspontanea', tipo: 'boolean', label: 'Dor: Iniciada espontaneamente' },
+
+  { grupo: '06) Alívio da Dor', nome: 'alivioDorFrio', tipo: 'boolean', label: 'Dor: Aliviada por frio' },
+  { grupo: '06) Alívio da Dor', nome: 'alivioDorCalor', tipo: 'boolean', label: 'Dor: Aliviada por calor' },
+  { grupo: '06) Alívio da Dor', nome: 'alivioDorAnalgesicos', tipo: 'boolean', label: 'Dor: Aliviada por analgesicos' },
+
+  { grupo: '07) Duração da Dor', nome: 'duracaoSegundos', tipo: 'boolean', label: 'Dor: Duração de segundos' },
+  { grupo: '07) Duração da Dor', nome: 'duracaoMinutos', tipo: 'boolean', label: 'Dor: Duração de minutos' },
+  { grupo: '07) Duração da Dor', nome: 'duracaoHoras', tipo: 'boolean', label: 'Dor: Duração de horas' },
+
 
   // Exame Radiográfico Inicial – Câmara Pulpar
-  { grupo: 'Exame Radiográfico Inicial – Câmara Pulpar', nome: 'radioCarie', tipo: 'boolean', label: 'Câmara Pulpar: Cárie' },
-  { grupo: 'Exame Radiográfico Inicial – Câmara Pulpar', nome: 'radioRestauracao', tipo: 'boolean', label: 'Câmara Pulpar: Restauração' },
-  { grupo: 'Exame Radiográfico Inicial – Câmara Pulpar', nome: 'radioComunicacao', tipo: 'boolean', label: 'Câmara Pulpar: Comunicação com meio bucal' },
-  { grupo: 'Exame Radiográfico Inicial – Câmara Pulpar', nome: 'radioAcessadaProvisorio', tipo: 'boolean', label: 'Câmara Pulpar: Acessada com provisório' },
-  { grupo: 'Exame Radiográfico Inicial – Câmara Pulpar', nome: 'radioDensInDente', tipo: 'boolean', label: 'Câmara Pulpar: Dens in Dente' },
-  { grupo: 'Exame Radiográfico Inicial – Câmara Pulpar', nome: 'radioNoduloPulpar', tipo: 'boolean', label: 'Câmara Pulpar: Nódulo pulpar' },
-  { grupo: 'Exame Radiográfico Inicial – Câmara Pulpar', nome: 'radioAtresica', tipo: 'boolean', label: 'Câmara Pulpar: Atrésica' },
-  { grupo: 'Exame Radiográfico Inicial – Câmara Pulpar', nome: 'radioAmpla', tipo: 'boolean', label: 'Câmara Pulpar: Ampla' },
+  { grupo: '08) Radiografia Inicial - Câmara Pulpar', nome: 'radioCarie', tipo: 'boolean', label: 'Câmara Pulpar: Cárie' },
+  { grupo: '08) Radiografia Inicial - Câmara Pulpar', nome: 'radioRestauracao', tipo: 'boolean', label: 'Câmara Pulpar: Restauração' },
+  { grupo: '08) Radiografia Inicial - Câmara Pulpar', nome: 'radioComunicacao', tipo: 'boolean', label: 'Câmara Pulpar: Comunicação com meio bucal' },
+  { grupo: '08) Radiografia Inicial - Câmara Pulpar', nome: 'radioAcessadaProvisorio', tipo: 'boolean', label: 'Câmara Pulpar: Acessada com provisório' },
+  { grupo: '08) Radiografia Inicial - Câmara Pulpar', nome: 'radioDensInDente', tipo: 'boolean', label: 'Câmara Pulpar: Dens in Dente' },
+  { grupo: '08) Radiografia Inicial - Câmara Pulpar', nome: 'radioNoduloPulpar', tipo: 'boolean', label: 'Câmara Pulpar: Nódulo pulpar' },
+  { grupo: '08) Radiografia Inicial - Câmara Pulpar', nome: 'radioAtresica', tipo: 'boolean', label: 'Câmara Pulpar: Atrésica' },
+  { grupo: '08) Radiografia Inicial - Câmara Pulpar', nome: 'radioAmpla', tipo: 'boolean', label: 'Câmara Pulpar: Ampla' },
 
   // Exame Radiográfico Inicial – Canais Radiculares
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'calcificado', tipo: 'boolean', label: 'Canais: Calcificado' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'curvaturaAcentuada', tipo: 'boolean', label: 'Canais: Curvatura acentuada' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'medicacaoIntracanal', tipo: 'boolean', label: 'Canais: Medicação intracanal' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'presencaMaterialObturador', tipo: 'boolean', label: 'Canais: Material obturador presente' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'linhaFraturaLocalizacao', tipo: 'text', label: 'Canais: Linha de fratura - Localização' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'limaFraturadaLocalizacao', tipo: 'text', label: 'Canais: Lima fraturada - Localização' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'perfuracaoLocalizacao', tipo: 'text', label: 'Canais: Perfuraçã - Localização' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'tipoRetentor', tipo: 'text', label: 'Canais: Tipo de retentor intrarradicular (Metálico/Fibra de vidro)' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'reabsorpcao', tipo: 'text', label: 'Canais: Reabsorção (Externa, Interna, Lateral, Apical, Anquilose)' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'localizacaoReabsorpcao', tipo: 'text', label: 'Canais: Localização da reabsorção' },
-  { grupo: 'Exame Radiográfico Inicial – Canais Radiculares', nome: 'regiaoFurca', tipo: 'text', label: 'Canais: Região de furca' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'calcificado', tipo: 'boolean', label: 'Canais: Calcificado' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'curvaturaAcentuada', tipo: 'boolean', label: 'Canais: Curvatura acentuada' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'medicacaoIntracanal', tipo: 'boolean', label: 'Canais: Medicação intracanal' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'presencaMaterialObturador', tipo: 'boolean', label: 'Canais: Material obturador presente' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'linhaFraturaLocalizacao', tipo: 'text', label: 'Canais: Linha de fratura - Localização' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'limaFraturadaLocalizacao', tipo: 'text', label: 'Canais: Lima fraturada - Localização' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'perfuracaoLocalizacao', tipo: 'text', label: 'Canais: Perfuração - Localização' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'tipoRetentor', tipo: 'text', label: 'Canais: Tipo de retentor intrarradicular (Metálico/Fibra de vidro)' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'reabsorpcao', tipo: 'text', label: 'Canais: Reabsorção (Externa, Interna, Lateral, Apical, Anquilose)' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'localizacaoReabsorpcao', tipo: 'text', label: 'Canais: Localização da reabsorção' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'regiaoFurca', tipo: 'text', label: 'Canais: Região de furca' },
 
   // Exame Radiográfico Inicial – Região Periapical
-  { grupo: 'Exame Radiográfico Inicial – Região Periapical', nome: 'regiaoPeriapical', tipo: 'text', label: 'Região Periapical' },
+  { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalSemAlteracao', tipo: 'boolean', label: 'Região Periapical: Sem alteração' },
+  { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalAumentoDeEspaco', tipo: 'boolean', label: 'Região Periapical: Aumento de espaço do ligamento periodontal' },
+  { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalRadiolucidezApical', tipo: 'boolean', label: 'Região Periapical: Sem alteração' },
+  { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalRadiolucidezApical', tipo: 'boolean', label: 'Região Periapical: Sem alteração' },
+  { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalHipercementose', tipo: 'boolean', label: 'Região Periapical: Hipercementose' },
+  { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalOsteite', tipo: 'boolean', label: 'Região Periapical: Osteíte condensante' },
+  { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalExtravasamento', tipo: 'boolean', label: 'Região Periapical: Material obturador extravasado ' },
 
   // Teste de Sensibilidade
-  { grupo: 'Teste de Sensibilidade', nome: 'denteControle', tipo: 'text', label: 'Dente controle (Sensibilidade)' },
-  { grupo: 'Teste de Sensibilidade', nome: 'denteSuspeito', tipo: 'text', label: 'Dente suspeito (Sensibilidade)' },
+  { grupo: '11) Teste de Sensibilidade', nome: 'denteControle', tipo: 'text', label: 'Sensibilidade: Dente controle' },
+  { grupo: '11) Teste de Sensibilidade', nome: 'denteSuspeito', tipo: 'text', label: 'Sensibilidade: Dente suspeito' },
+
+  { grupo: '12) Teste de Sensibilidade: Resposta', nome: 'respostaTestePositiva', tipo: 'boolean', label: 'Sensibilidade: Resposta positiva' },
+  { grupo: '12) Teste de Sensibilidade: Resposta', nome: 'respostaTesteNegativa', tipo: 'boolean', label: 'Sensibilidade: Resposta negativa' },
+
+  { grupo: '13) Teste de Sensibilidade: Duração', nome: 'duracaoIgualControle', tipo: 'boolean', label: 'Sensibilidade: Duração igual ao controle' },
+  { grupo: '13) Teste de Sensibilidade: Duração', nome: 'duracaoMaisLenta', tipo: 'boolean', label: 'Sensibilidade: Retorno mais lento que o controle' },
+
+  { grupo: '14) Teste de Sensibilidade: Intensidade', nome: 'intensidadeIgualControle', tipo: 'boolean', label: 'Sensibilidade: Intensidade igual ao controle' },
+  { grupo: '14) Teste de Sensibilidade: Intensidade', nome: 'intensidadeMaisAgudo', tipo: 'boolean', label: 'Sensibilidade: Intensidade mais aguda que o controle' },
 
   // Testes Clínicos
-  { grupo: 'Testes Clínicos', nome: 'testeMobilidade', tipo: 'boolean', label: 'Teste: Mobilidade' },
-  { grupo: 'Testes Clínicos', nome: 'testePalpacao', tipo: 'boolean', label: 'Teste: Palpação' },
-  { grupo: 'Testes Clínicos', nome: 'testePercussao', tipo: 'boolean', label: 'Teste: Percussão' },
-  { grupo: 'Testes Clínicos', nome: 'testeSondagem', tipo: 'boolean', label: 'Teste: Sondagem periodontal' },
-  { grupo: 'Testes Clínicos', nome: 'respostaTeste', tipo: 'boolean', label: 'Teste: Resposta' },
-  { grupo: 'Testes Clínicos', nome: 'duracaoTeste', tipo: 'text', label: 'Teste: Duração' },
-  { grupo: 'Testes Clínicos', nome: 'intensidadeTeste', tipo: 'text', label: 'Teste: Intensidade' },
+  { grupo: '15) Testes', nome: 'testeMobilidade', tipo: 'boolean', label: 'Mobilidade' },
+  { grupo: '15) Testes', nome: 'testePalpacao', tipo: 'boolean', label: 'Palpação' },
+  { grupo: '15) Testes', nome: 'testePercussaoVertical', tipo: 'boolean', label: 'Percussão vertical' },
+  { grupo: '15) Testes', nome: 'testePercussaoHorizontal', tipo: 'boolean', label: 'Percussão horizontal' },
+  { grupo: '15) Testes', nome: 'testeSondagem', tipo: 'boolean', label: 'Sondagem: Bolsa Periodontal' },
 
-  // Diagnóstico
-  { grupo: 'Diagnóstico', nome: 'diagnosticoPulpar', tipo: 'text', label: 'Diagnóstico: Pulpar' },
-  { grupo: 'Diagnóstico', nome: 'diagnosticoPerirradicular', tipo: 'text', label: 'Diagnóstico: Perirradicular' },
+  // Diagnóstico Pulpar
+  { grupo: '16) Diagnóstico Pulpar', nome: 'diagnosticoPulpar', tipo: 'boolean', label: 'Diagnóstico Pulpar: ' },
+  { grupo: '16) Diagnóstico Pulpar', nome: 'diagnosticoPulpar', tipo: 'boolean', label: 'Diagnóstico Pulpar: ' },
+  { grupo: '16) Diagnóstico Pulpar', nome: 'diagnosticoPulpar', tipo: 'boolean', label: 'Diagnóstico Pulpar: ' },
+  { grupo: '16) Diagnóstico Pulpar', nome: 'diagnosticoPulpar', tipo: 'boolean', label: 'Diagnóstico Pulpar: ' },
+  { grupo: '16) Diagnóstico Pulpar', nome: 'diagnosticoPulpar', tipo: 'boolean', label: 'Diagnóstico Pulpar: ' },
+  { grupo: '16) Diagnóstico Pulpar', nome: 'diagnosticoPulpar', tipo: 'boolean', label: 'Diagnóstico Pulpar: ' },
+  { grupo: '16) Diagnóstico Pulpar', nome: 'diagnosticoPulpar', tipo: 'boolean', label: 'Diagnóstico Pulpar: ' },
+  
+  // Diagnóstico Perirradicular
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular', tipo: 'text', label: 'Diagnóstico Perirradicular: ' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular', tipo: 'text', label: 'Diagnóstico Perirradicular: ' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular', tipo: 'text', label: 'Diagnóstico Perirradicular: ' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular', tipo: 'text', label: 'Diagnóstico Perirradicular: ' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular', tipo: 'text', label: 'Diagnóstico Perirradicular: ' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular', tipo: 'text', label: 'Diagnóstico Perirradicular: ' },
 
   // Plano de Tratamento
-  { grupo: 'Plano de Tratamento', nome: 'planoTratamento', tipo: 'textarea', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
+  { grupo: '18) Plano de Tratamento', nome: 'planoTratamento', tipo: 'boolean', label: 'Plano de Tratamento' },
 
   // Grampo do Isolamento
-  { grupo: 'Grampo do Isolamento', nome: 'grampoIsolamento', tipo: 'text', label: 'Grampo do Isolamento Absoluto' },
+  { grupo: '19) Grampo do Isolamento', nome: 'grampoIsolamento', tipo: 'text', label: 'Grampo do Isolamento Absoluto' },
 
   // Preparo Químico-Mecânico
-  { grupo: 'Preparo Químico-Mecânico', nome: 'tecnicaInstrumentacao', tipo: 'text', label: 'Técnica de instrumentação' },
+  { grupo: '20) Preparo Químico-Mecânico', nome: 'tecnicaInstrumentacao', tipo: 'text', label: 'Técnica de instrumentação' },
 
   // Irrigação
   { grupo: 'Irrigação', nome: 'hipoclorito', tipo: 'text', label: 'Hipoclorito de sódio (%)' },

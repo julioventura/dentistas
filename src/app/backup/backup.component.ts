@@ -29,7 +29,7 @@ export class BackupComponent implements OnInit {
 		console.log('BackupComponent iniciado');
 	}
 
-	async gerarBackup() {
+	async gerarBackup(tipo: string) {
 		// Adiciona confirmação antes de iniciar o backup
 		if (!window.confirm('Confirma iniciar o backup?')) {
 			return;
@@ -71,6 +71,7 @@ export class BackupComponent implements OnInit {
 				}
 			}
 
+			if(tipo == 'json') {
 			const json = JSON.stringify(backupData, null, 2);
 			const blob = new Blob([json], { type: 'application/json' });
 			const url = window.URL.createObjectURL(blob);
@@ -81,6 +82,14 @@ export class BackupComponent implements OnInit {
 			a.click();
 			document.body.removeChild(a);
 			window.URL.revokeObjectURL(url);
+			} else {
+				const wb = XLSX.utils.book_new();
+				for (const collName in backupData) {
+					const ws = XLSX.utils.json_to_sheet(backupData[collName].map((doc: { id: string; data: DocumentData; }) => doc.data));
+					XLSX.utils.book_append_sheet(wb, ws, collName);
+				}
+				XLSX.writeFile(wb, 'backup_dentistas_com_br.xlsx');
+			}
 		} catch (error) {
 			this.message = 'Erro ao gerar backup';
 			console.error(error);

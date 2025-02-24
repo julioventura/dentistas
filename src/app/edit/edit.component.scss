@@ -12,9 +12,6 @@
 
 // styles.scss
 .header {
-  
-
-
   .back-btn,
   .add-btn {
       background-color: $primary-color;
@@ -34,8 +31,6 @@
       background-color: $primary-hover;
   }
 }
-
-
 
 // Header com título 
 .header {
@@ -181,6 +176,22 @@ input {
   }
 }
 
+// Novo estilo para o container do slider
+.width-control {
+  display: inline-block;
+  border: 1px solid $red;       // Borda de 1px
+  border-radius: 6px;           // Border-radius de 6px
+  background-color: #fff;       // Fundo branco opaco
+  padding: 6px;                // Padding de 10px
+}
+
+// Novo estilo para o container das subcollections (container 2)
+.full-width-container {
+  display: block;
+  width: 100%;
+  padding: 0;      // Remove padding/bordas extras
+  border: none;
+}
 
 .sticky-header {
   position: sticky;
@@ -194,13 +205,21 @@ input {
   padding: 0px 10px;
 }
 
+.sticky-slider {
+  position: sticky;
+  top: 60px; // adjust based on header height
+  z-index: 100;
+  background-color: unset;
+  padding: 10px 0;
+  padding-bottom: 0px;
+}
 
 .record-details {
   background-color: #ffffff;
   padding: 20px;
   border-radius: 6px;
-  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
-  border: 0px solid #fff;
+  box-shadow: unset;
+  border: 1px solid #f00;
   margin: 10px 1px 0px 1px;
 }
 

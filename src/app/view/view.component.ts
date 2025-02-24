@@ -20,13 +20,15 @@ import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
+import { fadeAnimation } from '../animations/fade.animation';
 
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
   standalone: false,
-  encapsulation: ViewEncapsulation.None // Desativa o encapsulamento para permitir uso global de variáveis CSS
+  encapsulation: ViewEncapsulation.None, // Desativa o encapsulamento para permitir uso global de variáveis CSS
+  animations: [fadeAnimation]
 })
 export class ViewComponent implements OnInit {
   userId: string | null = null;           // ID do usuário autenticado

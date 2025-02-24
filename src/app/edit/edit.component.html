@@ -1,4 +1,4 @@
-<div class="container container_principal">
+<div class="container container_principal" [@fadeAnimation]>
   <div class="sticky-header">
     <!-- HEADER -->
     <div class="header">
@@ -14,6 +14,17 @@
       {{ subtitulo_da_pagina }}
     </div> -->
     <!-- /HEADER -->
+  </div>
+
+  <!-- Move the slider block to a floating sticky container -->
+  <div class="sticky-slider" *ngIf="subcollection && adjustableFields.length > 0">
+    <div class="width-control">
+      <div class="slider-wrapper">
+        <label for="labelWidthRange"></label>
+        <input type="range" id="labelWidthRange" min="100" max="500" [(ngModel)]="customLabelWidthValue" [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()">
+        <span class="small">{{ customLabelWidthValue }}px</span>
+      </div>
+    </div>
   </div>
 
   <!-- Formulário Dinâmico -->
@@ -90,17 +101,8 @@
 
       <br *ngIf="subcollection && adjustableFields.length > 0">
 
-      <!-- Slider para ajuste de largura (apenas se houver campos ajustáveis) -->
-      <div class="width-control" *ngIf="subcollection && adjustableFields.length > 0">
-        <div class="slider-wrapper">
-          <label for="labelWidthRange"></label>
-          <input type="range" id="labelWidthRange" min="100" max="500" [(ngModel)]="customLabelWidthValue" [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()">
-          <span class="small">{{ customLabelWidthValue }}px</span>
-        </div>
-      </div>
-
       <!-- Grupo de campos ajustáveis -->
-      <div class="width-control" *ngIf="subcollection && adjustableFields.length > 0">
+      <div class="full-width-container" *ngIf="subcollection && adjustableFields.length > 0">
         <div class="record-details" [style.--label-width]="customLabelWidth">
           <div *ngFor="let grupo of groupByGrupo(adjustableFields) | keyvalue; trackBy: trackByKey">
             <div class="grupo-titulo">{{ grupo.key }}</div>

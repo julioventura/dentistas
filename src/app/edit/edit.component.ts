@@ -31,13 +31,15 @@ import { CamposFichaService } from '../shared/campos-ficha.service';  // Serviç
 import { FormControl, FormGroup } from '@angular/forms';
 import { CamposService } from '../shared/campos.service'; // Serviço para carregar campos de coleções
 import { KeyValue } from '@angular/common';
+import { fadeAnimation } from '../animations/fade.animation';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
   standalone: false,
-  encapsulation: ViewEncapsulation.None // Desativa encapsulamento para permitir uso global de variáveis CSS
+  encapsulation: ViewEncapsulation.None, // Desativa encapsulamento para permitir uso global de variáveis CSS
+  animations: [fadeAnimation]
 })
 export class EditComponent implements OnInit, AfterViewInit {
   @ViewChild('nomeInput') nomeInput?: ElementRef;
