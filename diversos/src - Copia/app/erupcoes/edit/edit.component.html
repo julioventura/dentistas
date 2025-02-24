@@ -1,0 +1,91 @@
+<div class="container container_principal">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
+    </div>
+    <h1 class="title">{{ titulo_da_pagina }}</h1>
+    <div class="actions">
+      <img src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
+    </div>
+  </div>
+
+  <div class="record-header">
+    {{ subtitulo_da_pagina }}
+  </div>
+  <!-- /HEADER -->
+
+
+  <!-- Formulário Dinâmico -->
+  <div class="dynamic-form-container" *ngIf="this.FormService.fichaForm">
+
+    <div *ngIf="FormService.isLoading" class="aviso">
+      Carregando dados do registro...
+    </div>
+
+    <form *ngIf="!FormService.isLoading" [formGroup]="FormService.fichaForm" class="record-details">
+      <!-- Condição para ocultar o campo 'id' -->
+      <ng-container *ngFor="let campo of FormService.campos">
+        <div *ngIf="campo.nome !== 'id'" class="detail-container">
+          <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+    
+          <!-- Input para tipos normais -->
+          <input
+            *ngIf="campo.nome === 'nome'"
+            [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+            (change)="FormService.onFieldChange($event, campo.nome)" #nomeInput autofocus />
+    
+            <!-- <input
+            *ngIf="campo.nome === 'sexo'"
+            [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+            (change)="FormService.onFieldChange($event, campo.nome)" #nomeInput autofocus /> -->
+
+            <!-- Campo Sexo como Radio Buttons -->
+            <div *ngIf="campo.nome === 'sexo'" class="detail-container">
+              <div class="detail-value-semborda" style="display: flex; align-items: left; gap: 10px;">
+                <input type="radio" id="sexoM" value="M" [formControlName]="campo.nome">
+                <label for="sexoM">Masculino</label>
+
+                <input type="radio" id="sexoF" value="F" [formControlName]="campo.nome">
+                <label for="sexoF">Feminino</label>
+
+                <input type="radio" id="sexoO" value="O" [formControlName]="campo.nome">
+                <label for="sexoO">Outro</label>
+              </div>
+            </div>
+
+            <!-- Campo Checkbox -->
+            <div *ngIf="campo.tipo === 'checkbox'" class="detail-container">
+              <input
+                type="checkbox"
+                [formControlName]="campo.nome"
+                (change)="FormService.onFieldChange($event, campo.nome)"
+              />
+              <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+            </div>
+
+          <input
+            *ngIf="campo.nome != 'nome' && campo.nome != 'sexo' && campo.tipo !== 'date' && campo.tipo !== 'file' && campo.tipo !== 'image' && campo.tipo !== 'url' && campo.tipo !== 'textarea'"
+            [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+            (change)="FormService.onFieldChange($event, campo.nome)" />
+    
+          <input
+            *ngIf="campo.tipo === 'date'"
+            [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
+    
+          <!-- Textarea para campos longos -->
+          <textarea *ngIf="campo.tipo === 'textarea'" [formControlName]="campo.nome" [id]="campo.nome"
+            class="detail-value" rows="5" placeholder="Digite com quebras de linhas"></textarea>
+    
+          <!-- Input para URL -->
+          <input *ngIf="campo.tipo === 'url'" type="url" [formControlName]="campo.nome" [id]="campo.nome" class="url"
+            placeholder="Cole aqui o link do arquivo" />
+        </div>
+      </ng-container>
+    </form>
+    
+
+  </div>
+
+</div>
