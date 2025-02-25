@@ -34,18 +34,18 @@ export const CAMPOS_FICHAS_PLANOS: Campo[] = [
 export const CAMPOS_FICHAS_PAGAMENTOS: Campo[] = [
   { grupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', nome: 'forma', tipo: 'text', label: 'Forma de Pagamento' },
-  { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
   { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
   { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: '', nome: 'forma', tipo: 'text', label: 'Forma de Pagamento' },
+  { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
 ];
 
 export const CAMPOS_FICHAS_ATENDIMENTOS: Campo[] = [
   { grupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
   { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
 ];
 
 export const CAMPOS_FICHAS_DENTES: Campo[] = [
@@ -154,10 +154,19 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'linhaFraturaLocalizacao', tipo: 'text', label: 'Canais: Linha de fratura - Localização' },
   { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'limaFraturadaLocalizacao', tipo: 'text', label: 'Canais: Lima fraturada - Localização' },
   { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'perfuracaoLocalizacao', tipo: 'text', label: 'Canais: Perfuração - Localização' },
-  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'tipoRetentor', tipo: 'text', label: 'Canais: Tipo de retentor intrarradicular (Metálico/Fibra de vidro)' },
-  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'reabsorpcao', tipo: 'text', label: 'Canais: Reabsorção (Externa, Interna, Lateral, Apical, Anquilose)' },
-  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'localizacaoReabsorpcao', tipo: 'text', label: 'Canais: Localização da reabsorção' },
-  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'regiaoFurca', tipo: 'text', label: 'Canais: Região de furca' },
+
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'tipoRetentor1', tipo: 'boolean', label: 'Retentor intrarradicular Metálico' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'tipoRetentor2', tipo: 'boolean', label: 'Retentor intrarradicular de Fibra de vidro' },
+  
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'reabsorcao1', tipo: 'boolean', label: 'Canais: Reabsorção Externa' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'reabsorcao2', tipo: 'boolean', label: 'Canais: Reabsorção Interna' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'reabsorcao3', tipo: 'boolean', label: 'Canais: Reabsorção Lateral' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'reabsorcao4', tipo: 'boolean', label: 'Canais: Reabsorção Apical' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'reabsorcao5', tipo: 'boolean', label: 'Canais: Reabsorção Anquilose' },
+
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'localizacaoReabsorcao', tipo: 'text', label: 'Canais: Localização da reabsorção' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'regiaoFurca1', tipo: 'text', label: 'Canais: Região de furca integra' },
+  { grupo: '09) Radiografia Inicial - Canais Radiculares', nome: 'regiaoFurca2', tipo: 'text', label: 'Canais: Região de furca alterada' },
 
   // Exame Radiográfico Inicial – Região Periapical
   { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalSemAlteracao', tipo: 'boolean', label: 'Região Periapical: Sem alteração' },
@@ -169,17 +178,17 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '10) Radiografia Inicial - Região Periapical', nome: 'PeriapicalExtravasamento', tipo: 'boolean', label: 'Região Periapical: Material obturador extravasado ' },
 
   // Teste de Sensibilidade
-  { grupo: '11) Teste de Sensibilidade', nome: 'denteControle', tipo: 'text', label: 'Sensibilidade: Dente controle' },
-  { grupo: '11) Teste de Sensibilidade', nome: 'denteSuspeito', tipo: 'text', label: 'Sensibilidade: Dente suspeito' },
+  { grupo: '11) Teste de Sensibilidade', nome: 'denteControle', tipo: 'text', label: 'Teste de Sensibilidade: Dente controle' },
+  { grupo: '11) Teste de Sensibilidade', nome: 'denteSuspeito', tipo: 'text', label: 'Teste de Sensibilidade: Dente suspeito' },
 
-  { grupo: '12) Teste de Sensibilidade: Resposta', nome: 'respostaTestePositiva', tipo: 'boolean', label: 'Sensibilidade: Resposta positiva' },
-  { grupo: '12) Teste de Sensibilidade: Resposta', nome: 'respostaTesteNegativa', tipo: 'boolean', label: 'Sensibilidade: Resposta negativa' },
+  { grupo: '12) Teste de Sensibilidade: Resposta', nome: 'respostaTestePositiva', tipo: 'boolean', label: 'Teste de Sensibilidade: Resposta positiva' },
+  { grupo: '12) Teste de Sensibilidade: Resposta', nome: 'respostaTesteNegativa', tipo: 'boolean', label: 'Teste de Sensibilidade: Resposta negativa' },
 
-  { grupo: '13) Teste de Sensibilidade: Duração', nome: 'duracaoIgualControle', tipo: 'boolean', label: 'Sensibilidade: Duração igual ao controle' },
-  { grupo: '13) Teste de Sensibilidade: Duração', nome: 'duracaoMaisLenta', tipo: 'boolean', label: 'Sensibilidade: Retorno mais lento que o controle' },
+  { grupo: '13) Teste de Sensibilidade: Duração', nome: 'duracaoIgualControle', tipo: 'boolean', label: 'Teste de Sensibilidade: Duração igual ao controle' },
+  { grupo: '13) Teste de Sensibilidade: Duração', nome: 'duracaoMaisLenta', tipo: 'boolean', label: 'Teste de Sensibilidade: Retorno mais lento que o controle' },
 
-  { grupo: '14) Teste de Sensibilidade: Intensidade', nome: 'intensidadeIgualControle', tipo: 'boolean', label: 'Sensibilidade: Intensidade igual ao controle' },
-  { grupo: '14) Teste de Sensibilidade: Intensidade', nome: 'intensidadeMaisAgudo', tipo: 'boolean', label: 'Sensibilidade: Intensidade mais aguda que o controle' },
+  { grupo: '14) Teste de Sensibilidade: Intensidade', nome: 'intensidadeIgualControle', tipo: 'boolean', label: 'Teste de Sensibilidade: Intensidade igual ao controle' },
+  { grupo: '14) Teste de Sensibilidade: Intensidade', nome: 'intensidadeMaisAgudo', tipo: 'boolean', label: 'Teste de Sensibilidade: Intensidade mais aguda que o controle' },
 
   // Testes Clínicos
   { grupo: '15) Testes', nome: 'testeMobilidade', tipo: 'boolean', label: 'Mobilidade' },
@@ -200,12 +209,12 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   
   // Diagnóstico Perirradicular
   // AAE Consensus Conference Recommended Diagnostic Terminology. Journal of Endodontics. 2009;35:1634. 
-  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular1', tipo: 'text', label: 'Diagnóstico Perirradicular: Tecidos apicais normais' },
-  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular2', tipo: 'text', label: 'Diagnóstico Perirradicular: Periodontite Apical Sintomática' },
-  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular3', tipo: 'text', label: 'Diagnóstico Perirradicular: Periodontite Apical Assintomática' },
-  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular4', tipo: 'text', label: 'Diagnóstico Perirradicular: Abscesso Apical Agudo' },
-  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular5', tipo: 'text', label: 'Diagnóstico Perirradicular: Abscesso Apical Crônico' },
-  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular6', tipo: 'text', label: 'Diagnóstico Perirradicular: Osteíte Condensante' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular1', tipo: 'boolean', label: 'Diagnóstico Perirradicular: Tecidos apicais normais' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular2', tipo: 'boolean', label: 'Diagnóstico Perirradicular: Periodontite Apical Sintomática' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular3', tipo: 'boolean', label: 'Diagnóstico Perirradicular: Periodontite Apical Assintomática' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular4', tipo: 'boolean', label: 'Diagnóstico Perirradicular: Abscesso Apical Agudo' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular5', tipo: 'boolean', label: 'Diagnóstico Perirradicular: Abscesso Apical Crônico' },
+  { grupo: '17) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular6', tipo: 'boolean', label: 'Diagnóstico Perirradicular: Osteíte Condensante' },
 
   // Plano de Tratamento
   { grupo: '18) Plano de Tratamento', nome: 'planoTratamento1', tipo: 'boolean', label: 'Plano de Tratamento: Tratamento conservador' },
