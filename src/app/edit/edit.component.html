@@ -13,7 +13,7 @@
     <!-- /HEADER -->
   </div>
 
-  <!-- Slider para subcollection (se aplicável) -->
+  <!-- Slider para subcollection  -->
   <div class="sticky-slider" *ngIf="subcollection && adjustableFields.length > 0">
     <div class="width-control">
       <div class="slider-wrapper">
@@ -48,7 +48,7 @@
             
             <!-- Textarea -->
             <ng-container *ngSwitchCase="'textarea'">
-              <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3" placeholder="Digite o conteúdo"></textarea>
+              <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" placeholder="Digite o conteúdo"></textarea>
             </ng-container>
             
             <!-- Campo texto com autofocus para "nome" -->
@@ -78,10 +78,10 @@
 
     <!-- Formulário para subcollections com agrupamento -->
     <form *ngIf="!FormService.isLoading && subcollection" [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()" class="record-details borda_reta_topo">
+   
       <!-- Grupo de campos fixos -->
       <div *ngFor="let grupo of groupByGrupo(fixedFields) | keyvalue; trackBy: trackByKey">
         <!-- Caso deseje exibir o título do grupo, descomente a linha abaixo -->
-        <!-- <div class="grupo-titulo">{{ grupo.key }}</div> -->
         <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
           <div class="detail-container">
             <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
@@ -90,7 +90,7 @@
                 <input type="url" [formControlName]="campo.nome" class="detail-value url">
               </ng-container>
               <ng-container *ngSwitchCase="'textarea'">
-                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3"></textarea>
+                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2"></textarea>
               </ng-container>
               <ng-container *ngSwitchDefault>
                 <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
@@ -100,13 +100,11 @@
         </div>
       </div>
 
-      <br *ngIf="subcollection && adjustableFields.length > 0">
-
       <!-- Grupo de campos ajustáveis -->
       <div class="full-width-container" *ngIf="subcollection && adjustableFields.length > 0">
         <div class="record-details" [style.--label-width]="customLabelWidth">
           <div *ngFor="let grupo of groupByGrupo(adjustableFields) | keyvalue; trackBy: trackByKey">
-            <div class="grupo-titulo">{{ grupo.key }}</div>
+            <div *ngIf="grupo.key" class="grupo-titulo">{{ grupo.key }}</div>
             <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
               <div class="detail-container">
                 <label [for]="campo.nome" class="detail-label">{{ campo.label }}:</label>

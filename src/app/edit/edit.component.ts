@@ -57,7 +57,7 @@ export class EditComponent implements OnInit, AfterViewInit {
   routePath: string = '';
   arquivos: { [key: string]: File } = {};
   formReady: boolean = false;
-  customLabelWidthValue: number = 200;
+  customLabelWidthValue: number = 300;
   customLabelWidth: string = `${this.customLabelWidthValue}px`;
 
   constructor(
@@ -128,7 +128,7 @@ export class EditComponent implements OnInit, AfterViewInit {
         if (this.subcollection === 'dentesendo') {
           this.customLabelWidthValue = 400;
         } else {
-          this.customLabelWidthValue = 250;
+          this.customLabelWidthValue = 300;
         }
         this.updateCustomLabelWidth();
 

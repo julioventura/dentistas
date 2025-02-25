@@ -67,7 +67,7 @@ export class CamposFichaService {
     }
   }
 
-  // A função de setCamposFichaRegistro pode ser mantida ou removida, se não houver atualização
+  // A função de setCamposFichaRegistro pode ser mantida para uso futuro ou removida, se não houver necessidade
   setCamposFichaRegistro(userId: string, collection: string, campos: Campo[]): Promise<void> {
     const path = `users/${userId}/configuracoesFichas`;
     return this.firestore.collection(path).doc(collection).set({ campos });
