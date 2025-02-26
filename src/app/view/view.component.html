@@ -43,7 +43,7 @@
             </ng-container>
             <!-- Demais tipos -->
             <ng-container *ngSwitchCase="'textarea'">
-              <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3" readonly></textarea>
+              <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" readonly></textarea>
             </ng-container>
             <ng-container *ngSwitchDefault>
               <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
@@ -69,7 +69,7 @@
               </ng-container>
               <!-- Textarea -->
               <ng-container *ngSwitchCase="'textarea'">
-                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3" readonly></textarea>
+                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" readonly></textarea>
               </ng-container>
               <!-- Checkbox -->
               <ng-container *ngSwitchCase="'checkbox'">
@@ -126,7 +126,7 @@
                     </ng-container>
                     <!-- Textarea -->
                     <ng-container *ngSwitchCase="'textarea'">
-                      <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3" readonly></textarea>
+                      <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" readonly></textarea>
                     </ng-container>
                     <!-- Checkbox e Boolean -->
                     <ng-container *ngSwitchCase="'checkbox'">
