@@ -44,3 +44,5 @@ Thumbs.db
 
 # Ignore the environments folder
 src/environments/
+"node_modules/" 
+"*.zip" 
