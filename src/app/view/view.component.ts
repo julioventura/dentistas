@@ -13,8 +13,8 @@
  * 9. openUrl: Abre uma URL em uma nova janela, caso o campo corresponda a um link.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { KeyValue } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -159,17 +159,7 @@ export class ViewComponent implements OnInit {
    * Retorna: Array de objetos representando os campos fixos.
    */
   get fixedFields(): any[] {
-    const fixed = ['nome', 'data', 'nuvem', 'obs'];
-    return this.FormService.campos.filter(campo => {
-      if (fixed.includes(campo.nome)) {
-        if (campo.nome === 'nome') {
-          return true; // Exibe sempre o campo "nome"
-        }
-        const valor = this.FormService.registro[campo.nome];
-        return valor != null && String(valor).trim().length > 0;
-      }
-      return false;
-    });
+    return this.FormService.campos.filter(campo => !campo.grupo || campo.grupo === '');
   }
 
   /**
@@ -181,14 +171,33 @@ export class ViewComponent implements OnInit {
    * Retorna: Array de objetos representando os campos ajustáveis.
    */
   get adjustableFields(): any[] {
-    const fixed = ['nome', 'data', 'nuvem', 'obs'];
-    return this.FormService.campos.filter(campo => {
-      if (!fixed.includes(campo.nome)) {
-        const valor = this.FormService.registro[campo.nome];
-        return valor != null && String(valor).trim().length > 0;
+    return this.FormService.campos.filter(campo => campo.grupo && campo.grupo !== '');
+  }
+
+  // Agrupa campos pelo atributo "grupo"
+  groupByGrupo(campos: any[]): { [key: string]: any[] } {
+    return campos.reduce((groups, campo) => {
+      const grupo = campo.grupo || 'Sem Agrupamento';
+      if (!groups[grupo]) {
+        groups[grupo] = [];
       }
-      return false;
-    });
+      groups[grupo].push(campo);
+      return groups;
+    }, {} as { [key: string]: any[] });
+  }
+
+  // Funções trackBy para melhor performance no ngFor
+  trackByKey(index: number, item: KeyValue<string, any[]>): string {
+    return item.key;
+  }
+
+  trackByCampo(index: number, campo: any): string {
+    return campo.nome;
+  }
+
+  // Ordenação dos grupos por chave (opcional)
+  sortByKeys(a: KeyValue<string, any[]>, b: KeyValue<string, any[]>): number {
+    return a.key.localeCompare(b.key);
   }
 
   /**

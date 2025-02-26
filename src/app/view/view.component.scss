@@ -46,10 +46,46 @@ input {
   z-index: 100;
   top: 0;
   padding: 10px 0;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  // box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   margin-bottom: 10px;
   background-color: unset;
   margin-left: 0px;
+} 
+
+.grupo-titulo {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 15px 0 5px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 3px;
+}
+
+.record-details {
+  --label-width: 300px; // Valor padrão
+  
+  .detail-container {
+    display: flex;
+    margin-bottom: 8px;
+    
+    .detail-label {
+      width: var(--label-width);
+      flex-shrink: 0;
+      padding-right: 10px;
+    }
+    
+    .detail-value {
+      flex-grow: 1;
+      
+      &[readonly] {
+        background-color: #f9f9f9;
+        color: #333;
+      }
+    }
+  }
+}
+
+.full-width-container {
+  width: 100%;
 }
 
 // Novo estilo para o container do slider

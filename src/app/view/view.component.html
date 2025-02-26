@@ -1,4 +1,4 @@
-<div class="container container_principal">
+<div class="container container_principal" [@fadeAnimation]>
 
   <!-- HEADER -->
   <div class="header">
@@ -23,149 +23,129 @@
     <app-menu [collection]="collection" [id]="id"></app-menu>
   </div>
 
-  <!-- Detalhes -->
+  <!-- Formulário Dinâmico -->
   <div class="dynamic-form-container" *ngIf="FormService.fichaForm && FormService.campos.length > 0">
-
     <div *ngIf="FormService.isLoading" class="aviso">
       Carregando...
     </div>
 
-    <!-- Container 1: Exibe todos os campos PREENCHIDOS de collections -->
+    <!-- Container para visualização de registros normais (não subcollection) -->
     <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
       <div *ngFor="let campo of FormService.campos">
-        <!-- Só exibe se estiver preenchido -->
-        <div *ngIf="FormService.registro[campo.nome] && FormService.registro[campo.nome].length > 0" class="detail-container">
+        <div *ngIf="FormService.registro[campo.nome] && FormService.registro[campo.nome]?.length > 0" class="detail-container">
           <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
           <ng-container [ngSwitch]="campo.tipo">
-            <!-- Para URL, exibe clicável abrindo em nova janela -->
+            <!-- URL: campo clicável -->
             <ng-container *ngSwitchCase="'url'">
               <div (click)="openUrl(FormService.registro[campo.nome])" style="cursor:pointer;">
-                <input
-                  type="url"
-                  [value]="FormService.registro[campo.nome]"
-                  class="detail-value url"
-                  readonly>
+                <input type="url" [value]="FormService.registro[campo.nome]" class="detail-value url" readonly>
               </div>
             </ng-container>
-            <!-- Textarea -->
-            <textarea
-              *ngSwitchCase="'textarea'"
-              [formControlName]="campo.nome"
-              [id]="campo.nome"
-              class="detail-value"
-              rows="5"
-              placeholder="Digite o conteúdo"
-            ></textarea>
             <!-- Demais tipos -->
-            <input
-              *ngSwitchDefault
-              [type]="campo.tipo"
-              [formControlName]="campo.nome"
-              [id]="campo.nome"
-              class="detail-value"
-            >
+            <ng-container *ngSwitchCase="'textarea'">
+              <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3" readonly></textarea>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+            </ng-container>
           </ng-container>
         </div>
       </div>
     </form>
 
-<!-- Container 1: Campos fixos (largura fixa) de subcollections -->
-<form *ngIf="!FormService.isLoading && subcollection" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
-  <div *ngFor="let campo of fixedFields">
-    <div class="detail-container">
-      <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
-      <ng-container [ngSwitch]="campo.tipo">
-        <!-- Para campos do tipo 'url', utiliza o input com readonly e click para abrir a URL -->
-        <ng-container *ngSwitchCase="'url'">
-          <div (click)="openUrl(FormService.registro[campo.nome])" style="cursor:pointer;">
-            <input
-              type="url"
-              [value]="FormService.registro[campo.nome]"
-              class="detail-value url"
-              readonly>
-          </div>
-        </ng-container>
-        <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-          rows="3"></textarea>
-        <input *ngSwitchDefault [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome"
-          class="detail-value">
-      </ng-container>
-    </div>
-  </div>
-</form>
-
-        
-    <!-- <br *ngIf="subcollection && adjustableFields.length > 0"> -->
-
-    <!-- Slider flutuante (sticky) para subcollection -->
-         <!-- Só mostra o slider e container 2 se for subcollection E se tiver campos para exibir -->
-    <div class="sticky-slider" *ngIf="subcollection && adjustableFields.length > 0">
-      <div class="width-control">
-        <div class="slider-wrapper">
-          <label for="labelWidthRange"></label>
-          <input 
-            type="range" 
-            id="labelWidthRange" 
-            min="100" 
-            max="500" 
-            [(ngModel)]="customLabelWidthValue" 
-            [ngModelOptions]="{standalone: true}"
-            (input)="updateCustomLabelWidth()">
-          <span class="small">{{ customLabelWidthValue }}px</span>
-        </div>
-      </div>
-    </div>
-
-
-
-    <!-- Container 2: campos extras para a subcollection -->
-    <div *ngIf="subcollection && adjustableFields.length > 0">
-      <div class="record-details" [style.--label-width]="customLabelWidth">
-        <ng-container *ngFor="let campo of adjustableFields">
-          
-          <div class="detail-container" 
-           *ngIf="FormService.registro[campo.nome] !== null 
-                   && FormService.registro[campo.nome] !== undefined 
-                   && FormService.registro[campo.nome] !== '' 
-                   && FormService.registro[campo.nome] !== false">
-            <label [for]="campo.nome" class="detail-label">{{ campo.label }}:</label>
-            <div class="detail-value">
-              <!-- Se for checkbox/boolean -->
-              <ng-container *ngIf="campo.tipo === 'checkbox' || campo.tipo === 'boolean'">
-                {{ FormService.registro[campo.nome] ? 'Sim' : 'Não' }}
-              </ng-container>
-              <!-- Se for URL, exibe clicável abrindo em nova janela -->
-              <ng-container *ngIf="campo.tipo === 'url'">
+    <!-- Container para campos de subcollection com agrupamento -->
+    <div *ngIf="!FormService.isLoading && subcollection" class="record-details borda_reta_topo">
+      <!-- Campos fixos (sem grupo) -->
+      <form [formGroup]="FormService.fichaForm">
+        <div *ngFor="let campo of fixedFields">
+          <div class="detail-container">
+            <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+            <ng-container [ngSwitch]="campo.tipo">
+              <!-- URL -->
+              <ng-container *ngSwitchCase="'url'">
                 <div (click)="openUrl(FormService.registro[campo.nome])" style="cursor:pointer;">
-                  <input
-                    type="url"
-                    [value]="FormService.registro[campo.nome]"
-                    class="detail-value url"
-                    readonly>
+                  <input type="url" [value]="FormService.registro[campo.nome]" class="detail-value url" readonly>
                 </div>
               </ng-container>
-              <!-- Demais tipos -->
-              <ng-container *ngIf="campo.tipo !== 'checkbox' && campo.tipo !== 'boolean' && campo.tipo !== 'url'">
-                {{ FormService.registro[campo.nome] }}
+              <!-- Textarea -->
+              <ng-container *ngSwitchCase="'textarea'">
+                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3" readonly></textarea>
               </ng-container>
-            </div>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-
-    <!-- Formulário dinâmico para exibir apenas os campos adicionais (opcional) -->
-    <!-- <div *ngIf="!FormService.isLoading && menu_exame" class="extra-fields-container">
-      <div class="espacador_vertical"></div>
-      <form [formGroup]="FormService.fichaForm" class="record-details">
-        <div *ngFor="let campoNome of getDynamicFields()">
-          <div *ngIf="campoNome !== 'id'" class="detail-container">
-            <label [for]="campoNome" class="detail-label">{{ campoNome | titlecase }}</label>
-            <input type="text" [formControlName]="campoNome" [id]="campoNome" class="detail-value" readonly>
+              <!-- Checkbox -->
+              <ng-container *ngSwitchCase="'checkbox'">
+                <input type="checkbox" [formControlName]="campo.nome" [id]="campo.nome" readonly>
+              </ng-container>
+              <!-- Boolean -->
+              <ng-container *ngSwitchCase="'boolean'">
+                <input type="checkbox" [formControlName]="campo.nome" [id]="campo.nome" readonly>
+              </ng-container>
+              <!-- Outros tipos -->
+              <ng-container *ngSwitchDefault>
+                <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+              </ng-container>
+            </ng-container>
           </div>
         </div>
       </form>
-    </div> -->
 
+      <!-- Slider flutuante (sticky) para subcollection -->
+      <div class="sticky-slider" *ngIf="adjustableFields.length > 0">
+        <div class="width-control">
+          <div class="slider-wrapper">
+            <label for="labelWidthRange"></label>
+            <input type="range" id="labelWidthRange" min="100" max="500" [(ngModel)]="customLabelWidthValue" 
+                   [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()">
+            <span class="small">{{ customLabelWidthValue }}px</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campos agrupados -->
+      <div class="full-width-container" *ngIf="adjustableFields.length > 0">
+        <div class="record-details" [style.--label-width]="customLabelWidth">
+          <!-- Iterar sobre os grupos obtidos pelo método groupByGrupo -->
+          <div *ngFor="let grupo of groupByGrupo(adjustableFields) | keyvalue: sortByKeys; trackBy: trackByKey">
+            <!-- Título do grupo -->
+            <div class="grupo-titulo">{{ grupo.key }}</div>
+            <!-- Campos do grupo atual -->
+            <form [formGroup]="FormService.fichaForm">
+              <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
+                <!-- Exibe apenas campos com valores não vazios -->
+                <div class="detail-container" 
+                     *ngIf="FormService.registro[campo.nome] !== null && 
+                           FormService.registro[campo.nome] !== undefined && 
+                           FormService.registro[campo.nome] !== '' && 
+                           (campo.tipo === 'boolean' || campo.tipo === 'checkbox' ? FormService.registro[campo.nome] === true : true)">
+                  <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+                  <ng-container [ngSwitch]="campo.tipo">
+                    <!-- URL -->
+                    <ng-container *ngSwitchCase="'url'">
+                      <div (click)="openUrl(FormService.registro[campo.nome])" style="cursor:pointer;">
+                        <input type="url" [value]="FormService.registro[campo.nome]" class="detail-value url" readonly>
+                      </div>
+                    </ng-container>
+                    <!-- Textarea -->
+                    <ng-container *ngSwitchCase="'textarea'">
+                      <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="3" readonly></textarea>
+                    </ng-container>
+                    <!-- Checkbox e Boolean -->
+                    <ng-container *ngSwitchCase="'checkbox'">
+                      <input type="checkbox" [formControlName]="campo.nome" [id]="campo.nome" readonly>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'boolean'">
+                      <input type="checkbox" [formControlName]="campo.nome" [id]="campo.nome" readonly>
+                    </ng-container>
+                    <!-- Outros tipos -->
+                    <ng-container *ngSwitchDefault>
+                      <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
