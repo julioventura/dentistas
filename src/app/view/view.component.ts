@@ -305,4 +305,23 @@ export class ViewComponent implements OnInit {
       window.open(url, '_blank');
     }
   }
+
+  /**
+   * hasNonEmptyField(grupo: any[]): boolean
+   * 
+   * Parâmetros:
+   * - grupo: any[] - Array de campos a serem verificados.
+   * Funcionalidade:
+   * - Verifica se há algum campo no grupo com valor definido e não vazio.
+   * Retorna: boolean - true se houver algum campo com valor definido e não vazio, false caso contrário.
+   */
+  hasNonEmptyField(grupo: any[]): boolean {
+    return grupo.some(campo => {
+      const valor = this.FormService.registro[campo.nome];
+      if (campo.tipo === 'boolean' || campo.tipo === 'checkbox') {
+        return valor === true;
+      }
+      return valor !== null && valor !== undefined && valor !== '';
+    });
+  }
 }

@@ -105,8 +105,8 @@
         <div class="record-details" [style.--label-width]="customLabelWidth">
           <!-- Iterar sobre os grupos obtidos pelo método groupByGrupo -->
           <div *ngFor="let grupo of groupByGrupo(adjustableFields) | keyvalue: sortByKeys; trackBy: trackByKey">
-            <!-- Título do grupo -->
-            <div class="grupo-titulo">{{ grupo.key }}</div>
+            <!-- Título do grupo exibido somente se houver campo não vazio -->
+            <div *ngIf="hasNonEmptyField(grupo.value)" class="grupo-titulo">{{ grupo.key }}</div>
             <!-- Campos do grupo atual -->
             <form [formGroup]="FormService.fichaForm">
               <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
