@@ -230,11 +230,11 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '19) Grampo do Isolamento', nome: 'grampoIsolamento', tipo: 'text', label: 'Grampo do Isolamento Absoluto' },
 
   // Preparo Químico-Mecânico: Técnica de Instrumentação
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'text', label: 'Manual' },
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'text', label: 'Rotação contínua - ROTATÓRIA' },
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'text', label: 'Reciprocante' },
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'text', label: 'OSCILATÓRIA' },
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'text', label: 'Híbrida' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'Manual' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'Rotação contínua - ROTATÓRIA' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'Reciprocante' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'OSCILATÓRIA' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'Híbrida' },
   
   // Canais Radiculares
   // CAD – comprimento aparente do dente 
