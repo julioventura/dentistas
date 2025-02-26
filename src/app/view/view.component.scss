@@ -40,3 +40,25 @@ input {
 .record-details .detail-container .detail-value, .dynamic-form-container .detail-container .detail-value {
   border: 0px;
 }
+
+.sticky-slider {
+  position: sticky;
+  z-index: 100;
+  top: 0;
+  padding: 10px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+  background-color: unset;
+  margin-left: 0px;
+}
+
+// Novo estilo para o container do slider
+.width-control {
+  display: inline-block;
+  border: 1px solid $red;       // Borda de 1px
+  border-radius: 6px;           // Border-radius de 6px
+  background-color: #fff;       // Fundo branco opaco
+  padding: 6px;                // Padding de 10px
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
+
+}

@@ -95,28 +95,31 @@
 </form>
 
         
-    <br *ngIf="subcollection && adjustableFields.length > 0">
+    <!-- <br *ngIf="subcollection && adjustableFields.length > 0"> -->
 
-    <!-- Só mostra o slider e container 2 se for subcollection E se tiver campos para exibir -->
-    <div class="width-control" *ngIf="subcollection && adjustableFields.length > 0">
-      <div class="slider-wrapper">
-        <label for="labelWidthRange"></label>
-        <input
-          type="range"
-          id="labelWidthRange"
-          min="100"
-          max="500"
-          [(ngModel)]="customLabelWidthValue"
-          (input)="updateCustomLabelWidth()"
-        >
-        <span class="small">{{ customLabelWidthValue }}px</span>
+    <!-- Slider flutuante (sticky) para subcollection -->
+         <!-- Só mostra o slider e container 2 se for subcollection E se tiver campos para exibir -->
+    <div class="sticky-slider" *ngIf="subcollection && adjustableFields.length > 0">
+      <div class="width-control">
+        <div class="slider-wrapper">
+          <label for="labelWidthRange"></label>
+          <input 
+            type="range" 
+            id="labelWidthRange" 
+            min="100" 
+            max="500" 
+            [(ngModel)]="customLabelWidthValue" 
+            [ngModelOptions]="{standalone: true}"
+            (input)="updateCustomLabelWidth()">
+          <span class="small">{{ customLabelWidthValue }}px</span>
+        </div>
       </div>
     </div>
 
 
 
     <!-- Container 2: campos extras para a subcollection -->
-    <div class="width-control" *ngIf="subcollection && adjustableFields.length > 0">
+    <div *ngIf="subcollection && adjustableFields.length > 0">
       <div class="record-details" [style.--label-width]="customLabelWidth">
         <ng-container *ngFor="let campo of adjustableFields">
           
