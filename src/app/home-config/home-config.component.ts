@@ -4,7 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
  
 import { UtilService } from '../shared/utils/util.service';
-
+  
 @Component({
   selector: 'app-home-config',
   templateUrl: './home-config.component.html',
