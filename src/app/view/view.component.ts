@@ -127,14 +127,14 @@ export class ViewComponent implements OnInit {
         // Ajuste da largura dos labels baseado em coleções vs subcollections
         if (this.subcollection) {
           // Mantém a lógica existente para subcollections
-          if (this.subcollection === 'dentesendo') {
-            this.customLabelWidthValue = 400;
-          } else {
+          // if (this.subcollection === 'dentesendo') {
+          //   this.customLabelWidthValue = 400;
+          // } else {
             this.customLabelWidthValue = 150;
-          }
+          // }
         } else {
           // Para collections principais, usa a mesma largura do EditComponent
-          this.customLabelWidthValue = 180; // Ajuste este valor para corresponder ao EditComponent
+          this.customLabelWidthValue = 100; // Ajuste este valor para corresponder ao EditComponent
         }
         this.updateCustomLabelWidth();
 
