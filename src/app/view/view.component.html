@@ -29,6 +29,18 @@
       Carregando...
     </div>
 
+          <!-- Slider flutuante (sticky) para subcollection -->
+          <div class="sticky-slider" *ngIf="adjustableFields.length > 0">
+            <div class="width-control">
+              <div class="slider-wrapper">
+                <label for="labelWidthRange"></label>
+                <input type="range" id="labelWidthRange" min="100" max="500" [(ngModel)]="customLabelWidthValue"
+                  [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()">
+                <span class="small">{{ customLabelWidthValue }}px</span>
+              </div>
+            </div>
+          </div>
+
     <!-- Container para visualização de registros normais (não subcollection) -->
     <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
       <div *ngFor="let campo of FormService.campos">
@@ -88,17 +100,7 @@
         </div>
       </form>
 
-      <!-- Slider flutuante (sticky) para subcollection -->
-      <div class="sticky-slider" *ngIf="adjustableFields.length > 0">
-        <div class="width-control">
-          <div class="slider-wrapper">
-            <label for="labelWidthRange"></label>
-            <input type="range" id="labelWidthRange" min="100" max="500" [(ngModel)]="customLabelWidthValue" 
-                   [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()">
-            <span class="small">{{ customLabelWidthValue }}px</span>
-          </div>
-        </div>
-      </div>
+
 
       <!-- Campos agrupados -->
       <div class="full-width-container" *ngIf="adjustableFields.length > 0">
