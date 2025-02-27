@@ -22,6 +22,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavegacaoService } from '../navegacao.service';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { AngularFireStorage } from '@angular/fire/compat/storage'; 
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +35,7 @@ export class UtilService {
   constructor(
     private router: Router,
     private navegacaoService: NavegacaoService,
+    private storage: AngularFireStorage
   ) { }
 
   // Regex para validação de email
@@ -324,8 +328,6 @@ export class UtilService {
     return codigo.split('').reduce((acc, num) => acc + parseInt(num, 10), 0) % 10;
   }
 
-
-
   // Método para ir para a página home
   goHome() {
     this.router.navigate(['/home']);
@@ -338,6 +340,27 @@ export class UtilService {
   go_url(url: string) {
     window.open(url, '_blank'); // Abre em uma nova aba ou janela
   }
+
+
+
+  // Método para fazer upload de arquivos no Firebase Storage
+  uploadFile(path: string, file: File): Observable<string> {
+    const filePath = `${path}/${file.name}`; // Define o caminho no Firebase Storage
+    const fileRef = this.storage.ref(filePath);
+    const task = this.storage.upload(filePath, file);
+
+    return new Observable<string>(observer => {
+      task.snapshotChanges().pipe(
+        finalize(() => {
+          fileRef.getDownloadURL().subscribe(url => {
+            observer.next(url); // Retorna a URL do arquivo após o upload
+            observer.complete();
+          });
+        })
+      ).subscribe();
+    });
+  }
+
 
   voltar() {
     this.navegacaoService.goBack();
