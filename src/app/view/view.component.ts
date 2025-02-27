@@ -47,7 +47,7 @@ export class ViewComponent implements OnInit {
   menu_exame: boolean = false;            // Flag específica para exame (caso necessário)
   
   // Propriedade utilizada no binding CSS para definir a largura dos labels
-  customLabelWidthValue: number = 200;
+  customLabelWidthValue: number = 100;
   customLabelWidth: string = `${this.customLabelWidthValue}px`;
 
   constructor(
@@ -124,11 +124,17 @@ export class ViewComponent implements OnInit {
           this.show_menu = !!(this.collection && this.id && !this.subcollection);
         }
 
-        // Ajuste da largura dos labels baseado em critério (ex.: coleção "dentesendo")
-        if (this.subcollection === 'dentesendo') {
-          this.customLabelWidthValue = 400;
+        // Ajuste da largura dos labels baseado em coleções vs subcollections
+        if (this.subcollection) {
+          // Mantém a lógica existente para subcollections
+          if (this.subcollection === 'dentesendo') {
+            this.customLabelWidthValue = 400;
+          } else {
+            this.customLabelWidthValue = 150;
+          }
         } else {
-          this.customLabelWidthValue = 250;
+          // Para collections principais, usa a mesma largura do EditComponent
+          this.customLabelWidthValue = 180; // Ajuste este valor para corresponder ao EditComponent
         }
         this.updateCustomLabelWidth();
 
