@@ -230,6 +230,8 @@ export class ListComponent implements OnInit {
         const novoRegistro: any = {};
         novoRegistro.id = this.firestoreService.createId();
         novoRegistro.codigo = novoCodigo;
+        console.log("novoRegistro.id =", novoRegistro.id);
+        console.log("novoRegistro.codigo =", novoRegistro.codigo);
     
         if (this.userId && this.subcollection) {
           this.FormService.carregarCamposFichas(this.userId, this.subcollection);
@@ -237,14 +239,13 @@ export class ListComponent implements OnInit {
           this.FormService.campos.forEach(campo => {
             novoRegistro[campo.nome] = '';
           });
-          const now = new Date();
-          const day = String(now.getDate()).padStart(2, '0');
-          const month = String(now.getMonth() + 1).padStart(2, '0');
-          const year = now.getFullYear();
-          novoRegistro['data'] = `${year}-${month}-${day}`;
-        } else {
+          
+          novoRegistro['data'] = `this.getDataAtual()`; // Data de hoje
+        } 
+        else {
           this.FormService.campos.forEach(campo => {
             novoRegistro[campo.nome] = '';
+            novoRegistro['data'] = `this.getDataAtual()`; // Data de hoje
           });
         }
 
@@ -258,6 +259,15 @@ export class ListComponent implements OnInit {
         });
       });
     }
+  }
+
+  // Data de hoje em formato YYYY/MM/DD
+  getDataAtual(): string {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    return `${year}-${month}-${day}`;
   }
 
   /**
