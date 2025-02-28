@@ -10,6 +10,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { UtilService } from '../shared/utils/util.service'; 
 // import * as QRCode from 'qrcode'; // Biblioteca para QR Code (atualmente comentada)
 
 @Component({
@@ -32,7 +33,8 @@ export class HomepageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private firestoreService: FirestoreService<any>, // Serviço para buscar dados
-    private auth: AngularFireAuth // Serviço de autenticação
+    private auth: AngularFireAuth, // Serviço de autenticação
+    public utilService: UtilService, // Serviço de utilidades
   ) { }
 
   /**
@@ -109,6 +111,7 @@ export class HomepageComponent implements OnInit {
    * Se o username estiver definido, cria a URL e a abre com as configurações de segurança.
    */
   openHomepage(): void {
+    console.log("openHomepage()");
     if (this.username) {
       const homepageUrl = `/${this.username}`;
       window.open(homepageUrl, '_blank', 'noopener,noreferrer');

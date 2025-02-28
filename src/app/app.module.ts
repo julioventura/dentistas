@@ -17,8 +17,9 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import { PerfilComponent } from './perfil/perfil.component'; // Importando o componente Perfil
-import { HomepageIntroComponent } from './homepage-intro/homepage-intro.component'; // Importar o novo componente
+import { PerfilComponent } from './perfil/perfil.component'; 
+import { HomepageComponent } from './homepage/homepage.component';
+import { HomepageIntroComponent } from './homepage-intro/homepage-intro.component'; 
 import { ChatbotComponent } from './chatbot/chatbot.component';
 import { FooterComponent } from './footer/footer.component';
 import { MenuComponent } from './menu/menu.component';
@@ -29,13 +30,13 @@ import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
 import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
-import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
+import { FichasComponent } from './fichas/fichas.component'; 
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { HomeConfigComponent } from './home-config/home-config.component';
 import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';
-import { BackupComponent } from './backup/backup.component'; // Import the standalone component
+import { BackupComponent } from './backup/backup.component'; 
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 
 // Serviços
@@ -64,6 +65,7 @@ const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, 
+  { path: 'homepage', component: HomepageComponent, data: { animation: '2' } }, 
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
   { path: 'importar-cadastro', component: ImportarCadastroComponent },

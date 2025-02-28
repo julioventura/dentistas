@@ -1,151 +1,172 @@
 @import '../../styles.scss';
 
-h1 {
-    color: $primary-color;
-    font-weight: bold;
-    text-align: center;
-    font-size: 2rem;
-    padding: 10px 10px;
-    padding-top: 79px;
-    margin: 0px 0px 5px 0px;
-}
 
-h2 {
-    margin: 30px 0px 16px 0px;
-    font-size: 1.2rem;
+h1,
+h2,
+.title {
     font-weight: bold;
-    color: $primary-color;
     text-align: left;
-    padding: 0 10px;
-    background-color: $background-cinza;
-}
 
-h3 {
-    margin: 0px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: $primary-color-dark;
-    text-align: center;
-    padding: 0px;
-    background-color: $background-cinza;
-    margin-bottom: 0px;
-}
-
-p {
-    font-size: 1.1rem;
-    color: $text-color;
-    line-height: 1.6;
-    text-align: left;
-    background-color: $white;
-    font-weight: 500;
-}
-
-
-.profile-header {
-    margin: 0 20px;
-    text-align: center;
-    background-color: $background-cinza;
-    /* Fundo claro */
-    padding-bottom: 20px;
-
-    .header-bg {
-        position: relative;
-
-        .profile-photo {
-            width: 150px;
-            height: auto;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #fff;
-            position: absolute;
-            top: -75px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+    &.view-mode {
+        color: $primary-color; // Azul no modo de visualização
     }
 
-    .header-overlay {
-        margin-top: 100px;
-
-        .specialty {
-            font-size: 1.3rem;
-            color: #777;
-            margin-top: 5px;
-        }
+    &.edit-mode {
+        color: $red-dark; // Vermelho no modo de edição
     }
 }
 
-.profile-info {
-    padding: 0px 20px;
-    text-align: left;
-    background-color: $white;
-    /* Cor de fundo clara para destaque */
+// Header
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
 
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        flex-grow: 1;
+
+        &.view-mode {
+            color: $primary-color; // Azul no modo de visualização
+        }
+
+        &.edit-mode {
+            color: $red-dark; // Vermelho no modo de edição
+        }
+    }
+
+    .navegacao {
+        cursor: pointer;
+    }
 }
 
-.contact-section {
-    margin-top: 30px;
+// Linha com o nome do registro
+.record-header {
     text-align: center;
+    margin-bottom: 20px;
+    padding: 2px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
 
-    .contact-buttons {
+    &.view-mode {
+        background-color: $primary-color; // Azul no modo de visualização
+        color: $white;
+    }
+
+    &.edit-mode {
+        background-color: $red-dark; // Vermelho no modo de edição
+        color: $white;
+    }
+}
+
+// Detalhes do registro
+.record-details {
+    padding: 20px;
+    border-radius: 10px;
+
+    &.view-mode {
+        background-color: $white;
+        box-shadow: none; // Sem sombra no modo de visualização
+    }
+
+    &.edit-mode {
+        background-color: $white; // Fundo branco no modo de edição
+        box-shadow: $box-shadow; // Sombra ativada
+    }
+
+    .detail-container {
         display: flex;
-        justify-content: center;
-        gap: 15px;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid; // Dinâmico para os modos
 
-        .contact-btn {
-            background-color: $primary-color;
-            color: white;
-            padding: 12px 25px;
+        &.view-mode {
+            border-bottom-color: $primary-color-light; // Azul claro no modo de visualização
+        }
+
+        &.edit-mode {
+            border-bottom-color: $red-light; // Vermelho claro no modo de edição
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            width: 200px;
+            font-size: 14px;
+            text-align: left;
+
+            &.view-mode {
+                color: $primary-color-dark; // Azul escuro no modo de visualização
+            }
+
+            &.edit-mode {
+                color: $red-dark; // Vermelho escuro no modo de edição
+            }
+        }
+
+        .detail-value {
+            width: 100%;
+            padding: 8px;
             border-radius: 5px;
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
 
-            &:hover {
-                background-color: #0056b3;
-                box-shadow: 0 6px 8px rgba(0, 86, 179, 0.3);
+            &.view-mode {
+                background-color: $white;
+                border: 0; // Borda azul no modo de visualização
+                color: $primary-color-dark; // Texto azul no modo de visualização
+                cursor: not-allowed; // Não editável
+            }
+
+            &.edit-mode {
+                background-color: $white;
+                border: 1px solid $red-dark; // Borda vermelha no modo de edição
+                color: $red-dark; // Texto vermelho no modo de edição
             }
         }
     }
 }
 
-.social-media {
-    margin-top: 30px;
-    text-align: center;
-
-    padding: 0px 20px;
-    background-color: #ffffff;
-
-    img {
-        margin: 0 20px;
-    }
-}
-
-.qr-code {
+// Botões de ação do formulário
+.form-actions {
+    display: flex;
+    justify-content: space-between;
     margin-top: 20px;
-    text-align: center;
 
-    img {
-        display: inline-block;
-        margin: 10px auto;
-        width: 200px;
-        border: 7px solid #000;
-        border-radius: 20px;
-        padding: 0px;
-        background-color: #fff;
+    .btn {
+        background-color: $primary-color;
+        color: $white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+
+        &:hover {
+            background-color: $primary-hover;
+        }
     }
 
-    p {
-        margin-top: 10px;
-        font-size: 14px;
-        color: #555;
+    .btn-secondary {
+        background-color: $gray;
+        color: $white;
+
+        &:hover {
+            background-color: darken($gray, 10%);
+        }
     }
 }
 
-.footer {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 1rem;
-    color: #aaa;
+// Transições suaves
+.record-details,
+.detail-container,
+.detail-label,
+.detail-value,
+.record-header {
+    transition: all 0.3s ease;
 }
