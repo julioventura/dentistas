@@ -11,8 +11,10 @@ export interface Subcolecao {
 export class SubcolecaoService {
   private subcolecoes: Subcolecao[] = [
     { nome: 'exames' },
+    { nome: 'documentos' },
     { nome: 'planos' },
     { nome: 'atendimentos' },
+    { nome: 'tratamentos' },
     { nome: 'pagamentos' },
     { nome: 'dentes' },
     { nome: 'dentesendo' },

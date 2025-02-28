@@ -246,10 +246,14 @@ export class UtilService {
 
       case 'exames':
         return 'Exames';
+      case 'documentos':
+        return 'Documentos';
       case 'planos':
         return 'Planos';
       case 'atendimentos':
         return 'Atendimentos';
+      case 'tratamentos':
+        return 'Tratamentos';
       case 'pagamentos':
         return 'Pagamentos';
       case 'dentes':
@@ -297,10 +301,14 @@ export class UtilService {
 
       case 'exames':
         return 'Exame';
+      case 'documentos':
+        return 'Documento';
       case 'planos':
         return 'Plano';
       case 'atendimentos':
         return 'Atendimento';
+      case 'tratamentos':
+        return 'Tratamento';        
       case 'pagamentos':
         return 'Pagamento';
       case 'dentes':

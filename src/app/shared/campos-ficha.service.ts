@@ -19,8 +19,10 @@ import {
   DEFAULT_CAMPOS_PADRAO,
   DEFAULT_CAMPOS_PADRAO_FICHAS,
   CAMPOS_FICHAS_EXAMES,
+  CAMPOS_FICHAS_DOCUMENTOS,
   CAMPOS_FICHAS_PLANOS,
   CAMPOS_FICHAS_ATENDIMENTOS,
+  CAMPOS_FICHAS_TRATAMENTOS,
   CAMPOS_FICHAS_PAGAMENTOS,
   CAMPOS_FICHAS_DENTES,
   CAMPOS_FICHAS_DENTES_ENDO,
@@ -44,10 +46,14 @@ export class CamposFichaService {
         return of([...DEFAULT_CAMPOS_PADRAO]);
       case 'exames':
         return of([...CAMPOS_FICHAS_EXAMES]);
+      case 'documentos':
+        return of([...CAMPOS_FICHAS_DOCUMENTOS]);    
       case 'planos':
         return of([...CAMPOS_FICHAS_PLANOS]);        
         case 'atendimentos':
           return of([...CAMPOS_FICHAS_ATENDIMENTOS]);
+      case 'tratamentos':
+        return of([...CAMPOS_FICHAS_TRATAMENTOS]);
       case 'pagamentos':
         return of([...CAMPOS_FICHAS_PAGAMENTOS]);
       case 'dentes':

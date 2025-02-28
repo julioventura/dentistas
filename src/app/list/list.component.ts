@@ -31,7 +31,8 @@ import { FormService } from '../shared/form.service';
 import { ExportService } from '../shared/export.service';
 import { PdfExportService } from '../shared/pdf-export.service';
 import { SubcolecaoService } from '../shared/subcolecao.service';
-import { CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS } from '../shared/constants/campos-ficha.constants';
+import { CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_DOCUMENTOS, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_TRATAMENTOS, CAMPOS_FICHAS_PAGAMENTOS } from '../shared/constants/campos-ficha.constants';
+
 import { SUBCOLLECTION_FIELDS } from '../config/subcollection-fields.config';
 
 @Component({
@@ -239,13 +240,12 @@ export class ListComponent implements OnInit {
           this.FormService.campos.forEach(campo => {
             novoRegistro[campo.nome] = '';
           });
-          
-          novoRegistro['data'] = `this.getDataAtual()`; // Data de hoje
+          novoRegistro['data'] = this.getDataAtual(); // Data de hoje
         } 
         else {
           this.FormService.campos.forEach(campo => {
             novoRegistro[campo.nome] = '';
-            novoRegistro['data'] = `this.getDataAtual()`; // Data de hoje
+            novoRegistro['data'] = this.getDataAtual(); // Data de hoje
           });
         }
 
@@ -417,9 +417,9 @@ export class ListComponent implements OnInit {
   getMenusPadraoPorCollection(colecao: string): any {
     const subcolecoes = this.subcolecaoService.getSubcolecoesDisponiveis();
     const menusPadrao: { [key: string]: any[] } = {
-      pacientes: [CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
+      pacientes: [CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_TRATAMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
       clientes: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
-      alunos: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS],
+      alunos: [CAMPOS_FICHAS_DOCUMENTOS, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS],
       professores: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS],
       dentistas: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
       equipe: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],

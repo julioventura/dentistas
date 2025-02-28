@@ -70,7 +70,7 @@
           <tr *ngFor="let registro of registrosPaginados" (click)="verFicha(registro.id)" style="cursor: pointer;">
 
             <ng-container *ngIf="!this.subcollection">
-              <td>{{ registro.nome }}</td>
+              <td>{{ registro.nome ? registro.nome : '(vazio)' }}</td>
               <td class="right">{{ registro.codigo }}</td>
             </ng-container>
 

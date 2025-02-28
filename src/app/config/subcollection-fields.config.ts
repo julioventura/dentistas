@@ -5,21 +5,33 @@ export const SUBCOLLECTION_FIELDS: { [key: string]: { firstField: string, firstH
     secondField: 'data',
     secondHeader: 'Data'
   },
+  documentos: {
+    firstField: 'nome',
+    firstHeader: 'Documentos',
+    secondField: 'data',
+    secondHeader: 'Data'
+  },
   planos: {
     firstField: 'nome',
-    firstHeader: 'Plano',
+    firstHeader: 'Planos',
     secondField: 'data',
     secondHeader: 'Data'
   },
   pagamentos: {
     firstField: 'nome',
-    firstHeader: 'Pagamento',
+    firstHeader: 'Pagamentos',
     secondField: 'data',
     secondHeader: 'Data'
   },
   atendimentos: {
     firstField: 'nome',
-    firstHeader: 'Atendimento',
+    firstHeader: 'Atendimentos',
+    secondField: 'data',
+    secondHeader: 'Data'
+  },
+  tratamentos: {
+    firstField: 'nome',
+    firstHeader: 'Tratamentos',
     secondField: 'data',
     secondHeader: 'Data'
   },

@@ -25,14 +25,14 @@
 
   <!-- Formulário Dinâmico -->
   <div class="dynamic-form-container" *ngIf="FormService.fichaForm && FormService.campos.length > 0">
-  
+
     <div *ngIf="FormService.isLoading" class="aviso">
       Carregando...
     </div>
 
     <!-- Slider flutuante (sticky) para subcollection -->
     <div class="sticky-slider">
-    <!-- <div class="sticky-slider" *ngIf="adjustableFields.length > 0"> -->
+      <!-- <div class="sticky-slider" *ngIf="adjustableFields.length > 0"> -->
       <div class="width-control">
         <div class="slider-wrapper">
           <label for="labelWidthRange"></label>
@@ -44,12 +44,13 @@
     </div>
 
     <!-- Container para visualização de registros normais (não subcollection) -->
-    <form *ngIf="!FormService.isLoading && !subcollection" 
-      [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo"
-      [style.--label-width]="customLabelWidth">
+    <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm"
+      class="record-details borda_reta_topo" [style.--label-width]="customLabelWidth">
       <div *ngFor="let campo of FormService.campos">
-        <div *ngIf="FormService.registro[campo.nome] && FormService.registro[campo.nome]?.length > 0" class="detail-container">
+        <div *ngIf="campo.nome === 'nome' || (FormService.registro[campo.nome] && FormService.registro[campo.nome]?.length > 0)"
+          class="detail-container">
           <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+
           <ng-container [ngSwitch]="campo.tipo">
             <!-- URL: campo clicável -->
             <ng-container *ngSwitchCase="'url'">
@@ -57,23 +58,39 @@
                 <input type="url" [value]="FormService.registro[campo.nome]" class="detail-value url" readonly>
               </div>
             </ng-container>
-            <!-- Demais tipos -->
+
+            <!-- textarea -->
             <ng-container *ngSwitchCase="'textarea'">
-              <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" readonly></textarea>
+              <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2"
+                readonly></textarea>
             </ng-container>
+
+            <!-- text -->
+            <ng-container *ngSwitchCase="'text'">
+              <!-- When it's a nome field with empty value, show placeholder -->
+              <ng-container *ngIf="campo.nome === 'nome' && (!FormService.registro[campo.nome] || FormService.registro[campo.nome] === '')">
+                <input [type]="campo.tipo" [id]="campo.nome" value="(vazio)" class="detail-value" readonly>
+              </ng-container>
+              <!-- Otherwise show normal field -->
+              <ng-container *ngIf="!(campo.nome === 'nome' && (!FormService.registro[campo.nome] || FormService.registro[campo.nome] === ''))">
+                <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+              </ng-container>
+            </ng-container>
+
+
+            <!-- Demais tipos -->
             <ng-container *ngSwitchDefault>
               <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
             </ng-container>
           </ng-container>
+
         </div>
       </div>
     </form>
 
     <!-- Container para campos de subcollection com agrupamento -->
-    <div *ngIf="!FormService.isLoading && subcollection" 
-      class="record-details borda_reta_topo"
-      [style.--label-width]="customLabelWidth"
-    >
+    <div *ngIf="!FormService.isLoading && subcollection" class="record-details borda_reta_topo"
+      [style.--label-width]="customLabelWidth">
       <!-- Campos fixos (sem grupo) -->
       <form [formGroup]="FormService.fichaForm">
         <div *ngFor="let campo of fixedFields">
@@ -88,7 +105,8 @@
               </ng-container>
               <!-- Textarea -->
               <ng-container *ngSwitchCase="'textarea'">
-                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" readonly></textarea>
+                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2"
+                  readonly></textarea>
               </ng-container>
               <!-- Checkbox -->
               <ng-container *ngSwitchCase="'checkbox'">
@@ -100,7 +118,8 @@
               </ng-container>
               <!-- Outros tipos -->
               <ng-container *ngSwitchDefault>
-                <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+                <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+                  readonly>
               </ng-container>
             </ng-container>
           </div>
@@ -120,8 +139,8 @@
             <form [formGroup]="FormService.fichaForm">
               <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
                 <!-- Exibe apenas campos com valores não vazios -->
-                <div class="detail-container" 
-                     *ngIf="FormService.registro[campo.nome] !== null && 
+                <div class="detail-container"
+                  *ngIf="FormService.registro[campo.nome] !== null && 
                            FormService.registro[campo.nome] !== undefined && 
                            FormService.registro[campo.nome] !== '' && 
                            (campo.tipo === 'boolean' || campo.tipo === 'checkbox' ? FormService.registro[campo.nome] === true : true)">
@@ -135,7 +154,8 @@
                     </ng-container>
                     <!-- Textarea -->
                     <ng-container *ngSwitchCase="'textarea'">
-                      <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" readonly></textarea>
+                      <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2"
+                        readonly></textarea>
                     </ng-container>
                     <!-- Checkbox e Boolean -->
                     <ng-container *ngSwitchCase="'checkbox'">
@@ -146,7 +166,8 @@
                     </ng-container>
                     <!-- Outros tipos -->
                     <ng-container *ngSwitchDefault>
-                      <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+                      <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+                        readonly>
                     </ng-container>
                   </ng-container>
                 </div>

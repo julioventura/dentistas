@@ -56,6 +56,7 @@ export class FichasComponent implements OnInit {
           'planos',
           'pagamentos',
           'atendimentos',
+          'tratamentos',
           'dentes',
           'dentesendo',
           'dentesperio',

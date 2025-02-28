@@ -24,6 +24,14 @@ export const CAMPOS_FICHAS_EXAMES: Campo[] = [
   { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
+export const CAMPOS_FICHAS_DOCUMENTOS: Campo[] = [
+  { grupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
+  { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+];
+
+
 export const CAMPOS_FICHAS_PLANOS: Campo[] = [
   { grupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
@@ -48,6 +56,14 @@ export const CAMPOS_FICHAS_ATENDIMENTOS: Campo[] = [
   { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
 ];
 
+export const CAMPOS_FICHAS_TRATAMENTOS: Campo[] = [
+  { grupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
+  { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
+];
+
 export const CAMPOS_FICHAS_DENTES: Campo[] = [
   { grupo: '', nome: 'nome', tipo: 'text', label: 'Dente' },
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
@@ -65,12 +81,6 @@ export const CAMPOS_FICHAS_DIAGNOSTICOS: Campo[] = [
 
 export const CAMPOS_FICHAS_RISCO: Campo[] = [
   { grupo: '', nome: 'nome', tipo: 'text', label: 'Dente' },
-  { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-];
-export const CAMPOS_FICHAS_TRATAMENTOS: Campo[] = [
-  { grupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
   { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },

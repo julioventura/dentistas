@@ -19,19 +19,20 @@ interface Subcolecao {
 export class MenuConfigComponent implements OnInit {
   colecoesDisponiveis = [
     'pacientes',
-    'clientes',
     'alunos',
     'professores',
     'dentistas',
-    'equipe',
-    'proteticos'
+    'proteticos',
+    'equipe'
   ];
 
   todasSubcolecoes = [
     'padrao',
     'exames',
+    'documentos ',
     'planos',
     'atendimentos',
+    'tratamentos',
     'pagamentos',
     'dentes',
     'dentesendo',
