@@ -52,8 +52,10 @@ export class HomepageComponent implements OnInit {
     this.auth.authState.subscribe(user => {
       if (user) {
         this.loggedInUser = user; // Armazena os dados do usuário logado
+
         // Obtém o parâmetro 'username' da rota
         this.username = this.route.snapshot.paramMap.get('username');
+        
         // Se houver um username na URL, carrega o perfil público do usuário
         if (this.username) {
           this.loadUserProfile(this.username);

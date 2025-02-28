@@ -66,6 +66,7 @@ const routes: Routes = [
   { path: 'config', component: ConfigComponent },
   { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, 
   { path: 'homepage', component: HomepageComponent, data: { animation: '2' } }, 
+  { path: 'homepage-intro', component: HomepageIntroComponent, data: { animation: '2' } }, 
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
   { path: 'importar-cadastro', component: ImportarCadastroComponent },
