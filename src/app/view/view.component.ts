@@ -48,7 +48,7 @@ export class ViewComponent implements OnInit {
   
   // Propriedade utilizada no binding CSS para definir a largura dos labels
   customLabelWidthValue: number = 100;
-  customLabelWidth: string = `${this.customLabelWidthValue}px`;
+  customLabelWidth: string = `${this.customLabelWidthValue} px`;
 
   constructor(
     private route: ActivatedRoute,
