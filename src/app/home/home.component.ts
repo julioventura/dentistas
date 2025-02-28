@@ -39,6 +39,7 @@ export class HomeComponent implements OnInit {
     indicador: false,
     dentais: false,
     empresas: false,
+    fornecedores: false,
     perfil: true,
     homepage: true,
   };

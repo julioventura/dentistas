@@ -1,13 +1,12 @@
 <div class="container container_principal">
-    <!-- Header com título e botões de ação -->
+    <!-- Header with title and action buttons -->
     <div class="header">
         <div class="actions">
             <img [src]="isEditing ? 'https://dentistas.com.br/assets/voltar_red.png' : 'https://dentistas.com.br/assets/voltar.png'"
                 class="navegacao" (click)="voltar()" />
         </div>
 
-        <h2 *ngIf="!isEditing" class="view-mode">Perfil do Usuário</h2>
-        <h2 *ngIf="isEditing" class="edit-mode">Perfil do Usuário</h2>
+        <h2 class="title">Perfil do Usuário</h2>
 
         <div class="actions">
             <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/editar.png" class="navegacao_direita"
@@ -15,30 +14,45 @@
             <img *ngIf="isEditing" src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao_direita"
                 (click)="salvar()">
         </div>
-
     </div>
 
-    <!-- Bloco de dados pessoais -->
-    <div class="record-header" [class.view-mode]="!isEditing" [class.edit-mode]="isEditing">
-        {{ user?.nome || 'Nome do Usuário' }}
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" class="loading">
+        Carregando perfil...
     </div>
 
-    <!-- Dados Pessoais -->
-    <div class="record-details" [ngClass]="{ 'edit-mode': isEditing, 'view-mode': !isEditing }">
-        <div class="detail-container" *ngFor="let field of [
-            { id: 'nome', label: 'Nome', type: 'text', model: 'nome' },
-            { id: 'username', label: 'Username', type: 'text', model: 'username' },
-            { id: 'foto', label: 'Foto', type: 'text', model: 'foto' },
-            { id: 'nascimento', label: 'Data de Nascimento', type: 'date', model: 'nascimento' },
-            { id: 'email', label: 'Email', type: 'email', model: 'email' },
-            { id: 'whatsapp', label: 'Whatsapp', type: 'tel', model: 'whatsapp' },
-            { id: 'telefone', label: 'Telefone', type: 'tel', model: 'telefone' },
-            { id: 'endereco', label: 'Endereço', type: 'text', model: 'endereco' }
-          ]">
-            <label [for]="field.id" class="detail-label">{{ field.label }}:</label>
-            <input [id]="field.id" [(ngModel)]="user[field.model]" [readonly]="!isEditing" [type]="field.type"
-                class="detail-value" />
+    <!-- Error message -->
+    <div *ngIf="errorMessage" class="error-message">
+        {{errorMessage}}
+    </div>
+
+    <!-- Profile display -->
+    <div *ngIf="!isLoading && !errorMessage">
+        <div class="record-header">
+            {{userProfileData?.nome || 'Usuário sem nome definido'}}
+        </div>
+
+        <!-- Profile data -->
+        <div class="record-details" [ngClass]="{ 'edit-mode': isEditing, 'view-mode': !isEditing }">
+            <div class="detail-container" *ngFor="let field of [
+                { id: 'nome', label: 'Nome', type: 'text', model: 'nome' },
+                { id: 'username', label: 'Username', type: 'text', model: 'username' },
+                { id: 'foto', label: 'Foto', type: 'text', model: 'foto' },
+                { id: 'nascimento', label: 'Data de Nascimento', type: 'date', model: 'nascimento' },
+                { id: 'email', label: 'Email', type: 'email', model: 'email' },
+                { id: 'whatsapp', label: 'Whatsapp', type: 'tel', model: 'whatsapp' },
+                { id: 'telefone', label: 'Telefone', type: 'tel', model: 'telefone' },
+                { id: 'endereco', label: 'Endereço', type: 'text', model: 'endereco' }
+            ]">
+                <label [for]="field.id" class="detail-label">{{ field.label }}:</label>
+                <input [id]="field.id" [(ngModel)]="userProfileData[field.model]" [readonly]="!isEditing" [type]="field.type"
+                    class="detail-value" />
+            </div>
+        </div>
+
+        <!-- Save button (mobile view) -->
+        <div *ngIf="isEditing" class="save-button-container">
+            <button (click)="salvar()" class="save-button">Salvar Alterações</button>
         </div>
     </div>
-
 </div>

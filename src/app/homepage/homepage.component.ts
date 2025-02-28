@@ -3,15 +3,14 @@
   1. ngOnInit() - Inicializa o componente, verificando se o usuário está logado e, caso haja um username na URL, carrega o perfil público.
   2. loadUserProfile(username: string): void - Busca e carrega o perfil público do usuário com base no username.
   3. openHomepage(): void - Abre a homepage pública do usuário em uma nova janela.
-  // 4. generateQRCode(url: string): void - (Atualmente comentado) Gera um QR Code a partir da URL fornecida.
 */
 
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { UtilService } from '../shared/utils/util.service'; 
-// import * as QRCode from 'qrcode'; // Biblioteca para QR Code (atualmente comentada)
+import { UserService } from '../shared/user.service';
+import { UtilService } from '../shared/utils/util.service';
 
 @Component({
   selector: 'app-homepage',
@@ -20,21 +19,22 @@ import { UtilService } from '../shared/utils/util.service';
   standalone: false,
 })
 export class HomepageComponent implements OnInit {
-  public userProfile: any = {}; // Dados do perfil público
-  public username: string | null = null; // Username utilizado para buscar o perfil público
-  public currentYear: number = new Date().getFullYear(); // Ano atual
-  public qrCodeUrl: string = 'https://dentistas.com.br/assets/qrcode_dentistascombr.png'; // URL do QR Code
-  public loggedInUser: any; // Dados do usuário logado
-  
-  // Propriedades para feedback visual e tratamento de erros
-  public isLoading: boolean = false;
+  public userProfile: any = {}; 
+  public username: string | null = null;
+  public currentYear: number = new Date().getFullYear();
+  public qrCodeUrl: string = 'https://dentistas.com.br/assets/qrcode_dentistascombr.png';
+  public loggedInUser: any;
+  public isLoading: boolean = true;
   public errorMessage: string = '';
+  public isCurrentUserProfile: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
-    private firestoreService: FirestoreService<any>, // Serviço para buscar dados
-    private auth: AngularFireAuth, // Serviço de autenticação
-    public utilService: UtilService, // Serviço de utilidades
+    private router: Router,
+    private firestoreService: FirestoreService<any>,
+    private auth: AngularFireAuth,
+    private userService: UserService,
+    public util: UtilService,
   ) { }
 
   /**
@@ -46,35 +46,79 @@ export class HomepageComponent implements OnInit {
    *   - Atualiza as flags de carregamento e mensagens de erro para fornecer feedback visual.
    */
   ngOnInit(): void {
-    console.log("ngOnInit()");
+    console.log("HomepageComponent ngOnInit()");
     this.isLoading = true;
+    
+    // Obtém o parâmetro 'username' da rota primeiro
+    this.username = this.route.snapshot.paramMap.get('username');
+    console.log("Username from route:", this.username);
+    
     // Subscreve ao estado de autenticação para verificar se o usuário está logado
     this.auth.authState.subscribe(user => {
       if (user) {
         this.loggedInUser = user; // Armazena os dados do usuário logado
+        console.log("Authenticated user:", this.loggedInUser);
 
-        // Obtém o parâmetro 'username' da rota
-        this.username = this.route.snapshot.paramMap.get('username');
-        
-        // Se houver um username na URL, carrega o perfil público do usuário
+        // Carrega os dados do usuário autenticado do seu perfil no app
+        this.userService.getUserProfileData().subscribe(profileData => {
+          if (profileData) {
+            console.log("User profile data:", profileData);
+            
+            // Se não houver username na URL, usa o do perfil (se disponível)
+            if (!this.username && profileData.username) {
+              this.username = profileData.username;
+              console.log("Using username from profile:", this.username);
+              this.isCurrentUserProfile = true;
+            }
+            
+            // Se temos um username, carregamos o perfil
+            if (this.username) {
+              this.loadUserProfile(this.username);
+            } else {
+              this.errorMessage = 'Usuário sem nome de usuário definido. Atualize seu perfil.';
+              this.isLoading = false;
+            }
+          } else {
+            console.log("No profile data found");
+            if (this.username) {
+              // Se temos um username da rota mas não há dados de perfil,
+              // carregamos o perfil para esse username
+              this.loadUserProfile(this.username);
+            } else {
+              this.errorMessage = 'Perfil não encontrado. Por favor, atualize seu perfil.';
+              this.isLoading = false;
+            }
+          }
+        }, error => {
+          console.error("Error getting user profile:", error);
+          if (this.username) {
+            // Ainda tenta carregar o perfil com base no username da rota
+            this.loadUserProfile(this.username);
+          } else {
+            this.errorMessage = 'Erro ao carregar perfil.';
+            this.isLoading = false;
+          }
+        });
+      } else {
+        console.log("No authenticated user");
         if (this.username) {
+          // Se temos um username da rota mas não há usuário autenticado,
+          // tenta carregar o perfil (visualização pública)
           this.loadUserProfile(this.username);
-          // Exemplo de como gerar um QR Code – função comentada:
-          // const userProfileUrl = 'https://dentistas.com.br/' + this.username;
-          // this.generateQRCode(userProfileUrl);
         } else {
-          this.errorMessage = 'Username não definido na URL.';
+          this.errorMessage = 'Por favor, faça login para ver seu perfil.';
           this.isLoading = false;
         }
+      }
+    }, error => {
+      console.error("Auth error:", error);
+      if (this.username) {
+        // Ainda tenta carregar o perfil com base no username da rota
+        this.loadUserProfile(this.username);
       } else {
-        this.errorMessage = 'Usuário não autenticado. Por favor, faça login.';
+        this.errorMessage = 'Erro de autenticação.';
         this.isLoading = false;
       }
-    },
-    error => {
-      console.error('Erro na autenticação:', error);
-      this.errorMessage = 'Erro ao verificar autenticação.';
-      this.isLoading = false;
     });
   }
 
@@ -86,22 +130,30 @@ export class HomepageComponent implements OnInit {
    * se não, define uma mensagem de erro para feedback visual.
    */
   loadUserProfile(username: string): void {
+    console.log("Loading user profile for username:", username);
     this.firestoreService.getRegistroByUsername('usuarios/dentistascombr/users', username).subscribe(
       (userProfiles) => {
         if (userProfiles && userProfiles.length > 0) {
           // Armazena o primeiro resultado (assumindo username único)
           this.userProfile = userProfiles[0];
-          console.log('Dados do usuário carregados:', this.userProfile);
+          console.log('Profile loaded:', this.userProfile);
           this.errorMessage = '';
+          
+          // Verifica se este é o perfil do usuário atual
+          if (this.loggedInUser && this.loggedInUser.email && 
+              this.userProfile.email === this.loggedInUser.email) {
+            this.isCurrentUserProfile = true;
+          }
         } else {
-          console.error('Perfil não encontrado');
-          this.errorMessage = 'Perfil não encontrado para o username informado.';
+          console.error('Profile not found');
+          this.errorMessage = 'Perfil não encontrado.';
+          this.userProfile = {};
         }
         this.isLoading = false;
       },
       (error) => {
-        console.error('Erro ao carregar perfil:', error);
-        this.errorMessage = 'Erro ao carregar perfil. Por favor, tente novamente.';
+        console.error('Error loading profile:', error);
+        this.errorMessage = 'Erro ao carregar perfil.';
         this.isLoading = false;
       }
     );
@@ -113,32 +165,24 @@ export class HomepageComponent implements OnInit {
    * Se o username estiver definido, cria a URL e a abre com as configurações de segurança.
    */
   openHomepage(): void {
-    console.log("openHomepage()");
+    console.log("Opening homepage for username:", this.username);
+    
     if (this.username) {
-      const homepageUrl = `/${this.username}`;
-      window.open(homepageUrl, '_blank', 'noopener,noreferrer');
+      if (this.isCurrentUserProfile) {
+        // Para outros usuários, abre em uma nova aba
+        console.log("Opening user homepage in new tab");
+        const homepageUrl = "https://dentista.com.br/" + this.username;
+        window.open(homepageUrl, '_blank', 'noopener,noreferrer');
+      }
+    } else {
+      console.error('Username not defined');
+      this.errorMessage = 'Nome de usuário não definido.';
     }
   }
-  
-  /*
-  // Exemplo de função para gerar QR Code utilizando a biblioteca 'qrcode'
-  // @param url - URL a ser convertida em QR Code.
-  // @description Gera um QR Code para a URL fornecida e atualiza a propriedade qrCodeUrl com a imagem gerada.
-  generateQRCode(url: string): void {
-    QRCode.toDataURL(url, {
-      width: 300, // Define a largura do QR Code
-      margin: 3,  // Define a margem ao redor (borda)
-      color: {
-        dark: '#000000',  // Cor do QR Code (preto)
-        light: '#ffffff'  // Cor de fundo (branco)
-      }
-    }, (err, url) => {
-      if (err) {
-        console.error('Erro ao gerar QR Code', err);
-        return;
-      }
-      this.qrCodeUrl = url;
-    });
+
+  editProfile(): void {
+    if (this.isCurrentUserProfile) {
+      this.router.navigate(['/perfil']);
+    }
   }
-  */
 }

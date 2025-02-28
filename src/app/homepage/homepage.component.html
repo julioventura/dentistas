@@ -1,49 +1,47 @@
-<!-- <div class="container" *ngIf="loggedInUser && !username"> -->
-<div class="container container_principal" *ngIf="!username">
-
-
-    <!-- Header com título e botões de ação -->
+<div class="container container_principal">
     <div class="header">
         <div class="actions">
-            <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao"
-                (click)="this.utilService.voltar()" />
+            <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="this.util.voltar()">
         </div>
-
-        <h2 class="view-mode">Configuração da Homepage</h2>
-
+        <h1 class="title">Configuração da Homepage</h1>
         <div class="actions">
-            <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao_direita" />
+            <img src="https://dentistas.com.br/assets/global.png" class="navegacao" (click)="openHomepage()">
+        </div>
+    </div>
+
+    <div class="record-header">
+        Sua homepage
+    </div>
+
+    <div class="record-details">
+        <div class="intro-container">
+            <p>
+                Para configurar sua homepage profissional
+                <br />
+                acesse <a href="/perfil" class="perfil-link"> Seu Perfil </a> na página inicial.
+            </p>
+
+            <!-- Botão para abrir a homepage em uma nova janela -->
+            <button (click)="openHomepage()" class="open-homepage-btn">
+                Abrir Homepage em uma Nova Janela
+            </button>
+        </div>
+    </div>
+
+    <div class="homepage-container">
+        <!-- Loading and error messages -->
+        <div *ngIf="isLoading" class="loading">
+            Carregando perfil...
+        </div>
+
+        <div *ngIf="errorMessage" class="error-message">
+            {{errorMessage}}
+
+            <!-- Show update profile button if user is logged in -->
+            <div *ngIf="loggedInUser" class="action-buttons">
+                <button (click)="editProfile()" class="edit-profile-btn">Atualizar Perfil</button>
+            </div>
         </div>
 
     </div>
-
-    <!-- Bloco de dados pessoais -->
-    <div class="record-header" >
-        {{ this.username || 'Nome do Usuário' }}
-    </div>
-
-
-        <div *ngIf="!username">
-
-    <!-- Bloco de dados pessoais -->
-    <p>
-        Para configurar sua homepage profissional, 
-    </p>
-    <p>
-        acesse seu "Perfil" na tela inicial.
-    </p>
-        </div>
-
-
-    <div *ngIf="username">
-
-        <!-- Botão para abrir a homepage pública -->
-        <button (click)="openHomepage()" class="open-homepage-btn">
-            Abrir Homepage em uma Nova Janela
-        </button>
-
-    </div>
-
-
-
 </div>

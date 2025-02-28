@@ -241,9 +241,8 @@ export class UtilService {
         return 'Dentais';
       case 'empresas':
         return 'Empresas';
-      case 'notas':
-        return 'Anotações';
-
+      case 'fornecedores':
+        return 'Fornecedores';
       case 'exames':
         return 'Exames';
       case 'documentos':
@@ -296,6 +295,8 @@ export class UtilService {
         return 'Dental';
       case 'empresas':
         return 'Empresa';
+      case 'fornecedores':
+        return 'Fornecedor';
       case 'notas':
         return 'Anotação';
 

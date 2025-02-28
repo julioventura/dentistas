@@ -26,9 +26,7 @@ export class HomeConfigComponent implements OnInit {
     { key: 'indicador', label: 'Indicador' },
     { key: 'dentais', label: 'Dentais' },
     { key: 'empresas', label: 'Empresas' },
-    { key: 'perfil', label: 'Perfil' },
-    { key: 'homepage', label: 'Homepage' }
-  ];
+    { key: 'fornecedores', label: 'Fornecedores' },];
   visibleIcons: { [key: string]: boolean } = {};
 
   private userId: string | null = null;
@@ -51,9 +49,6 @@ export class HomeConfigComponent implements OnInit {
     });
   }
 
-  selecionarColecao(colecao: string) {
-    this.colecaoSelecionada = colecao;
-  }
 
   loadIconConfig() {
     if (!this.userId) return;
@@ -68,6 +63,10 @@ export class HomeConfigComponent implements OnInit {
         });
       }
     });
+  }
+
+  selecionarColecao(colecao: string) {
+    this.colecaoSelecionada = colecao;
   }
 
   salvarConfiguracoes() {

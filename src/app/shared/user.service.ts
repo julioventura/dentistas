@@ -1,22 +1,62 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { FirestoreService } from '../shared/firestore.service'; // Serviço para manipular o Firestore
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
+import { map, catchError, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+
   constructor(
     private afAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private firestoreService: FirestoreService<any>
   ) { }
+
+  userEmail: string | null = null; // Email do usuário logado
+  user: any = {}; // Dados do perfil
 
   // Método para pegar os dados do usuário autenticado
   getUser(): Observable<firebase.User | null> {
     return this.afAuth.authState;
+  }
+
+  // Carregar dados do usuário autenticado
+  loadUserData() {
+    try {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        this.user = parsedData;
+        console.log('User data loaded from localStorage:', this.user);
+        return parsedData;
+      }
+      return {}; // Return empty object if no data found
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      return {}; // Return empty object on error
+    }
+  }
+
+  // Add method to get user profile data asynchronously
+  getUserProfileData(): Observable<any> {
+    return this.afAuth.authState.pipe(
+      switchMap(authUser => {
+        if (authUser && authUser.email) {
+          this.userEmail = authUser.email;
+          return this.firestoreService.getRegistroById('usuarios/dentistascombr/users', this.userEmail);
+        }
+        return of(null);
+      }),
+      catchError(error => {
+        console.error('Error getting user profile data:', error);
+        return of(null);
+      })
+    );
   }
 
   // Método para criar um documento de usuário na coleção 'usuarios/dentistascombr'

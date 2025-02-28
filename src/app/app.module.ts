@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';  // Importe o CommonModule
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HomepageModule } from './homepage/homepage.module';
 
 // Firebase e Firestore
 import { AngularFireModule } from '@angular/fire/compat';
@@ -17,9 +18,8 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import { PerfilComponent } from './perfil/perfil.component'; 
-import { HomepageComponent } from './homepage/homepage.component';
-import { HomepageIntroComponent } from './homepage-intro/homepage-intro.component'; 
+import { PerfilComponent } from './perfil/perfil.component'; // Importando o componente Perfil
+// import { HomepageComponent } from './homepage/homepage.component'; // Removido o componente Homepage
 import { ChatbotComponent } from './chatbot/chatbot.component';
 import { FooterComponent } from './footer/footer.component';
 import { MenuComponent } from './menu/menu.component';
@@ -30,13 +30,13 @@ import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
 import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
-import { FichasComponent } from './fichas/fichas.component'; 
+import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { HomeConfigComponent } from './home-config/home-config.component';
 import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';
-import { BackupComponent } from './backup/backup.component'; 
+import { BackupComponent } from './backup/backup.component'; // Import the standalone component
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 
 // Serviços
@@ -65,8 +65,7 @@ const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, 
-  { path: 'homepage', component: HomepageComponent, data: { animation: '2' } }, 
-  { path: 'homepage-intro', component: HomepageIntroComponent, data: { animation: '2' } }, 
+  { path: 'homepage', redirectTo: '/homepage', pathMatch: 'full' }, 
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
   { path: 'importar-cadastro', component: ImportarCadastroComponent },
@@ -89,7 +88,6 @@ const routes: Routes = [
     { path: 'backup', component: BackupComponent },
   
   // HOMEPAGES
-  { path: ':username/intro', component: HomepageIntroComponent },
   { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
 
   // Redireciona para a página inicial em caso de rota inválida
@@ -113,7 +111,6 @@ const routes: Routes = [
     ViewComponent,
     EditComponent,
     PerfilComponent,
-    HomepageIntroComponent,
     FichasComponent,
     MenuConfigComponent,
     HomeConfigComponent,
@@ -139,6 +136,7 @@ const routes: Routes = [
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    HomepageModule,
     BackupComponent // Import the standalone component
   ],
   providers: [
