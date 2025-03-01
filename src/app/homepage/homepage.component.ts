@@ -169,9 +169,13 @@ export class HomepageComponent implements OnInit {
     
     if (this.username) {
       if (this.isCurrentUserProfile) {
+        // Se for o usuário atual, navega dentro do app
+        console.log("Navigating to current user's homepage within app");
+        this.router.navigate([`/${this.username}`]);
+      } else {
         // Para outros usuários, abre em uma nova aba
         console.log("Opening user homepage in new tab");
-        const homepageUrl = "https://dentista.com.br/" + this.username;
+        const homepageUrl = `${window.location.origin}/${this.username}`;
         window.open(homepageUrl, '_blank', 'noopener,noreferrer');
       }
     } else {

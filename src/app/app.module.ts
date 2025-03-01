@@ -6,7 +6,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';  // Importe o CommonModule
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { HomepageModule } from './homepage/homepage.module';
 
 // Firebase e Firestore
 import { AngularFireModule } from '@angular/fire/compat';
@@ -19,7 +18,6 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { PerfilComponent } from './perfil/perfil.component'; // Importando o componente Perfil
-// import { HomepageComponent } from './homepage/homepage.component'; // Removido o componente Homepage
 import { ChatbotComponent } from './chatbot/chatbot.component';
 import { FooterComponent } from './footer/footer.component';
 import { MenuComponent } from './menu/menu.component';
@@ -33,11 +31,13 @@ import { CamposRegistroComponent } from './camposRegistro/camposRegistro.compone
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { HomeConfigComponent } from './home-config/home-config.component';
+import { HomepageIntroComponent } from './homepage-intro/homepage-intro.component';
 import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';
 import { BackupComponent } from './backup/backup.component'; // Import the standalone component
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
+import { HomepageComponent } from './homepage/homepage.component';
 
 // Serviços
 
@@ -57,7 +57,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 
 const routes: Routes = [
-  { path: '', component: HomeComponent }, // Página inicial padrão
+  { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'home', component: HomeComponent, data: { animation: '1' } },
   { path: 'login', component: LoginComponent },
   { path: 'chatbot', component: ChatbotComponent },
@@ -65,7 +65,7 @@ const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, 
-  { path: 'homepage', redirectTo: '/homepage', pathMatch: 'full' }, 
+  { path: 'homepage-intro', component: HomepageIntroComponent, data: { animation: '2' } },
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
   { path: 'importar-cadastro', component: ImportarCadastroComponent },
@@ -88,7 +88,8 @@ const routes: Routes = [
     { path: 'backup', component: BackupComponent },
   
   // HOMEPAGES
-  { path: ':username', loadChildren: () => import('./homepage/homepage.module').then(m => m.HomepageModule), canActivate: [UsernameGuard] },
+  { path: ':username',          component: HomepageComponent, canActivate: [UsernameGuard] },
+  { path: ':username/homepage', component: HomepageComponent, canActivate: [UsernameGuard] },
 
   // Redireciona para a página inicial em caso de rota inválida
   { path: '**', component: HomeComponent, data: { animation: '9' } }
@@ -119,6 +120,7 @@ const routes: Routes = [
     MenuComponent,
     ErupcoesEditComponent,
     AutoFocusDirective,
+    HomepageComponent
   ],
   imports: [
     BrowserModule,
@@ -136,7 +138,6 @@ const routes: Routes = [
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    HomepageModule,
     BackupComponent // Import the standalone component
   ],
   providers: [
