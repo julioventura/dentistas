@@ -11,12 +11,22 @@ import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../shared/user.service';
 import { UtilService } from '../shared/utils/util.service';
+// Módulos necessários para o componente standalone
+import { CommonModule } from '@angular/common';
+// Importação do componente standalone do chatbot
+import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.component';
+import { TestWidgetComponent } from './test-widget.component';
 
 @Component({
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TestWidgetComponent,
+    ChatbotWidgetComponent,
+  ]
 })
 export class HomepageComponent implements OnInit {
   public userProfile: any = {}; 
@@ -120,6 +130,10 @@ export class HomepageComponent implements OnInit {
         this.isLoading = false;
       }
     });
+
+    // Adicione isso para debug
+    console.log('ChatbotWidgetComponent importado:', 
+      !!ChatbotWidgetComponent);
   }
 
   /**
@@ -136,6 +150,7 @@ export class HomepageComponent implements OnInit {
         if (userProfiles && userProfiles.length > 0) {
           // Armazena o primeiro resultado (assumindo username único)
           this.userProfile = userProfiles[0];
+          console.log('User profile loaded:', this.userProfile); // Adicione isso para debug
           console.log('Profile loaded:', this.userProfile);
           this.errorMessage = '';
           

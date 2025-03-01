@@ -8,5 +8,7 @@ export const environment = {
     messagingSenderId: "62096953183",
     appId: "1:62096953183:web:d23421cecbd0caebc2b0ea",
     measurementId: "G-657HTS1CNX"
-  }
+  },
+  aiChatApiUrl: 'https://api.dentistas.com.br/ai', // URL da API de chatbot
+
 };

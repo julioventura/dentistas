@@ -37,7 +37,6 @@ import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';
 import { BackupComponent } from './backup/backup.component'; // Import the standalone component
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
-import { HomepageComponent } from './homepage/homepage.component';
 
 // Serviços
 
@@ -53,8 +52,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { ChatbotWidgetComponent } from "./homepage/chatbot-widget/chatbot-widget.component";
 
-
+// Importar o HomepageComponent como componente standalone
+import { HomepageComponent } from './homepage/homepage.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -119,8 +120,7 @@ const routes: Routes = [
     ErupcoesComponent,
     MenuComponent,
     ErupcoesEditComponent,
-    AutoFocusDirective,
-    HomepageComponent
+    AutoFocusDirective
   ],
   imports: [
     BrowserModule,
@@ -138,8 +138,11 @@ const routes: Routes = [
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    BackupComponent // Import the standalone component
-  ],
+    BackupComponent, // Import the standalone component
+    ChatbotWidgetComponent,
+    // Importar o HomepageComponent como componente standalone
+    HomepageComponent
+],
   providers: [
     AuthGuard, DatePipe, provideAnimationsAsync()
   ],

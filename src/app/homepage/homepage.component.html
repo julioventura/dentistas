@@ -70,6 +70,28 @@
 </div>
 
 
-<div class="footer">
+<!-- Chatbot Widget -->
+<!-- <app-chatbot-widget 
+  [dentistId]="userProfile?.uid || ''" 
+  [dentistName]="userProfile?.nome || 'Dr(a).'" 
+  *ngIf="userProfile && userProfile.nome">
+</app-chatbot-widget> -->
+
+<!-- Versão de teste, sem condição -->
+<!-- <app-chatbot-widget 
+  [dentistId]="'test-id'" 
+  [dentistName]="'Dr. Teste'">
+</app-chatbot-widget> -->
+
+<!-- <app-test-widget></app-test-widget> -->
+
+<app-chatbot-widget 
+    [dentistId]="userProfile?.uid || ''" 
+    [dentistName]="userProfile?.nome || 'Dentista'">
+</app-chatbot-widget>
+
+
+
+<!-- <div class="footer">
     <p>© {{ currentYear }} Dentistas.com.br</p>
-</div>
+</div> -->
