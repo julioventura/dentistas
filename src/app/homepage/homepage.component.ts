@@ -15,7 +15,7 @@ import { UtilService } from '../shared/utils/util.service';
 import { CommonModule } from '@angular/common';
 // Importação do componente standalone do chatbot
 import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.component';
-import { TestWidgetComponent } from './test-widget.component';
+// import { TestWidgetComponent } from './test-widget.component';
 
 @Component({
   selector: 'app-homepage',
@@ -24,7 +24,7 @@ import { TestWidgetComponent } from './test-widget.component';
   standalone: true,
   imports: [
     CommonModule,
-    TestWidgetComponent,
+    // TestWidgetComponent,
     ChatbotWidgetComponent,
   ]
 })
