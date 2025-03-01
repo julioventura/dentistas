@@ -1,7 +1,7 @@
 <div class="chatbot-widget" [class.minimized]="isMinimized">
   <!-- Botão de chat minimizado -->
   <div class="chat-button" *ngIf="isMinimized" (click)="toggleChat()">
-    <i class="material-icons">chat</i>
+    <span class="chat-icon">💬</span>
   </div>
   
   <!-- Interface de chat expandida -->
@@ -10,7 +10,7 @@
     <div class="chat-header">
       <h3>Atendimento Virtual</h3>
       <button class="close-button" (click)="toggleChat()">
-        <i class="material-icons">close</i>
+        <span class="close-icon">✕</span>
       </button>
     </div>
     
@@ -31,9 +31,7 @@
       <!-- Indicador de digitação -->
       <div *ngIf="isBotTyping" class="message bot-message typing">
         <div class="typing-indicator">
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </div>
       </div>
     </div>
@@ -46,7 +44,7 @@
         placeholder="Digite sua mensagem..."
         (keyup.enter)="sendMessage()" />
       <button (click)="sendMessage()">
-        <i class="material-icons">send</i>
+        <span class="send-icon">➤</span>
       </button>
     </div>
   </div>
