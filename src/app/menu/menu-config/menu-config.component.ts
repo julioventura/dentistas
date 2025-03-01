@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
-import { UtilService } from '../shared/utils/util.service';
-import { NavegacaoService } from '../shared/navegacao.service';
+import { UtilService } from '../../shared/utils/util.service';
+import { NavegacaoService } from '../../shared/navegacao.service';
 
 interface Subcolecao {
   nome: string;
@@ -22,8 +22,11 @@ export class MenuConfigComponent implements OnInit {
     'alunos',
     'professores',
     'dentistas',
+    'equipe',
     'proteticos',
-    'equipe'
+    'dentais',
+    'empresas',
+    'fornecedores',
   ];
 
   todasSubcolecoes = [

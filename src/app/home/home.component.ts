@@ -1,12 +1,11 @@
 /* 
   Métodos do componente HomeComponent:
   1. ngOnInit() - Inicializa o componente, autenticando o usuário, carregando dados do usuário (username) e configuração de ícones.
-  2. capitalize(text: string): string - Formata um texto capitalizando a primeira letra de cada palavra.
-  3. loadIconConfig() - Carrega as configurações de ícones personalizadas do usuário a partir do Firestore.
-  4. saveIconConfig() - Salva as configurações de ícones do usuário no Firestore.
-  5. loadUserData(email: string): void - Carrega os dados do usuário (como o username) a partir do FirestoreService.
-  6. mostrarAlerta(): void - Exibe um alerta informando que o acesso é reservado ao administrador.
-  7. go(component: string, new_window: boolean) - Realiza a navegação para o componente informado, podendo abrir em nova janela se especificado.
+  2. loadIconConfig() - Carrega as configurações de ícones personalizadas do usuário a partir do Firestore.
+  3. saveIconConfig() - Salva as configurações de ícones do usuário no Firestore.
+  4. loadUserData(email: string): void - Carrega os dados do usuário (como o username) a partir do FirestoreService.
+  5. mostrarAlerta(): void - Exibe um alerta informando que o acesso é reservado ao administrador.
+  6. go(component: string, new_window: boolean) - Realiza a navegação para o componente informado, podendo abrir em nova janela se especificado.
 */
 
 import { Component, OnInit } from '@angular/core';
@@ -16,6 +15,7 @@ import { FirestoreService } from '../shared/firestore.service'; // Import Firest
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 import { ConfigService } from '../shared/config.service';
+import { UtilService } from '../shared/utils/util.service';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +24,7 @@ import { ConfigService } from '../shared/config.service';
   standalone: false
 })
 export class HomeComponent implements OnInit {
-  nome: string = '';  // Armazena o nome do usuário logado (capitalizado)
+  nome: string = '';  // Armazena o nome do usuário logado
   username: string | null = null;  // Armazena o username do usuário logado
   new_window: boolean = false;  // Controla se a navegação ocorrerá em nova janela
 
@@ -50,6 +50,7 @@ export class HomeComponent implements OnInit {
     private auth: AngularFireAuth,  
     private router: Router,
     public config: ConfigService,
+    public util: UtilService,
     private firestore: AngularFirestore, 
     private firestoreService: FirestoreService<any> // Usado para buscar o username
   ) { }
@@ -66,7 +67,7 @@ export class HomeComponent implements OnInit {
     this.auth.user.subscribe(user => {
       if (user && user.email) {
         // Define o nome do usuário utilizando a função capitalize para deixar a primeira letra de cada palavra em maiúsculo.
-        this.nome = this.capitalize(user.displayName || user.email || 'Usuário');
+        this.nome = this.util.capitalizar(user.displayName || user.email || 'Usuário');
         this.userId = user.uid;
         // Carrega dados adicionais do usuário
         this.loadUserData(user.email);
@@ -87,15 +88,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  /**
-   * capitalize(text: string): string
-   * @param text - Texto a ser formatado.
-   * @returns O mesmo texto com a primeira letra de cada palavra em maiúsculo.
-   * @description Essa função utiliza expressão regular para capitalizar a primeira letra de cada palavra.
-   */
-  capitalize(text: string): string {
-    return text.replace(/\b\w/g, (char) => char.toUpperCase());
-  }
 
   /**
    * loadIconConfig()

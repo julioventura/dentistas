@@ -13,7 +13,7 @@
   <div class="container" style="display: flex; gap: 40px; padding: 20px 40px;">
     <!-- Coluna 1: Coleções -->
     <div style="flex: 1;">
-      <h2 class="subtitle">Coleções Disponíveis</h2>
+      <div class="subtitle">Coleções</div>
       <div class="colecao-buttons" style="display: flex; flex-direction: column; gap: 10px;">
         <button *ngFor="let colecao of colecoesDisponiveis"
                 (click)="selecionarColecao(colecao)"
@@ -26,7 +26,7 @@
 
     <!-- Coluna 2: Subcoleções -->
     <div style="flex: 1;">
-      <h2 class="subtitle">Subcoleções</h2>
+      <div class="subtitle">Subcoleções</div>
       <div class="subcolecoes-list">
         <div *ngFor="let subcolecao of subcolecoesDisponiveis" class="subcolecao-item">
           <input type="checkbox" id="{{ subcolecao.nome }}" [(ngModel)]="subcolecao.selecionado" />

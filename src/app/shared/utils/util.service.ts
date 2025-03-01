@@ -165,6 +165,19 @@ export class UtilService {
   // ====================================
   // NOVOS 2024
   // ====================================
+
+  /**
+ * capitalize(text: string): string
+ * @param text - Texto a ser formatado.
+ * @returns O mesmo texto com a primeira letra de cada palavra em maiúsculo.
+ * @description Essa função utiliza expressão regular para capitalizar a primeira letra de cada palavra.
+ */
+  capitalize(text: string): string {
+    console.log("capitalize(" + text + ")");
+    return text.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
+
   public capitalizar(str: string): string {
     console.log("capitalizar(" + str + ")");
 

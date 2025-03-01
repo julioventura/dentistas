@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { NavegacaoService } from '../shared/navegacao.service';
+import { NavegacaoService } from '../../shared/navegacao.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
  
-import { UtilService } from '../shared/utils/util.service';
+import { UtilService } from '../../shared/utils/util.service';
   
 @Component({
   selector: 'app-home-config',

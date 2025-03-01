@@ -1,4 +1,12 @@
-export const SUBCOLLECTION_FIELDS: { [key: string]: { firstField: string, firstHeader: string, secondField: string, secondHeader: string } } = {
+export const SUBCOLLECTION_FIELDS: {
+  [key: string]: {
+    firstField: string,
+    firstHeader: string,
+    secondField: string,
+    secondHeader: string
+  }
+} = 
+{
   exames: {
     firstField: 'nome',
     firstHeader: 'Exame',

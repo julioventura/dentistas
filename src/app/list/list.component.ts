@@ -22,7 +22,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
-import { Registro } from './registro.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UtilService } from '../shared/utils/util.service';
@@ -32,8 +31,8 @@ import { ExportService } from '../shared/export.service';
 import { PdfExportService } from '../shared/pdf-export.service';
 import { SubcolecaoService } from '../shared/subcolecao.service';
 import { CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_DOCUMENTOS, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_TRATAMENTOS, CAMPOS_FICHAS_PAGAMENTOS } from '../shared/constants/campos-ficha.constants';
-
-import { SUBCOLLECTION_FIELDS } from '../config/subcollection-fields.config';
+import { SUBCOLLECTION_FIELDS } from '../shared/constants/subcollection-fields.config';
+import { Registro } from '../shared/constants/registro.model';
 
 @Component({
   selector: 'app-list',
