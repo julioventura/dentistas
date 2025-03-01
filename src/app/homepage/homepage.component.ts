@@ -11,11 +11,8 @@ import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../shared/user.service';
 import { UtilService } from '../shared/utils/util.service';
-// Módulos necessários para o componente standalone
 import { CommonModule } from '@angular/common';
-// Importação do componente standalone do chatbot
 import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.component';
-// import { TestWidgetComponent } from './test-widget.component';
 
 @Component({
   selector: 'app-homepage',
@@ -24,7 +21,6 @@ import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.componen
   standalone: true,
   imports: [
     CommonModule,
-    // TestWidgetComponent,
     ChatbotWidgetComponent,
   ]
 })
