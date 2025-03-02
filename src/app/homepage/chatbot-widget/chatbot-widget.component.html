@@ -1,50 +1,39 @@
-<div class="chatbot-widget" [class.minimized]="isMinimized">
-  <!-- Botão de chat minimizado -->
-  <div class="chat-button" *ngIf="isMinimized" (click)="toggleChat()">
-    <span class="chat-icon">💬</span>
+<div class="chatbot-container" [class.minimized]="isMinimized" [class.fullscreen]="isFullscreen">
+  <div class="chat-header" (click)="isMinimized ? toggleChat() : null">
+    <button class="toggle-fullscreen-btn" *ngIf="!isMinimized" (click)="toggleFullscreen(); $event.stopPropagation()">
+      <i class="material-icons">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</i>
+    </button>
+    <span class="chatbot-title" *ngIf="!isMinimized">Assistente Virtual de I.A.</span>
+    <button class="close-btn" *ngIf="!isMinimized" (click)="toggleChat(); $event.stopPropagation()">
+      <i class="material-icons">close</i>
+    </button>
   </div>
   
-  <!-- Interface de chat expandida -->
-  <div class="chat-container" *ngIf="!isMinimized">
-    <!-- Cabeçalho -->
-    <div class="chat-header">
-      <h3>Atendimento Virtual</h3>
-      <button class="close-button" (click)="toggleChat()">
-        <span class="close-icon">✕</span>
-      </button>
-    </div>
-    
-    <!-- Mensagens -->
+  <div class="chat-body" *ngIf="!isMinimized">
     <div class="chat-messages">
-      <div *ngFor="let message of messages" 
-           class="message" 
-           [class.user-message]="message.sender === 'user'" 
-           [class.bot-message]="message.sender === 'bot'">
-        <div class="message-content">
-          {{ message.content }}
-        </div>
-        <div class="message-time">
-          {{ message.timestamp | date:'HH:mm' }}
-        </div>
+      <div *ngFor="let message of messages" class="message" [ngClass]="message.sender">
+        <div class="message-content">{{ message.content }}</div>
+        <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
       </div>
-      
-      <!-- Indicador de digitação -->
-      <div *ngIf="isBotTyping" class="message bot-message typing">
+      <div *ngIf="isBotTyping" class="message bot typing">
         <div class="typing-indicator">
-          <span></span><span></span><span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
       </div>
     </div>
     
-    <!-- Área de input -->
-    <div class="chat-input">
+    <div class="chat-input-container">
       <input 
         type="text" 
-        [(ngModel)]="userInput" 
-        placeholder="Digite sua mensagem..."
-        (keyup.enter)="sendMessage()" />
-      <button (click)="sendMessage()">
-        <span class="send-icon">➤</span>
+        class="chat-input" 
+        placeholder="Digite sua mensagem..." 
+        [(ngModel)]="userInput"
+        (keyup.enter)="sendMessage()"
+      >
+      <button class="send-btn" (click)="sendMessage()">
+        <i class="material-icons">send</i>
       </button>
     </div>
   </div>

@@ -24,6 +24,7 @@ export class ChatbotWidgetComponent implements OnInit {
   userInput: string = '';
   isMinimized: boolean = true;
   isBotTyping: boolean = false;
+  isFullscreen: boolean = false;
   
   constructor() {
     console.log('ChatbotWidget constructor called');
@@ -37,6 +38,12 @@ export class ChatbotWidgetComponent implements OnInit {
   toggleChat(): void {
     this.isMinimized = !this.isMinimized;
     console.log('Chat toggled:', this.isMinimized ? 'minimized' : 'expanded');
+  }
+  
+  toggleFullscreen(): void {
+    this.isFullscreen = !this.isFullscreen;
+    console.log('Chat fullscreen toggled:', this.isFullscreen ? 'fullscreen' : 'normal');
+    this.scrollToBottom();
   }
   
   sendMessage(): void {
