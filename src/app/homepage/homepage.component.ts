@@ -13,6 +13,7 @@ import { UserService } from '../shared/user.service';
 import { UtilService } from '../shared/utils/util.service';
 import { CommonModule } from '@angular/common';
 import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.component';
+import { RodapeHomepageComponent } from './rodape-homepage/rodape-homepage.component';
 
 @Component({
   selector: 'app-homepage',
@@ -22,6 +23,7 @@ import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.componen
   imports: [
     CommonModule,
     ChatbotWidgetComponent,
+    RodapeHomepageComponent
   ]
 })
 export class HomepageComponent implements OnInit {

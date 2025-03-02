@@ -1,0 +1,44 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <h2>DentistaApp</h2>
+        <p>Cuidando do seu sorriso</p>
+      </div>
+      
+      <div class="footer-links">
+        <h3>Links Importantes</h3>
+        <ul>
+          <li><a routerLink="/">Home</a></li>
+          <li><a routerLink="/sobre">Sobre Nós</a></li>
+          <li><a routerLink="/servicos">Serviços</a></li>
+          <li><a routerLink="/contato">Contato</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-policy">
+        <h3>Políticas</h3>
+        <ul>
+          <li *ngFor="let link of politicaLinks">
+            <a [routerLink]="link.route">{{ link.text }}</a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="footer-social">
+        <h3>Redes Sociais</h3>
+        <div class="social-icons">
+          <a *ngFor="let rede of redesSociais" [href]="rede.url" target="_blank" rel="noopener noreferrer" 
+             class="social-icon" [attr.aria-label]="rede.nome">
+            <i class="fab" [ngClass]="rede.icon"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; {{ currentYear }} DentistaApp. Todos os direitos reservados.</p>
+      <!-- <app-endereco></app-endereco> -->
+    </div>
+  </div>
+</footer>
