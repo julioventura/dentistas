@@ -82,8 +82,8 @@ h2,
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid; // Dinâmico para os modos
+    padding: 7px 10px 7px 10px;
+    border-bottom: 0; // Dinâmico para os modos
 
     &.view-mode {
       border-bottom-color: $primary-color-light; // Azul claro no modo de visualização

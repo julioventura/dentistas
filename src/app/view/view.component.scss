@@ -54,9 +54,10 @@ input {
 .grupo-titulo {
   font-weight: bold;
   font-size: 1.1rem;
-  margin: 15px 0 5px;
+  margin: 25px 0 10px;
   border-bottom: 1px solid #ccc;
   padding-bottom: 3px;
+
 }
 
 .record-details {
@@ -77,8 +78,10 @@ input {
       
       &[readonly] {
         color: #333;
-        font-size: 11px;
-        background-color: #eeeeee;
+        font-size: 14px;
+        background-color: #fff;
+        border-bottom: 0px solid #eee; // Dinâmico para os modos
+        padding: 7px 10px 7px 10px;
       }
     }
   }

@@ -49,6 +49,8 @@ $font-size: 12px;
 $max-width: 800px;
 $medium-width: 500px;
 
+$linhas_de_campos_do_view: #93c6f4;
+
 // ====================================
 
 // CORES
@@ -236,17 +238,17 @@ h4 {
         justify-content: flex-start;
         align-items: center;
         padding: 0px;
-        border-bottom: 1px solid $primary-color-light;
+        border-bottom: 1px solid $linhas_de_campos_do_view;
 
         // &:last-child {
         //   border-bottom: none;
         // }
 
         .detail-label {
-            width: 120px;
-            font-weight: bold;
+            // width: 120px;
+            font-weight: normal;
             color: $primary-color;
-            font-size: 9px;
+            font-size: 12px;
             text-align: left;
         }
 
