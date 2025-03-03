@@ -1,12 +1,29 @@
 <div class="container container_principal">
     <!-- Header with title and action buttons -->
+
+    <!-- HEADER -->
+     
+    <!-- <div class="header">
+        <div class="left">
+            <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+            <img src="https://dentistas.com.br/assets/home.png" class="navegacao" (click)="util.goHome()">
+        </div>
+        <h1 class="title">{{ titulo_da_pagina }}</h1>
+        <div class="right">
+            <img src="https://dentistas.com.br/assets/editar.png" class="navegacao_direita" (click)="editar()">
+            <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao_direita" (click)="excluir()">
+        </div>
+    </div> -->
+
+
+
     <div class="header">
         <div class="actions">
             <img [src]="isEditing ? 'https://dentistas.com.br/assets/voltar_red.png' : 'https://dentistas.com.br/assets/voltar.png'"
                 class="navegacao" (click)="voltar()" />
         </div>
 
-        <h2 class="title">Perfil do Usuário</h2>
+        <h1 class="title">Perfil Profissional</h1>
 
         <div class="actions">
             <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/editar.png" class="navegacao_direita"

@@ -26,3 +26,11 @@
   font-size: 1rem; /* Tamanho normal do texto */
   color: $primary-color; /* Cor do texto (ajuste conforme necessário) */
 }
+
+.container-red-border {
+  border: 2px solid $red-dark; /* Borda vermelha */
+  border-radius: 8px; /* Borda arredondada */
+  padding: 10px; /* Espaçamento interno */
+  margin-top: 20px; /* Espaçamento superior */
+  background-color: #ffe2e2; /* Cor de fundo */
+}

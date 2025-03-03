@@ -59,7 +59,7 @@
             </div>
       
             <div class="icon-item" *ngIf="visibleIcons['empresas']" (click)="go('list/empresas')">
-              <img src="https://dentistas.com.br/assets/fornecedores.png" alt="Empresas">
+              <img src="https://dentistas.com.br/assets/empresas.png" alt="Empresas">
               <p>EMPRESAS</p>
             </div> 
             
@@ -70,12 +70,12 @@
 
             
       
-            <div class="icon-item" *ngIf="visibleIcons['perfil']" (click)="go('perfil')">
+            <div class="icon-item" (click)="go('perfil')">
               <img src="https://dentistas.com.br/assets/perfil.png" alt="Seu Perfil">
-              <p>SEU PERFIL</p>
+              <p>PERFIL PROFISSIONAL</p>
             </div>
       
-            <div class="icon-item" *ngIf="visibleIcons['homepage']" (click)="go('homepage-intro')">
+            <div class="icon-item" (click)="go('homepage-intro')">
               <img src="https://dentistas.com.br/assets/global.png" alt="Sua Homepage">
               <p>SUA HOMEPAGE</p>
             </div>

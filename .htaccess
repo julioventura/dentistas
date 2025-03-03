@@ -2,7 +2,7 @@
   RewriteEngine On
   RewriteBase /
 
-  # Exceções para arquivos físicos (ex: imagens, CSS, JS)
+  # Exceções para arquivos físicos (como imagens, CSS, JS)
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
