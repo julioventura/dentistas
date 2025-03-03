@@ -1,0 +1,21 @@
+<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
+
+    <div class="block-title">
+
+        <div class="profile-header">
+            <div class="header-bg">
+                <!-- Foto do usuário -->
+                <img src="{{ userProfile.foto }}" alt="{{ userProfile.nome}}" class="profile-photo">
+                <div class="header-overlay">
+                    <h1>{{ userProfile.nome }}</h1> <!-- Nome do dentista -->
+                    <h3 class="center">{{ userProfile.tituloProfissional }}</h3> <!-- Título Profissional -->
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+</div>

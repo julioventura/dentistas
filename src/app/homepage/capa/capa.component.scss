@@ -1,0 +1,31 @@
+@import '../../../styles.scss';
+@import '../homepage.component.scss';
+
+
+.block-container {
+    margin: 1rem 0;
+    font-size: 0.9rem;
+
+    &.dark-mode {
+        color: #ecf0f1;
+
+        .block-info {
+            >div {
+                i {
+                    color: #3498db;
+                }
+            }
+        }
+    }
+}
+
+.block-title {
+    /* Container */
+    background-color: white;
+    color: white;
+    font-weight: 500;
+    border: 0;
+    box-shadow: unset;
+    border-radius: 8px 8px 0 0;
+    padding: 10px;
+}

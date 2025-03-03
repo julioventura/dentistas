@@ -21,6 +21,7 @@ import { HorariosComponent } from "./horarios/horarios.component";
 import { ConveniosComponent } from "./convenios/convenios.component";
 import { RedesComponent } from "./redes/redes.component";
 import { CartaoComponent } from "./cartao/cartao.component";
+import { CapaComponent } from "./capa/capa.component";
 
 @Component({
   selector: 'app-homepage',
@@ -37,7 +38,8 @@ import { CartaoComponent } from "./cartao/cartao.component";
     HorariosComponent,
     ConveniosComponent,
     RedesComponent,
-    CartaoComponent
+    CartaoComponent,
+    CapaComponent
 ]
 })
 export class HomepageComponent implements OnInit {

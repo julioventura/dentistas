@@ -1,37 +1,29 @@
 <!-- Exibe a homepage pública se houver um username na rota -->
 <div class="container">
 
-    <div class="profile-header">
-        <div class="header-bg">
-            <!-- Foto do usuário -->
-            <img src="{{ userProfile.foto }}" alt="{{ userProfile.nome}}" class="profile-photo">
-            <div class="header-overlay">
-                <h1>{{ userProfile.nome }}</h1> <!-- Nome do dentista -->
-                <h3 class="center">{{ userProfile.tituloProfissional }}</h3> <!-- Título Profissional -->
 
-            </div>
-        </div>
-    </div>
 
-    <div class="profile-info">
+    <app-capa [userProfile]="userProfile" [darkMode]="false"></app-capa>
 
-        <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato> 
-    
-        <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco>
 
-        <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
+<div class="profile-info">
 
-        <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
+    <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato>
 
-        <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
+    <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco>
 
-        <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
+    <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
 
-        <app-cartao [userProfile]="userProfile" [darkMode]="false"></app-cartao>
+    <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
 
-    </div>
+    <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
 
-   
+    <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
+
+    <app-cartao [userProfile]="userProfile" [darkMode]="false"></app-cartao>
+
+</div>
+
 
     <app-rodape-homepage></app-rodape-homepage>
 
@@ -39,10 +31,8 @@
 
 
 <!-- Chatbot Widget -->
-<app-chatbot-widget 
-    [dentistId]="userProfile?.uid || ''" 
-    [dentistName]="userProfile?.nome || 'Dentista'"
-      *ngIf="userProfile && !isLoading">
+<app-chatbot-widget [dentistId]="userProfile?.uid || ''" [dentistName]="userProfile?.nome || 'Dentista'"
+    *ngIf="userProfile && !isLoading">
 </app-chatbot-widget>
 
 
