@@ -1,21 +1,41 @@
-<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
-
-    <div class="block-title">
-
-        <div class="profile-header">
-            <div class="header-bg">
-                <!-- Foto do usuário -->
-                <img src="{{ userProfile.foto }}" alt="{{ userProfile.nome}}" class="profile-photo">
-                <div class="header-overlay">
-                    <h1>{{ userProfile.nome }}</h1> <!-- Nome do dentista -->
-                    <h3 class="center">{{ userProfile.tituloProfissional }}</h3> <!-- Título Profissional -->
-
-                </div>
-            </div>
+<div class="capa-container" [ngClass]="{'dark-mode': darkMode}">
+  <div class="capa-background" [style.backgroundImage]="getBackgroundImage()">
+    <div class="capa-content">
+      <!-- Seção da foto do perfil -->
+      <div class="profile-section">
+        <div class="profile-image" *ngIf="userProfile?.foto">
+          <img [src]="userProfile.foto" [alt]="userProfile?.nome || 'Foto do profissional'">
         </div>
-
+      </div>
+      
+      <!-- Seção de informações -->
+      <div class="info-section">
+        <div class="title-area">
+          <h1>{{ userProfile?.nome || 'Nome do Profissional' }}</h1>
+          <h2>{{ userProfile?.tituloProfissional || 'Cirurgião-Dentista' }}</h2>
+        </div>
+        
+        <div class="badges-row" *ngIf="userProfile?.especialidades?.length">
+          <span class="badge" *ngFor="let esp of userProfile?.especialidades?.slice(0,3)">
+            {{ esp }}
+          </span>
+          <span class="badge more" *ngIf="userProfile?.especialidades?.length > 3">
+            +{{ userProfile.especialidades.length - 3 }}
+          </span>
+        </div>
+        
+        <div class="action-buttons">
+          <a href="#" class="btn primary">
+            <i class="fas fa-calendar-alt"></i> 
+            Agendar Consulta
+          </a>
+          
+          <a href="https://wa.me/{{ getWhatsappFormatado() }}" target="_blank" class="btn secondary">
+            <i class="fab fa-whatsapp"></i> 
+            WhatsApp
+          </a>
+        </div>
+      </div>
     </div>
-
-
-
+  </div>
 </div>

@@ -47,4 +47,32 @@ export class RedesComponent {
       return '';
     }
   }
+
+  // Para RedesComponent
+  hasRedesSociais(): boolean {
+    return !!(
+      this.userProfile?.instagram || 
+      this.userProfile?.facebook || 
+      this.userProfile?.linkedin || 
+      this.userProfile?.youtube || 
+      this.userProfile?.website
+    );
+  }
+
+  getInstagramUrl(): string {
+    const username = this.userProfile?.instagram?.replace('@', '');
+    return `https://instagram.com/${username}`;
+  }
+
+  getFacebookUrl(): string {
+    return this.userProfile?.facebook;
+  }
+
+  getLinkedinUrl(): string {
+    return this.userProfile?.linkedin;
+  }
+
+  getYoutubeUrl(): string {
+    return this.userProfile?.youtube;
+  }
 }

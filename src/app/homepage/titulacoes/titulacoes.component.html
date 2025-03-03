@@ -1,16 +1,33 @@
-<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
-
-    <div class="container block-title">
-        Títulos Profissionais
+<div class="profile-card titulacoes-card" [ngClass]="{'dark-mode': darkMode}">
+  <div class="card-header">
+    <h3>Formação & Especialidades</h3>
+  </div>
+  
+  <div class="card-body">
+    <div class="titulacao-grupo">
+      <h4>
+        <i class="fas fa-graduation-cap"></i>
+        Formação Acadêmica
+      </h4>
+      
+      <div class="titulacao-item" *ngFor="let formacao of getFormacao()">
+        <p class="curso">{{ formacao.curso }}</p>
+        <p class="instituicao">{{ formacao.instituicao }}</p>
+        <p class="periodo" *ngIf="formacao.ano">{{ formacao.ano }}</p>
+      </div>
     </div>
-
-    <div class="container block-info">
-
-        <div>
-            <div class="texto">
-                <p class="principal">Cirurgião-Dentista</p>
-            </div>
-        </div>
-
+    
+    <div class="titulacao-grupo" *ngIf="getEspecialidades().length > 0">
+      <h4>
+        <i class="fas fa-certificate"></i>
+        Especialidades
+      </h4>
+      
+      <div class="especialidade-lista">
+        <span class="badge" *ngFor="let esp of getEspecialidades()">
+          {{ esp }}
+        </span>
+      </div>
     </div>
+  </div>
 </div>

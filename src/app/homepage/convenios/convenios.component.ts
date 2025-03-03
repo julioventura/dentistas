@@ -30,6 +30,14 @@ export class ConveniosComponent {
     { dia: 'Sábado', horario: '09:00 - 16:00' }
   ];
   
+  // Dados padrão para quando não houver convênios no perfil
+  conveniosDefault = [
+    'Amil',
+    'Bradesco Saúde',
+    'SulAmérica',
+    'Unimed'
+  ];
+  
   getEnderecoCompleto(): string {
     if (this.userProfile) {
         console.log("userProfile:", this.userProfile);
@@ -46,5 +54,17 @@ export class ConveniosComponent {
     else {
       return '';
     }
+  }
+
+  getConvenios(): string[] {
+    if (this.userProfile?.convenios && this.userProfile.convenios.length > 0) {
+      return this.userProfile.convenios;
+    }
+    return this.conveniosDefault;
+  }
+  
+  // Verifica se existem convênios para exibir
+  temConvenios(): boolean {
+    return this.getConvenios().length > 0;
   }
 }

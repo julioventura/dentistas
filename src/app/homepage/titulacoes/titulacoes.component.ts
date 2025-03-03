@@ -30,6 +30,20 @@ export class TitulacoesComponent {
     { dia: 'Sábado', horario: '09:00 - 16:00' }
   ];
   
+  // Adicionando a propriedade formacaoPadrao que estava faltando
+  formacaoPadrao = [
+    { 
+      curso: 'Graduação em Odontologia',
+      instituicao: 'Universidade de São Paulo (USP)',
+      ano: '2010'
+    },
+    {
+      curso: 'Especialização em Ortodontia',
+      instituicao: 'Associação Brasileira de Odontologia (ABO)',
+      ano: '2012'
+    }
+  ];
+
   getEnderecoCompleto(): string {
     if (this.userProfile) {
         console.log("userProfile:", this.userProfile);
@@ -46,5 +60,19 @@ export class TitulacoesComponent {
     else {
       return '';
     }
+  }
+
+  getFormacao(): any[] {
+    if (this.userProfile?.formacao && this.userProfile.formacao.length > 0) {
+      return this.userProfile.formacao;
+    }
+    return this.formacaoPadrao;
+  }
+
+  getEspecialidades(): string[] {
+    if (this.userProfile?.especialidades && this.userProfile.especialidades.length > 0) {
+      return this.userProfile.especialidades;
+    }
+    return [];
   }
 }

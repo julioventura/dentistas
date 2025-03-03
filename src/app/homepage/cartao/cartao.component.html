@@ -1,20 +1,56 @@
-<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
-
-    <div class="container block-title">
-        Cartão de Visitas Digital
+<div class="profile-card cartao-card" [ngClass]="{'dark-mode': darkMode}">
+  <div class="card-header">
+    <h3>Cartão Digital</h3>
+  </div>
+  
+  <div class="card-body">
+    <div class="cartao-virtual" [ngClass]="{'dark-theme': userProfile?.temaCartao === 'dark'}">
+      <div class="cartao-header">
+        <div class="cartao-logo" *ngIf="userProfile?.logo">
+          <img [src]="userProfile.logo" alt="Logo">
+        </div>
+        <div class="cartao-nome">
+          <h4>{{ userProfile?.nome || 'Nome do Profissional' }}</h4>
+          <p>{{ userProfile?.tituloProfissional || 'Cirurgião-Dentista' }}</p>
+        </div>
+      </div>
+      
+      <div class="cartao-info">
+        <div class="info-item" *ngIf="userProfile?.cro">
+          <i class="fas fa-id-card"></i>
+          <span>CRO: {{ userProfile.cro }}</span>
+        </div>
+        
+        <div class="info-item" *ngIf="userProfile?.especialidade">
+          <i class="fas fa-certificate"></i>
+          <span>{{ userProfile.especialidade }}</span>
+        </div>
+        
+        <div class="info-item" *ngIf="userProfile?.telefone">
+          <i class="fas fa-phone-alt"></i>
+          <span>{{ userProfile.telefone }}</span>
+        </div>
+        
+        <div class="info-item" *ngIf="userProfile?.email">
+          <i class="fas fa-envelope"></i>
+          <span>{{ userProfile.email }}</span>
+        </div>
+        
+        <div class="info-item" *ngIf="userProfile?.endereco">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>{{ userProfile.endereco }}</span>
+        </div>
+      </div>
     </div>
-
-    <div class="container block-info">
-
-
-
-            <div class="container">
-                <!-- Exibe o QR Code para a URL da homepage do usuário -->
-                <div class="qr-code" *ngIf="qrCodeUrl">
-                    <img [src]="qrCodeUrl" alt="QR Code da homepage">
-                </div>
-            </div>
-
-
+    
+    <div class="cartao-acoes">
+      <button class="btn-salvar">
+        <i class="fas fa-download"></i> Salvar Cartão
+      </button>
+      
+      <button class="btn-compartilhar">
+        <i class="fas fa-share-alt"></i> Compartilhar
+      </button>
     </div>
+  </div>
 </div>

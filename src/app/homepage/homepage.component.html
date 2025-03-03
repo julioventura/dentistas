@@ -1,42 +1,30 @@
-<!-- Exibe a homepage pública se houver um username na rota -->
-<div class="container">
+<div class="homepage">
+  <!-- Cabeçalho e navegação -->
+  <!-- <app-cabecalho-homepage [userProfile]="userProfile"></app-cabecalho-homepage> -->
 
-
-
-    <app-capa [userProfile]="userProfile" [darkMode]="false"></app-capa>
-
-
-<div class="profile-info">
-
-    <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato>
-
-    <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco>
-
-    <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
-
-    <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
-
-    <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
-
-    <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
-
-    <app-cartao [userProfile]="userProfile" [darkMode]="false"></app-cartao>
-
-</div>
-
-
-    <app-rodape-homepage></app-rodape-homepage>
-
-</div>
-
-
-<!-- Chatbot Widget -->
-<app-chatbot-widget [dentistId]="userProfile?.uid || ''" [dentistName]="userProfile?.nome || 'Dentista'"
+  <!-- Capa (Hero) com imagem de fundo e overlay -->
+  <app-capa [userProfile]="userProfile" [darkMode]="false"></app-capa>
+  
+  <div class="container">
+    <!-- Área de Conteúdo em grid para os componentes internos -->
+    <div class="content-grid">
+      <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato>
+      <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco>
+      <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
+      <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
+      <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
+      <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
+      <app-cartao [userProfile]="userProfile" [darkMode]="false"></app-cartao>
+    </div>
+  </div>
+  
+  <!-- Rodapé -->
+  <app-rodape-homepage></app-rodape-homepage>
+  
+  <!-- Chatbot Widget -->
+  <app-chatbot-widget 
+    [dentistId]="userProfile?.uid || ''" 
+    [dentistName]="userProfile?.nome || 'Dentista'"
     *ngIf="userProfile && !isLoading">
-</app-chatbot-widget>
-
-
-
-<!-- <div class="footer">
-    <p>© {{ currentYear }} Dentistas.com.br</p>
-</div> -->
+  </app-chatbot-widget>
+</div>

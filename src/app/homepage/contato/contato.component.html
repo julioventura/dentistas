@@ -1,25 +1,35 @@
-<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
-
-    <div class="container block-title">
-        Contato
+<div class="profile-card contato-card" [ngClass]="{'dark-mode': darkMode}">
+  <div class="card-header">
+    <h3>Contato</h3>
+  </div>
+  
+  <div class="card-body">
+    <div class="contato-item">
+      <i *ngIf="showIcon" class="fas fa-phone-alt"></i>
+      <div class="texto">
+        <p class="label">Telefone</p>
+        <p class="valor">{{ getTelefone() }}</p>
+      </div>
     </div>
-
-    <div class="container block-info">
-
-
-
-        <div class="contato">
-            <div class="telefone">
-                <i *ngIf="showIcon" class="fas fa-phone-alt"></i>
-                <span>{{ endereco.telefone }}</span>
-            </div>
-
-            <div class="email">
-                <i *ngIf="showIcon" class="fas fa-envelope"></i>
-                <span>{{ endereco.email }}</span>
-            </div>
-        </div>
-
-      
+    
+    <div class="contato-item">
+      <i *ngIf="showIcon" class="fab fa-whatsapp"></i>
+      <div class="texto">
+        <p class="label">WhatsApp</p>
+        <p class="valor">{{ getWhatsapp() }}</p>
+      </div>
     </div>
+    
+    <div class="contato-item">
+      <i *ngIf="showIcon" class="fas fa-envelope"></i>
+      <div class="texto">
+        <p class="label">E-mail</p>
+        <p class="valor">{{ getEmail() }}</p>
+      </div>
+    </div>
+    
+    <button class="btn-contato">
+      <i class="fas fa-comment-dots"></i> Enviar mensagem
+    </button>
+  </div>
 </div>

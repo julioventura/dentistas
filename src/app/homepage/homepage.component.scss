@@ -279,3 +279,103 @@ p {
         font-size: 0.85rem;
     }
 }
+
+.homepage {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #fff;
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 15px auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+
+    // Para telas maiores, limite a 3 colunas para melhor leitura
+    @media (min-width: 1200px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    // Para telas médias, ajuste para 2 colunas
+    @media (max-width: 992px) and (min-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    // Para dispositivos móveis, uma coluna
+    @media (max-width: 767px) {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+}
+
+// Adicione uma classe base para todos os cards da homepage
+:host ::ng-deep .profile-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    height: 100%;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        background-color: rgba(0, 0, 0, 0.02);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+        h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    &.dark-mode {
+        background: #333;
+        color: #f8f9fa;
+
+        .card-header {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+            h3 {
+                color: #f8f9fa;
+            }
+        }
+    }
+}
+
+// Força o RodapeHomepageComponent a ter a mesma largura máxima
+:host ::ng-deep app-rodape-homepage {
+    display: block;
+
+    .footer-content,
+    .footer-bottom {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+}

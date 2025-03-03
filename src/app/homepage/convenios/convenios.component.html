@@ -1,16 +1,28 @@
-<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
-
-    <div class="container block-title">
-        Convênios
-    </div>
-
-    <div class="container block-info">
-
-
-
-      <p>Amil
-      <p>Uniodonto
-
+<div class="profile-card convenios-card" [ngClass]="{'dark-mode': darkMode}">
+  <div class="card-header">
+    <h3>Convênios Aceitos</h3>
+  </div>
+  
+  <div class="card-body">
+    <div class="convenios-info" *ngIf="temConvenios(); else semConvenios">
+      <div class="convenios-lista">
+        <div class="convenio-item" *ngFor="let convenio of getConvenios()">
+          <i *ngIf="showIcon" class="fas fa-check-circle"></i>
+          <span>{{ convenio }}</span>
+        </div>
+      </div>
       
+      <div class="info-particular" *ngIf="userProfile?.atendimentoParticular">
+        <i *ngIf="showIcon" class="fas fa-money-bill-wave"></i>
+        <span>Também aceita pagamento particular</span>
+      </div>
     </div>
+    
+    <ng-template #semConvenios>
+      <div class="no-convenios">
+        <i class="fas fa-info-circle"></i>
+        <p>Informações sobre convênios não disponíveis. Entre em contato para mais detalhes.</p>
+      </div>
+    </ng-template>
+  </div>
 </div>

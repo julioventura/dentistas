@@ -1,20 +1,22 @@
-<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
-
-    <div class="container block-title">
-        Horários de Atendimento
-    </div>
-
-    <div class="container block-info">
-
-        <div class="horarios">
-            <i *ngIf="showIcon" class="fas fa-clock"></i>
-            <div class="texto">
-                <p *ngFor="let item of horarios">
-                    <span class="dia">{{ item.dia }}:</span>
-                    <span class="hora">{{ item.horario }}</span>
-                </p>
-            </div>
+<div class="profile-card horarios-card" [ngClass]="{'dark-mode': darkMode}">
+  <div class="card-header">
+    <h3>Horários de Atendimento</h3>
+  </div>
+  
+  <div class="card-body">
+    <div class="horarios-lista">
+      <div class="horario-item" *ngFor="let horario of getHorarios()">
+        <div class="dia">
+          <i *ngIf="showIcon" class="fas fa-calendar-day"></i>
+          <span>{{ horario.dia }}</span>
         </div>
-
+        <div class="hora">{{ horario.horario }}</div>
+      </div>
     </div>
+    
+    <div class="agendamento-info" *ngIf="userProfile?.agendamentoOnline">
+      <i *ngIf="showIcon" class="fas fa-laptop-medical"></i>
+      <span>Agendamento online disponível</span>
+    </div>
+  </div>
 </div>

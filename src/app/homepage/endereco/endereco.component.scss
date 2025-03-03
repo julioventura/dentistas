@@ -1,3 +1,72 @@
 @import '../../../styles.scss';
 @import '../homepage.component.scss';
 
+/* filepath: /c:/contexto/dentistas/src/app/homepage/endereco/endereco.component.scss */
+.endereco-card {
+  i {
+    color: #3498db;
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+    margin-right: 12px;
+  }
+  
+  .endereco-principal {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    
+    .texto {
+      flex: 1;
+      
+      .principal {
+        font-size: 1rem;
+        font-weight: 500;
+        margin: 0;
+        line-height: 1.4;
+      }
+      
+      .secundario {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin: 0.25rem 0 0 0;
+        line-height: 1.4;
+      }
+    }
+  }
+  
+  .contato-info {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    
+    .item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      
+      span {
+        font-size: 0.95rem;
+      }
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  &.dark-mode {
+    .secundario {
+      color: #adb5bd;
+    }
+    
+    .contato-info {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    i {
+      color: #5dade2;
+    }
+  }
+}
+

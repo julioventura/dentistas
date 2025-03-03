@@ -12,6 +12,7 @@ export class CapaComponent {
   @Input() showIcon: boolean = true;
   @Input() darkMode: boolean = false;
   @Input() userProfile: any; // Recebe dados do perfil
+
   
   // Dados padrão, usados apenas se userProfile não for fornecido
 
@@ -50,4 +51,33 @@ export class CapaComponent {
       return '';
     }
   }
+
+  getBackgroundImage(): string {
+    // Se o usuário tiver uma foto de capa, use-a. Caso contrário, use uma imagem padrão
+    const backgroundImage = this.userProfile?.fotoCapa || 'assets/images/dental-office-background.jpg';
+    return `url('${backgroundImage}')`;
+  }
+
+  // Método para formatar especialidades
+  formatEspecialidades(): string {
+    if (!this.userProfile?.especialidades || this.userProfile.especialidades.length === 0) {
+      return '';
+    }
+    
+    return this.userProfile.especialidades.join(' • ');
+  }
+
+
+  getWhatsapp(): string {
+    if (!this.userProfile?.whatsapp) return '5511999999999'; // Número padrão
+    
+    // Remove caracteres não numéricos
+    return this.userProfile.whatsapp.replace(/\D/g, '');
+  }
+
+  getWhatsappFormatado(): string {
+    if (!this.userProfile?.whatsapp) return '5511999999999';
+    return this.userProfile.whatsapp.replace(/\D/g, '');
+  }
+
 }

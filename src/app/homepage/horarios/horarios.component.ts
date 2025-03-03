@@ -1,34 +1,33 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+interface Horario {
+  dia: string;
+  horario: string;
+}
+
 @Component({
   selector: 'app-horarios',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './horarios.component.html', 
+  templateUrl: './horarios.component.html',
   styleUrls: ['./horarios.component.scss']
 })
 export class HorariosComponent {
   @Input() showIcon: boolean = true;
   @Input() darkMode: boolean = false;
-  @Input() userProfile: any; // Recebe dados do perfil
+  @Input() userProfile: any;
   
-  // Dados padrão, usados apenas se userProfile não for fornecido
-  endereco = {
-    rua: 'Av. Paulista, 1000',
-    complemento: 'Sala 501',
-    bairro: 'Bela Vista',
-    cidade: 'São Paulo',
-    estado: 'SP',
-    cep: '01310-100',
-    telefone: '(11) 3456-7890',
-    email: 'contato@dentistaapp.com.br'
-  };
-  
-  horarios = [
-    { dia: 'Segunda a Sexta', horario: '08:00 - 19:00' },
-    { dia: 'Sábado', horario: '09:00 - 16:00' }
+  // Dados padrão
+  horariosDefault: Horario[] = [
+    { dia: 'Segunda à Sexta', horario: '09:00 - 18:00' },
+    { dia: 'Sábado', horario: '09:00 - 13:00' }
   ];
   
-
+  getHorarios(): Horario[] {
+    if (this.userProfile?.horarios && this.userProfile.horarios.length > 0) {
+      return this.userProfile.horarios;
+    }
+    return this.horariosDefault;
+  }
 }

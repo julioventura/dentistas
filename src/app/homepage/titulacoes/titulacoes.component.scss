@@ -1,2 +1,96 @@
 @import '../../../styles.scss';
 @import '../homepage.component.scss';
+
+/* filepath: /c:/contexto/dentistas/src/app/homepage/titulacoes/titulacoes.component.scss */
+.titulacoes-card {
+  .titulacao-grupo {
+    margin-bottom: 1.5rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    h4 {
+      font-size: 1.05rem;
+      margin: 0 0 1rem;
+      color: #333;
+      display: flex;
+      align-items: center;
+      
+      i {
+        color: #3498db;
+        margin-right: 10px;
+        font-size: 1.1rem;
+      }
+    }
+  }
+  
+  .titulacao-item {
+    margin-bottom: 1rem;
+    padding-left: 10px;
+    border-left: 2px solid rgba(52, 152, 219, 0.3);
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .curso {
+      font-weight: 500;
+      margin: 0 0 0.2rem;
+    }
+    
+    .instituicao {
+      font-size: 0.9rem;
+      margin: 0 0 0.2rem;
+      color: #555;
+    }
+    
+    .periodo {
+      font-size: 0.85rem;
+      margin: 0;
+      color: #6c757d;
+    }
+  }
+  
+  .especialidade-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    
+    .badge {
+      background-color: rgba(52, 152, 219, 0.15);
+      color: #2980b9;
+      border-radius: 20px;
+      padding: 0.35rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+  }
+  
+  &.dark-mode {
+    .titulacao-grupo h4 {
+      color: #f8f9fa;
+      
+      i {
+        color: #5dade2;
+      }
+    }
+    
+    .titulacao-item {
+      border-left-color: rgba(93, 173, 226, 0.4);
+      
+      .instituicao {
+        color: #ccc;
+      }
+      
+      .periodo {
+        color: #adb5bd;
+      }
+    }
+    
+    .especialidade-lista .badge {
+      background-color: rgba(93, 173, 226, 0.2);
+      color: #5dade2;
+    }
+  }
+}
