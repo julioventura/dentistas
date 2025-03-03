@@ -2,13 +2,13 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-horarios',
+  selector: 'app-redes',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './horarios.component.html', 
-  styleUrls: ['./horarios.component.scss']
+  templateUrl: './redes.component.html', 
+  styleUrls: ['./redes.component.scss']
 })
-export class HorariosComponent {
+export class RedesComponent {
   @Input() showIcon: boolean = true;
   @Input() darkMode: boolean = false;
   @Input() userProfile: any; // Recebe dados do perfil
@@ -30,5 +30,21 @@ export class HorariosComponent {
     { dia: 'Sábado', horario: '09:00 - 16:00' }
   ];
   
+  getEnderecoCompleto(): string {
+    if (this.userProfile) {
+        console.log("userProfile:", this.userProfile);
 
+      return `${this.userProfile.endereco}, ${this.userProfile.cidade} - ${this.userProfile.estado}`;
+    }
+    return `${this.endereco.rua}, ${this.endereco.complemento} - ${this.endereco.bairro}`;
+  }
+  
+  getCidadeEstadoCep(): string {
+    if (this.userProfile) {
+      return `${this.userProfile.cidade} - ${this.userProfile.estado}, CEP ${this.userProfile.cep}`;
+    }
+    else {
+      return '';
+    }
+  }
 }

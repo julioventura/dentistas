@@ -18,6 +18,9 @@ import { EnderecoComponent } from "./endereco/endereco.component";
 import { ContatoComponent } from "./contato/contato.component";
 import { TitulacoesComponent } from "./titulacoes/titulacoes.component";
 import { HorariosComponent } from "./horarios/horarios.component";
+import { ConveniosComponent } from "./convenios/convenios.component";
+import { RedesComponent } from "./redes/redes.component";
+import { CartaoComponent } from "./cartao/cartao.component";
 
 @Component({
   selector: 'app-homepage',
@@ -31,14 +34,16 @@ import { HorariosComponent } from "./horarios/horarios.component";
     EnderecoComponent,
     ContatoComponent,
     TitulacoesComponent,
-    HorariosComponent
+    HorariosComponent,
+    ConveniosComponent,
+    RedesComponent,
+    CartaoComponent
 ]
 })
 export class HomepageComponent implements OnInit {
   public userProfile: any = {}; 
   public username: string | null = null;
   public currentYear: number = new Date().getFullYear();
-  public qrCodeUrl: string = 'https://dentistas.com.br/assets/qrcode_dentistascombr.png';
   public loggedInUser: any;
   public isLoading: boolean = true;
   public errorMessage: string = '';

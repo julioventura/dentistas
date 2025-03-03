@@ -1,0 +1,20 @@
+<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
+
+    <div class="container block-title">
+        Cartão de Visitas Digital
+    </div>
+
+    <div class="container block-info">
+
+
+
+            <div class="center">
+                <!-- Exibe o QR Code para a URL da homepage do usuário -->
+                <div class="qr-code" *ngIf="qrCodeUrl">
+                    <img [src]="qrCodeUrl" alt="QR Code da homepage">
+                </div>
+            </div>
+
+
+    </div>
+</div>
