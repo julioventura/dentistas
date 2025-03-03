@@ -1,0 +1,18 @@
+<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
+
+    <div class="container block-title">
+        Endereço
+    </div>
+
+    <div class="container block-info">
+
+        <div>
+            <i *ngIf="showIcon" class="fas fa-map-marker-alt"></i>
+            <div class="texto">
+                <p class="principal">{{ getEnderecoCompleto() }}</p>
+            </div>
+        </div>
+
+
+    </div>
+</div>

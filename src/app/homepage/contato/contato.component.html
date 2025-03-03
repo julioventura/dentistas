@@ -1,0 +1,25 @@
+<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
+
+    <div class="container block-title">
+        Contato
+    </div>
+
+    <div class="container block-info">
+
+
+
+        <div class="contato">
+            <div class="telefone">
+                <i *ngIf="showIcon" class="fas fa-phone-alt"></i>
+                <span>{{ endereco.telefone }}</span>
+            </div>
+
+            <div class="email">
+                <i *ngIf="showIcon" class="fas fa-envelope"></i>
+                <span>{{ endereco.email }}</span>
+            </div>
+        </div>
+
+      
+    </div>
+</div>

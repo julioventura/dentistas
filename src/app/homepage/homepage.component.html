@@ -14,23 +14,15 @@
     </div>
 
     <div class="profile-info">
-        <h2>Contato</h2>
-        <div class="contact-buttons">
-            <p>Email: <a [href]="'mailto:' + userProfile.email" class="contact-btn">{{userProfile.email}}</a></p>
-            <p>Whatsapp: {{userProfile.whatsapp}} </p>
-            <p>Telefone: {{userProfile.telefone}} </p>
-        </div>
 
-        <h2>Endereço</h2>
-        <p>{{ userProfile.endereco }}</p>
-        <p>{{ userProfile.website }}</p>
+        <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato> 
+    
+        <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco>
 
-        <h2>Título Profissional</h2>
-        <p>{{ userProfile.tituloProfissional }}</p> <!-- Título Profissional -->
-        <p>{{ userProfile.descricao }}</p> <!-- Descrição do dentista -->
+        <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
 
-        <h2>Horários de Atendimeto</h2>
-        <p>{{ userProfile.tituloProfissional }}</p> <!-- Título Profissional -->
+        <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
+
     </div>
 
     <div class="social-media">

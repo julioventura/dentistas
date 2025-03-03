@@ -1,0 +1,20 @@
+<div class="block-container" [ngClass]="{'dark-mode': darkMode}">
+
+    <div class="container block-title">
+        Horários de Atendimento
+    </div>
+
+    <div class="container block-info">
+
+        <div class="horarios">
+            <i *ngIf="showIcon" class="fas fa-clock"></i>
+            <div class="texto">
+                <p *ngFor="let item of horarios">
+                    <span class="dia">{{ item.dia }}:</span>
+                    <span class="hora">{{ item.horario }}</span>
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>

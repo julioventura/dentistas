@@ -31,7 +31,7 @@ import { CamposRegistroComponent } from './camposRegistro/camposRegistro.compone
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
 import { MenuConfigComponent } from './menu/menu-config/menu-config.component';
 import { HomeConfigComponent } from './home/home-config/home-config.component';
-import { HomepageIntroComponent } from './homepage-intro/homepage-intro.component';
+import { HomepageIntroComponent } from './homepage/homepage-intro/homepage-intro.component';
 import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';

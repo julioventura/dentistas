@@ -14,6 +14,10 @@ import { UtilService } from '../shared/utils/util.service';
 import { CommonModule } from '@angular/common';
 import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.component';
 import { RodapeHomepageComponent } from './rodape-homepage/rodape-homepage.component';
+import { EnderecoComponent } from "./endereco/endereco.component";
+import { ContatoComponent } from "./contato/contato.component";
+import { TitulacoesComponent } from "./titulacoes/titulacoes.component";
+import { HorariosComponent } from "./horarios/horarios.component";
 
 @Component({
   selector: 'app-homepage',
@@ -23,8 +27,12 @@ import { RodapeHomepageComponent } from './rodape-homepage/rodape-homepage.compo
   imports: [
     CommonModule,
     ChatbotWidgetComponent,
-    RodapeHomepageComponent
-  ]
+    RodapeHomepageComponent,
+    EnderecoComponent,
+    ContatoComponent,
+    TitulacoesComponent,
+    HorariosComponent
+]
 })
 export class HomepageComponent implements OnInit {
   public userProfile: any = {}; 
