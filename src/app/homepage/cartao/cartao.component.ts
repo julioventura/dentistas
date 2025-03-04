@@ -16,6 +16,7 @@ export class CartaoComponent {
   // Dados padrão, usados apenas se userProfile não for fornecido
 
   public qrCodeUrl: string = 'https://dentistas.com.br/assets/qrcode_dentistascombr.png';
+  googleMapsUrl: string = '';
 
  public endereco = {
     rua: 'Av. Paulista, 1000',

@@ -1,12 +1,12 @@
 @import '../../../styles.scss';
 @import '../homepage.component.scss';
 
-.container  {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .cartao-card {
@@ -26,25 +26,26 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    
+
     @media (max-width: 500px) {
       height: auto;
       min-height: 250px;
     }
-    
+
     &.dark-theme {
       background: linear-gradient(135deg, #2c3e50, #1a1a1a);
     }
   }
-  
+
   .cartao-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 0;
-    
+
     .cartao-nome {
       flex-grow: 1;
+
       h4 {
         font-size: 1.1rem;
         font-weight: 600;
@@ -63,14 +64,14 @@
           background-color: $white;
         }
       }
-      
+
       p {
         font-size: 0.8rem;
         margin: 0;
         opacity: 0.9;
       }
     }
-    
+
     .cartao-qrcode {
       width: 100px;
       height: 100px;
@@ -79,7 +80,7 @@
       justify-content: center;
       margin-left: 1rem;
       flex-shrink: 0;
-      
+
       img {
         width: 100%;
         height: 100%;
@@ -87,32 +88,32 @@
       }
     }
   }
-  
+
   // Elemento flexível que cresce para empurrar conteúdo para as bordas
   .flex-spacer {
     flex-grow: 1;
   }
-  
+
   .cartao-content {
     display: flex;
     align-items: flex-end; // Alinha os itens na parte inferior
     justify-content: space-between;
     margin-top: auto; // Empurra para parte inferior
   }
-  
+
   .cartao-info {
     flex: 1;
     margin-right: 0.75rem;
-    
+
     .info-item {
       display: flex;
       align-items: center;
       margin-bottom: 0.5rem;
-      
+
       &:last-child {
         margin-bottom: 0;
       }
-      
+
       i {
         width: 16px;
         text-align: center;
@@ -120,14 +121,14 @@
         opacity: 0.9;
         font-size: 0.8rem;
       }
-      
+
       span {
         font-size: 0.8rem;
         line-height: 1.2;
       }
     }
   }
-  
+
   .cartao-qrcode {
     width: 70px;
     height: 70px;
@@ -135,7 +136,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    
+
     img {
       width: 100%;
       height: 100%;
@@ -145,12 +146,12 @@
       padding: 2px;
     }
   }
-  
+
   .cartao-acoes {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
-    
+
     button {
       flex: 1;
       padding: 0.75rem 0;
@@ -162,41 +163,96 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s;
-      
+
       i {
         margin-right: 8px;
       }
     }
-    
+
     .btn-salvar {
       background-color: #3498db;
       color: white;
-      
+
       &:hover {
         background-color: #2980b9;
       }
     }
-    
+
     .btn-compartilhar {
       background-color: #ecf0f1;
       color: #2c3e50;
-      
+
       &:hover {
         background-color: #bdc3c7;
       }
     }
   }
-  
+
   &.dark-mode {
     .cartao-acoes {
       .btn-compartilhar {
         background-color: #4a5568;
         color: #ecf0f1;
-        
+
         &:hover {
           background-color: #2d3748;
         }
       }
+    }
+  }
+}
+
+.map-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 1.5rem 1.5rem;
+  width: calc(100% - 3rem);
+
+  .map-link {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    min-width: 120px;
+
+    i {
+      font-size: 1.1rem;
+    }
+
+    &.primary {
+      background-color: #2196f3;
+      color: white;
+
+      &:hover {
+        background-color: #1976d2;
+        transform: translateY(-2px);
+      }
+    }
+
+    &.secondary {
+      background-color: #e3f2fd;
+      color: #1976d2;
+
+      &:hover {
+        background-color: #bbdefb;
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+
+    .map-link {
+      width: 100%;
     }
   }
 }

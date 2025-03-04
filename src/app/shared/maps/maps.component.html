@@ -5,29 +5,34 @@
   
   <div class="card-body">
     <div class="map-container">
-      <!-- Always show the fallback display since we don't have a valid API key -->
       <div class="map-fallback">
-        <div class="address-icon">
-          <i class="fas fa-map-marker-alt"></i>
+        <!-- Imagem estática genérica de mapa -->
+        <div class="map-static-image">
+          <div class="map-pin">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
         </div>
+        
         <div class="address-details">
-          <h4>Endereço</h4>
+          <h4>{{ getAddressTitle() }}</h4>
           <p>{{ address }}</p>
         </div>
+        
         <div class="map-actions">
           <a [href]="googleMapsUrl" 
              target="_blank" 
              class="map-link primary">
             <i class="fas fa-map"></i>
-            Ver no Maps
+            Ver no Google Maps
           </a>
           <a [href]="'https://waze.com/ul?q=' + address" 
              target="_blank" 
-             class="map-link secondary">
+             class="map-link primary">
             <i class="fab fa-waze"></i>
-            Ver no Waze
+            Navegação Waze
           </a>
         </div>
+
       </div>
     </div>
   </div>
