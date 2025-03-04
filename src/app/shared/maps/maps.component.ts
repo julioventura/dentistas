@@ -14,7 +14,6 @@ export class MapsComponent implements OnChanges, AfterViewInit {
   
   address: string = '';
   googleMapsUrl: string = '';
-  useStaticMap: boolean = true; // Always use static fallback instead of iframe
   
   constructor() {}
   
@@ -34,7 +33,7 @@ export class MapsComponent implements OnChanges, AfterViewInit {
       this.address = 'Av. Paulista, 1000, São Paulo - SP';
     } else {
       // Construir endereço a partir do perfil do usuário
-      const parts: string[] = []; // Explicitamente tipado como array de strings
+      const parts: string[] = [];
       
       if (this.userProfile.endereco) parts.push(this.userProfile.endereco);
       if (this.userProfile.bairro) parts.push(this.userProfile.bairro);

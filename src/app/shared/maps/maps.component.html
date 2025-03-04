@@ -5,6 +5,7 @@
   
   <div class="card-body">
     <div class="map-container">
+      <!-- Always show the fallback display since we don't have a valid API key -->
       <div class="map-fallback">
         <div class="address-icon">
           <i class="fas fa-map-marker-alt"></i>
@@ -18,13 +19,13 @@
              target="_blank" 
              class="map-link primary">
             <i class="fas fa-map"></i>
-            Ver no Google Maps
+            Ver no Maps
           </a>
           <a [href]="'https://waze.com/ul?q=' + address" 
              target="_blank" 
              class="map-link secondary">
             <i class="fab fa-waze"></i>
-            Navegação Waze
+            Ver no Waze
           </a>
         </div>
       </div>
