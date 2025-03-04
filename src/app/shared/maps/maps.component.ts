@@ -27,6 +27,10 @@ export class MapsComponent implements OnChanges, AfterViewInit {
     this.updateAddress();
   }
   
+  getAddressTitle(): string {
+    return this.userProfile?.nomeClinica || 'Consultório';
+  }
+  
   private updateAddress(): void {
     if (!this.userProfile) {
       // Endereço padrão se não houver perfil
