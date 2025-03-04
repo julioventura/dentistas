@@ -95,9 +95,9 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '', nome: 'queixaPrincipal', tipo: 'text', label: 'Queixa Principal' },
   { grupo: '', nome: 'emTratamentoMedico', tipo: 'boolean', label: 'Está em tratamento médico?' },
   { grupo: '', nome: 'motivoTratamentoMedico', tipo: 'text', label: 'Motivo do tratamento médico' },
-  { grupo: '', nome: 'usaMedicamento', tipo: 'boolean', label: 'Está tomando algum medicamento?' },
+  { grupo: '', nome: 'usaMedicamento', tipo: 'boolean', label: 'Toma medicamentos?' },
   { grupo: '', nome: 'quaisMedicamentos', tipo: 'text', label: 'Quais medicamentos?' },
-  { grupo: '', nome: 'motivoMedicamentos', tipo: 'text', label: 'Motivo do uso de medicamentos' },
+  { grupo: '', nome: 'motivoMedicamentos', tipo: 'text', label: 'Motivo dos medicamentos' },
 
   // Encaminhamento e Dente (campos comentados não foram incluídos)
 

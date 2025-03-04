@@ -124,12 +124,9 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.subtitulo_da_pagina = this.FormService.nome_in_collection;
         console.log('subtitulo_da_pagina:', this.subtitulo_da_pagina);
 
-        // Ajuste da largura dos labels baseado em critério (ex.: coleção "dentesendo")
-        if (this.subcollection === 'dentesendo') {
-          this.customLabelWidthValue = 400;
-        } else {
-          this.customLabelWidthValue = 300;
-        }
+        // Ajuste da largura inicial dos labels
+        this.customLabelWidthValue = 200;
+
         this.updateCustomLabelWidth();
 
       } else {

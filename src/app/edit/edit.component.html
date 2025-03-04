@@ -13,13 +13,13 @@
     <!-- /HEADER -->
   </div>
 
-  <!-- Slider para subcollection  -->
-  <div class="sticky-slider" *ngIf="subcollection && adjustableFields.length > 0">
+  <!-- Slider para ajuste de largura dos labels (sempre visível) -->
+  <div class="sticky-slider">
     <div class="width-control">
       <div class="slider-wrapper">
-        <label for="labelWidthRange"></label>
+        <label for="labelWidthRange"> </label>
         <input type="range" id="labelWidthRange" min="100" max="500" [(ngModel)]="customLabelWidthValue" 
-               [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()">
+               [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()" value="150">
         <span class="small">{{ customLabelWidthValue }}px</span>
       </div>
     </div>
@@ -32,7 +32,7 @@
     </div>
 
     <!-- Container 1: Exibe TODOS os campos preenchidos de collections -->
-    <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo">
+    <form *ngIf="!FormService.isLoading && !subcollection" [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo" [style.--label-width]="customLabelWidth">
       <div *ngFor="let campo of FormService.campos">
         <div *ngIf="campo.nome !== 'id'" class="detail-container">
           <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
@@ -77,7 +77,7 @@
     </form>
 
     <!-- Formulário para subcollections com agrupamento -->
-    <form *ngIf="!FormService.isLoading && subcollection" [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()" class="record-details borda_reta_topo">
+    <form *ngIf="!FormService.isLoading && subcollection" [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()" class="record-details borda_reta_topo" [style.--label-width]="customLabelWidth">
    
       <!-- Grupo de campos fixos -->
       <div *ngFor="let grupo of groupByGrupo(fixedFields) | keyvalue; trackBy: trackByKey">
