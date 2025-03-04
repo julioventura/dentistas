@@ -301,7 +301,7 @@ p {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
     padding: 2rem 0;
-    margin-bottom: 2rem;
+    // margin-bottom: 2rem;
 
     // Para telas maiores, limite a 3 colunas para melhor leitura
     @media (min-width: 1200px) {
@@ -318,6 +318,16 @@ p {
         grid-template-columns: 1fr;
         gap: 1rem;
         padding: 1rem 0;
+    }
+    
+    // Nova classe para grid de duas colunas
+    &.two-columns {
+        // Para telas maiores, força exatamente 2 colunas em vez de 3
+        @media (min-width: 1200px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        // Os outros breakpoints já estão configurados para 2 ou 1 coluna
     }
 }
 
@@ -336,8 +346,8 @@ p {
     }
 
     .card-header {
-        padding: 1.25rem 1.5rem;
-        background-color: rgba(0, 0, 0, 0.02);
+        padding: 0.5rem 0.5rem;
+        background-color: #eee;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
         h3 {
@@ -345,6 +355,7 @@ p {
             font-size: 1.1rem;
             font-weight: 600;
             color: #333;
+            background-color: #d9d9d9;
         }
     }
 

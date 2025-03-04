@@ -8,9 +8,9 @@
 
       <div class="cartao-header">
 
-        <div class="cartao-logo" *ngIf="userProfile?.logo">
+        <!-- <div class="cartao-logo" *ngIf="userProfile?.logo">
           <img [src]="userProfile.logo" alt="Logo">
-        </div>
+        </div> -->
 
         <div class="cartao-nome">
           <h4>{{ userProfile?.nome || 'Nome do Profissional' }}</h4>
@@ -18,34 +18,39 @@
           <p>{{ userProfile?.especialidade || '' }}</p>
         </div>
 
+      </div>
+
+      <!-- Elemento flexível para empurrar conteúdo para as bordas -->
+      <div class="flex-spacer"></div>
+
+      <div class="cartao-content">
+        <div class="cartao-info">
+
+          <div class="info-item" *ngIf="userProfile?.cro">
+            <i class="fas fa-id-card"></i>
+            <span>CRO: {{ userProfile.cro }}</span>
+          </div>
+
+          <div class="info-item" *ngIf="userProfile?.telefone">
+            <i class="fas fa-phone-alt"></i>
+            <span>{{ userProfile.telefone }}</span>
+          </div>
+
+          <div class="info-item" *ngIf="userProfile?.email">
+            <i class="fas fa-envelope"></i>
+            <span>{{ userProfile.email }}</span>
+          </div>
+
+          <div class="info-item" *ngIf="userProfile?.endereco">
+            <i class="fas fa-globe"></i>
+            <span>{{ endereco.site}}</span>
+          </div>
+
+        </div>
+
         <div class="cartao-qrcode">
           <img [src]="qrCodeUrl" alt="QR Code">
         </div>
-
-      </div>
-
-      <div class="cartao-info">
-
-        <div class="info-item" *ngIf="userProfile?.cro">
-          <i class="fas fa-id-card"></i>
-          <span>CRO: {{ userProfile.cro }}</span>
-        </div>
-
-        <div class="info-item" *ngIf="userProfile?.telefone">
-          <i class="fas fa-phone-alt"></i>
-          <span>{{ userProfile.telefone }}</span>
-        </div>
-
-        <div class="info-item" *ngIf="userProfile?.email">
-          <i class="fas fa-envelope"></i>
-          <span>{{ userProfile.email }}</span>
-        </div>
-
-        <div class="info-item" *ngIf="userProfile?.endereco">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>{{ endereco.site}}</span>
-        </div>
-
       </div>
 
     </div>
