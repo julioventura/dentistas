@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-cabecalho-homepage',
+  selector: 'app-menu-homepage',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './cabecalho-homepage.component.html',
-  styleUrls: ['./cabecalho-homepage.component.scss']
+  templateUrl: './menu-homepage.component.html',
+  styleUrls: ['./menu-homepage.component.scss']
 })
-export class CabecalhoHomepageComponent {
+export class MenuHomepageComponent {
   @Input() userProfile: any;
   
   isScrolled = false;

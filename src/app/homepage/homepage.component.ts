@@ -22,7 +22,6 @@ import { ConveniosComponent } from "./convenios/convenios.component";
 import { RedesComponent } from "./redes/redes.component";
 import { CartaoComponent } from "./cartao/cartao.component";
 import { CapaComponent } from "./capa/capa.component";
-import { CabecalhoHomepageComponent } from "./cabecalho-homepage/cabecalho-homepage.component";
 
 @Component({
   selector: 'app-homepage',
@@ -41,7 +40,6 @@ import { CabecalhoHomepageComponent } from "./cabecalho-homepage/cabecalho-homep
     RedesComponent,
     CartaoComponent,
     CapaComponent,
-    CabecalhoHomepageComponent
 ]
 })
 export class HomepageComponent implements OnInit {
