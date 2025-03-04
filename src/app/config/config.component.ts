@@ -32,7 +32,7 @@ export class ConfigComponent implements OnInit {
 
 
   constructor(
-    public config: ConfigService,
+    public configuracoes: ConfigService,
     private router: Router,
     private navegacaoService: NavegacaoService,
     public util: UtilService,
@@ -44,7 +44,7 @@ export class ConfigComponent implements OnInit {
     console.log("ngOnInit()");
     // Pegando as configurações do ConfigService
 
-    this.ambiente = this.config.getAmbiente();
+    this.ambiente = this.configuracoes.getAmbiente();
 
     // Carregar a lista de subcoleções dinamicamente a partir do SubcolecaoService
     this.carregarSubcolecoesDisponiveis();

@@ -18,7 +18,7 @@ export class FooterComponent implements OnInit {
   constructor(
     private router: Router,
     private auth: AngularFireAuth, // Injeta o serviço de autenticação
-    public config: ConfigService
+    public configuracoes: ConfigService
   ) { }
 
   ngOnInit() {
@@ -29,15 +29,15 @@ export class FooterComponent implements OnInit {
       this.user = user;
       console.log(user);
       if(user?.email=='julio@dentistas.com.br'){
-        this.config.is_admin = true;
+        this.configuracoes.is_admin = true;
       }
       else {
-        this.config.is_admin = false;
+        this.configuracoes.is_admin = false;
       }
-      console.log("this.config.is_admin = " + this.config.is_admin);
+      console.log("this.configuracoes.is_admin = " + this.configuracoes.is_admin);
       console.log(user);
 
-      this.ambiente = this.config.getAmbiente();
+      this.ambiente = this.configuracoes.getAmbiente();
       this.show_footer = true;
     });
   }

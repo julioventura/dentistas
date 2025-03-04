@@ -89,7 +89,7 @@
 
 
       
-      <div class="icon-item" (click)="go('backup')">
+      <div *nfIf="this.configuracoes.is_admin" class="icon-item" (click)="go('backup')">
         <img src="https://dentistas.com.br/assets/backup.png" alt="Backup">
         <p>BACKUP </p>
     </div>

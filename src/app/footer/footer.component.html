@@ -48,7 +48,7 @@
 
   <!-- Exibe informações do usuário logado, se disponível -->
   <div id="usuario_logado" *ngIf="user">
-    {{ambiente}} - {{ user.email }} {{ this.config.is_admin ? ' - ADMIN' : ''}}<br>
+    {{ambiente}} - {{ user.email }} {{ this.configuracoes.is_admin ? ' - ADMIN' : ''}}<br>
     <span class='transparente'>{{ user.uid }}</span>
   </div>
 </footer>

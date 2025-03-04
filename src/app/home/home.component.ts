@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private auth: AngularFireAuth,  
     private router: Router,
-    public config: ConfigService,
+    public configuracoes: ConfigService,
     public util: UtilService,
     private firestore: AngularFirestore, 
     private firestoreService: FirestoreService<any> // Usado para buscar o username
@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
 
         // Define o usuário como administrador, se o email corresponder
         if (user.email == 'julio@dentistas.com.br') {
-          this.config.is_admin = true;
+          this.configuracoes.is_admin = true;
         }
 
         // Carrega as configurações de ícones a partir do Firestore
