@@ -1,4 +1,4 @@
-  <div class="container container_principal">
+<div class="container container_principal">
 
   <!-- Header - Cabeçalho da página -->
   <div id="header">
@@ -11,106 +11,100 @@
   <!-- Conteúdo principal -->
 
 
-    <section class="services-section icon-grid largo">
+  <section class="services-section icon-grid largo">
 
-        <!-- Conteúdo principal -->
-        <div id="Services" class="container margin0">
-          <section class="services-section icon-grid largo">
-            
-            <!-- Ícones Condicionais -->
-            <div class="icon-item" *ngIf="visibleIcons['pacientes']" (click)="go('list/pacientes')">
-              <img src="https://dentistas.com.br/assets/pacientes.png" alt="Pacientes">
-              <p>PACIENTES</p>
-            </div>
-      
-            <div class="icon-item" *ngIf="visibleIcons['alunos']" (click)="go('list/alunos')">
-              <img src="https://dentistas.com.br/assets/alunos.png" alt="Alunos">
-              <p>ALUNOS</p>
-            </div>
-      
-            <div class="icon-item" *ngIf="visibleIcons['professores']" (click)="go('list/professores')">
-              <img src="https://dentistas.com.br/assets/professores.png" alt="Professores">
-              <p>PROFESSORES</p>
-            </div>
-      
-            <div class="icon-item" *ngIf="visibleIcons['dentistas']" (click)="go('list/dentistas')">
-              <img src="https://dentistas.com.br/assets/clinica.png" alt="Dentistas">
-              <p>DENTISTAS</p>
-            </div>
-      
-            <div class="icon-item" *ngIf="visibleIcons['equipe']" (click)="go('list/equipe')">
-              <img src="https://dentistas.com.br/assets/usuarios.png" alt="Equipe">
-              <p>EQUIPE</p>
-            </div>
-      
-            <div class="icon-item" *ngIf="visibleIcons['proteticos']" (click)="go('list/proteticos')">
-              <img src="https://dentistas.com.br/assets/equipe.png" alt="Protéticos">
-              <p>PROTÉTICOS</p>
-            </div> 
-      
-             <div class="icon-item" *ngIf="visibleIcons['indicador']" (click)="go('list/indicador')">
-              <img src="https://dentistas.com.br/assets/indicador.png" alt="Indicador">
-              <p>INDICADOR</p>
-            </div>
-      
-            <div class="icon-item" *ngIf="visibleIcons['dentais']" (click)="go('list/dentais')">
-              <img src="https://dentistas.com.br/assets/carrinho.png" alt="Dentais">
-              <p>DENTAIS</p>
-            </div>
-      
-            <div class="icon-item" *ngIf="visibleIcons['empresas']" (click)="go('list/empresas')">
-              <img src="https://dentistas.com.br/assets/empresas.png" alt="Empresas">
-              <p>EMPRESAS</p>
-            </div> 
-            
-            <div class="icon-item" *ngIf="visibleIcons['fornecedores']" (click)="go('list/fornecedores')">
-              <img src="https://dentistas.com.br/assets/fornecedores.png" alt="Fornecedores">
-              <p>FORNECEDORES</p>
-            </div>
+    <!-- Conteúdo principal -->
+    <div id="Services" class="container margin-bottom-8">
+      <section class="services-section icon-grid largo">
 
-            
-      
-            <div class="icon-item" (click)="go('perfil')">
-              <img src="https://dentistas.com.br/assets/perfil.png" alt="Seu Perfil">
-              <p>PERFIL PROFISSIONAL</p>
-            </div>
-      
-            <div class="icon-item" (click)="go('homepage-intro')">
-              <img src="https://dentistas.com.br/assets/global.png" alt="Sua Homepage">
-              <p>SUA HOMEPAGE</p>
-            </div>
+        <!-- Ícones Condicionais -->
+        <div class="icon-item" *ngIf="visibleIcons['pacientes']" (click)="go('list/pacientes')">
+          <img src="https://dentistas.com.br/assets/pacientes.png" alt="Pacientes">
+          <p>PACIENTES</p>
+        </div>
 
-            
+        <div class="icon-item" *ngIf="visibleIcons['alunos']" (click)="go('list/alunos')">
+          <img src="https://dentistas.com.br/assets/alunos.png" alt="Alunos">
+          <p>ALUNOS</p>
+        </div>
 
-      <div class="icon-item" (click)="go('config')">
-        <img src="https://dentistas.com.br/assets/config.png" alt="Configurar">
-        <p>CONFIGURAR </p>
-      </div>
+        <div class="icon-item" *ngIf="visibleIcons['professores']" (click)="go('list/professores')">
+          <img src="https://dentistas.com.br/assets/professores.png" alt="Professores">
+          <p>PROFESSORES</p>
+        </div>
+
+        <div class="icon-item" *ngIf="visibleIcons['dentistas']" (click)="go('list/dentistas')">
+          <img src="https://dentistas.com.br/assets/clinica.png" alt="Dentistas">
+          <p>DENTISTAS</p>
+        </div>
+
+        <div class="icon-item" *ngIf="visibleIcons['equipe']" (click)="go('list/equipe')">
+          <img src="https://dentistas.com.br/assets/usuarios.png" alt="Equipe">
+          <p>EQUIPE</p>
+        </div>
+
+        <div class="icon-item" *ngIf="visibleIcons['proteticos']" (click)="go('list/proteticos')">
+          <img src="https://dentistas.com.br/assets/equipe.png" alt="Protéticos">
+          <p>PROTÉTICOS</p>
+        </div>
+
+        <div class="icon-item" *ngIf="visibleIcons['indicador']" (click)="go('list/indicador')">
+          <img src="https://dentistas.com.br/assets/indicador.png" alt="Indicador">
+          <p>INDICADOR</p>
+        </div>
+
+        <div class="icon-item" *ngIf="visibleIcons['dentais']" (click)="go('list/dentais')">
+          <img src="https://dentistas.com.br/assets/carrinho.png" alt="Dentais">
+          <p>DENTAIS</p>
+        </div>
+
+        <div class="icon-item" *ngIf="visibleIcons['empresas']" (click)="go('list/empresas')">
+          <img src="https://dentistas.com.br/assets/empresas.png" alt="Empresas">
+          <p>EMPRESAS</p>
+        </div>
+
+        <div class="icon-item" *ngIf="visibleIcons['fornecedores']" (click)="go('list/fornecedores')">
+          <img src="https://dentistas.com.br/assets/fornecedores.png" alt="Fornecedores">
+          <p>FORNECEDORES</p>
+        </div>
+
+        <div class="icon-item" (click)="go('perfil')">
+          <img src="https://dentistas.com.br/assets/perfil.png" alt="Seu Perfil">
+          <p>PERFIL PROFISSIONAL</p>
+        </div>
+
+        <div class="icon-item" (click)="go('homepage-intro')">
+          <img src="https://dentistas.com.br/assets/global.png" alt="Sua Homepage">
+          <p>SUA HOMEPAGE</p>
+        </div>
+
+        <div class="icon-item" (click)="go('config')">
+          <img src="https://dentistas.com.br/assets/config.png" alt="Configurar">
+          <p>CONFIGURAR </p>
+        </div>
+
+        <div class="icon-item" (click)="go('backup')">
+          <img src="https://dentistas.com.br/assets/backup.png" alt="Backup">
+          <p>BACKUP </p>
+        </div>
 
 
-      
-      <div *nfIf="this.configuracoes.is_admin" class="icon-item" (click)="go('backup')">
-        <img src="https://dentistas.com.br/assets/backup.png" alt="Backup">
-        <p>BACKUP </p>
+      </section>
     </div>
 
-    
-          </section>
-        </div>
-      
-    </section>
+  </section>
 
 
 
   <!-- <div class="boxvazio"> -->
 
-    <!-- Coluna 1 -->
-    <!-- <div class="column column-left">
+  <!-- Coluna 1 -->
+  <!-- <div class="column column-left">
       <app-chatbot></app-chatbot>
     </div> -->
 
-    <!-- Coluna 2 -->
-    <!-- <div class="column column-right">
+  <!-- Coluna 2 -->
+  <!-- <div class="column column-right">
 
       <section class="chatbots-section box">
 
@@ -154,7 +148,7 @@
       </section>
 
     </div> -->
-   
+
   <!-- </div> -->
 
 </div>
