@@ -17,7 +17,7 @@ export class CartaoComponent {
 
   public qrCodeUrl: string = 'https://dentistas.com.br/assets/qrcode_dentistascombr.png';
 
-  endereco = {
+ public endereco = {
     rua: 'Av. Paulista, 1000',
     complemento: 'Sala 501',
     bairro: 'Bela Vista',
@@ -25,7 +25,8 @@ export class CartaoComponent {
     estado: 'SP',
     cep: '01310-100',
     telefone: '(11) 3456-7890',
-    email: 'contato@dentistaapp.com.br'
+    email: 'bia@dentistas.com.br',
+    site: 'www.dentistas.com.br/bia'
   };
   
   horarios = [

@@ -168,8 +168,7 @@ export class HomepageComponent implements OnInit {
           this.errorMessage = '';
           
           // Verifica se este é o perfil do usuário atual
-          if (this.loggedInUser && this.loggedInUser.email && 
-              this.userProfile.email === this.loggedInUser.email) {
+          if (this.loggedInUser && this.loggedInUser.email && this.userProfile.email === this.loggedInUser.email) {
             this.isCurrentUserProfile = true;
           }
         } else {
