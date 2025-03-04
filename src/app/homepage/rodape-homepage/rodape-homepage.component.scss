@@ -1,7 +1,7 @@
 .footer {
   background-color: #ffffff;
   color: #000000;
-  padding: 3rem 0 0;
+  padding: 1rem 0 0;
   
   .container {
     max-width: 1200px;
@@ -44,6 +44,7 @@
     font-size: 1.2rem;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
+    text-align: left;
     
     &::after {
       content: '';
@@ -106,7 +107,41 @@
     color: #bdc3c7;
   }
 
-  h3 {
-    text-align: left;
+  .footer-legal {
+    text-align: right;
+    
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    h3,
+    li {
+      text-align: right;
+    }
+    
+    h3::after {
+      left: auto;
+      right: 0;
+    }
+  }
+  
+  .footer-contact {
+    text-align: center;
+    
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    h3,
+    li {
+      text-align: center;
+    }
+    
+    h3::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }
