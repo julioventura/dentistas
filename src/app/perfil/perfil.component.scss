@@ -12,17 +12,17 @@
   margin-top: 14px;
   padding: 0px 10px;
 
-    &.view-mode {
-        border-color: $primary-color; // Azul no modo de visualização
-      }
-    
-      &.edit-mode {
-        border-color: $red-dark; // Vermelho no modo de edição
-      }
+  &.view-mode {
+    border-color: $primary-color; // Azul no modo de visualização
+  }
+
+  &.edit-mode {
+    border-color: $red-dark; // Vermelho no modo de edição
+  }
 }
 
 h1,
-h2, 
+h2,
 .title {
   font-weight: bold;
   text-align: center;
@@ -127,7 +127,7 @@ h2,
     .detail-label {
       flex: 0 0 var(--label-width, 150px);
       padding-right: 10px;
-      color: $red-dark;
+      color: $gray;
       font-weight: 500;
       padding-top: 8px;
     }
@@ -159,7 +159,7 @@ h2,
     textarea.detail-value {
       min-height: 80px;
       resize: vertical;
-      
+
       &:focus {
         background-color: #fff6ed;
       }
@@ -245,7 +245,7 @@ h2,
   justify-content: center;
   align-items: center;
   height: 200px;
-  
+
   .aviso {
     color: $red-dark;
     font-size: 18px;
@@ -287,59 +287,66 @@ h2,
     box-shadow: $box-shadow; // Sombra ativada
   }
 
-  .detail-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 7px 10px 7px 10px;
-    border-bottom: 0; // Dinâmico para os modos
+}
 
-    &.view-mode {
-      border-bottom-color: $primary-color-light; // Azul claro no modo de visualização
-    }
+.detail-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 7px 10px 7px 10px;
+  border-bottom: 0; // Dinâmico para os modos
 
-    &.edit-mode {
-      border-bottom-color: $red-light; // Vermelho claro no modo de edição
-    }
+  &.view-mode {
+    border-bottom-color: $primary-color-light; // Azul claro no modo de visualização
+  }
 
-    &:last-child {
-      border-bottom: none;
-    }
+  &.edit-mode {
+    border-bottom-color: $red-light; // Vermelho claro no modo de edição
+  }
 
-    .detail-label {
-      width: 200px;
-      font-size: 14px;
-      text-align: left;
+  &:last-child {
+    border-bottom: none;
+  }
 
-      &.view-mode {
-        color: $primary-color-dark; // Azul escuro no modo de visualização
-      }
+}
 
-      &.edit-mode {
-        color: $red-dark; // Vermelho escuro no modo de edição
-      }
-    }
 
-    .detail-value {
-      width: 100%;
-      padding: 8px;
-      border-radius: 5px;
+.detail-label {
+  // width: 200px;
+  font-size: 10px;
+  text-align: left;
 
-      &.view-mode {
-        background-color: $white;
-        border: 0; // Borda azul no modo de visualização
-        color: $primary-color-dark; // Texto azul no modo de visualização
-        cursor: not-allowed; // Não editável
-      }
+  &.view-mode {
+    color: $primary-color; // Azul no modo de visualização
+  }
 
-      &.edit-mode {
-        background-color: $white;
-        border: 1px solid $red-dark; // Borda vermelha no modo de edição
-        color: $red-dark; // Texto vermelho no modo de edição
-      }
-    }
+  &.edit-mode {
+    color: $red-dark; // Vermelho escuro no modo de edição
   }
 }
+
+.detail-value {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid $primary-color-light; // Borda azul no modo de visualização
+
+  &.view-mode {
+    background-color: $white;
+    border: 0; // Borda azul no modo de visualização
+    color: $primary-color-dark; // Texto azul no modo de visualização
+    cursor: not-allowed; // Não editável
+  }
+
+  &.edit-mode {
+    background-color: $white;
+    border: 1px solid $red-dark; // Borda vermelha no modo de edição
+    color: $red-dark; // Texto vermelho no modo de edição
+  }
+}
+
+
+
 
 // Botões de ação do formulário
 .form-actions {
@@ -388,12 +395,40 @@ h2,
   margin: 0;
   margin-top: 20px;
 
+  &.view-mode {
+    color: $primary-color; // Azul no modo de visualização
+  }
+
+  &.edit-mode {
+    color: $red-dark; // Vermelho no modo de edição
+  }
+
+}
+
+
+.detail-value {
     &.view-mode {
-        color: $primary-color; // Azul no modo de visualização
+        border: 1px solid $primary-color; // Azul no modo de visualização
+        color: $primary-color-dark; // Azul escuro o modo de visualização
       }
     
       &.edit-mode {
-        color: $red-dark; // Vermelho no modo de edição
+        border: 1px solid #d00a0a; // Vermelho no modo de edição
+        color: $red-dark; // Vermelho escuro no modo de edição
       }
-      
+}
+
+
+input {
+  font-size: 12px;
+
+  &.view-mode {
+    border: 1px solid $primary-color; // Azul no modo de visualização
+    color: $primary-color-dark; // Azul no modo de visualização
+  }
+
+  &.edit-mode {
+    border: 1px solid #d00a0a;
+    color: $red-dark;
+  }
 }

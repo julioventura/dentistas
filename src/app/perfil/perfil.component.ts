@@ -247,4 +247,8 @@ export class PerfilComponent implements OnInit {
       this.router.navigate(['/']);
     }
   }
+
+  setClass(baseClass: string): string {
+    return `${baseClass} ${this.isEditing ? 'edit-mode' : 'view-mode'}`;
+  }
 }
