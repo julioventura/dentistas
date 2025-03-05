@@ -1,71 +1,173 @@
 <div class="container container_principal">
-    <!-- Header with title and action buttons -->
-
+  <div class="{{isEditing ? 'sticky-header edit-mode' : 'sticky-header view-mode'}}">
     <!-- HEADER -->
-     
-    <!-- <div class="header">
-        <div class="left">
-            <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
-            <img src="https://dentistas.com.br/assets/home.png" class="navegacao" (click)="util.goHome()">
-        </div>
-        <h1 class="title">{{ titulo_da_pagina }}</h1>
-        <div class="right">
-            <img src="https://dentistas.com.br/assets/editar.png" class="navegacao_direita" (click)="editar()">
-            <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao_direita" (click)="excluir()">
-        </div>
-    </div> -->
-
-
+      <!-- <div class="sticky-header view-mode"> -->
 
     <div class="header">
-        <div class="actions">
-            <img [src]="isEditing ? 'https://dentistas.com.br/assets/voltar_red.png' : 'https://dentistas.com.br/assets/voltar.png'"
-                class="navegacao" (click)="voltar()" />
-        </div>
+      <div class="actions">
+        <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
+      </div>
+      <h1 *ngIf="!isEditing" class="title view-mode">Meu Perfil</h1>
+      <h1 *ngIf="isEditing" class="title edit-mode">Meu Perfil</h1>
+      <div class="actions">
+        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
+        <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()">
+      </div>
+    </div>
+    <!-- /HEADER -->
+  </div>
 
-        <h1 class="title">Perfil Profissional</h1>
-
-        <div class="actions">
-            <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/editar.png" class="navegacao_direita"
-                (click)="editar()">
-            <img *ngIf="isEditing" src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao_direita"
-                (click)="salvar()">
-        </div>
+  <div class="content">
+    <div *ngIf="isLoading" class="loading-container">
+      <p class="aviso">Carregando dados do perfil...</p>
     </div>
 
-    <!-- Loading indicator -->
-    <div *ngIf="isLoading" class="loading">
-        Carregando perfil...
-    </div>
-
-    <!-- Error message -->
     <div *ngIf="errorMessage" class="error-message">
-        {{errorMessage}}
+      {{ errorMessage }}
     </div>
 
-    <!-- Profile display -->
-    <div *ngIf="!isLoading && !errorMessage">
-        <div class="record-header">
-            {{userProfileData?.nome || 'Usuário sem nome definido'}}
-        </div>
+    <div *ngIf="!isLoading && !errorMessage" class="profile-container" [style.--label-width]="customLabelWidth">
+      <!-- Form direto no template -->
+      <form [formGroup]="profileForm" (ngSubmit)="salvar()">
+        
+        <!-- Informações Pessoais -->
+        <div class="form-section">
+          <h4  class="{{isEditing ? 'section-title edit-mode' : 'section-title view-mode'}}">Informações Pessoais</h4>
+         
+          <!-- Nome -->
+          <div class="form-field">
+            <label for="nome" class="detail-label">Nome Completo:</label>
+            <input 
+              type="text" 
+              id="nome" 
+              formControlName="nome" 
+              class="detail-value" 
+              [attr.disabled]="!isEditing ? '' : null">
+          </div>
 
-        <!-- Profile data -->
-        <div class="record-details" [ngClass]="{ 'edit-mode': isEditing, 'view-mode': !isEditing }">
-            <div class="detail-container" *ngFor="let field of [
-                { id: 'nome', label: 'Nome', type: 'text', model: 'nome' },
-                { id: 'username', label: 'Username', type: 'text', model: 'username' },
-                { id: 'foto', label: 'Foto', type: 'text', model: 'foto' },
-                { id: 'nascimento', label: 'Data de Nascimento', type: 'date', model: 'nascimento' },
-                { id: 'email', label: 'Email', type: 'email', model: 'email' },
-                { id: 'whatsapp', label: 'Whatsapp', type: 'tel', model: 'whatsapp' },
-                { id: 'telefone', label: 'Telefone', type: 'tel', model: 'telefone' },
-                { id: 'endereco', label: 'Endereço', type: 'text', model: 'endereco' }
-            ]">
-                <label [for]="field.id" class="detail-label">{{ field.label }}:</label>
-                <input [id]="field.id" [(ngModel)]="userProfileData[field.model]" [readonly]="!isEditing" [type]="field.type"
-                    class="detail-value" />
+          <!-- Username -->
+          <div class="form-field">
+            <label for="username" class="detail-label">Nome de Usuário:</label>
+            <div class="field-with-error">
+              <input 
+                type="text" 
+                id="username" 
+                formControlName="username" 
+                class="detail-value" 
+                [attr.disabled]="!isEditing ? '' : null"
+                (blur)="checkUsername()">
+              <div *ngIf="usernameError" class="validation-message">{{ usernameError }}</div>
             </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-field">
+            <label for="email" class="detail-label">Email:</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              class="detail-value" 
+              [disabled]="true">
+          </div>
+
+          <!-- Telefone -->
+          <div class="form-field">
+            <label for="telefone" class="detail-label">Telefone:</label>
+            <input 
+              type="tel" 
+              id="telefone" 
+              formControlName="telefone" 
+              class="detail-value" 
+              [attr.disabled]="!isEditing ? '' : null">
+          </div>
         </div>
 
-    </div>
-</div>
+        <!-- Endereço -->
+        <div class="form-section">
+          <h4 class="{{isEditing ? 'section-title edit-mode' : 'section-title view-mode'}}">Endereço</h4>
+
+          <!-- Endereço -->
+          <div class="form-field">
+            <label for="endereco" class="detail-label">Endereço:</label>
+            <input 
+              type="text" 
+              id="endereco" 
+              formControlName="endereco" 
+              class="detail-value" 
+              [attr.disabled]="!isEditing ? '' : null">
+          </div>
+
+          <!-- Cidade -->
+          <div class="form-field">
+            <label for="cidade" class="detail-label">Cidade:</label>
+            <input 
+              type="text" 
+              id="cidade" 
+              formControlName="cidade" 
+              class="detail-value" 
+              [attr.disabled]="!isEditing ? '' : null">
+          </div>
+
+          <!-- Estado -->
+          <div class="form-field">
+            <label for="estado" class="detail-label">Estado:</label>
+            <input 
+              type="text" 
+              id="estado" 
+              formControlName="estado" 
+              class="detail-value" 
+              [attr.disabled]="!isEditing ? '' : null">
+          </div>
+
+          <!-- CEP -->
+          <div class="form-field">
+            <label for="cep" class="detail-label">CEP:</label>
+            <input 
+              type="text" 
+              id="cep" 
+              formControlName="cep" 
+              class="detail-value" 
+              [attr.disabled]="!isEditing ? '' : null">
+          </div>
+        </div>
+
+        <!-- Informações Profissionais -->
+        <div class="form-section">
+          <h4 class="{{isEditing ? 'section-title edit-mode' : 'section-title view-mode'}}">Informações Profissionais</h4>
+
+          <!-- CRO -->
+          <div class="form-field">
+            <label for="cro" class="detail-label">CRO:</label>
+            <input 
+              type="text" 
+              id="cro" 
+              formControlName="cro" 
+              class="detail-value" 
+              [attr.disabled]="!isEditing ? '' : null">
+          </div>
+
+          <!-- Especialidades -->
+          <div class="form-field">
+            <label for="especialidade" class="detail-label">Especialidades:</label>
+            <input 
+              type="text" 
+              id="especialidade" 
+              formControlName="especialidade" 
+              class="detail-value" 
+              [attr.disabled]="!isEditing ? '' : null">
+          </div>
+
+          <!-- Bio -->
+          <div class="form-field">
+            <label for="bio" class="detail-label">Biografia:</label>
+            <textarea 
+              id="bio" 
+              formControlName="bio" 
+              class="detail-value" 
+              rows="4"
+              [attr.disabled]="!isEditing ? '' : null"></textarea>
+          </div>
+        </div>
+

@@ -1,0 +1,220 @@
+import { Validators } from '@angular/forms';
+
+export interface ProfileField {
+  controlName: string;
+  defaultValue: any;
+  validators?: any[];
+  label?: string;
+  type?: string;
+  placeholder?: string;
+  group?: string;
+}
+
+export const PROFILE_FORM_FIELDS: ProfileField[] = [
+  { 
+    controlName: 'nome', 
+    defaultValue: '', 
+    validators: [Validators.required],
+    label: 'Nome Completo',
+    type: 'text',
+    placeholder: 'Seu nome completo',
+    group: 'Dados Pessoais'
+  },
+  { 
+    controlName: 'username', 
+    defaultValue: '',
+    label: 'Nome de Usuário',
+    type: 'text',
+    placeholder: 'Seu nome de usuário único',
+    group: 'Dados Pessoais'
+  },
+  { 
+    controlName: 'foto', 
+    defaultValue: '',
+    label: 'URL da Foto',
+    type: 'url',
+    placeholder: 'URL da sua foto de perfil',
+    group: 'Dados Pessoais'
+  },
+  { 
+    controlName: 'nascimento', 
+    defaultValue: '',
+    label: 'Data de Nascimento',
+    type: 'date',
+    group: 'Dados Pessoais'
+  },
+  { 
+    controlName: 'email', 
+    defaultValue: '', 
+    validators: [Validators.email, Validators.required],
+    label: 'Email',
+    type: 'email',
+    placeholder: 'Seu email',
+    group: 'Contato'
+  },
+  { 
+    controlName: 'whatsapp', 
+    defaultValue: '',
+    label: 'WhatsApp',
+    type: 'tel',
+    placeholder: '(99) 99999-9999',
+    group: 'Contato'
+  },
+  { 
+    controlName: 'telefone', 
+    defaultValue: '',
+    label: 'Telefone',
+    type: 'tel',
+    placeholder: '(99) 9999-9999',
+    group: 'Contato'
+  },
+  { 
+    controlName: 'endereco', 
+    defaultValue: '',
+    label: 'Endereço',
+    type: 'text',
+    placeholder: 'Rua, número',
+    group: 'Endereço'
+  },
+  { 
+    controlName: 'bairro', 
+    defaultValue: '',
+    label: 'Bairro',
+    type: 'text',
+    group: 'Endereço'
+  },
+  { 
+    controlName: 'cidade', 
+    defaultValue: '',
+    label: 'Cidade',
+    type: 'text',
+    group: 'Endereço'
+  },
+  { 
+    controlName: 'estado', 
+    defaultValue: '',
+    label: 'Estado',
+    type: 'text',
+    group: 'Endereço'
+  },
+  { 
+    controlName: 'cep', 
+    defaultValue: '',
+    label: 'CEP',
+    type: 'text',
+    placeholder: '00000-000',
+    group: 'Endereço'
+  },
+  { 
+    controlName: 'complemento', 
+    defaultValue: '',
+    label: 'Complemento',
+    type: 'text',
+    placeholder: 'Apto, sala, etc.',
+    group: 'Endereço'
+  },
+  { 
+    controlName: 'cro', 
+    defaultValue: '',
+    label: 'CRO',
+    type: 'text',
+    group: 'Profissional'
+  },
+  { 
+    controlName: 'especialidades', 
+    defaultValue: '',
+    label: 'Especialidades',
+    type: 'text',
+    placeholder: 'Suas especialidades',
+    group: 'Profissional'
+  },
+  { 
+    controlName: 'enderecos', 
+    defaultValue: '',
+    label: 'Outros Endereços',
+    type: 'textarea',
+    group: 'Profissional'
+  },
+  { 
+    controlName: 'instagram', 
+    defaultValue: '',
+    label: 'Instagram',
+    type: 'text',
+    placeholder: '@usuario',
+    group: 'Redes Sociais'
+  },
+  { 
+    controlName: 'facebook', 
+    defaultValue: '',
+    label: 'Facebook',
+    type: 'text',
+    group: 'Redes Sociais'
+  },
+  { 
+    controlName: 'linkedin', 
+    defaultValue: '',
+    label: 'LinkedIn',
+    type: 'text',
+    group: 'Redes Sociais'
+  },
+  { 
+    controlName: 'twitter', 
+    defaultValue: '',
+    label: 'Twitter',
+    type: 'text',
+    group: 'Redes Sociais'
+  },
+  { 
+    controlName: 'youtube', 
+    defaultValue: '',
+    label: 'YouTube',
+    type: 'text',
+    group: 'Redes Sociais'
+  },
+  { 
+    controlName: 'pinterest', 
+    defaultValue: '',
+    label: 'Pinterest',
+    type: 'text',
+    group: 'Redes Sociais'
+  },
+  { 
+    controlName: 'tiktok', 
+    defaultValue: '',
+    label: 'TikTok',
+    type: 'text',
+    group: 'Redes Sociais'
+  },
+];
+
+/**
+ * Creates a configuration object for a reactive form group from the profile fields
+ * @returns Object with control names as keys and [defaultValue, validators] arrays as values
+ */
+export function getProfileFormConfig(): { [key: string]: any[] } {
+  const formConfig: { [key: string]: any[] } = {};
+  
+  PROFILE_FORM_FIELDS.forEach(field => {
+    formConfig[field.controlName] = [
+      field.defaultValue, 
+      field.validators || []
+    ];
+  });
+  
+  return formConfig;
+}
+
+/**
+ * Groups profile fields by their group property
+ * @returns Object with group names as keys and arrays of fields as values
+ */
+export function getGroupedProfileFields(): { [key: string]: ProfileField[] } {
+  return PROFILE_FORM_FIELDS.reduce((groups: { [key: string]: ProfileField[] }, field) => {
+    const group = field.group || 'Outros';
+    if (!groups[group]) {
+      groups[group] = [];
+    }
+    groups[group].push(field);
+    return groups;
+  }, {});
+}

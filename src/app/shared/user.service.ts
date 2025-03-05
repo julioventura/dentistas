@@ -115,4 +115,43 @@ export class UserService {
         })
       );
   }
+  
+  // NOVO MÉTODO: Salvar username se estiver disponível
+  saveUsernameIfAvailable(userId: string, username: string): Observable<boolean> {
+    return this.isValidUsername(username).pipe(
+      map(exists => !exists), // Inverte o resultado: true se não existir (disponível)
+      switchMap(isAvailable => {
+        if (isAvailable) {
+          // Username disponível, salvar no perfil do usuário
+          return from(this.firestore.collection('usuarios')
+            .doc('dentistascombr')
+            .collection('users')
+            .doc(userId)
+            .update({ username: username })
+            .then(() => true)
+            .catch(err => {
+              console.error("Erro ao salvar username:", err);
+              return false;
+            })
+          );
+        } else {
+          // Username já existe
+          return of(false);
+        }
+      })
+    );
+  }
+
+  // NOVO MÉTODO: Atualizar perfil completo
+  updateUserProfile(userEmail: string, profileData: any): Promise<void> {
+    if (!userEmail) {
+      return Promise.reject('Email do usuário não fornecido');
+    }
+    
+    return this.firestore.collection('usuarios')
+      .doc('dentistascombr')
+      .collection('users')
+      .doc(userEmail)
+      .update(profileData);
+  }
 }

@@ -1,5 +1,25 @@
 @import '../../styles.scss';
 
+// Estilos do cabeçalho
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  border: $red solid 1px;
+  border-radius: 8px;
+  margin-top: 14px;
+  padding: 0px 10px;
+
+    &.view-mode {
+        border-color: $primary-color; // Azul no modo de visualização
+      }
+    
+      &.edit-mode {
+        border-color: $red-dark; // Vermelho no modo de edição
+      }
+}
 
 h1,
 h2, 
@@ -21,13 +41,12 @@ h2,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
+  padding: 0 0;
 
   .title {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    flex-grow: 1;
+    color: $red-dark;
+    margin: 0;
+    font-size: 1.5rem;
 
     &.view-mode {
       color: $primary-color; // Azul no modo de visualização
@@ -38,8 +57,198 @@ h2,
     }
   }
 
+  .actions {
+    display: flex;
+  }
+
   .navegacao {
+    width: 40px;
+    height: 40px;
     cursor: pointer;
+  }
+}
+
+// Estilos do slider para ajustar largura dos labels
+.sticky-slider {
+  position: sticky;
+  top: 60px;
+  z-index: 100;
+  background-color: transparent;
+  padding: 10px 0;
+}
+
+.width-control {
+  display: inline-block;
+  border: 1px solid $red;
+  border-radius: 6px;
+  background-color: #fff;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  padding: 3px 12px 3px 0px;
+}
+
+.slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .small {
+    line-height: 1.2;
+    font-size: 0.8em;
+  }
+}
+
+// Estilos do formulário de perfil
+.profile-form {
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid $red-light;
+  padding: 15px;
+
+  // Estilo para o título dos grupos
+  .grupo-titulo {
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1em;
+    color: $red-dark;
+    border-bottom: 1px solid $red-light;
+    padding-bottom: 5px;
+  }
+
+  // Container de cada campo
+  .detail-container {
+    display: flex;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: flex-start;
+
+    .detail-label {
+      flex: 0 0 var(--label-width, 150px);
+      padding-right: 10px;
+      color: $red-dark;
+      font-weight: 500;
+      padding-top: 8px;
+    }
+
+    .detail-value {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid $red-light;
+      border-radius: 4px;
+      font-size: 14px;
+      min-height: 20px;
+
+      &:focus {
+        border-color: $red;
+        outline: none;
+        box-shadow: 0 0 3px rgba(255, 0, 0, 0.3);
+      }
+
+      &.error {
+        border-color: #f44336;
+      }
+
+      &.url {
+        color: #0066cc;
+        text-decoration: underline;
+      }
+    }
+
+    textarea.detail-value {
+      min-height: 80px;
+      resize: vertical;
+      
+      &:focus {
+        background-color: #fff6ed;
+      }
+    }
+  }
+
+  // Mensagens de validação
+  .validation-message {
+    color: #f44336;
+    font-size: 0.8em;
+    margin-top: 3px;
+    margin-left: var(--label-width, 150px);
+  }
+
+  // Botões de ação
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid $red-light;
+
+    .btn {
+      padding: 8px 20px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      min-width: 120px;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &.btn-primary {
+        background-color: $red;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: darken($red, 10%);
+        }
+      }
+
+      &.btn-secondary {
+        background-color: #ccc;
+        color: #333;
+
+        &:hover:not(:disabled) {
+          background-color: #bbb;
+        }
+      }
+    }
+  }
+}
+
+// Estilos para modos view/edit
+.view-mode {
+  .detail-value {
+    background-color: #f9f9f9;
+    border-color: transparent !important;
+  }
+}
+
+.edit-mode {
+  .detail-value {
+    background-color: white;
+  }
+}
+
+// Estilo para mensagem de erro geral
+.error-message {
+  color: white;
+  background-color: #f44336;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+// Estilo para container de loading
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  
+  .aviso {
+    color: $red-dark;
+    font-size: 18px;
   }
 }
 
@@ -169,4 +378,22 @@ h2,
 .detail-value,
 .record-header {
   transition: all 0.3s ease;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  line-height: 0%;
+  font-weight: bold;
+  color: $primary-color;
+  margin: 0;
+  margin-top: 20px;
+
+    &.view-mode {
+        color: $primary-color; // Azul no modo de visualização
+      }
+    
+      &.edit-mode {
+        color: $red-dark; // Vermelho no modo de edição
+      }
+      
 }
