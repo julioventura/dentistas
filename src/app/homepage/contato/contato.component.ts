@@ -22,14 +22,14 @@ export class ContatoComponent {
   
   // Métodos chamados no template HTML
   getTelefone(): string {
-    return this.userProfile?.telefone || this.contato.telefone;
+    return this.userProfile?.telefone || '';
   }
   
   getWhatsapp(): string {
-    return this.userProfile?.whatsapp || this.contato.whatsapp;
+    return this.userProfile?.whatsapp || '';
   }
   
   getEmail(): string {
-    return this.userProfile?.email || this.contato.email;
+    return this.userProfile?.email || '';
   }
 }

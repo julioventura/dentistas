@@ -9,18 +9,19 @@
     <!-- Área de Conteúdo em grid para os componentes internos -->
     <div class="content-grid">
       <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato>
-      <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
-      <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
       <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
       <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
-      <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco>
-
+      <!-- <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco> -->
+      
     </div>
   </div>
-
+  
   <div id="bottom_block" class="container">
     <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
     <div class="content-grid two-columns">
+      <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
+      <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
+      
       <app-cartao [userProfile]="userProfile" [darkMode]="false"></app-cartao>
       <app-maps [userProfile]="userProfile" [darkMode]="false"></app-maps>
     </div>

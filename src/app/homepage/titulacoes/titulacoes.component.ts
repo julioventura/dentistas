@@ -62,17 +62,13 @@ export class TitulacoesComponent {
     }
   }
 
-  getFormacao(): any[] {
-    if (this.userProfile?.formacao && this.userProfile.formacao.length > 0) {
-      return this.userProfile.formacao;
-    }
-    return this.formacaoPadrao;
+  getFormacao() {
+    return this.userProfile?.formacao || this.formacaoPadrao;
   }
 
-  getEspecialidades(): string[] {
-    if (this.userProfile?.especialidades && this.userProfile.especialidades.length > 0) {
-      return this.userProfile.especialidades;
-    }
-    return [];
+  getEspecialidades() {
+    // Esse campo pode ser um string no PROFILE_FORM_FIELDS, mas pode precisar ser um array na exibição
+    const especialidades = this.userProfile?.especialidades || '';
+    return typeof especialidades === 'string' ? especialidades.split(',').map(e => e.trim()) : [];
   }
 }

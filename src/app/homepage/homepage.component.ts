@@ -159,33 +159,29 @@ export class HomepageComponent implements OnInit {
    * se não, define uma mensagem de erro para feedback visual.
    */
   loadUserProfile(username: string): void {
-    console.log("Loading user profile for username:", username);
-    this.firestoreService.getRegistroByUsername('usuarios/dentistascombr/users', username).subscribe(
-      (userProfiles) => {
-        if (userProfiles && userProfiles.length > 0) {
-          // Armazena o primeiro resultado (assumindo username único)
-          this.userProfile = userProfiles[0];
-          console.log('User profile loaded:', this.userProfile); // Adicione isso para debug
-          console.log('Profile loaded:', this.userProfile);
-          this.errorMessage = '';
-          
-          // Verifica se este é o perfil do usuário atual
-          if (this.loggedInUser && this.loggedInUser.email && this.userProfile.email === this.loggedInUser.email) {
-            this.isCurrentUserProfile = true;
+    if (!username) return;
+    
+    this.isLoading = true;
+    this.firestoreService.getRegistroByUsername('usuarios/dentistascombr/users', username)
+      .subscribe(
+        (userProfiles) => {
+          if (userProfiles && userProfiles.length > 0) {
+            this.userProfile = userProfiles[0];
+            // Log para debug
+            console.log('Perfil carregado:', this.userProfile);
+            this.errorMessage = '';
+          } else {
+            this.errorMessage = 'Perfil não encontrado.';
+            this.userProfile = {};
           }
-        } else {
-          console.error('Profile not found');
-          this.errorMessage = 'Perfil não encontrado.';
-          this.userProfile = {};
+          this.isLoading = false;
+        },
+        (error) => {
+          console.error('Erro ao carregar perfil:', error);
+          this.errorMessage = 'Erro ao carregar perfil.';
+          this.isLoading = false;
         }
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error('Error loading profile:', error);
-        this.errorMessage = 'Erro ao carregar perfil.';
-        this.isLoading = false;
-      }
-    );
+      );
   }
 
   /**

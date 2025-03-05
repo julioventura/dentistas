@@ -32,9 +32,7 @@ export class EnderecoComponent {
   
   getEnderecoCompleto(): string {
     if (this.userProfile) {
-        console.log("userProfile:", this.userProfile);
-
-      return `${this.userProfile.endereco}, ${this.userProfile.cidade} - ${this.userProfile.estado}`;
+      return `${this.userProfile.endereco || ''}, ${this.userProfile.bairro || ''} - ${this.userProfile.cidade || ''}, ${this.userProfile.estado || ''}`;
     }
     return `${this.endereco.rua}, ${this.endereco.complemento} - ${this.endereco.bairro}`;
   }
@@ -46,5 +44,9 @@ export class EnderecoComponent {
     else {
       return '';
     }
+  }
+
+  getCep(): string {
+    return this.userProfile?.cep || '';
   }
 }

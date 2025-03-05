@@ -37,6 +37,13 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     group: '01. Dados Pessoais'
   },
   { 
+    controlName: 'fotoCapa', 
+    defaultValue: '',
+    label: 'Foto de Capa',
+    type: 'url',
+    group: '01. Dados Pessoais'
+  },
+  { 
     controlName: 'nascimento', 
     defaultValue: '',
     label: 'Nascimento',
@@ -138,6 +145,27 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     controlName: 'bio',
     defaultValue: '',
     label: 'Biografia',
+    type: 'textarea',
+    group: '04. Informações Profissionais'
+  },
+  { 
+    controlName: 'convenios', 
+    defaultValue: [],
+    label: 'Convênios',
+    type: 'array',
+    group: '04. Informações Profissionais'
+  },
+  { 
+    controlName: 'formacao', 
+    defaultValue: '',
+    label: 'Formação Profissional',
+    type: 'textarea',
+    group: '04. Informações Profissionais'
+  },
+  { 
+    controlName: 'horarios', 
+    defaultValue: '',
+    label: 'Horários de Atendimento',
     type: 'textarea',
     group: '04. Informações Profissionais'
   },

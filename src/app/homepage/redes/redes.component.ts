@@ -54,14 +54,16 @@ export class RedesComponent {
       this.userProfile?.instagram || 
       this.userProfile?.facebook || 
       this.userProfile?.linkedin || 
-      this.userProfile?.youtube || 
-      this.userProfile?.website
+      this.userProfile?.youtube ||
+      this.userProfile?.twitter ||
+      this.userProfile?.tiktok ||
+      this.userProfile?.pinterest
     );
   }
 
   getInstagramUrl(): string {
     const username = this.userProfile?.instagram?.replace('@', '');
-    return `https://instagram.com/${username}`;
+    return username ? `https://instagram.com/${username}` : '';
   }
 
   getFacebookUrl(): string {

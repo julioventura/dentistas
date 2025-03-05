@@ -80,4 +80,18 @@ export class CapaComponent {
     return this.userProfile.whatsapp.replace(/\D/g, '');
   }
 
+  // Dados principais e foto
+  getNome() {
+    return this.userProfile?.nome || 'Dentista';
+  }
+
+  getEspecialidades() {
+    const especialidades = this.userProfile?.especialidades || '';
+    return typeof especialidades === 'string' ? especialidades.split(',').map(e => e.trim()) : [];
+  }
+
+  getProfileImage() {
+    return this.userProfile?.foto || 'https://dentistas.com.br/assets/default-profile.png';
+  }
+
 }

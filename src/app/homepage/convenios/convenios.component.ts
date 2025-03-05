@@ -56,11 +56,8 @@ export class ConveniosComponent {
     }
   }
 
-  getConvenios(): string[] {
-    if (this.userProfile?.convenios && this.userProfile.convenios.length > 0) {
-      return this.userProfile.convenios;
-    }
-    return this.conveniosDefault;
+  getConvenios() {
+    return this.userProfile?.convenios || this.conveniosDefault;
   }
   
   // Verifica se existem convênios para exibir
