@@ -18,7 +18,7 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'Nome Completo',
     type: 'text',
     placeholder: 'Seu nome completo',
-    group: 'Dados Pessoais'
+    group: '01. Dados Pessoais'
   },
   { 
     controlName: 'username', 
@@ -26,7 +26,7 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'Nome de Usuário',
     type: 'text',
     placeholder: 'Seu nome de usuário único',
-    group: 'Dados Pessoais'
+    group: '01. Dados Pessoais'
   },
   { 
     controlName: 'foto', 
@@ -34,14 +34,14 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'URL da Foto',
     type: 'url',
     placeholder: 'URL da sua foto de perfil',
-    group: 'Dados Pessoais'
+    group: '01. Dados Pessoais'
   },
   { 
     controlName: 'nascimento', 
     defaultValue: '',
     label: 'Nascimento',
     type: 'date',
-    group: 'Dados Pessoais'
+    group: '01. Dados Pessoais'
   },
 
   // Contato
@@ -52,7 +52,7 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'Email',
     type: 'email',
     placeholder: 'Seu email',
-    group: 'Contato'
+    group: '02. Contato'
   },
   { 
     controlName: 'whatsapp', 
@@ -60,7 +60,7 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'WhatsApp',
     type: 'tel',
     placeholder: '(99) 99999-9999',
-    group: 'Contato'
+    group: '02. Contato'
   },
   { 
     controlName: 'telefone', 
@@ -68,7 +68,7 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'Telefone',
     type: 'tel',
     placeholder: '(99) 9999-9999',
-    group: 'Contato'
+    group: '02. Contato'
   },
 
   // Endereço
@@ -78,28 +78,28 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'Endereço',
     type: 'text',
     placeholder: 'Rua, número',
-    group: 'Endereço'
+    group: '03. Endereço'
   },
   { 
     controlName: 'bairro', 
     defaultValue: '',
     label: 'Bairro',
     type: 'text',
-    group: 'Endereço'
+    group: '03. Endereço'
   },
   { 
     controlName: 'cidade', 
     defaultValue: '',
     label: 'Cidade',
     type: 'text',
-    group: 'Endereço'
+    group: '03. Endereço'
   },
   { 
     controlName: 'estado', 
     defaultValue: '',
     label: 'Estado',
     type: 'text',
-    group: 'Endereço'
+    group: '03. Endereço'
   },
   { 
     controlName: 'cep', 
@@ -107,8 +107,41 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'CEP',
     type: 'text',
     placeholder: '00000-000',
-    group: 'Endereço'
+    group: '03. Endereço'
   },
+
+
+  // Informações Profissionais
+  {
+    controlName: 'cro',
+    defaultValue: '',
+    label: 'CRO',
+    type: 'text',
+    group: '04. Informações Profissionais'
+  },
+  {
+    controlName: 'especialidades',
+    defaultValue: '',
+    label: 'Especialidades',
+    type: 'textarea',
+    placeholder: 'Suas especialidades',
+    group: '04. Informações Profissionais'
+  },
+  {
+    controlName: 'enderecos',
+    defaultValue: '',
+    label: 'Outros Endereços',
+    type: 'textarea',
+    group: '04. Informações Profissionais'
+  },
+  {
+    controlName: 'bio',
+    defaultValue: '',
+    label: 'Biografia',
+    type: 'textarea',
+    group: '04. Informações Profissionais'
+  },
+
 
   // Redes Sociais
   { 
@@ -117,81 +150,51 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'Instagram',
     type: 'text',
     placeholder: '@usuario',
-    group: 'Redes Sociais'
+    group: '05. Redes Sociais'
   },
   { 
     controlName: 'facebook', 
     defaultValue: '',
     label: 'Facebook',
     type: 'text',
-    group: 'Redes Sociais'
+    group: '05. Redes Sociais'
   },
   { 
     controlName: 'linkedin', 
     defaultValue: '',
     label: 'LinkedIn',
     type: 'text',
-    group: 'Redes Sociais'
+    group: '05. Redes Sociais'
   },
   { 
     controlName: 'twitter', 
     defaultValue: '',
     label: 'Twitter',
     type: 'text',
-    group: 'Redes Sociais'
+    group: '05. Redes Sociais'
   },
   { 
     controlName: 'youtube', 
     defaultValue: '',
     label: 'YouTube',
     type: 'text',
-    group: 'Redes Sociais'
+    group: '05. Redes Sociais'
   },
   { 
     controlName: 'pinterest', 
     defaultValue: '',
     label: 'Pinterest',
     type: 'text',
-    group: 'Redes Sociais'
+    group: '05. Redes Sociais'
   },
   { 
     controlName: 'tiktok', 
     defaultValue: '',
     label: 'TikTok',
     type: 'text',
-    group: 'Redes Sociais'
+    group: '05. Redes Sociais'
   },
 
-  // Informações Profissionais
-  {
-    controlName: 'cro',
-    defaultValue: '',
-    label: 'CRO',
-    type: 'text',
-    group: 'Informações Profissionais'
-  },
-  {
-    controlName: 'especialidades',
-    defaultValue: '',
-    label: 'Especialidades',
-    type: 'textarea',
-    placeholder: 'Suas especialidades',
-    group: 'Informações Profissionais'
-  },
-  {
-    controlName: 'enderecos',
-    defaultValue: '',
-    label: 'Outros Endereços',
-    type: 'textarea',
-    group: 'Informações Profissionais'
-  },
-  {
-    controlName: 'bio',
-    defaultValue: '',
-    label: 'Biografia',
-    type: 'textarea',
-    group: 'Informações Profissionais'
-  },
 ];
 
 /**

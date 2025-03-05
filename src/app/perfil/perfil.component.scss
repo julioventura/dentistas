@@ -86,14 +86,14 @@ h2,
   padding: 3px 12px 3px 0px;
 
   &.view-mode {
-      color: $primary-color; // modo de visualização
-      border-color: $primary-color;
-    }
-  
-    &.edit-mode {
-      color: $red-dark; // modo de edição
-      border-color: $red;
-    }
+    color: $primary-color; // modo de visualização
+    border-color: $primary-color;
+  }
+
+  &.edit-mode {
+    color: $red-dark; // modo de edição
+    border-color: $red;
+  }
 }
 
 .slider-wrapper {
@@ -125,12 +125,13 @@ h2,
   // Estilo para o título dos grupos
   .grupo-titulo {
     font-weight: bold;
-    margin-bottom: 0;
+    margin-bottom: 6px;
     font-size: 1em;
     color: $gray;
     border-bottom: 1px solid $red-light;
     padding-top: 10px;
     padding-bottom: 0px;
+    text-align: left;
     line-height: 1.5em;
 
     &.view-mode {
@@ -147,15 +148,15 @@ h2,
   // Container de cada campo
   .detail-container {
     display: flex;
-    margin-bottom: 0;
-    padding: 5px 0;
+    margin-bottom: 4px;
+    padding: 0;
     border-bottom: 0;
     align-items: flex-start;
 
     .detail-label {
       flex: 0 0 var(--label-width, 150px);
       padding-right: 10px;
-      padding-top: 8px;
+      padding-top: 1px;
 
       &.view-mode {
         color: $primary-color; // Azul no modo de visualização
@@ -173,14 +174,14 @@ h2,
     }
 
     .detail-value {
-      width: 100%;
-      padding: 8px;
+      // width: 100%;
+      padding: 3px;
       border-radius: 5px;
       min-height: 20px;
 
       &.view-mode {
         background-color: #fff;
-        border: 1px solid $primary-color; // Borda azul no modo de visualização
+        border: 1px solid $primary-color-light; // Borda azul no modo de visualização
         color: $primary-color-dark; // Texto azul no modo de visualização
         cursor: not-allowed; // Não editável
       }
@@ -195,6 +196,7 @@ h2,
         border-color: currentColor;
         outline: none;
         box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+        background-color: $red-light;
       }
 
       &.error {
@@ -202,9 +204,14 @@ h2,
       }
     }
 
-    textarea.detail-value {
-      min-height: 80px;
-      resize: vertical;
+    textarea {
+      margin-bottom: 6px;
+      
+      textarea.detail-value {
+        min-height: 80px;
+        resize: vertical;
+        margin-bottom: 10px;
+      }
     }
   }
 
@@ -410,14 +417,14 @@ h2,
 
   &.view-mode {
     background-color: $white;
-    border: 0; 
+    border: 0;
     color: $primary-color-dark; // Texto azul no modo de visualização
     cursor: not-allowed; // Não editável
   }
 
   &.edit-mode {
     background-color: $white;
-    border: 0; 
+    border: 0;
     color: $red-dark; // Texto vermelho no modo de edição
   }
 }
