@@ -7,7 +7,7 @@
   z-index: 100;
   background: #fff;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  border: $red solid 1px;
+  border: $gray solid 1px;
   border-radius: 8px;
   margin-top: 14px;
   padding: 0px 10px;
@@ -17,7 +17,7 @@
   }
 
   &.edit-mode {
-    border-color: $red-dark; // Vermelho no modo de edição
+    border-color: $red; // Vermelho no modo de edição
   }
 }
 
@@ -44,9 +44,9 @@ h2,
   padding: 0 0;
 
   .title {
-    color: $red-dark;
+    color: $gray;
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 20px;
 
     &.view-mode {
       color: $primary-color; // Azul no modo de visualização
@@ -84,6 +84,16 @@ h2,
   background-color: #fff;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   padding: 3px 12px 3px 0px;
+
+  &.view-mode {
+      color: $primary-color; // modo de visualização
+      border-color: $primary-color;
+    }
+  
+    &.edit-mode {
+      color: $red-dark; // modo de edição
+      border-color: $red;
+    }
 }
 
 .slider-wrapper {
@@ -99,70 +109,102 @@ h2,
 
 // Estilos do formulário de perfil
 .profile-form {
-  margin-top: 20px;
   background-color: #fff;
   border-radius: 8px;
-  border: 1px solid $red-light;
-  padding: 15px;
+  border: 1px solid $gray;
+  padding: 10px;
+
+  &.view-mode {
+    border-color: $primary-color; // Azul no modo de visualização
+  }
+
+  &.edit-mode {
+    border-color: $red; // Vermelho escuro no modo de edição
+  }
 
   // Estilo para o título dos grupos
   .grupo-titulo {
     font-weight: bold;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     font-size: 1em;
-    color: $red-dark;
+    color: $gray;
     border-bottom: 1px solid $red-light;
-    padding-bottom: 5px;
+    padding-top: 10px;
+    padding-bottom: 0px;
+    line-height: 1.5em;
+
+    &.view-mode {
+      color: $primary-color; // Azul no modo de visualização
+      border-color: $primary-color-light;
+    }
+
+    &.edit-mode {
+      color: $red-dark; // Vermelho escuro no modo de edição
+      border-color: $red-light;
+    }
   }
 
   // Container de cada campo
   .detail-container {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     padding: 5px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 0;
     align-items: flex-start;
 
     .detail-label {
       flex: 0 0 var(--label-width, 150px);
       padding-right: 10px;
-      color: $gray;
-      font-weight: 500;
       padding-top: 8px;
+
+      &.view-mode {
+        color: $primary-color; // Azul no modo de visualização
+      }
+
+      &.edit-mode {
+        color: $red-dark; // Vermelho escuro no modo de edição
+      }
+    }
+
+    .field-input-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .detail-value {
-      flex: 1;
+      width: 100%;
       padding: 8px;
-      border: 1px solid $red-light;
-      border-radius: 4px;
-      font-size: 14px;
+      border-radius: 5px;
       min-height: 20px;
 
+      &.view-mode {
+        background-color: #fff;
+        border: 1px solid $primary-color; // Borda azul no modo de visualização
+        color: $primary-color-dark; // Texto azul no modo de visualização
+        cursor: not-allowed; // Não editável
+      }
+
+      &.edit-mode {
+        background-color: #fff;
+        border: 1px solid $red; // Borda vermelha no modo de edição
+        color: $red-dark; // Texto vermelho no modo de edição
+      }
+
       &:focus {
-        border-color: $red;
+        border-color: currentColor;
         outline: none;
-        box-shadow: 0 0 3px rgba(255, 0, 0, 0.3);
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
       }
 
       &.error {
         border-color: #f44336;
-      }
-
-      &.url {
-        color: #0066cc;
-        text-decoration: underline;
       }
     }
 
     textarea.detail-value {
       min-height: 80px;
       resize: vertical;
-
-      &:focus {
-        background-color: #fff6ed;
-      }
     }
   }
 
@@ -171,7 +213,6 @@ h2,
     color: #f44336;
     font-size: 0.8em;
     margin-top: 3px;
-    margin-left: var(--label-width, 150px);
   }
 
   // Botões de ação
@@ -252,6 +293,43 @@ h2,
   }
 }
 
+// Modern spinner styles for loading state
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: $primary-color;
+  animation: spin 1s ease-in-out infinite;
+
+  &.view-mode {
+    border-top-color: $primary-color;
+  }
+
+  &.edit-mode {
+    border-top-color: $red;
+  }
+}
+
+.spinner-text {
+  color: $gray-dark;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 // Linha com o nome do registro
 .record-header {
   text-align: center;
@@ -312,7 +390,6 @@ h2,
 
 
 .detail-label {
-  // width: 200px;
   font-size: 10px;
   text-align: left;
 
@@ -333,14 +410,14 @@ h2,
 
   &.view-mode {
     background-color: $white;
-    border: 0; // Borda azul no modo de visualização
+    border: 0; 
     color: $primary-color-dark; // Texto azul no modo de visualização
     cursor: not-allowed; // Não editável
   }
 
   &.edit-mode {
     background-color: $white;
-    border: 1px solid $red-dark; // Borda vermelha no modo de edição
+    border: 0; 
     color: $red-dark; // Texto vermelho no modo de edição
   }
 }
@@ -407,15 +484,15 @@ h2,
 
 
 .detail-value {
-    &.view-mode {
-        border: 1px solid $primary-color; // Azul no modo de visualização
-        color: $primary-color-dark; // Azul escuro o modo de visualização
-      }
-    
-      &.edit-mode {
-        border: 1px solid #d00a0a; // Vermelho no modo de edição
-        color: $red-dark; // Vermelho escuro no modo de edição
-      }
+  &.view-mode {
+    border: 1px solid $primary-color; // Azul no modo de visualização
+    color: $primary-color-dark; // Azul escuro o modo de visualização
+  }
+
+  &.edit-mode {
+    border: 1px solid $red; // Vermelho no modo de edição
+    color: $red-dark; // Vermelho escuro no modo de edição
+  }
 }
 
 

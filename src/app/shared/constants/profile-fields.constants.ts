@@ -39,10 +39,12 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
   { 
     controlName: 'nascimento', 
     defaultValue: '',
-    label: 'Data de Nascimento',
+    label: 'Nascimento',
     type: 'date',
     group: 'Dados Pessoais'
   },
+
+  // Contato
   { 
     controlName: 'email', 
     defaultValue: '', 
@@ -68,6 +70,8 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     placeholder: '(99) 9999-9999',
     group: 'Contato'
   },
+
+  // Endereço
   { 
     controlName: 'endereco', 
     defaultValue: '',
@@ -105,36 +109,8 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     placeholder: '00000-000',
     group: 'Endereço'
   },
-  { 
-    controlName: 'complemento', 
-    defaultValue: '',
-    label: 'Complemento',
-    type: 'text',
-    placeholder: 'Apto, sala, etc.',
-    group: 'Endereço'
-  },
-  { 
-    controlName: 'cro', 
-    defaultValue: '',
-    label: 'CRO',
-    type: 'text',
-    group: 'Profissional'
-  },
-  { 
-    controlName: 'especialidades', 
-    defaultValue: '',
-    label: 'Especialidades',
-    type: 'text',
-    placeholder: 'Suas especialidades',
-    group: 'Profissional'
-  },
-  { 
-    controlName: 'enderecos', 
-    defaultValue: '',
-    label: 'Outros Endereços',
-    type: 'textarea',
-    group: 'Profissional'
-  },
+
+  // Redes Sociais
   { 
     controlName: 'instagram', 
     defaultValue: '',
@@ -184,6 +160,37 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'TikTok',
     type: 'text',
     group: 'Redes Sociais'
+  },
+
+  // Informações Profissionais
+  {
+    controlName: 'cro',
+    defaultValue: '',
+    label: 'CRO',
+    type: 'text',
+    group: 'Informações Profissionais'
+  },
+  {
+    controlName: 'especialidades',
+    defaultValue: '',
+    label: 'Especialidades',
+    type: 'textarea',
+    placeholder: 'Suas especialidades',
+    group: 'Informações Profissionais'
+  },
+  {
+    controlName: 'enderecos',
+    defaultValue: '',
+    label: 'Outros Endereços',
+    type: 'textarea',
+    group: 'Informações Profissionais'
+  },
+  {
+    controlName: 'bio',
+    defaultValue: '',
+    label: 'Biografia',
+    type: 'textarea',
+    group: 'Informações Profissionais'
   },
 ];
 

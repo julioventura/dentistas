@@ -1,140 +1,116 @@
 <div class="container container_principal">
-  <div class="{{isEditing ? 'sticky-header edit-mode' : 'sticky-header view-mode'}}">
+  <div class="sticky-header" [ngClass]="{'view-mode': !isEditing, 'edit-mode': isEditing}">
     <!-- HEADER -->
-    <!-- <div class="sticky-header view-mode"> -->
-
     <div class="header">
       <div class="actions">
+        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
         <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
-        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao"
-          (click)="voltar()">
       </div>
-      <h1 *ngIf="!isEditing" class="title view-mode">Meu Perfil</h1>
-      <h1 *ngIf="isEditing" class="title edit-mode">Meu Perfil</h1>
+      <h1 class="title" [ngClass]="setClass('')">Meu Perfil</h1>
       <div class="actions">
-        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao"
-          (click)="salvar()">
+        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
         <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()">
       </div>
     </div>
     <!-- /HEADER -->
   </div>
 
+  <!-- Slider para ajustar largura dos labels (sempre visível) -->
+  <div class="sticky-slider view-mode">
+    <div [ngClass]="setClass('width-control')">
+      <div class="slider-wrapper">
+        <label for="labelWidthRange"></label>
+        <input 
+          type="range" 
+          id="labelWidthRange" 
+          min="50" 
+          max="300" 
+          [(ngModel)]="customLabelWidthValue" 
+          [ngModelOptions]="{standalone: true}" 
+          (input)="updateCustomLabelWidth()" 
+          value="150">
+        <span class="small">{{ customLabelWidthValue }}px</span>
+      </div>
+    </div>
+  </div>
+
   <div class="content">
     <div *ngIf="isLoading" class="loading-container">
-      <!-- <p class="aviso">Carregando dados do perfil...</p> -->
+      <div class="spinner-container">
+        <div class="spinner" [ngClass]="{'view-mode': !isEditing, 'edit-mode': isEditing}"></div>
+      </div>
     </div>
 
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
 
-    <div *ngIf="!isLoading && !errorMessage" class="profile-container" [style.--label-width]="customLabelWidth">
-      <!-- Form direto no template -->
+    <div id="profile-form" *ngIf="!isLoading && !errorMessage" 
+      [ngClass]="setClass('profile-form')"      
+      [style.--label-width]="customLabelWidth">
+
       <form [formGroup]="profileForm" (ngSubmit)="salvar()">
 
-        <!-- Informações Pessoais -->
-        <div class="form-section">
-          <h4 class="{{isEditing ? 'section-title edit-mode' : 'section-title view-mode'}}">Informações Pessoais</h4>
-
-          <!-- Nome -->
-          <div class="form-field">
-            <label for="nome" [ngClass]="setClass('detail-label')">Nome Completo:</label>
-            <input type="text" id="nome" formControlName="nome"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-              [attr.disabled]="!isEditing ? '' : null">
-          </div>
-
-          <!-- Username -->
-          <div class="form-field">
-            <label for="username" [ngClass]="setClass('detail-label')">Nome de Usuário:</label>
-            <div class="field-with-error">
-              <input type="text" id="username" formControlName="username"
-                class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-                [attr.disabled]="!isEditing ? '' : null" (blur)="checkUsername()">
-              <div *ngIf="usernameError" class="validation-message">{{ usernameError }}</div>
+        <!-- Percorre os grupos de campos -->
+        <div *ngFor="let group of groupedFields | keyvalue" class="field-group">
+          <h3 [ngClass]="setClass('grupo-titulo')">{{ group.key }}</h3>
+          
+          <!-- Percorre os campos de cada grupo -->
+          <div *ngFor="let field of group.value" class="detail-container">
+            <label [for]="field.controlName" [ngClass]="setClass('detail-label')" [style.width]="customLabelWidth">
+              {{ field.label }}:
+            </label>
+            
+            <!-- Container do campo com input e possíveis mensagens de erro -->
+            <div class="field-input-container">
+              <!-- Renderiza o tipo apropriado de campo -->
+              <ng-container [ngSwitch]="field.type">
+                <!-- Textarea para campos de texto longo -->
+                <ng-container *ngSwitchCase="'textarea'">
+                  <textarea 
+                    [formControlName]="field.controlName"
+                    [id]="field.controlName"
+                    [placeholder]="field.placeholder || ''"
+                    [ngClass]="{'detail-value view-mode': !isEditing, 'detail-value edit-mode': isEditing}"
+                    [attr.disabled]="!isEditing ? '' : null"
+                    [class.error]="isFieldInvalid(field.controlName)"
+                    (blur)="onFieldBlur(field.controlName)"
+                    (change)="onFieldChange($event, field.controlName)"
+                    rows="4">
+                  </textarea>
+                </ng-container>
+                
+                <!-- Input padrão para os demais campos -->
+                <ng-container *ngSwitchDefault>
+                  <input 
+                    [type]="field.type || 'text'"
+                    [formControlName]="field.controlName"
+                    [id]="field.controlName"
+                    [placeholder]="field.placeholder || ''"
+                    [ngClass]="{'detail-value view-mode': !isEditing, 'detail-value edit-mode': isEditing}"
+                    [attr.disabled]="!isEditing ? '' : null"
+                    [class.error]="isFieldInvalid(field.controlName)"
+                    (blur)="onFieldBlur(field.controlName)"
+                    (change)="onFieldChange($event, field.controlName)">
+                </ng-container>
+              </ng-container>
+              
+              <!-- Mensagem de erro para validação -->
+              <div *ngIf="isFieldInvalid(field.controlName)" class="validation-message">
+                {{ getErrorMessage(field.controlName) }}
+              </div>
+              
+              <!-- Mensagem de erro específica para o campo username -->
+              <div *ngIf="field.controlName === 'username' && usernameError" class="validation-message">
+                {{ usernameError }}
+              </div>
             </div>
           </div>
-
-          <!-- Email -->
-          <div class="form-field">
-            <label for="email" [ngClass]="setClass('detail-label')">Email:</label>
-            <input type="email" id="email" formControlName="email"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}" [disabled]="true">
-          </div>
-
-          <!-- Telefone -->
-          <div class="form-field">
-            <label for="telefone" [ngClass]="setClass('detail-label')">Telefone:</label>
-            <input type="tel" id="telefone" formControlName="telefone"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-              [attr.disabled]="!isEditing ? '' : null">
-          </div>
         </div>
+        
+      </form>
 
-        <!-- Endereço -->
-        <div class="form-section">
-          <h4 class="{{isEditing ? 'section-title edit-mode' : 'section-title view-mode'}}">Endereço</h4>
+    </div>
 
-          <!-- Endereço -->
-          <div class="form-field">
-            <label for="endereco" [ngClass]="setClass('detail-label')">Endereço:</label>
-            <input type="text" id="endereco" formControlName="endereco"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-              [attr.disabled]="!isEditing ? '' : null">
-          </div>
-
-          <!-- Cidade -->
-          <div class="form-field">
-            <label for="cidade" [ngClass]="setClass('detail-label')">Cidade:</label>
-            <input type="text" id="cidade" formControlName="cidade"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-              [attr.disabled]="!isEditing ? '' : null">
-          </div>
-
-          <!-- Estado -->
-          <div class="form-field">
-            <label for="estado" [ngClass]="setClass('detail-label')">Estado:</label>
-            <input type="text" id="estado" formControlName="estado"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-              [attr.disabled]="!isEditing ? '' : null">
-          </div>
-
-          <!-- CEP -->
-          <div class="form-field">
-            <label for="cep" [ngClass]="setClass('detail-label')">CEP:</label>
-            <input type="text" id="cep" formControlName="cep"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-              [attr.disabled]="!isEditing ? '' : null">
-          </div>
-        </div>
-
-        <!-- Informações Profissionais -->
-        <div class="form-section">
-          <h4 class="{{isEditing ? 'section-title edit-mode' : 'section-title view-mode'}}">Informações Profissionais
-          </h4>
-
-          <!-- CRO -->
-          <div class="form-field">
-            <label for="cro" [ngClass]="setClass('detail-label')">CRO:</label>
-            <input type="text" id="cro" formControlName="cro"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-              [attr.disabled]="!isEditing ? '' : null">
-          </div>
-
-          <!-- Especialidades -->
-          <div class="form-field">
-            <label for="especialidade" [ngClass]="setClass('detail-label')">Especialidades:</label>
-            <input type="text" id="especialidade" formControlName="especialidade"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}"
-              [attr.disabled]="!isEditing ? '' : null">
-          </div>
-
-          <!-- Bio -->
-          <div class="form-field">
-            <label for="bio" [ngClass]="setClass('detail-label')">Biografia:</label>
-            <textarea id="bio" formControlName="bio"
-              class="{{isEditing ? 'detail-value edit-mode' : 'detail-value view-mode'}}" rows="4"
-              [attr.disabled]="!isEditing ? '' : null"></textarea>
-          </div>
-        </div>
+  </div>
+</div>

@@ -6,7 +6,7 @@ import { UtilService } from '../shared/utils/util.service';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import { getProfileFormConfig } from '../shared/constants/profile-fields.constants';
+import { getProfileFormConfig, getGroupedProfileFields, ProfileField } from '../shared/constants/profile-fields.constants';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -27,8 +27,11 @@ export class PerfilComponent implements OnInit {
   originalUsername = '';
   
   // Configuração de layout
-  customLabelWidthValue: number = 150;
+  customLabelWidthValue: number = 100;
   customLabelWidth: string = `${this.customLabelWidthValue}px`;
+
+  // Add reference to grouped fields for the template
+  groupedFields: { [key: string]: ProfileField[] };
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +44,7 @@ export class PerfilComponent implements OnInit {
     this.isEditing = false;
     this.profileForm = this.fb.group(getProfileFormConfig());
     this.profileForm.disable(); // Inicialmente desabilitado (modo visualização)
+    this.groupedFields = getGroupedProfileFields();
   }
 
   ngOnInit() {
@@ -248,7 +252,58 @@ export class PerfilComponent implements OnInit {
     }
   }
 
+  // Helper method for setting classes based on edit mode
   setClass(baseClass: string): string {
     return `${baseClass} ${this.isEditing ? 'edit-mode' : 'view-mode'}`;
+  }
+
+  // Helper method for displaying field values properly
+  displayValue(field: ProfileField): string {
+    const value = this.profileForm.get(field.controlName)?.value;
+    if (value === null || value === undefined || value === '') {
+      return '';
+    }
+    return value;
+  }
+  
+  // Helper method to check if a field is invalid
+  isFieldInvalid(fieldName: string): boolean {
+    const control = this.profileForm.get(fieldName);
+    return control ? (control.invalid && (control.dirty || control.touched)) : false;
+  }
+  
+  // Helper method to get error message for a field
+  getErrorMessage(fieldName: string): string {
+    const control = this.profileForm.get(fieldName);
+    if (!control || !control.errors) {
+      return '';
+    }
+    
+    if (control.errors['required']) {
+      return 'Este campo é obrigatório';
+    }
+    if (control.errors['email']) {
+      return 'Email inválido';
+    }
+    if (control.errors['pattern']) {
+      return 'Formato inválido';
+    }
+    if (control.errors['minlength']) {
+      return `Mínimo de ${control.errors['minlength'].requiredLength} caracteres`;
+    }
+    
+    return 'Campo inválido';
+  }
+  
+  // Handle field blur event for validation
+  onFieldBlur(fieldName: string): void {
+    if (fieldName === 'username') {
+      this.checkUsername();
+    }
+  }
+  
+  // Handle field change event
+  onFieldChange(event: Event, fieldName: string): void {
+    this.onFieldChanged({ field: fieldName, value: (event.target as HTMLInputElement).value });
   }
 }

@@ -65,7 +65,7 @@ export class UtilService {
   public EDITANDO = 'EDITANDO';
   public COMPLETAR = 'COMPLETAR';
 
-  public GREY = 'grey';
+  public GRAY = 'gray';
   public BLUE = 'dodgerblue';
   public ORANGE = 'orange';
   public GREEN = 'green';

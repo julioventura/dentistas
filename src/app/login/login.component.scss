@@ -3,7 +3,7 @@ $primary-color: #2196F3;
 $secondary-color: #4CAF50;
 $error-color: #f44336;
 $hover-error-color: #a9001c;
-$white-color: #ffffff;
+$white: #ffffff;
 $text-color: #2f5489;
 $input-border-color: #bbb;
 $input-focus-color: rgba(33, 150, 243, 0.5);
@@ -26,7 +26,7 @@ body {
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: $white-color;
+  background-color: $white;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
@@ -73,7 +73,7 @@ button[mat-raised-button] {
   width: 100%; // O botão de login ocupa 100% da largura do container
   padding: 12px;
   background-color: $secondary-color;
-  color: $white-color;
+  color: $white;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
