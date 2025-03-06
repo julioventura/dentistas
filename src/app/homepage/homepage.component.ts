@@ -23,6 +23,7 @@ import { RedesComponent } from "./redes/redes.component";
 import { CartaoComponent } from "./cartao/cartao.component";
 import { CapaComponent } from "./capa/capa.component";
 import { MapsComponent } from "../shared/maps/maps.component";
+import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.component";
 
 @Component({
   selector: 'app-homepage',
@@ -41,7 +42,8 @@ import { MapsComponent } from "../shared/maps/maps.component";
     RedesComponent,
     CartaoComponent,
     CapaComponent,
-    MapsComponent
+    MapsComponent,
+    WhatsappButtonComponent
 ]
 })
 export class HomepageComponent implements OnInit {
@@ -52,6 +54,7 @@ export class HomepageComponent implements OnInit {
   public isLoading: boolean = true;
   public errorMessage: string = '';
   public isCurrentUserProfile: boolean = false;
+  isChatbotExpanded: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -213,5 +216,15 @@ export class HomepageComponent implements OnInit {
     if (this.isCurrentUserProfile) {
       this.router.navigate(['/perfil']);
     }
+  }
+
+  onChatbotExpansionChange(isExpanded: boolean): void {
+    this.isChatbotExpanded = isExpanded;
+  }
+
+  formatWhatsApp(phoneNumber: string | undefined): string {
+    if (!phoneNumber) return '5521981707207'; // Número padrão se não houver número
+    // Remove non-numeric characters
+    return phoneNumber.replace(/\D/g, '');
   }
 }

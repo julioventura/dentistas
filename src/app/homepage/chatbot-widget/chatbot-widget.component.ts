@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -20,11 +20,14 @@ export class ChatbotWidgetComponent implements OnInit {
   @Input() dentistId: string = '';
   @Input() dentistName: string = 'Dr(a).';
   
+  @Output() expansionChange = new EventEmitter<boolean>();
+  
   messages: Message[] = [];
   userInput: string = '';
   isMinimized: boolean = true;
   isBotTyping: boolean = false;
   isFullscreen: boolean = false;
+  isExpanded: boolean = false;
   
   constructor() {
     console.log('ChatbotWidget constructor called');
@@ -38,6 +41,13 @@ export class ChatbotWidgetComponent implements OnInit {
   toggleChat(): void {
     this.isMinimized = !this.isMinimized;
     console.log('Chat toggled:', this.isMinimized ? 'minimized' : 'expanded');
+    this.isExpanded = !this.isExpanded;
+    this.expansionChange.emit(this.isExpanded);
+  }
+  
+  minimizeChat(): void {
+    this.isExpanded = false;
+    this.expansionChange.emit(false);
   }
   
   toggleFullscreen(): void {

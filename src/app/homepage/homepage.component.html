@@ -4,8 +4,17 @@
     class="top-positioned"
     [dentistId]="userProfile?.uid || ''" 
     [dentistName]="userProfile?.nome || 'Dentista'"
-    *ngIf="userProfile && !isLoading">
+    *ngIf="userProfile && !isLoading"
+    (expansionChange)="onChatbotExpansionChange($event)">
   </app-chatbot-widget>
+  
+  <!-- WhatsApp Button - colocando com visibilidade garantida para depuração -->
+  <app-whatsapp-button 
+    [phoneNumber]="formatWhatsApp(userProfile?.whatsapp) || '5521981707207'"
+    [message]="'Olá, gostaria de falar com ' + (userProfile?.nome || 'vocês') + '.'"
+    [isChatbotExpanded]="isChatbotExpanded"
+    *ngIf="userProfile">
+  </app-whatsapp-button>
   
   <!-- Cabeçalho e navegação -->
   <!-- <app-cabecalho-homepage [userProfile]="userProfile"></app-cabecalho-homepage> -->
