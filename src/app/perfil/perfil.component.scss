@@ -337,6 +337,19 @@ h2,
   }
 }
 
+// Spinner inline para os botões
+.spinner-inline {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
 // Linha com o nome do registro
 .record-header {
   text-align: center;
@@ -429,35 +442,54 @@ h2,
   }
 }
 
-
-
-
 // Botões de ação do formulário
 .form-actions {
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: flex-end; // Alinha os botões à direita
+  gap: 12px; // Espaço entre os botões
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid $gray-light;
 
   .btn {
-    background-color: $primary-color;
-    color: $white;
+    min-width: 120px;
     padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-
-    &:hover {
-      background-color: $primary-hover;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
-  }
-
-  .btn-secondary {
-    background-color: $gray;
-    color: $white;
-
-    &:hover {
-      background-color: darken($gray, 10%);
+    
+    &.btn-primary {
+      &.view-mode {
+        background-color: $primary-color;
+      }
+      
+      &.edit-mode {
+        background-color: $red;
+      }
+      
+      color: white;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    &.btn-secondary {
+      background-color: $gray-light;
+      color: $gray-dark;
+      
+      &:hover:not(:disabled) {
+        background-color: darken($gray-light, 5%);
+      }
     }
   }
 }

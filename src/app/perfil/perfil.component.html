@@ -108,9 +108,31 @@
           </div>
         </div>
         
+        <!-- Botões de ação na parte inferior -->
+        <div class="form-actions">
+          <button *ngIf="!isEditing" type="button" class="btn btn-primary" (click)="editar()">
+            Editar Perfil
+          </button>
+          
+          <ng-container *ngIf="isEditing">
+            <button type="button" class="btn btn-secondary" (click)="cancelEdit()" [disabled]="isSaving">
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="btn btn-primary" 
+              [disabled]="profileForm.invalid || isSaving || !!usernameError">
+              <span *ngIf="isSaving">
+                <div class="spinner-inline"></div>
+                Salvando...
+              </span>
+              <span *ngIf="!isSaving">
+                Salvar Perfil
+              </span>
+            </button>
+          </ng-container>
+        </div>
       </form>
-
     </div>
-
   </div>
 </div>

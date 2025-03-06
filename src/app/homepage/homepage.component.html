@@ -1,21 +1,19 @@
 <div class="homepage">
+  <!-- Chatbot Widget (movido para o topo) -->
+  <app-chatbot-widget 
+    class="top-positioned"
+    [dentistId]="userProfile?.uid || ''" 
+    [dentistName]="userProfile?.nome || 'Dentista'"
+    *ngIf="userProfile && !isLoading">
+  </app-chatbot-widget>
+  
   <!-- Cabeçalho e navegação -->
   <!-- <app-cabecalho-homepage [userProfile]="userProfile"></app-cabecalho-homepage> -->
 
   <!-- Capa (Hero) com imagem de fundo e overlay -->
   <app-capa [userProfile]="userProfile" [darkMode]="false"></app-capa>
 
-  <div class="container">
-    <!-- Área de Conteúdo em grid para os componentes internos -->
-    <div class="content-grid">
-      <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato>
-      <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
-      <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
-      <!-- <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco> -->
-      
-    </div>
-  </div>
-  
+  <!-- Movido para o topo: área de conteúdo de duas colunas (antes estava no final) -->
   <div id="bottom_block" class="container">
     <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
     <div class="content-grid two-columns">
@@ -27,11 +25,18 @@
     </div>
   </div>
 
+  <div class="container">
+    <!-- Área de Conteúdo em grid para os componentes internos -->
+    <div class="content-grid">
+      <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato>
+      <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
+      <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
+      <!-- <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco> -->
+      
+    </div>
+  </div>
+
   <!-- Rodapé -->
   <app-rodape-homepage></app-rodape-homepage>
-
-  <!-- Chatbot Widget -->
-  <app-chatbot-widget [dentistId]="userProfile?.uid || ''" [dentistName]="userProfile?.nome || 'Dentista'"
-    *ngIf="userProfile && !isLoading">
-  </app-chatbot-widget>
+  
 </div>

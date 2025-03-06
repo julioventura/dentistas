@@ -19,22 +19,15 @@
           <span class="badge" *ngFor="let esp of userProfile?.especialidades?.slice(0,3)">
             {{ esp }}
           </span>
-          <span class="badge more" *ngIf="userProfile?.especialidades?.length > 3">
-            +{{ userProfile.especialidades.length - 3 }}
-          </span>
         </div>
         
-        <div class="action-buttons">
-          <a href="#" class="btn primary">
-            <i class="fas fa-calendar-alt"></i> 
-            Agendar Consulta
-          </a>
-          
+        <!-- <div class="action-buttons">
           <a href="https://wa.me/{{ getWhatsappFormatado() }}" target="_blank" class="btn secondary">
             <i class="fab fa-whatsapp"></i> 
             WhatsApp
           </a>
-        </div>
+        </div> -->
+        
       </div>
     </div>
   </div>
