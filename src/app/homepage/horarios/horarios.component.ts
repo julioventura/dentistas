@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 interface Horario {
   dia: string;
   horario: string;
+  local: string;
 }
 
 @Component({
@@ -19,17 +20,26 @@ export class HorariosComponent {
   @Input() userProfile: any;
   
   // Dados padrão
-  horariosDefault: Horario[] = [
-    { dia: 'Segunda à Sexta', horario: '09:00 - 18:00' },
-    { dia: 'Sábado', horario: '09:00 - 13:00' }
-  ];      
+  horariosDefault: Horario[] = [];      
   
   getHorarios(): Horario[] {
-    if (this.userProfile?.horarios && this.userProfile.horarios.length > 0) {
+    if (!this.userProfile?.horarios) return [];
+
+    // Se for string (formato antigo), tenta converter
+    if (typeof this.userProfile.horarios === 'string') {
+      try {
+        return JSON.parse(this.userProfile.horarios);
+      } catch (e) {
+        console.error('Erro ao converter horários', e);
+        return [];
+      }
+    }
+
+    // Se já for array
+    if (Array.isArray(this.userProfile.horarios)) {
       return this.userProfile.horarios;
     }
-    else {
-      return this.horariosDefault;
-    } 
+
+    return [];
   }
 }

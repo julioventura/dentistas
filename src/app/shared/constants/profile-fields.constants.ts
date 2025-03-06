@@ -162,13 +162,6 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     type: 'textarea',
     group: '04. Informações Profissionais'
   },
-  { 
-    controlName: 'horarios', 
-    defaultValue: '',
-    label: 'Horários de Atendimento',
-    type: 'textarea',
-    group: '04. Informações Profissionais'
-  },
 
 
   // Redes Sociais

@@ -3,12 +3,14 @@
     <!-- HEADER -->
     <div class="header">
       <div class="actions">
-        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao" (click)="voltar()">
+        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/voltar_red.png" class="navegacao"
+          (click)="voltar()">
         <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
       </div>
       <h1 class="title" [ngClass]="setClass('')">Meu Perfil</h1>
       <div class="actions">
-        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao" (click)="salvar()">
+        <img *ngIf="isEditing" src="https://dentistas.com.br/assets/salvar_red.png" class="navegacao"
+          (click)="salvar()">
         <img *ngIf="!isEditing" src="https://dentistas.com.br/assets/editar.png" class="navegacao" (click)="editar()">
       </div>
     </div>
@@ -20,15 +22,8 @@
     <div [ngClass]="setClass('width-control')">
       <div class="slider-wrapper">
         <label for="labelWidthRange"></label>
-        <input 
-          type="range" 
-          id="labelWidthRange" 
-          min="50" 
-          max="300" 
-          [(ngModel)]="customLabelWidthValue" 
-          [ngModelOptions]="{standalone: true}" 
-          (input)="updateCustomLabelWidth()" 
-          value="150">
+        <input type="range" id="labelWidthRange" min="50" max="300" [(ngModel)]="customLabelWidthValue"
+          [ngModelOptions]="{standalone: true}" (input)="updateCustomLabelWidth()" value="150">
         <span class="small">{{ customLabelWidthValue }}px</span>
       </div>
     </div>
@@ -45,8 +40,7 @@
       {{ errorMessage }}
     </div>
 
-    <div id="profile-form" *ngIf="!isLoading && !errorMessage" 
-      [ngClass]="setClass('profile-form')"      
+    <div id="profile-form" *ngIf="!isLoading && !errorMessage" [ngClass]="setClass('profile-form')"
       [style.--label-width]="customLabelWidth">
 
       <form [formGroup]="profileForm" (ngSubmit)="salvar()">
@@ -54,52 +48,50 @@
         <!-- Percorre os grupos de campos -->
         <div *ngFor="let group of groupedFields | keyvalue" class="field-group">
           <h3 [ngClass]="setClass('grupo-titulo')">{{ group.key }}</h3>
-          
+
           <!-- Percorre os campos de cada grupo -->
           <div *ngFor="let field of group.value" class="detail-container">
             <label [for]="field.controlName" [ngClass]="setClass('detail-label')" [style.width]="customLabelWidth">
               {{ field.label }}:
             </label>
-            
+
             <!-- Container do campo com input e possíveis mensagens de erro -->
             <div class="field-input-container">
               <!-- Renderiza o tipo apropriado de campo -->
               <ng-container [ngSwitch]="field.type">
+
                 <!-- Textarea para campos de texto longo -->
+
                 <ng-container *ngSwitchCase="'textarea'">
-                  <textarea 
-                    [formControlName]="field.controlName"
-                    [id]="field.controlName"
+                  <textarea [formControlName]="field.controlName" [id]="field.controlName"
                     [placeholder]="field.placeholder || ''"
                     [ngClass]="{'detail-value view-mode': !isEditing, 'detail-value edit-mode': isEditing}"
-                    [attr.disabled]="!isEditing ? '' : null"
-                    [class.error]="isFieldInvalid(field.controlName)"
-                    (blur)="onFieldBlur(field.controlName)"
-                    (change)="onFieldChange($event, field.controlName)"
+                    [attr.disabled]="!isEditing ? '' : null" [class.error]="isFieldInvalid(field.controlName)"
+                    (blur)="onFieldBlur(field.controlName)" (change)="onFieldChange($event, field.controlName)"
                     rows="4">
                   </textarea>
                 </ng-container>
-                
+
                 <!-- Input padrão para os demais campos -->
                 <ng-container *ngSwitchDefault>
-                  <input 
-                    [type]="field.type || 'text'"
-                    [formControlName]="field.controlName"
-                    [id]="field.controlName"
+                  <input [type]="field.type || 'text'" [formControlName]="field.controlName" [id]="field.controlName"
                     [placeholder]="field.placeholder || ''"
                     [ngClass]="{'detail-value view-mode': !isEditing, 'detail-value edit-mode': isEditing}"
-                    [attr.disabled]="!isEditing ? '' : null"
-                    [class.error]="isFieldInvalid(field.controlName)"
-                    (blur)="onFieldBlur(field.controlName)"
-                    (change)="onFieldChange($event, field.controlName)">
+                    [attr.disabled]="!isEditing ? '' : null" [class.error]="isFieldInvalid(field.controlName)"
+                    (blur)="onFieldBlur(field.controlName)" (change)="onFieldChange($event, field.controlName)">
                 </ng-container>
+
+
+
+
+
               </ng-container>
-              
+
               <!-- Mensagem de erro para validação -->
               <div *ngIf="isFieldInvalid(field.controlName)" class="validation-message">
                 {{ getErrorMessage(field.controlName) }}
               </div>
-              
+
               <!-- Mensagem de erro específica para o campo username -->
               <div *ngIf="field.controlName === 'username' && usernameError" class="validation-message">
                 {{ usernameError }}
@@ -107,31 +99,74 @@
             </div>
           </div>
         </div>
-        
-        <!-- Botões de ação na parte inferior -->
-        <div class="form-actions">
-          <button *ngIf="!isEditing" type="button" class="btn btn-primary" (click)="editar()">
-            Editar Perfil
-          </button>
-          
-          <ng-container *ngIf="isEditing">
-            <button type="button" class="btn btn-secondary" (click)="cancelEdit()" [disabled]="isSaving">
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              class="btn btn-primary" 
-              [disabled]="profileForm.invalid || isSaving || !!usernameError">
-              <span *ngIf="isSaving">
-                <div class="spinner-inline"></div>
-                Salvando...
-              </span>
-              <span *ngIf="!isSaving">
-                Salvar Perfil
-              </span>
-            </button>
-          </ng-container>
+
+        <h3 [ngClass]="setClass('grupo-titulo')">{{ '06. Horários de Atendimento' }}</h3>
+
+        <!-- Editor de horários de atendimento -->
+        <div class="form-field horarios-editor">
+          <label for="horarios" [ngClass]="setClass('detail-label')" [style.width]="customLabelWidth">
+          </label>
+
+          <div class="horarios-container">
+            <!-- Lista de horários em modo visualização -->
+            <div *ngIf="!isEditing && horarios.length > 0" class="horarios-list view-mode">
+              <div *ngFor="let horario of horarios" class="horario-item">
+                <div class="horario-content">
+                  <strong>{{ horario.dia }}:</strong> {{ horario.horario }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Lista de horários em modo edição (com botões de remover) -->
+            <div *ngIf="isEditing && horarios.length > 0" class="horarios-list edit-mode">
+              <div *ngFor="let horario of horarios; let i = index" class="horario-item">
+                <div class="horario-content">
+                  <strong>{{ horario.dia }}:</strong> {{ horario.horario }}
+                </div>
+                <button type="button" class="btn-remove" (click)="removeHorario(i)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Formulário para adicionar novo horário (apenas em modo edição) -->
+            <div *ngIf="isEditing" class="add-horario-form">
+              <div class="input-group">
+                <div class="input-field">
+                  <label for="novoDia" class="input-label">Dias:</label>
+                  <input 
+                    type="text" 
+                    id="novoDia"
+                    class="detail-value edit-mode"
+                    placeholder="Segunda a Sexta" 
+                    [(ngModel)]="novoDia"
+                    [ngModelOptions]="{standalone: true}">
+                </div>
+                <div class="input-field">
+                  <label for="novoHorario" class="input-label">Horário:</label>
+                  <input 
+                    type="text" 
+                    id="novoHorario"
+                    class="detail-value edit-mode" 
+                    placeholder="08:00 - 18:00" 
+                    [(ngModel)]="novoHorario"
+                    [ngModelOptions]="{standalone: true}">
+                </div>
+                <button type="button" class="btn-add" [disabled]="!novoDia || !novoHorario" (click)="addHorario()">
+                  <i class="fas fa-plus"></i> Adicionar
+                </button>
+              </div>
+            </div>
+
+
+
+            <!-- Mensagem quando não há horários cadastrados -->
+            <div *ngIf="horarios.length === 0" class="empty-message">
+              <span class="help-text {{isEditing ? 'edit-mode' : 'view-mode'}}">Nenhum horário cadastrado.</span>
+            </div>
+          </div>
         </div>
+
       </form>
     </div>
   </div>

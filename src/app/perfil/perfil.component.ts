@@ -9,6 +9,11 @@ import { Router } from '@angular/router';
 import { getProfileFormConfig, getGroupedProfileFields, ProfileField } from '../shared/constants/profile-fields.constants';
 import { finalize } from 'rxjs/operators';
 
+interface Horario {
+  dia: string;
+  horario: string;
+}
+
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.component.html',
@@ -32,6 +37,10 @@ export class PerfilComponent implements OnInit {
 
   // Add reference to grouped fields for the template
   groupedFields: { [key: string]: ProfileField[] };
+
+  horarios: Horario[] = [];
+  novoDia: string = '';
+  novoHorario: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -63,6 +72,21 @@ export class PerfilComponent implements OnInit {
       this.errorMessage = 'Erro ao verificar autenticação';
       this.isLoading = false;
     });
+
+    // Inicializa horarios a partir do userProfileData
+    if (this.userProfileData && this.userProfileData.horarios) {
+      try {
+        // Tenta converter se estiver em formato de string
+        if (typeof this.userProfileData.horarios === 'string') {
+          this.horarios = JSON.parse(this.userProfileData.horarios);
+        } else {
+          this.horarios = this.userProfileData.horarios || [];
+        }
+      } catch (e) {
+        console.error('Erro ao converter horários:', e);
+        this.horarios = [];
+      }
+    }
   }
 
   loadUserProfile() {
@@ -114,6 +138,20 @@ export class PerfilComponent implements OnInit {
         }, {} as Record<string, any>);
       
       this.profileForm.patchValue(formValues);
+      
+      // Carregar horários se existirem
+      if (this.userProfileData.horarios && Array.isArray(this.userProfileData.horarios)) {
+        this.horarios = [...this.userProfileData.horarios];
+      } else if (typeof this.userProfileData.horarios === 'string') {
+        try {
+          this.horarios = JSON.parse(this.userProfileData.horarios);
+        } catch (e) {
+          console.error('Erro ao converter horários:', e);
+          this.horarios = [];
+        }
+      } else {
+        this.horarios = [];
+      }
       
       if (!this.userProfileData.email && this.userEmail) {
         this.userProfileData.email = this.userEmail;
@@ -192,50 +230,34 @@ export class PerfilComponent implements OnInit {
     // Your implementation...
   }
 
-  salvar(): void {
-    if (this.profileForm.invalid) {
-      this.errorMessage = 'Por favor, corrija os erros no formulário.';
-      return;
-    }
-    
-    if (this.usernameError) {
-      this.errorMessage = 'Por favor, escolha outro username.';
-      return;
-    }
-    
-    if (!this.userEmail) {
-      console.error('Email do usuário não encontrado.');
-      this.errorMessage = 'Email do usuário não encontrado.';
-      return;
-    }
-
+  salvar() {
+    if (this.isSaving) return;
     this.isSaving = true;
-    
-    // Obter dados do formulário
-    const formValues = this.profileForm.getRawValue(); // Inclui campos disabled
-    
-    const updatedProfile = {
-      ...this.userProfileData,
+
+    console.log('Horários antes de salvar:', this.horarios);
+  
+    // Garantir que os horários estão sincronizados com o formulário antes de salvar
+    const formValues = this.profileForm.getRawValue();
+    const dataToSave = {
       ...formValues,
-      email: this.userEmail // Garantir que o email não mude
+      horarios: this.horarios // Assegura que usamos o array de horários atual, incluindo remoções
     };
+  
+    // Prosseguir com o salvamento usando dataToSave em vez de this.profileForm.value
+    const userId = this.userProfileData.id || this.userEmail;
     
-    this.userService.updateUserProfile(this.userEmail, updatedProfile)
+    this.firestoreService.updateRegistro('usuarios/dentistascombr/users', userId, dataToSave)
       .then(() => {
-        console.log('Perfil atualizado com sucesso!');
-        this.userProfileData = updatedProfile;
-        localStorage.setItem('userData', JSON.stringify(updatedProfile));
         this.isEditing = false;
-        this.profileForm.disable(); // Desabilita os campos após salvar
         this.isSaving = false;
-        this.errorMessage = '';
-        this.usernameError = '';
-        this.originalUsername = updatedProfile.username || '';
-        alert('Perfil atualizado com sucesso!');
+        // Atualizar dados locais
+        this.userProfileData = { ...this.userProfileData, ...dataToSave };
+        // Desativar formulário após salvar
+        this.profileForm.disable();
       })
       .catch(error => {
-        console.error('Erro ao atualizar perfil:', error);
-        this.errorMessage = `Erro ao salvar: ${error.message}`;
+        console.error('Erro ao salvar perfil:', error);
+        this.errorMessage = 'Erro ao salvar as alterações. Por favor, tente novamente.';
         this.isSaving = false;
       });
   }
@@ -305,5 +327,34 @@ export class PerfilComponent implements OnInit {
   // Handle field change event
   onFieldChange(event: Event, fieldName: string): void {
     this.onFieldChanged({ field: fieldName, value: (event.target as HTMLInputElement).value });
+  }
+
+  addHorario() {
+    if (this.novoDia && this.novoHorario) {
+      this.horarios.push({
+        dia: this.novoDia.trim(),
+        horario: this.novoHorario.trim()
+      });
+      
+      // Atualiza o valor no formulário
+      this.profileForm.patchValue({
+        horarios: this.horarios
+      });
+      
+      // Limpa os campos
+      this.novoDia = '';
+      this.novoHorario = '';
+    }
+  }
+  
+  removeHorario(index: number) {
+    if (index >= 0 && index < this.horarios.length) {
+      this.horarios.splice(index, 1);
+      
+      // Atualiza o valor no formulário
+      this.profileForm.patchValue({
+        horarios: this.horarios
+      });
+    }
   }
 }
