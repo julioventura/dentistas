@@ -174,6 +174,15 @@ export class HomepageComponent implements OnInit {
             console.log('Homepage - Perfil completo carregado:', this.userProfile);
             console.log('Homepage - Tipo de endereços:', typeof this.userProfile.enderecos);
             console.log('Homepage - Endereços:', this.userProfile.enderecos);
+            console.log('Homepage - Redes sociais:', {
+              instagram: this.userProfile.instagram,
+              facebook: this.userProfile.facebook,
+              linkedin: this.userProfile.linkedin,
+              youtube: this.userProfile.youtube,
+              twitter: this.userProfile.twitter,
+              tiktok: this.userProfile.tiktok,
+              pinterest: this.userProfile.pinterest
+            });
             this.errorMessage = '';
           } else {
             this.errorMessage = 'Perfil não encontrado.';

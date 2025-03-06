@@ -24,12 +24,12 @@ export class EnderecoComponent {
   
   // Método para obter os endereços do userProfile
   getEnderecos(): Endereco[] {
-    console.log('getEnderecos()');
-    console.log('userProfile', this.userProfile);
+    // console.log('getEnderecos()');
+    // console.log('userProfile', this.userProfile);
     
     if (!this.userProfile?.enderecos) return [];
     
-    console.log('userProfile.enderecos', this.userProfile?.enderecos);
+    // console.log('userProfile.enderecos', this.userProfile?.enderecos);
 
     // Se for string (formato antigo), tenta converter
     if (typeof this.userProfile.enderecos === 'string') {
@@ -43,8 +43,8 @@ export class EnderecoComponent {
     
     // Se já for array
     if (Array.isArray(this.userProfile.enderecos)) {
-      console.log('userProfile.enderecos é um array');
-      console.log('userProfile.enderecos', this.userProfile.enderecos);
+      // console.log('userProfile.enderecos é um array');
+      // console.log('userProfile.enderecos', this.userProfile.enderecos);
 
       return this.userProfile.enderecos;
     }
@@ -54,7 +54,7 @@ export class EnderecoComponent {
   
   // Verifica se existem endereços para exibir
   hasEnderecos(): boolean {
-    console.log('hasEnderecos()');
+    // console.log('hasEnderecos()');
     const enderecos = this.getEnderecos();
     return enderecos.length > 0;
   }

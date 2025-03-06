@@ -68,6 +68,36 @@
       }
     }
     
+    &.twitter {
+      background-color: rgba(29, 161, 242, 0.1);
+      color: #1DA1F2;
+      
+      &:hover {
+        background-color: rgba(29, 161, 242, 0.2);
+        transform: translateY(-3px);
+      }
+    }
+    
+    &.tiktok {
+      background-color: rgba(0, 0, 0, 0.1);
+      color: #000000;
+      
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.15);
+        transform: translateY(-3px);
+      }
+    }
+    
+    &.pinterest {
+      background-color: rgba(230, 0, 35, 0.1);
+      color: #E60023;
+      
+      &:hover {
+        background-color: rgba(230, 0, 35, 0.2);
+        transform: translateY(-3px);
+      }
+    }
+    
     &.website {
       background-color: rgba(52, 152, 219, 0.1);
       color: #3498db;
@@ -117,6 +147,18 @@
         background-color: rgba(255, 0, 0, 0.15);
       }
       
+      &.twitter {
+        background-color: rgba(29, 161, 242, 0.15);
+      }
+      
+      &.tiktok {
+        background-color: rgba(0, 0, 0, 0.15);
+      }
+      
+      &.pinterest {
+        background-color: rgba(230, 0, 35, 0.15);
+      }
+      
       &.website {
         background-color: rgba(52, 152, 219, 0.15);
       }
@@ -133,5 +175,17 @@
         color: #ccc;
       }
     }
+  }
+}
+
+.loading-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #777;
+  
+  i {
+    margin-right: 10px;
   }
 }

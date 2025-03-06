@@ -285,6 +285,9 @@ p {
     min-height: 100vh;
     background-color: #fff;
     font-family: 'Roboto', 'Segoe UI', sans-serif;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 20px;
 }
 
 
@@ -303,13 +306,8 @@ p {
     padding: 2rem 0;
     // margin-bottom: 2rem;
 
-    // Para telas maiores, limite a 3 colunas para melhor leitura
-    @media (min-width: 1200px) {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    // Para telas médias, ajuste para 2 colunas
-    @media (max-width: 992px) and (min-width: 768px) {
+      // Para telas médias, ajuste para 2 colunas
+    @media (min-width: 768px) {
         grid-template-columns: repeat(2, 1fr);
     }
 
