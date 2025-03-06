@@ -1,21 +1,16 @@
 <div class="homepage">
   <!-- Chatbot Widget (movido para o topo) -->
-  <app-chatbot-widget 
-    class="top-positioned"
-    [dentistId]="userProfile?.uid || ''" 
-    [dentistName]="userProfile?.nome || 'Dentista'"
-    *ngIf="userProfile && !isLoading"
+  <app-chatbot-widget class="top-positioned" [dentistId]="userProfile?.uid || ''"
+    [dentistName]="userProfile?.nome || 'Dentista'" *ngIf="userProfile && !isLoading"
     (expansionChange)="onChatbotExpansionChange($event)">
   </app-chatbot-widget>
-  
+
   <!-- WhatsApp Button - colocando com visibilidade garantida para depuração -->
-  <app-whatsapp-button 
-    [phoneNumber]="formatWhatsApp(userProfile?.whatsapp) || '5521981707207'"
+  <app-whatsapp-button [phoneNumber]="formatWhatsApp(userProfile?.whatsapp) || '5521981707207'"
     [message]="'Olá, gostaria de falar com ' + (userProfile?.nome || 'vocês') + '.'"
-    [isChatbotExpanded]="isChatbotExpanded"
-    *ngIf="userProfile">
+    [isChatbotExpanded]="isChatbotExpanded" *ngIf="userProfile">
   </app-whatsapp-button>
-  
+
   <!-- Cabeçalho e navegação -->
   <!-- <app-cabecalho-homepage [userProfile]="userProfile"></app-cabecalho-homepage> -->
 
@@ -26,26 +21,31 @@
   <div id="bottom_block" class="container">
     <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
     <div class="content-grid two-columns">
-      <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
-      <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
-      
+
       <app-cartao [userProfile]="userProfile" [darkMode]="false"></app-cartao>
       <app-maps [userProfile]="userProfile" [darkMode]="false"></app-maps>
-    </div>
-  </div>
 
-  <div class="container">
-    <!-- Área de Conteúdo em grid para os componentes internos -->
-    <div class="content-grid">
       <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato>
       <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
+
       <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
-      <!-- <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco> -->
+      <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
       
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- Área de Conteúdo em grid para 3 componentes internos por linha -->
+    <!-- <div class="content-grid"> -->
+    <div>
+      
+      <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
+      <!-- <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco> -->
+
     </div>
   </div>
 
   <!-- Rodapé -->
   <app-rodape-homepage></app-rodape-homepage>
-  
+
 </div>

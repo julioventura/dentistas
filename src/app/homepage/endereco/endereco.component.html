@@ -1,16 +1,25 @@
 <div class="profile-card endereco-card" [ngClass]="{'dark-mode': darkMode}">
   <div class="card-header">
-    <h3>Endereço</h3>
+    <h3>Endereços</h3>
   </div>
-  
+ 
   <div class="card-body">
     <div class="endereco-principal">
       <i *ngIf="showIcon" class="fas fa-map-marker-alt"></i>
       <div class="texto">
-        <p class="principal">{{ getEnderecoCompleto() }}</p>
-        <p class="secundario">{{ getCidadeEstadoCep() }}</p>
+        <p class="principal">{{ getEnderecoCompleto() || endereco.rua }}</p>
+        <p class="secundario">{{ getCidadeEstadoCep() || endereco.cidade + ', ' + endereco.estado + ' - ' + endereco.cep }}</p>
       </div>
     </div>
+
+        <div class="endereco-principal">
+          <i *ngIf="showIcon" class="fas fa-map-marker-alt"></i>
+          <div class="texto">
+            <p class="principal">{{ getEnderecoCompleto() || endereco.rua }}</p>
+            <p class="secundario">{{ getCidadeEstadoCep() || endereco.cidade + ', ' + endereco.estado + ' - ' + endereco.cep }}
+            </p>
+          </div>
+        </div>
     
     <div class="contato-info" *ngIf="userProfile?.telefone || userProfile?.email || (endereco.telefone && !userProfile)">
       <div class="item" *ngIf="userProfile?.telefone || endereco.telefone">

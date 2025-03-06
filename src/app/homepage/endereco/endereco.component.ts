@@ -25,11 +25,7 @@ export class EnderecoComponent {
     email: 'contato@dentistaapp.com.br'
   };
   
-  horarios = [
-    { dia: 'Segunda a Sexta', horario: '08:00 - 19:00' },
-    { dia: 'Sábado', horario: '09:00 - 16:00' }
-  ];
-  
+
   getEnderecoCompleto(): string {
     if (this.userProfile) {
       return `${this.userProfile.endereco || ''}, ${this.userProfile.bairro || ''} - ${this.userProfile.cidade || ''}, ${this.userProfile.estado || ''}`;
@@ -39,7 +35,7 @@ export class EnderecoComponent {
   
   getCidadeEstadoCep(): string {
     if (this.userProfile) {
-      return `${this.userProfile.cidade} - ${this.userProfile.estado}, CEP ${this.userProfile.cep}`;
+      return `${this.userProfile.cidade || 'XXXXXX'} - ${this.userProfile.estado || 'XX'}, CEP ${this.userProfile.cep || 'XXXXX-XXX'}`;
     }
     else {
       return '';
