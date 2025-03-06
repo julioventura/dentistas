@@ -1,36 +1,42 @@
-<div class="profile-card endereco-card" [ngClass]="{'dark-mode': darkMode}">
+<div class="profile-card component-card" [ngClass]="{'dark-mode': darkMode}">
   <div class="card-header">
     <h3>Endereços</h3>
   </div>
- 
-  <div class="card-body">
-    <div class="endereco-principal">
-      <i *ngIf="showIcon" class="fas fa-map-marker-alt"></i>
-      <div class="texto">
-        <p class="principal">{{ getEnderecoCompleto() || endereco.rua }}</p>
-        <p class="secundario">{{ getCidadeEstadoCep() || endereco.cidade + ', ' + endereco.estado + ' - ' + endereco.cep }}</p>
-      </div>
-    </div>
-
-        <div class="endereco-principal">
-          <i *ngIf="showIcon" class="fas fa-map-marker-alt"></i>
-          <div class="texto">
-            <p class="principal">{{ getEnderecoCompleto() || endereco.rua }}</p>
-            <p class="secundario">{{ getCidadeEstadoCep() || endereco.cidade + ', ' + endereco.estado + ' - ' + endereco.cep }}
-            </p>
-          </div>
+  
+  <div class="card-body component-content">
+    <!-- Lista de endereços -->
+    <div class="enderecos-lista" *ngIf="hasEnderecos(); else semEnderecos">
+      <div *ngFor="let endereco of getEnderecos()" class="endereco-item">
+        <!-- Rua -->
+        <div *ngIf="endereco.rua" class="info-line">
+          <strong>{{ endereco.rua }}</strong>
         </div>
-    
-    <div class="contato-info" *ngIf="userProfile?.telefone || userProfile?.email || (endereco.telefone && !userProfile)">
-      <div class="item" *ngIf="userProfile?.telefone || endereco.telefone">
-        <i *ngIf="showIcon" class="fas fa-phone-alt"></i>
-        <span>{{ userProfile?.telefone || endereco.telefone }}</span>
-      </div>
-      
-      <div class="item" *ngIf="userProfile?.email || endereco.email">
-        <i *ngIf="showIcon" class="fas fa-envelope"></i>
-        <span>{{ userProfile?.email || endereco.email }}</span>
+        
+        <!-- Bairro, Cidade e Estado -->
+        <div *ngIf="endereco.bairro || endereco.cidade || endereco.estado" class="info-line">
+          {{ endereco.bairro }}
+          <span *ngIf="(endereco.bairro && endereco.cidade) || (endereco.bairro && endereco.estado)">, </span>
+          {{ endereco.cidade }}
+          <span *ngIf="endereco.estado">/{{ endereco.estado }}</span>
+        </div>
+        
+        <!-- CEP -->
+        <div *ngIf="endereco.cep" class="info-line">
+          CEP: {{ endereco.cep }}
+        </div>
+        
+        <!-- Telefone -->
+        <div *ngIf="endereco.telefone" class="info-line">
+          Tel: {{ endereco.telefone }}
+        </div>
       </div>
     </div>
+    
+    <!-- Template para quando não há endereços -->
+    <ng-template #semEnderecos>
+      <div class="empty-message">
+        Nenhum endereço cadastrado
+      </div>
+    </ng-template>
   </div>
 </div>

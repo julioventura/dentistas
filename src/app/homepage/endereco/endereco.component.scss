@@ -70,3 +70,76 @@
   }
 }
 
+.component-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  padding-top: 0px;
+  margin-bottom: 20px;
+  height: 100%;
+  
+  &.dark-mode {
+    background-color: #222;
+    color: #f0f0f0;
+  }
+  
+  .component-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    
+    i {
+      color: $primary-color;
+      font-size: 20px;
+      margin-right: 10px;
+      
+      .dark-mode & {
+        color: $primary-color-light;
+      }
+    }
+    
+    h2 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+  
+  .endereco-item {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .info-line {
+      margin-bottom: 5px;
+      line-height: 1.5;
+      
+      strong {
+        color: $secondary-color;
+        
+        .dark-mode & {
+          color: $secondary-color-light;
+        }
+      }
+    }
+  }
+  
+  .empty-message {
+    color: #888;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    
+    .dark-mode & {
+      background-color: #333;
+      color: #aaa;
+    }
+  }
+}
+

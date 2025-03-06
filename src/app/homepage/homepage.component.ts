@@ -170,8 +170,10 @@ export class HomepageComponent implements OnInit {
         (userProfiles) => {
           if (userProfiles && userProfiles.length > 0) {
             this.userProfile = userProfiles[0];
-            // Log para debug
-            console.log('Perfil carregado:', this.userProfile);
+            // Adicionar logs para depuração
+            console.log('Homepage - Perfil completo carregado:', this.userProfile);
+            console.log('Homepage - Tipo de endereços:', typeof this.userProfile.enderecos);
+            console.log('Homepage - Endereços:', this.userProfile.enderecos);
             this.errorMessage = '';
           } else {
             this.errorMessage = 'Perfil não encontrado.';
@@ -203,8 +205,10 @@ export class HomepageComponent implements OnInit {
       } else {
         // Para outros usuários, abre em uma nova aba
         console.log("Opening user homepage in new tab");
-        const homepageUrl = `${window.location.origin}/${this.username}`;
-        window.open(homepageUrl, '_blank', 'noopener,noreferrer');
+        const homepageUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/${this.username}`;
+        if (typeof window !== 'undefined') {
+          window.open(homepageUrl, '_blank', 'noopener,noreferrer');
+        }
       }
     } else {
       console.error('Username not defined');

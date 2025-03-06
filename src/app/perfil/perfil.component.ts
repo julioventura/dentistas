@@ -8,10 +8,21 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { getProfileFormConfig, getGroupedProfileFields, ProfileField } from '../shared/constants/profile-fields.constants';
 import { finalize } from 'rxjs/operators';
+import { from } from 'rxjs';
 
 interface Horario {
   dia: string;
   horario: string;
+}
+
+// Em perfil.component.ts
+interface Endereco {
+  rua: string;
+  bairro: string;
+  cidade: string;
+  estado: string;
+  cep: string;
+  telefone: string;
 }
 
 @Component({
@@ -41,6 +52,18 @@ export class PerfilComponent implements OnInit {
   horarios: Horario[] = [];
   novoDia: string = '';
   novoHorario: string = '';
+
+  // Em perfil.component.ts - dentro da classe PerfilComponent
+  // Arrays para gerenciar os endereços
+  enderecos: Endereco[] = [];
+  novoEndereco: Endereco = {
+    rua: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
+    cep: '',
+    telefone: ''
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -156,6 +179,20 @@ export class PerfilComponent implements OnInit {
       if (!this.userProfileData.email && this.userEmail) {
         this.userProfileData.email = this.userEmail;
       }
+
+      // Carregar endereços se existirem
+      if (this.userProfileData.enderecos && Array.isArray(this.userProfileData.enderecos)) {
+        this.enderecos = [...this.userProfileData.enderecos];
+      } else if (typeof this.userProfileData.enderecos === 'string') {
+        try {
+          this.enderecos = JSON.parse(this.userProfileData.enderecos);
+        } catch (e) {
+          console.error('Erro ao converter endereços:', e);
+          this.enderecos = [];
+        }
+      } else {
+        this.enderecos = [];
+      }
     }
   }
 
@@ -234,31 +271,35 @@ export class PerfilComponent implements OnInit {
     if (this.isSaving) return;
     this.isSaving = true;
 
-    console.log('Horários antes de salvar:', this.horarios);
-  
-    // Garantir que os horários estão sincronizados com o formulário antes de salvar
+    // Garantir que os endereços estão sincronizados com o formulário antes de salvar
     const formValues = this.profileForm.getRawValue();
+    
+    // Usar spread operator para criar um novo objeto e evitar modificar o original
     const dataToSave = {
       ...formValues,
-      horarios: this.horarios // Assegura que usamos o array de horários atual, incluindo remoções
+      horarios: this.horarios,
+      enderecos: this.enderecos // Incluímos os endereços aqui como array
     };
-  
-    // Prosseguir com o salvamento usando dataToSave em vez de this.profileForm.value
+
+    console.log('Salvando endereços:', this.enderecos);
+    console.log('Objeto completo para salvar:', dataToSave);
+
+    // Prosseguir com o salvamento...
     const userId = this.userProfileData.id || this.userEmail;
-    
-    this.firestoreService.updateRegistro('usuarios/dentistascombr/users', userId, dataToSave)
-      .then(() => {
-        this.isEditing = false;
+
+    from(this.firestoreService.updateRegistro('usuarios/dentistascombr/users', userId, dataToSave))
+      .pipe(finalize(() => {
         this.isSaving = false;
+      }))
+      .subscribe(() => {
+        this.isEditing = false;
         // Atualizar dados locais
         this.userProfileData = { ...this.userProfileData, ...dataToSave };
         // Desativar formulário após salvar
         this.profileForm.disable();
-      })
-      .catch(error => {
+      }, error => {
         console.error('Erro ao salvar perfil:', error);
         this.errorMessage = 'Erro ao salvar as alterações. Por favor, tente novamente.';
-        this.isSaving = false;
       });
   }
 
@@ -354,6 +395,41 @@ export class PerfilComponent implements OnInit {
       // Atualiza o valor no formulário
       this.profileForm.patchValue({
         horarios: this.horarios
+      });
+    }
+  }
+
+  // Em perfil.component.ts - dentro da classe PerfilComponent
+  addEndereco() {
+    // Validação básica - precisa ter pelo menos rua e cidade
+    if (this.novoEndereco.rua && this.novoEndereco.cidade) {
+      // Adiciona uma cópia do endereço (não a referência)
+      this.enderecos.push({...this.novoEndereco});
+      
+      // Limpa o formulário para o próximo endereço
+      this.novoEndereco = {
+        rua: '',
+        bairro: '',
+        cidade: '',
+        estado: '',
+        cep: '',
+        telefone: ''
+      };
+      
+      // Atualiza o valor no formulário principal
+      this.profileForm.patchValue({
+        enderecos: this.enderecos
+      });
+    }
+  }
+
+  removeEndereco(index: number) {
+    if (index >= 0 && index < this.enderecos.length) {
+      this.enderecos.splice(index, 1);
+      
+      // Atualiza o valor no formulário
+      this.profileForm.patchValue({
+        enderecos: this.enderecos
       });
     }
   }

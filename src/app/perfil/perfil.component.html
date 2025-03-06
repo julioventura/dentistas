@@ -134,23 +134,13 @@
               <div class="input-group">
                 <div class="input-field">
                   <label for="novoDia" class="input-label">Dias:</label>
-                  <input 
-                    type="text" 
-                    id="novoDia"
-                    class="detail-value edit-mode"
-                    placeholder="Segunda a Sexta" 
-                    [(ngModel)]="novoDia"
-                    [ngModelOptions]="{standalone: true}">
+                  <input type="text" id="novoDia" class="detail-value edit-mode" placeholder="Segunda a Sexta"
+                    [(ngModel)]="novoDia" [ngModelOptions]="{standalone: true}">
                 </div>
                 <div class="input-field">
                   <label for="novoHorario" class="input-label">Horário:</label>
-                  <input 
-                    type="text" 
-                    id="novoHorario"
-                    class="detail-value edit-mode" 
-                    placeholder="08:00 - 18:00" 
-                    [(ngModel)]="novoHorario"
-                    [ngModelOptions]="{standalone: true}">
+                  <input type="text" id="novoHorario" class="detail-value edit-mode" placeholder="08:00 - 18:00"
+                    [(ngModel)]="novoHorario" [ngModelOptions]="{standalone: true}">
                 </div>
                 <button type="button" class="btn-add" [disabled]="!novoDia || !novoHorario" (click)="addHorario()">
                   <i class="fas fa-plus"></i> Adicionar
@@ -163,6 +153,109 @@
             <!-- Mensagem quando não há horários cadastrados -->
             <div *ngIf="horarios.length === 0" class="empty-message">
               <span class="help-text {{isEditing ? 'edit-mode' : 'view-mode'}}">Nenhum horário cadastrado.</span>
+            </div>
+          </div>
+        </div>
+
+<br>
+        <h3 [ngClass]="setClass('grupo-titulo')">{{ '07. Endereços' }}</h3>
+
+        <!-- Editor de endereços alternativos -->
+        <div class="form-field enderecos-editor">
+          <label [ngClass]="setClass('detail-label')"></label>
+
+          <div class="enderecos-container">
+            <!-- Lista de endereços em modo visualização -->
+            <div *ngIf="!isEditing && enderecos.length > 0" class="enderecos-list view-mode">
+              <div *ngFor="let endereco of enderecos" class="endereco-item">
+                <div class="endereco-content">
+                  <strong>{{ endereco.rua }}</strong>
+                  <div class="endereco-details">
+                    {{ endereco.bairro ? endereco.bairro + ', ' : '' }}{{ endereco.cidade }}/{{ endereco.estado }}
+                    <span *ngIf="endereco.cep">, CEP: {{ endereco.cep }}</span>
+                    <span *ngIf="endereco.telefone">, Tel: {{ endereco.telefone }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lista de endereços em modo edição (com botões de remover) -->
+            <div *ngIf="isEditing && enderecos.length > 0" class="enderecos-list edit-mode">
+              <div *ngFor="let endereco of enderecos; let i = index" class="endereco-item">
+                <div class="endereco-content">
+                  <strong>{{ endereco.rua }}</strong>
+                  <div class="endereco-details">
+                    {{ endereco.bairro ? endereco.bairro + ', ' : '' }}{{ endereco.cidade }}/{{ endereco.estado }}
+                    <span *ngIf="endereco.cep">, CEP: {{ endereco.cep }}</span>
+                    <span *ngIf="endereco.telefone">, Tel: {{ endereco.telefone }}</span>
+                  </div>
+                </div>
+                <button type="button" class="btn-remove" (click)="removeEndereco(i)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Formulário para adicionar novo endereço (apenas em modo edição) -->
+            <div *ngIf="isEditing" class="add-endereco-form">
+              <div class="input-fields-grid">
+                <!-- Rua -->
+                <div class="input-field">
+                  <label for="novaRua" class="input-label">Rua/Nº:</label>
+                  <input type="text" id="novaRua" class="detail-value edit-mode" placeholder="Rua e número"
+                    [(ngModel)]="novoEndereco.rua" [ngModelOptions]="{standalone: true}">
+                </div>
+
+                <!-- Bairro -->
+                <div class="input-field">
+                  <label for="novoBairro" class="input-label">Bairro:</label>
+                  <input type="text" id="novoBairro" class="detail-value edit-mode" placeholder="Bairro"
+                    [(ngModel)]="novoEndereco.bairro" [ngModelOptions]="{standalone: true}">
+                </div>
+
+                <!-- Cidade -->
+                <div class="input-field">
+                  <label for="novaCidade" class="input-label">Cidade:</label>
+                  <input type="text" id="novaCidade" class="detail-value edit-mode" placeholder="Cidade"
+                    [(ngModel)]="novoEndereco.cidade" [ngModelOptions]="{standalone: true}">
+                </div>
+
+                <!-- Estado -->
+                <div class="input-field">
+                  <label for="novoEstado" class="input-label">Estado:</label>
+                  <input type="text" id="novoEstado" class="detail-value edit-mode" placeholder="UF"
+                    [(ngModel)]="novoEndereco.estado" [ngModelOptions]="{standalone: true}">
+                </div>
+
+                <!-- CEP -->
+                <div class="input-field">
+                  <label for="novoCEP" class="input-label">CEP:</label>
+                  <input type="text" id="novoCEP" class="detail-value edit-mode" placeholder="00000-000"
+                    [(ngModel)]="novoEndereco.cep" [ngModelOptions]="{standalone: true}">
+                </div>
+
+                <!-- Telefone -->
+                <div class="input-field">
+                  <label for="novoTelefone" class="input-label">Telefone:</label>
+                  <input type="text" id="novoTelefone" class="detail-value edit-mode" placeholder="(00) 0000-0000"
+                    [(ngModel)]="novoEndereco.telefone" [ngModelOptions]="{standalone: true}">
+                </div>
+              </div>
+
+              <!-- Botão de adicionar -->
+              <div class="button-container">
+                <button type="button" class="btn-add" [disabled]="!novoEndereco.rua || !novoEndereco.cidade"
+                  (click)="addEndereco()">
+                  <i class="fas fa-plus"></i> Adicionar Endereço
+                </button>
+              </div>
+            </div>
+
+            <!-- Mensagem quando não há endereços cadastrados -->
+            <div *ngIf="enderecos.length === 0" class="empty-message"
+              [ngClass]="{'view-mode': !isEditing, 'edit-mode': isEditing}">
+              <span *ngIf="!isEditing">Nenhum endereço adicional cadastrado.</span>
+              <span *ngIf="isEditing">Nenhum endereço adicional cadastrado. Adicione os endereços acima.</span>
             </div>
           </div>
         </div>

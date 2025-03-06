@@ -17,37 +17,20 @@
   <!-- Capa (Hero) com imagem de fundo e overlay -->
   <app-capa [userProfile]="userProfile" [darkMode]="false"></app-capa>
 
-  <!-- Movido para o topo: área de conteúdo de duas colunas (antes estava no final) -->
+  <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
   <div id="bottom_block" class="container">
-    <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
     <div class="content-grid two-columns">
-
       <app-cartao [userProfile]="userProfile" [darkMode]="false"></app-cartao>
-      <app-maps [userProfile]="userProfile" [darkMode]="false"></app-maps>
-
       <app-contato [userProfile]="userProfile" [darkMode]="false"></app-contato>
+      <app-enderecos [userProfile]="userProfile" [darkMode]="false"></app-enderecos>
       <app-horarios [userProfile]="userProfile" [darkMode]="false"></app-horarios>
-
+      <app-maps [userProfile]="userProfile" [darkMode]="false"></app-maps>
+      <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
       <app-convenios [userProfile]="userProfile" [darkMode]="false"></app-convenios>
       <app-redes [userProfile]="userProfile" [darkMode]="false"></app-redes>
-      
-    </div>
-  </div>
-  
-  <div class="container">
-    <!-- Área de Conteúdo em grid para 3 componentes internos por linha -->
-    <!-- <div class="content-grid"> -->
-    <div>
-      
-      <app-titulacoes [userProfile]="userProfile" [darkMode]="false"></app-titulacoes>
-      <app-endereco [userProfile]="userProfile" [darkMode]="false"></app-endereco>
-
     </div>
   </div>
 
   <!-- Rodapé -->
   <app-rodape-homepage></app-rodape-homepage>
-
-
-
 </div>
