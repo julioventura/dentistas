@@ -1,11 +1,17 @@
+@import '../../../styles.scss';
+@import '../homepage.component.scss';
+
 .footer {
-  background-color: #ffffff;
+  background-color: unset;
   color: #000000;
   padding: 1rem 0 0;
+  border: 0px solid #7896c0;
+  border-bottom: none;
+  border-radius: 20px;
   
   .container {
-    max-width: 1200px;
-    margin: 15px auto;
+    max-width: 1000px;
+    margin: 20px auto;
     padding: 0 15px;
   }
   
@@ -45,6 +51,7 @@
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
     text-align: left;
+    background: unset;
     
     &::after {
       content: '';
@@ -66,12 +73,12 @@
       margin-bottom: 0.5rem;
       
       a {
-        color: #bdc3c7;
+        color: #000000;
         text-decoration: none;
-        transition: color 0.3s;
+        transition: none;
         
-        &:hover {
-          color: #3498db;
+        &:hover, &:active, &:visited, &:focus {
+          color: #000000;
         }
       }
     }
@@ -104,7 +111,7 @@
     padding-top: 1.5rem;
     text-align: center;
     font-size: 0.9rem;
-    color: #bdc3c7;
+    color: #000000;
   }
 
   .footer-legal {
@@ -143,5 +150,48 @@
       left: 50%;
       transform: translateX(-50%);
     }
+  }
+
+  // Add a general rule for any links in the footer
+  .footer a {
+    color: #000000 !important;
+    
+    &:hover, &:active, &:visited, &:focus {
+      color: #000000 !important;
+    }
+  }
+
+  // Brand section styling
+  .footer-brand {
+    margin-bottom: 1.5rem;
+    padding: 0 15px;
+  }
+  
+  .brand-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 0.75rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 60px;
+      height: 3px;
+      background-color: #3498db;
+    }
+  }
+  
+  .brand-desc {
+    font-size: 16px;
+    color: #000000;
+    text-align: left;
+    margin-top: 0.75rem;
+    line-height: 1.5;
+    font-weight: normal;
   }
 }

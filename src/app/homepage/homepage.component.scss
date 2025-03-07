@@ -283,7 +283,7 @@ p {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #fff;
+    background-color: #c8ddf0;
     font-family: 'Roboto', 'Segoe UI', sans-serif;
     margin: 10px;
     padding: 20px;
@@ -292,8 +292,8 @@ p {
 
 
 .container {
-    width: 100%;
-    max-width: 1200px;
+    // width: 100%;
+    max-width: 100%;
     margin: 15px auto;
     padding: 0 15px;
     box-sizing: border-box;
@@ -382,7 +382,7 @@ p {
 
     .footer-content,
     .footer-bottom {
-        max-width: 1200px;
+        max-width: 1000px;
         margin: 0 auto;
         padding: 0 15px;
     }

@@ -6,7 +6,7 @@
   </app-chatbot-widget>
 
   <!-- WhatsApp Button - colocando com visibilidade garantida para depuração -->
-  <app-whatsapp-button [phoneNumber]="formatWhatsApp(userProfile?.whatsapp) || '5521981707207'"
+  <app-whatsapp-button [phoneNumber]="formatWhatsApp(userProfile?.whatsapp) || ''"
     [message]="'Olá, gostaria de falar com ' + (userProfile?.nome || 'vocês') + '.'"
     [isChatbotExpanded]="isChatbotExpanded" *ngIf="userProfile">
   </app-whatsapp-button>

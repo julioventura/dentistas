@@ -66,15 +66,17 @@
   
   // Container do conteúdo
   .capa-content {
-    position: relative;
+    position: absolute;
     z-index: 1;
     width: 100%;
-    max-width: 1200px;
+    height: 100%;
     margin: 0 auto;
     padding: 0 1.5rem;
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
+    top: 0;
     
     // Layout em coluna para dispositivos móveis
     @media (max-width: 768px) {
