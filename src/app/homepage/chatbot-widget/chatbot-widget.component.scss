@@ -215,16 +215,16 @@
 // Classe para posicionar o widget no topo
 :host.top-positioned {
   .chatbot-widget {
-    top: 20px;
+    top: 2px;
     bottom: auto; // Remover posicionamento de baixo
     right: 20px;
     z-index: 1000; // Garantir que fique acima de outros elementos
   }
   
   .chatbot-container {
-    top: 20px;
+    top: 36px;
     bottom: auto;
-    right: 20px;
+    right: 22px;
   }
 }
 
