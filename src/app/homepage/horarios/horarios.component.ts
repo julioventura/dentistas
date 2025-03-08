@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../shared/user.service';
 
 interface Horario {
   dia: string;
@@ -15,20 +16,19 @@ interface Horario {
   styleUrls: ['./horarios.component.scss']
 }) 
 export class HorariosComponent {
-  @Input() showIcon: boolean = true;
-  @Input() darkMode: boolean = false;
-  @Input() userProfile: any;
-  
+ 
+  constructor(public userService: UserService) {} 
+
   // Dados padrão
   horariosDefault: Horario[] = [];      
   
   getHorarios(): Horario[] {
-    if (!this.userProfile?.horarios) return [];
+    if (!this.userService.userProfile?.horarios) return [];
 
     // Se for string (formato antigo), tenta converter
-    if (typeof this.userProfile.horarios === 'string') {
+    if (typeof this.userService.userProfile.horarios === 'string') {
       try {
-        return JSON.parse(this.userProfile.horarios);
+        return JSON.parse(this.userService.userProfile.horarios);
       } catch (e) {
         console.error('Erro ao converter horários', e);
         return [];
@@ -36,8 +36,8 @@ export class HorariosComponent {
     }
 
     // Se já for array
-    if (Array.isArray(this.userProfile.horarios)) {
-      return this.userProfile.horarios;
+    if (Array.isArray(this.userService.userProfile.horarios)) {
+      return this.userService.userProfile.horarios;
     }
 
     return [];

@@ -1,22 +1,22 @@
-<div class="capa-container" [ngClass]="{'dark-mode': darkMode}">
+<div class="capa-container">
   <div class="capa-background" [style.backgroundImage]="getBackgroundImage()">
     <div class="capa-content">
       <!-- Seção da foto do perfil -->
       <div class="profile-section">
-        <div class="profile-image" *ngIf="userProfile?.foto">
-          <img [src]="userProfile.foto" [alt]="userProfile?.nome || 'Foto do profissional'">
+        <div class="profile-image" *ngIf="userService.userProfile?.foto">
+          <img [src]="userService.userProfile.foto" [alt]="userService.userProfile?.nome || 'Foto do profissional'">
         </div>
       </div>
       
       <!-- Seção de informações -->
       <div class="info-section">
         <div class="title-area">
-          <h1>{{ userProfile?.nome || 'Nome do Profissional' }}</h1>
-          <h2>{{ userProfile?.tituloProfissional || 'Cirurgião-Dentista' }}</h2>
+          <h1>{{ userService.userProfile?.nome || 'Nome do Profissional' }}</h1>
+          <h2>{{ userService.userProfile?.tituloProfissional || 'Titulo profissional' }}</h2>
         </div>
         
-        <div class="badges-row" *ngIf="userProfile?.especialidades?.length">
-          <span class="badge" *ngFor="let esp of userProfile?.especialidades?.slice(0,3)">
+        <div class="badges-row" *ngIf="userService.userProfile?.especialidades?.length">
+          <span class="badge" *ngFor="let esp of userService.userProfile?.especialidades?.slice(0,3)">
             {{ esp }}
           </span>
         </div>

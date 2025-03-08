@@ -1,4 +1,4 @@
-<div class="profile-card convenios-card" [ngClass]="{'dark-mode': darkMode}">
+<div class="profile-card convenios-card">
   <div class="card-header">
     <h3>Convênios Aceitos</h3>
   </div>
@@ -7,13 +7,13 @@
     <div class="convenios-info" *ngIf="temConvenios(); else semConvenios">
       <div class="convenios-lista">
         <div class="convenio-item" *ngFor="let convenio of getConvenios()">
-          <i *ngIf="showIcon" class="fas fa-check-circle"></i>
+          <i class="fas fa-check-circle"></i>
           <span>{{ convenio }}</span>
         </div>
       </div>
       
       <div class="info-particular" *ngIf="userProfile?.atendimentoParticular">
-        <i *ngIf="showIcon" class="fas fa-money-bill-wave"></i>
+        <i class="fas fa-money-bill-wave"></i>
         <span>Também aceita pagamento particular</span>
       </div>
     </div>

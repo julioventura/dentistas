@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   selector: 'app-contato',
@@ -9,27 +10,20 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./contato.component.scss']
 })
 export class ContatoComponent {
-  @Input() showIcon: boolean = true;
-  @Input() darkMode: boolean = false;
-  @Input() userProfile: any; // Recebe dados do perfil
-  
-  // Dados padrão de contato com valores preenchidos
-  contato = {
-    telefone: '(11) 3456-7890',
-    whatsapp: '(11) 98765-4321',
-    email: 'contato@dentistaapp.com.br'
-  };
+
+  constructor(public userService: UserService) { }
+
   
   // Métodos chamados no template HTML
   getTelefone(): string {
-    return this.userProfile?.telefone || '';
+    return this.userService.userProfile.telefone || '';
   }
   
   getWhatsapp(): string {
-    return this.userProfile?.whatsapp || '';
+    return this.userService.userProfile.whatsapp || '';
   }
   
   getEmail(): string {
-    return this.userProfile?.email || '';
+    return this.userService.userProfile.email || '';
   }
 }

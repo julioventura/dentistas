@@ -45,162 +45,73 @@ import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.compo
 ]
 })
 export class HomepageComponent implements OnInit {
-  public userProfile: any = {}; 
-  public username: string | null = null;
-  public currentYear: number = new Date().getFullYear();
-  public loggedInUser: any;
-  public isLoading: boolean = true;
-  public errorMessage: string = '';
-  public isCurrentUserProfile: boolean = false;
-  isChatbotExpanded: boolean = false;
+  isLoading = false;
+  errorMessage = '';
+  isChatbotExpanded = false;
+  username: string | null = null;  // Added missing property
+  isCurrentUserProfile = false;    // Added missing property
+  
+  // Manteremos userProfile como uma referência local para compatibilidade,
+  // mas não o passaremos mais como @Input para os componentes filhos
+  get userProfile(): any {
+    return this.userService.userProfile;
+  }
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private firestoreService: FirestoreService<any>,
-    private auth: AngularFireAuth,
-    private userService: UserService,
-    public util: UtilService,
+    private afAuth: AngularFireAuth,
+    public userService: UserService, // Agora é public para acesso nos templates
+    private util: UtilService
   ) { }
 
-  /**
-   * ngOnInit()
-   * @description Inicializa o componente:
-   *   - Verifica se o usuário está logado através de authState.
-   *   - Caso o usuário esteja logado, armazena os dados e tenta obter o username da URL.
-   *   - Se houver um username, chama loadUserProfile para carregar o perfil público desse usuário.
-   *   - Atualiza as flags de carregamento e mensagens de erro para fornecer feedback visual.
-   */
-  ngOnInit(): void {
-    console.log("HomepageComponent ngOnInit()");
-    this.isLoading = true;
-    
-    // Obtém o parâmetro 'username' da rota primeiro
-    this.username = this.route.snapshot.paramMap.get('username');
-    console.log("Username from route:", this.username);
-    
-    // Subscreve ao estado de autenticação para verificar se o usuário está logado
-    this.auth.authState.subscribe(user => {
-      if (user) {
-        this.loggedInUser = user; // Armazena os dados do usuário logado
-        console.log("Authenticated user:", this.loggedInUser);
-
-        // Carrega os dados do usuário autenticado do seu perfil no app
-        this.userService.getUserProfileData().subscribe(profileData => {
-          if (profileData) {
-            console.log("User profile data:", profileData);
-            
-            // Se não houver username na URL, usa o do perfil (se disponível)
-            if (!this.username && profileData.username) {
-              this.username = profileData.username;
-              console.log("Using username from profile:", this.username);
-              this.isCurrentUserProfile = true;
-            }
-            
-            // Se temos um username, carregamos o perfil
-            if (this.username) {
-              this.loadUserProfile(this.username);
-            } else {
-              this.errorMessage = 'Usuário sem nome de usuário definido. Atualize seu perfil.';
-              this.isLoading = false;
-            }
-          } else {
-            console.log("No profile data found");
-            if (this.username) {
-              // Se temos um username da rota mas não há dados de perfil,
-              // carregamos o perfil para esse username
-              this.loadUserProfile(this.username);
-            } else {
-              this.errorMessage = 'Perfil não encontrado. Por favor, atualize seu perfil.';
-              this.isLoading = false;
-            }
-          }
-        }, error => {
-          console.error("Error getting user profile:", error);
-          if (this.username) {
-            // Ainda tenta carregar o perfil com base no username da rota
-            this.loadUserProfile(this.username);
-          } else {
-            this.errorMessage = 'Erro ao carregar perfil.';
-            this.isLoading = false;
-          }
-        });
+  ngOnInit() {
+    // Código existente para obter username da URL...
+    this.route.params.subscribe(params => {
+      const username = params['username'];
+      if (username) {
+        this.loadUserProfile(username);
       } else {
-        console.log("No authenticated user");
-        if (this.username) {
-          // Se temos um username da rota mas não há usuário autenticado,
-          // tenta carregar o perfil (visualização pública)
-          this.loadUserProfile(this.username);
-        } else {
-          this.errorMessage = 'Por favor, faça login para ver seu perfil.';
-          this.isLoading = false;
-        }
-      }
-    }, error => {
-      console.error("Auth error:", error);
-      if (this.username) {
-        // Ainda tenta carregar o perfil com base no username da rota
-        this.loadUserProfile(this.username);
-      } else {
-        this.errorMessage = 'Erro de autenticação.';
-        this.isLoading = false;
+        // Lidar com caso sem username...
       }
     });
-
-    // Adicione isso para debug
-    console.log('ChatbotWidgetComponent importado:', 
-      !!ChatbotWidgetComponent);
   }
 
-  /**
-   * loadUserProfile(username: string): void
-   * @param username - Nome de usuário usado para buscar o perfil público.
-   * @description Busca os dados do usuário usando o FirestoreService.
-   * Se o perfil for encontrado, armazena os dados no 'userProfile';
-   * se não, define uma mensagem de erro para feedback visual.
-   */
   loadUserProfile(username: string): void {
-    if (!username) return;
-    
     this.isLoading = true;
-    this.firestoreService.getRegistroByUsername('usuarios/dentistascombr/users', username)
+    this.username = username; // Set the username property
+    
+    // Agora usando o método do UserService
+    this.userService.loadUserProfileByUsername(username)
       .subscribe(
         (userProfiles) => {
           if (userProfiles && userProfiles.length > 0) {
-            this.userProfile = userProfiles[0];
-            // Adicionar logs para depuração
-            console.log('Homepage - Perfil completo carregado:', this.userProfile);
-            console.log('Homepage - Tipo de endereços:', typeof this.userProfile.enderecos);
-            console.log('Homepage - Endereços:', this.userProfile.enderecos);
-            console.log('Homepage - Redes sociais:', {
-              instagram: this.userProfile.instagram,
-              facebook: this.userProfile.facebook,
-              linkedin: this.userProfile.linkedin,
-              youtube: this.userProfile.youtube,
-              twitter: this.userProfile.twitter,
-              tiktok: this.userProfile.tiktok,
-              pinterest: this.userProfile.pinterest
-            });
+            // O userService já define userProfile internamente
             this.errorMessage = '';
+            
+            // Check if this is the current user's profile
+            this.afAuth.authState.subscribe(user => {
+              if (user) {
+                this.isCurrentUserProfile = (user.email === userProfiles[0].email);
+                console.log('Is current user profile:', this.isCurrentUserProfile);
+              } else {
+                this.isCurrentUserProfile = false;
+              }
+            });
           } else {
-            this.errorMessage = 'Perfil não encontrado.';
-            this.userProfile = {};
+            this.errorMessage = `Não foi encontrado um perfil com o username: ${username}`;
           }
           this.isLoading = false;
         },
         (error) => {
           console.error('Erro ao carregar perfil:', error);
-          this.errorMessage = 'Erro ao carregar perfil.';
+          this.errorMessage = 'Erro ao carregar o perfil.';
           this.isLoading = false;
         }
       );
   }
 
-  /**
-   * openHomepage(): void
-   * @description Abre a homepage pública do usuário em uma nova janela utilizando o username.
-   * Se o username estiver definido, cria a URL e a abre com as configurações de segurança.
-   */
   openHomepage(): void {
     console.log("Opening homepage for username:", this.username);
     

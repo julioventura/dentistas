@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../shared/user.service';
 
 interface Endereco {
   rua: string;
@@ -17,24 +18,24 @@ interface Endereco {
   templateUrl: './endereco.component.html',
   styleUrls: ['./endereco.component.scss']
 })
-export class EnderecoComponent {
-  @Input() showIcon: boolean = true;
-  @Input() darkMode: boolean = false;
-  @Input() userProfile: any;
+export class EnderecoComponent implements OnInit {
+  // Remover userProfile como Input
+  
+  constructor(public userService: UserService) {}
+  
+  ngOnInit() {
+    // Sem código aqui - usaremos apenas o acesso direto pelo userService.userProfile
+  }
   
   // Método para obter os endereços do userProfile
   getEnderecos(): Endereco[] {
-    // console.log('getEnderecos()');
-    // console.log('userProfile', this.userProfile);
+    const userProfile = this.userService.userProfile; // Acesso direto
+    if (!userProfile?.enderecos) return [];
     
-    if (!this.userProfile?.enderecos) return [];
-    
-    // console.log('userProfile.enderecos', this.userProfile?.enderecos);
-
     // Se for string (formato antigo), tenta converter
-    if (typeof this.userProfile.enderecos === 'string') {
+    if (typeof userProfile.enderecos === 'string') {
       try {
-        return JSON.parse(this.userProfile.enderecos);
+        return JSON.parse(userProfile.enderecos);
       } catch (e) {
         console.error('Erro ao converter endereços', e);
         return [];
@@ -42,11 +43,8 @@ export class EnderecoComponent {
     }
     
     // Se já for array
-    if (Array.isArray(this.userProfile.enderecos)) {
-      // console.log('userProfile.enderecos é um array');
-      // console.log('userProfile.enderecos', this.userProfile.enderecos);
-
-      return this.userProfile.enderecos;
+    if (Array.isArray(userProfile.enderecos)) {
+      return userProfile.enderecos;
     }
     
     return [];
@@ -54,7 +52,6 @@ export class EnderecoComponent {
   
   // Verifica se existem endereços para exibir
   hasEnderecos(): boolean {
-    // console.log('hasEnderecos()');
     const enderecos = this.getEnderecos();
     return enderecos.length > 0;
   }

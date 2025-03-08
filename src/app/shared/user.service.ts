@@ -3,8 +3,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from '../shared/firestore.service'; // Serviço para manipular o Firestore
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
-import { Observable, of, from } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { Observable, of, from, BehaviorSubject } from 'rxjs';
+import { map, catchError, switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,24 @@ export class UserService {
 
   userEmail: string | null = null; // Email do usuário logado
   user: any = {}; // Dados do perfil
+
+  // Novo objeto centralizado para o perfil do usuário
+  private _userProfile: any = null;
+  // Observable para permitir componentes reagirem a mudanças
+  private userProfileSubject = new BehaviorSubject<any>(null);
+  public userProfile$ = this.userProfileSubject.asObservable();
+
+  // Getter para userProfile
+  get userProfile(): any {
+    return this._userProfile;
+  }
+
+  // Setter para userProfile - atualiza também o Subject para notificar componentes
+  setUserProfile(profile: any): void {
+    console.log('UserService: Setting userProfile', profile);
+    this._userProfile = profile;
+    this.userProfileSubject.next(profile);
+  }
 
   // Método para pegar os dados do usuário autenticado
   getUser(): Observable<firebase.User | null> {
@@ -48,7 +66,13 @@ export class UserService {
       switchMap(authUser => {
         if (authUser && authUser.email) {
           this.userEmail = authUser.email;
-          return this.firestoreService.getRegistroById('usuarios/dentistascombr/users', this.userEmail);
+          return this.firestoreService.getRegistroById('usuarios/dentistascombr/users', this.userEmail).pipe(
+            tap(profileData => {
+              if (profileData) {
+                this.setUserProfile(profileData);
+              }
+            })
+          );
         }
         return of(null);
       }),
@@ -148,10 +172,25 @@ export class UserService {
       return Promise.reject('Email do usuário não fornecido');
     }
     
+    // Atualizar o userProfile local ao mesmo tempo que salva no Firestore
+    this.setUserProfile(profileData);
+    
     return this.firestore.collection('usuarios')
       .doc('dentistascombr')
       .collection('users')
       .doc(userEmail)
       .update(profileData);
+  }
+
+  // Método para recuperar perfil do usuário pelo username
+  loadUserProfileByUsername(username: string): Observable<any> {
+    return this.firestoreService.getRegistroByUsername('usuarios/dentistascombr/users', username)
+      .pipe(
+        tap(userProfiles => {
+          if (userProfiles && userProfiles.length > 0) {
+            this.setUserProfile(userProfiles[0]);
+          }
+        })
+      );
   }
 }

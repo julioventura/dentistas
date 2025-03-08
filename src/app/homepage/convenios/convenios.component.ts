@@ -9,8 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./convenios.component.scss']
 })
 export class ConveniosComponent {
-  @Input() showIcon: boolean = true;
-  @Input() darkMode: boolean = false;
   @Input() userProfile: any; // Recebe dados do perfil
   
   // Dados padrão, usados apenas se userProfile não for fornecido

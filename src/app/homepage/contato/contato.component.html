@@ -1,30 +1,30 @@
-<div class="profile-card contato-card" [ngClass]="{'dark-mode': darkMode}">
+<div class="profile-card contato-card">
   <div class="card-header">
     <h3>Contato</h3>
   </div>
   
   <div class="card-body">
     <div class="contato-item">
-      <i *ngIf="showIcon" class="fas fa-phone-alt"></i>
+      <i class="fas fa-phone-alt"></i>
       <div class="texto">
         <p class="label">Telefone</p>
-        <p class="valor">{{ getTelefone() }}</p>
+        <p class="valor">{{ userService.userProfile.telefone }}</p>
       </div>
     </div>
     
     <div class="contato-item">
-      <i *ngIf="showIcon" class="fab fa-whatsapp"></i>
+      <i class="fab fa-whatsapp"></i>
       <div class="texto">
         <p class="label">WhatsApp</p>
-        <p class="valor">{{ getWhatsapp() }}</p>
+        <p class="valor">{{ userService.userProfile.whatsapp }}</p>
       </div>
     </div>
     
     <div class="contato-item">
-      <i *ngIf="showIcon" class="fas fa-envelope"></i>
+      <i class="fas fa-envelope"></i>
       <div class="texto">
         <p class="label">E-mail</p>
-        <p class="valor">{{ getEmail() }}</p>
+        <p class="valor">{{ userService.userProfile.email }}</p>
       </div>
     </div>
     
