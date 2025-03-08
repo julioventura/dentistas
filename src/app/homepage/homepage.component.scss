@@ -306,7 +306,7 @@ p {
     padding: 2rem 0;
     // margin-bottom: 2rem;
 
-      // Para telas médias, ajuste para 2 colunas
+    // Para telas médias, ajuste para 2 colunas
     @media (min-width: 768px) {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -317,15 +317,21 @@ p {
         gap: 1rem;
         padding: 1rem 0;
     }
-    
+
     // Nova classe para grid de duas colunas
     &.two-columns {
+
         // Para telas maiores, força exatamente 2 colunas em vez de 3
         @media (min-width: 1200px) {
             grid-template-columns: repeat(2, 1fr);
         }
-        
-        // Os outros breakpoints já estão configurados para 2 ou 1 coluna
+    }
+
+    // grid de uma coluna
+    &.one-column {
+        grid-template-columns: unset;
+        width: 100%;
+        padding: 0;
     }
 }
 
@@ -359,6 +365,17 @@ p {
 
     .card-body {
         padding: 1.5rem;
+
+        // grid de uma coluna
+        &.one-column {
+            grid-template-columns: unset;
+            width: 100%;
+            padding-bottom: 20px;
+        }
+
+        .list {
+            padding-bottom: 12px;
+        }
     }
 
     &.dark-mode {
@@ -380,10 +397,30 @@ p {
 :host ::ng-deep app-rodape-homepage {
     display: block;
 
-    .footer-content,
-    .footer-bottom {
-        max-width: 1000px;
+    .footer-content {
+        max-width: 100%;
         margin: 0 auto;
-        padding: 0 15px;
+    }
+
+}
+
+.left {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    &>* {
+        margin-left: 0;
+        margin-right: auto;
+        text-align: left;
+    }
+
+    & p,
+    & h1,
+    & h2,
+    & h3,
+    & div {
+        text-align: left;
     }
 }

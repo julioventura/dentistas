@@ -16,7 +16,6 @@ export class RodapeHomepageComponent {
   politicaLinks = [
     { text: 'Termos de Uso', route: '/termos' },
     { text: 'Política de Privacidade', route: '/privacidade' },
-    { text: 'Cookies', route: '/cookies' }
   ];
   
   redesSociais = [

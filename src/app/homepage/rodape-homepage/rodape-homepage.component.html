@@ -1,9 +1,9 @@
 <footer class="footer">
   <div>
     <div class="footer-content">
+<div class="footer-brand">
 
-      <div class="footer-brand">
-
+      <!-- 
         <h3>Dentistas.com.br</h3>
 
         <p class="brand-desc">Serviços de tecnologia, comunicação e Inteligência Arftificial para dentistas.</p>
@@ -11,28 +11,27 @@
         <p class="brand-desc">Conectando dentistas desde 1997</p>
 
         <p class="brand-desc"></p>
-      </div>
+      </div> -->
 
 
 
-      <div class="footer-contact" style="text-align: center;">
         <h3>Contato</h3>
-        <ul class="contact-list">
-         
-          <li>
+        
+          <div class="left">
             <!-- <i class="fas fa-phone"></i>&nbsp; -->
-            <span>Whatsapp com IA:<br><b>(11) 3456-7890</b></span>
-          </li>
-          <li>
+            <span>Whatsapp com IA: <b>(21) 2434-6931</b></span>
+          </div>
+
+          <div class="left">
             <!-- <i class="fas fa-envelope"></i>&nbsp; -->
-            <span>Email<br><b>bia&#64;dentistas.com.br</b></span>
-          </li>
-          <li>
-            <!-- <i class="fas fa-envelope"></i>&nbsp; -->
-            <span>Homepage profissional:
-              <b>Dentistas.com.br/bia</b></span>
-          </li>
-        </ul>
+            <span>Email: <b>bia&#64;dentistas.com.br</b></span>
+          </div>
+          
+          <div class="left">
+            <!-- <i class="fas fa-globe"></i>&nbsp; -->
+            <span>Homepage profissional: <b>Dentistas.com.br/bia</b></span>
+          </div>
+        
       </div>
 
       <div class="footer-legal" style="text-align: right;">
@@ -41,8 +40,6 @@
           <li *ngFor="let link of politicaLinks">
             <a [routerLink]="link.route">{{ link.text }}</a>
           </li>
-          <li><a routerLink="/uso-responsavel">Uso Responsável</a></li>
-          <li><a routerLink="/cookies">Política de Cookies</a></li>
         </ul>
       </div>
 
