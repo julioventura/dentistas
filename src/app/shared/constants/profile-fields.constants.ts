@@ -78,53 +78,14 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     group: '02. Contato'
   },
 
-  // Endereço
-  { 
-    controlName: 'endereco', 
-    defaultValue: '',
-    label: 'Endereço',
-    type: 'text',
-    placeholder: 'Rua, número',
-    group: '03. Endereço'
-  },
-  { 
-    controlName: 'bairro', 
-    defaultValue: '',
-    label: 'Bairro',
-    type: 'text',
-    group: '03. Endereço'
-  },
-  { 
-    controlName: 'cidade', 
-    defaultValue: '',
-    label: 'Cidade',
-    type: 'text',
-    group: '03. Endereço'
-  },
-  { 
-    controlName: 'estado', 
-    defaultValue: '',
-    label: 'Estado',
-    type: 'text',
-    group: '03. Endereço'
-  },
-  { 
-    controlName: 'cep', 
-    defaultValue: '',
-    label: 'CEP',
-    type: 'text',
-    placeholder: '00000-000',
-    group: '03. Endereço'
-  },
-
-
+  
   // Informações Profissionais
   {
     controlName: 'cro',
     defaultValue: '',
     label: 'CRO',
     type: 'text',
-    group: '04. Informações Profissionais'
+    group: '03. Informações Profissionais'
   },
   {
     controlName: 'especialidades',
@@ -132,35 +93,28 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'Especialidades',
     type: 'textarea',
     placeholder: 'Suas especialidades',
-    group: '04. Informações Profissionais'
-  },
-  {
-    controlName: 'enderecos',
-    defaultValue: '',
-    label: 'Outros Endereços',
-    type: 'textarea',
-    group: '04. Informações Profissionais'
+    group: '03. Informações Profissionais'
   },
   {
     controlName: 'bio',
     defaultValue: '',
     label: 'Biografia',
     type: 'textarea',
-    group: '04. Informações Profissionais'
+    group: '03. Informações Profissionais'
   },
   { 
     controlName: 'convenios', 
     defaultValue: [],
     label: 'Convênios',
     type: 'array',
-    group: '04. Informações Profissionais'
+    group: '03. Informações Profissionais'
   },
   { 
     controlName: 'formacao', 
     defaultValue: '',
     label: 'Formação Profissional',
     type: 'textarea',
-    group: '04. Informações Profissionais'
+    group: '03. Informações Profissionais'
   },
 
 
@@ -171,49 +125,49 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     label: 'Instagram',
     type: 'text',
     placeholder: '@usuario',
-    group: '05. Redes Sociais'
+    group: '04. Redes Sociais'
   },
   { 
     controlName: 'facebook', 
     defaultValue: '',
     label: 'Facebook',
     type: 'text',
-    group: '05. Redes Sociais'
+    group: '04. Redes Sociais'
   },
   { 
     controlName: 'linkedin', 
     defaultValue: '',
     label: 'LinkedIn',
     type: 'text',
-    group: '05. Redes Sociais'
+    group: '04. Redes Sociais'
   },
   { 
     controlName: 'twitter', 
     defaultValue: '',
     label: 'Twitter',
     type: 'text',
-    group: '05. Redes Sociais'
+    group: '04. Redes Sociais'
   },
   { 
     controlName: 'youtube', 
     defaultValue: '',
     label: 'YouTube',
     type: 'text',
-    group: '05. Redes Sociais'
+    group: '04. Redes Sociais'
   },
   { 
     controlName: 'pinterest', 
     defaultValue: '',
     label: 'Pinterest',
     type: 'text',
-    group: '05. Redes Sociais'
+    group: '04. Redes Sociais'
   },
   { 
     controlName: 'tiktok', 
     defaultValue: '',
     label: 'TikTok',
     type: 'text',
-    group: '05. Redes Sociais'
+    group: '04. Redes Sociais'
   },
 
 ];

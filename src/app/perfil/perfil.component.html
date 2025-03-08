@@ -81,10 +81,6 @@
                     (blur)="onFieldBlur(field.controlName)" (change)="onFieldChange($event, field.controlName)">
                 </ng-container>
 
-
-
-
-
               </ng-container>
 
               <!-- Mensagem de erro para validação -->
@@ -100,27 +96,27 @@
           </div>
         </div>
 
-        <h3 [ngClass]="setClass('grupo-titulo')">{{ '06. Horários de Atendimento' }}</h3>
+        <h3 [ngClass]="setClass('grupo-titulo')">{{ '05. Horários de Atendimento' }}</h3>
 
         <!-- Editor de horários de atendimento -->
-        <div class="form-field horarios-editor">
+        <div class="form-field perfil-editor">
           <label for="horarios" [ngClass]="setClass('detail-label')" [style.width]="customLabelWidth">
           </label>
 
-          <div class="horarios-container">
+          <div class="perfil-container">
             <!-- Lista de horários em modo visualização -->
-            <div *ngIf="!isEditing && horarios.length > 0" class="horarios-list view-mode">
-              <div *ngFor="let horario of horarios" class="horario-item">
-                <div class="horario-content">
+            <div *ngIf="!isEditing && horarios.length > 0" class="perfil-list view-mode">
+              <div *ngFor="let horario of horarios" class="perfil-item">
+                <div class="perfil-content">
                   <strong>{{ horario.dia }}:</strong> {{ horario.horario }}
                 </div>
               </div>
             </div>
 
             <!-- Lista de horários em modo edição (com botões de remover) -->
-            <div *ngIf="isEditing && horarios.length > 0" class="horarios-list edit-mode">
-              <div *ngFor="let horario of horarios; let i = index" class="horario-item">
-                <div class="horario-content">
+            <div *ngIf="isEditing && horarios.length > 0" class="perfil-list edit-mode">
+              <div *ngFor="let horario of horarios; let i = index" class="perfil-item">
+                <div class="perfil-content">
                   <strong>{{ horario.dia }}:</strong> {{ horario.horario }}
                 </div>
                 <button type="button" class="btn-remove" (click)="removeHorario(i)">
@@ -130,7 +126,7 @@
             </div>
 
             <!-- Formulário para adicionar novo horário (apenas em modo edição) -->
-            <div *ngIf="isEditing" class="add-horario-form">
+            <div *ngIf="isEditing" class="add-perfil-form">
               <div class="input-group">
                 <div class="input-field">
                   <label for="novoDia" class="input-label">Dias:</label>
@@ -142,10 +138,15 @@
                   <input type="text" id="novoHorario" class="detail-value edit-mode" placeholder="08:00 - 18:00"
                     [(ngModel)]="novoHorario" [ngModelOptions]="{standalone: true}">
                 </div>
-                <button type="button" class="btn-add" [disabled]="!novoDia || !novoHorario" (click)="addHorario()">
-                  <i class="fas fa-plus"></i> Adicionar
-                </button>
               </div>
+
+                <!-- Botão de adicionar -->
+                <div class="button-container">
+                  <button type="button" class="btn-add" [disabled]="!novoDia || !novoHorario" (click)="addHorario()">
+                    <i class="fas fa-plus"></i> Adicionar
+                  </button>
+                </div>
+
             </div>
 
 
@@ -158,19 +159,19 @@
         </div>
 
 <br>
-        <h3 [ngClass]="setClass('grupo-titulo')">{{ '07. Endereços' }}</h3>
+        <h3 [ngClass]="setClass('grupo-titulo')">{{ '06. Endereços' }}</h3>
 
         <!-- Editor de endereços alternativos -->
-        <div class="form-field enderecos-editor">
+        <div class="form-field perfil-editor">
           <label [ngClass]="setClass('detail-label')"></label>
 
-          <div class="enderecos-container">
+          <div class="perfil-container">
             <!-- Lista de endereços em modo visualização -->
-            <div *ngIf="!isEditing && enderecos.length > 0" class="enderecos-list view-mode">
-              <div *ngFor="let endereco of enderecos" class="endereco-item">
-                <div class="endereco-content">
+            <div *ngIf="!isEditing && enderecos.length > 0" class="perfil-list view-mode">
+              <div *ngFor="let endereco of enderecos" class="perfil-item">
+                <div class="perfil-content">
                   <strong>{{ endereco.rua }}</strong>
-                  <div class="endereco-details">
+                  <div class="perfil-details">
                     {{ endereco.bairro ? endereco.bairro + ', ' : '' }}{{ endereco.cidade }}/{{ endereco.estado }}
                     <span *ngIf="endereco.cep">, CEP: {{ endereco.cep }}</span>
                     <span *ngIf="endereco.telefone">, Tel: {{ endereco.telefone }}</span>
@@ -180,11 +181,11 @@
             </div>
 
             <!-- Lista de endereços em modo edição (com botões de remover) -->
-            <div *ngIf="isEditing && enderecos.length > 0" class="enderecos-list edit-mode">
-              <div *ngFor="let endereco of enderecos; let i = index" class="endereco-item">
-                <div class="endereco-content">
+            <div *ngIf="isEditing && enderecos.length > 0" class="perfil-list edit-mode">
+              <div *ngFor="let endereco of enderecos; let i = index" class="perfil-item">
+                <div class="perfil-content">
                   <strong>{{ endereco.rua }}</strong>
-                  <div class="endereco-details">
+                  <div class="perfil-details">
                     {{ endereco.bairro ? endereco.bairro + ', ' : '' }}{{ endereco.cidade }}/{{ endereco.estado }}
                     <span *ngIf="endereco.cep">, CEP: {{ endereco.cep }}</span>
                     <span *ngIf="endereco.telefone">, Tel: {{ endereco.telefone }}</span>
@@ -197,46 +198,46 @@
             </div>
 
             <!-- Formulário para adicionar novo endereço (apenas em modo edição) -->
-            <div *ngIf="isEditing" class="add-endereco-form">
+            <div *ngIf="isEditing" class="add-perfil-form">
               <div class="input-fields-grid">
                 <!-- Rua -->
                 <div class="input-field">
-                  <label for="novaRua" class="input-label">Rua/Nº:</label>
+                  <label for="novaRua" class="input-label edit-mode">Rua/Nº:</label>
                   <input type="text" id="novaRua" class="detail-value edit-mode" placeholder="Rua e número"
                     [(ngModel)]="novoEndereco.rua" [ngModelOptions]="{standalone: true}">
                 </div>
 
                 <!-- Bairro -->
                 <div class="input-field">
-                  <label for="novoBairro" class="input-label">Bairro:</label>
+                  <label for="novoBairro" class="input-label edit-mode">Bairro:</label>
                   <input type="text" id="novoBairro" class="detail-value edit-mode" placeholder="Bairro"
                     [(ngModel)]="novoEndereco.bairro" [ngModelOptions]="{standalone: true}">
                 </div>
 
                 <!-- Cidade -->
                 <div class="input-field">
-                  <label for="novaCidade" class="input-label">Cidade:</label>
+                  <label for="novaCidade" class="input-label edit-mode">Cidade:</label>
                   <input type="text" id="novaCidade" class="detail-value edit-mode" placeholder="Cidade"
                     [(ngModel)]="novoEndereco.cidade" [ngModelOptions]="{standalone: true}">
                 </div>
 
                 <!-- Estado -->
                 <div class="input-field">
-                  <label for="novoEstado" class="input-label">Estado:</label>
+                  <label for="novoEstado" class="input-label edit-mode">Estado:</label>
                   <input type="text" id="novoEstado" class="detail-value edit-mode" placeholder="UF"
                     [(ngModel)]="novoEndereco.estado" [ngModelOptions]="{standalone: true}">
                 </div>
 
                 <!-- CEP -->
                 <div class="input-field">
-                  <label for="novoCEP" class="input-label">CEP:</label>
+                  <label for="novoCEP" class="input-label edit-mode">CEP:</label>
                   <input type="text" id="novoCEP" class="detail-value edit-mode" placeholder="00000-000"
                     [(ngModel)]="novoEndereco.cep" [ngModelOptions]="{standalone: true}">
                 </div>
 
                 <!-- Telefone -->
                 <div class="input-field">
-                  <label for="novoTelefone" class="input-label">Telefone:</label>
+                  <label for="novoTelefone" class="input-label edit-mode">Telefone:</label>
                   <input type="text" id="novoTelefone" class="detail-value edit-mode" placeholder="(00) 0000-0000"
                     [(ngModel)]="novoEndereco.telefone" [ngModelOptions]="{standalone: true}">
                 </div>
@@ -246,7 +247,7 @@
               <div class="button-container">
                 <button type="button" class="btn-add" [disabled]="!novoEndereco.rua || !novoEndereco.cidade"
                   (click)="addEndereco()">
-                  <i class="fas fa-plus"></i> Adicionar Endereço
+                  <i class="fas fa-plus"></i> Adicionar
                 </button>
               </div>
             </div>

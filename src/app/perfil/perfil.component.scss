@@ -94,6 +94,7 @@ h2,
     color: $red-dark; // modo de edição
     border-color: $red;
   }
+  
 }
 
 .slider-wrapper {
@@ -105,6 +106,7 @@ h2,
     line-height: 1.2;
     font-size: 0.8em;
   }
+
 }
 
 // Estilos do formulário de perfil
@@ -193,9 +195,8 @@ h2,
       }
 
       &:focus {
-        border-color: currentColor;
-        outline: none;
         box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+        background: $red-light;
         background-color: $red-light;
       }
 
@@ -206,7 +207,7 @@ h2,
 
     textarea {
       margin-bottom: 6px;
-      
+
       textarea.detail-value {
         min-height: 80px;
         resize: vertical;
@@ -265,18 +266,12 @@ h2,
 }
 
 // Estilos para modos view/edit
-.view-mode {
-  .detail-value {
-    background-color: #f9f9f9;
-    border-color: transparent !important;
-  }
-}
-
-.edit-mode {
-  .detail-value {
-    background-color: white;
-  }
-}
+// .view-mode {
+//   .detail-value {
+//     background-color: #f9f9f9;
+//     border-color: transparent !important;
+//   }
+// }
 
 // Estilo para mensagem de erro geral
 .error-message {
@@ -384,7 +379,6 @@ h2,
     background-color: $white; // Fundo branco no modo de edição
     box-shadow: $box-shadow; // Sombra ativada
   }
-
 }
 
 .detail-container {
@@ -405,9 +399,7 @@ h2,
   &:last-child {
     border-bottom: none;
   }
-
 }
-
 
 .detail-label {
   font-size: 10px;
@@ -440,6 +432,13 @@ h2,
     border: 0;
     color: $red-dark; // Texto vermelho no modo de edição
   }
+
+  &:focus {
+    background-color: $red-light;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    outline: none;
+    border-color: darken($red, 10%);
+  }
 }
 
 // Botões de ação do formulário
@@ -460,33 +459,33 @@ h2,
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
-    
+
     &.btn-primary {
       &.view-mode {
         background-color: $primary-color;
       }
-      
+
       &.edit-mode {
         background-color: $red;
       }
-      
+
       color: white;
-      
+
       &:hover:not(:disabled) {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
     }
-    
+
     &.btn-secondary {
       background-color: $gray-light;
       color: $gray-dark;
-      
+
       &:hover:not(:disabled) {
         background-color: darken($gray-light, 5%);
       }
@@ -518,9 +517,7 @@ h2,
   &.edit-mode {
     color: $red-dark; // Vermelho no modo de edição
   }
-
 }
-
 
 .detail-value {
   &.view-mode {
@@ -534,69 +531,95 @@ h2,
   }
 }
 
-
 input {
   font-size: 12px;
 
   &.view-mode {
     border: 1px solid $primary-color; // Azul no modo de visualização
-    color: $primary-color-dark; // Azul no modo de visualização
+    color: $primary-color; // Azul no modo de visualização
   }
 
   &.edit-mode {
     border: 1px solid #d00a0a;
     color: $red-dark;
+
+    &:focus {
+      background-color: $red-light;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+      outline: none;
+    }
   }
 }
 
-.horarios-editor {
-  .horarios-container {
+.perfil-content {
+  font-size: 12px;
+
+  .perfil-details {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+.perfil-editor {
+  .perfil-container {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    
-    .horarios-list {
-      max-height: 200px;
+
+    .perfil-list {
       overflow-y: auto;
-      border: 2px solid #ccc;
+      border: 2px solid $primary-color;
       border-radius: 6px;
       padding: 8px;
-      
+
       &.view-mode {
         border-color: $primary-color-light;
         background-color: #f8fcff;
+        border-radius: 4px;
+        margin-bottom: 6px;
       }
-      
+
       &.edit-mode {
+        color: $red-dark;
         border-color: $red-light;
         background-color: #fff9f9;
       }
-      
-      .horario-item {
+
+      .perfil-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px;
-        border-bottom: 1px solid #eee;
-        
-        &:last-child {
-          border-bottom: none;
+        padding: 12px;
+        border-bottom: 2px solid $gray-light;
+
+        &.view-mode {
+          border-color: $primary-color-light;
+          border-bottom: 2px solid $primary-color;
         }
-        
+
+        &.edit-mode {
+          border-color: $red-light;
+          border-bottom: 2px solid $red;
+        }
+
+        // &:last-child {
+        //   border-bottom: 2px solid $primary-color-light;
+        // }
+
         .btn-remove {
           background: transparent;
           border: none;
           color: #dc3545;
           cursor: pointer;
           font-size: 18px;
-          
+
           &:hover {
             color: #c82333;
           }
         }
       }
     }
-    
+
     .empty-message {
       color: #6c757d;
       font-style: italic;
@@ -607,27 +630,76 @@ input {
     }
   }
 
-  .add-horario-form {
-    margin-top: 12px;
-    
+  .btn-add {
+    background-color: $red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+
+    &:hover:not(:disabled) {
+      background-color: darken($red, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    // &:disabled {
+    //   background-color: #ccc;
+    //   cursor: not-allowed;
+    //   opacity: 0.7;
+    // }
+
+    i {
+      font-size: 12px;
+    }
+  }
+
+  .add-perfil-form {
+    border: 1px solid $red-light;
+    border-radius: 4px;
+    padding: 16px;
+
     .input-group {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       align-items: flex-end;
-      
+
       .input-field {
         flex: 1;
         min-width: 180px;
-        
+
         .input-label {
           display: block;
           font-size: 12px;
           font-weight: 500;
           margin-bottom: 4px;
-          color: $red-dark;
+          color: $gray;
+
+          &.view-mode {
+            color: $primary-color;
+          }
+
+          &.edit-mode {
+            color: $red-dark;
+          }
+
+          &:focus {
+            border-color: currentColor;
+            outline: none;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+            background-color: $red-light;
+          }
         }
-        
+
         input {
           width: 100%;
           padding: 8px 12px;
@@ -635,13 +707,14 @@ input {
           border-radius: 4px;
           font-size: 14px;
           transition: all 0.2s;
-          
+
           &:focus {
             border-color: darken($red, 10%);
             box-shadow: 0 0 0 2px rgba($red, 0.2);
             outline: none;
+            background-color: $red-light;
           }
-          
+
           &::placeholder {
             color: #aaa;
             font-style: italic;
@@ -649,53 +722,22 @@ input {
           }
         }
       }
-      
-      .btn-add {
-        background-color: $red;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 8px 16px;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-weight: 500;
-        height: 38px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        
-        &:hover:not(:disabled) {
-          background-color: darken($red, 10%);
-          transform: translateY(-2px);
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        &:disabled {
-          background-color: #ccc;
-          cursor: not-allowed;
-          opacity: 0.7;
-        }
-        
-        i {
-          font-size: 12px;
-        }
-      }
     }
   }
-  
+
   // Melhoria para a lista de horários
-  .horarios-list {
+  .perfil-list {
     &.edit-mode {
-      .horario-item {
+      .perfil-item {
         background-color: rgba($red-light, 0.1);
         border-radius: 4px;
         margin-bottom: 6px;
         transition: all 0.2s;
-        
+
         &:hover {
           background-color: rgba($red-light, 0.2);
         }
-        
+
         .btn-remove {
           width: 30px;
           height: 30px;
@@ -703,34 +745,34 @@ input {
           display: flex;
           align-items: center;
           justify-content: center;
-          
+
           &:hover {
             background-color: rgba($red, 0.1);
           }
         }
       }
     }
-    
+
     &.view-mode {
-      .horario-item {
+      .perfil-item {
         background-color: rgba($primary-color-light, 0.1);
         border-radius: 4px;
         margin-bottom: 6px;
       }
     }
   }
-  
+
   .empty-message {
     text-align: center;
     padding: 16px;
     font-style: italic;
     border: 1px dashed;
-    
+
     &.view-mode {
       border-color: $primary-color-light;
       color: $primary-color;
     }
-    
+
     &.edit-mode {
       border-color: $red-light;
       color: $red;
@@ -740,15 +782,37 @@ input {
 
 // Responsividade para telas pequenas
 @media (max-width: 576px) {
-  .horarios-editor {
-    .add-horario-form {
+  .perfil-editor {
+    .add-perfil-form {
       .input-group {
         flex-direction: column;
         align-items: stretch;
-        
+
         .btn-add {
           width: 100%;
           margin-top: 8px;
+          justify-content: center;
+        }
+      }
+
+      // Melhoria vinda da lista de enderecos
+      .input-fields-grid {
+        grid-template-columns: 1fr;
+
+        // de enderecos
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .button-container {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+
+        .btn-add {
+          width: 100%;
           justify-content: center;
         }
       }
@@ -760,7 +824,7 @@ input {
   color: $gray;
   font-size: 14px;
   font-weight: bold;
-  
+
   &.view-mode {
     color: $primary-color;
   }
@@ -770,178 +834,10 @@ input {
   }
 }
 
-// Em perfil.component.scss
-.enderecos-editor {
-  .enderecos-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    
-    .enderecos-list {
-      max-height: 300px;
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 8px;
-      
-      &.view-mode {
-        border-color: $primary-color-light;
-        background-color: #f8fcff;
-      }
-      
-      &.edit-mode {
-        border-color: $red-light;
-        background-color: #fff9f9;
-      }
-      
-      .endereco-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-        
-        &:last-child {
-          border-bottom: none;
-        }
-        
-        .endereco-content {
-          flex: 1;
-          
-          .endereco-details {
-            color: #666;
-            font-size: 14px;
-            margin-top: 4px;
-          }
-        }
-        
-        .btn-remove {
-          background: transparent;
-          border: none;
-          color: #dc3545;
-          cursor: pointer;
-          font-size: 18px;
-          
-          &:hover {
-            color: #c82333;
-          }
-        }
-      }
-    }
-    
-    .add-endereco-form {
-      margin-top: 16px;
-      border: 1px solid $red-light;
-      border-radius: 4px;
-      padding: 16px;
-      
-      .input-fields-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 12px;
-        margin-bottom: 16px;
-        
-        .input-field {
-          .input-label {
-            display: block;
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 4px;
-            color: $red-dark;
-          }
-          
-          input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid $red;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: all 0.2s;
-            
-            &:focus {
-              border-color: darken($red, 10%);
-              box-shadow: 0 0 0 2px rgba($red, 0.2);
-              outline: none;
-            }
-            
-            &::placeholder {
-              color: #aaa;
-              font-style: italic;
-              font-size: 13px;
-            }
-          }
-        }
-      }
-      
-      .button-container {
-        display: flex;
-        justify-content: flex-end;
-        
-        .btn-add {
-          background-color: $red;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          padding: 10px 16px;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          
-          &:hover:not(:disabled) {
-            background-color: darken($red, 10%);
-            transform: translateY(-2px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-          }
-          
-          &:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-          }
-          
-          i {
-            font-size: 12px;
-          }
-        }
-      }
-    }
-    
-    .empty-message {
-      text-align: center;
-      padding: 16px;
-      font-style: italic;
-      border: 1px dashed;
-      
-      &.view-mode {
-        border-color: $primary-color-light;
-        color: $primary-color;
-      }
-      
-      &.edit-mode {
-        border-color: $red-light;
-        color: $red;
-      }
-    }
-  }
+.view-mode {
+  color: $primary-color;
 }
 
-// Responsividade para dispositivos móveis
-@media (max-width: 576px) {
-  .enderecos-editor {
-    .add-endereco-form {
-      .input-fields-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .button-container {
-        .btn-add {
-          width: 100%;
-          justify-content: center;
-        }
-      }
-    }
-  }
+.edit-mode {
+  color: $red-dark;
 }

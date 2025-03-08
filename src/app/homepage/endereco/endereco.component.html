@@ -6,7 +6,7 @@
   <div class="card-body component-content">
     <!-- Lista de endereços -->
     <div class="enderecos-lista" *ngIf="hasEnderecos(); else semEnderecos">
-      <div *ngFor="let endereco of getEnderecos()" class="endereco-item">
+      <div *ngFor="let endereco of getEnderecos()" class="enderecos-item">
         <!-- Rua -->
         <div *ngIf="endereco.rua" class="info-line">
           <strong>{{ endereco.rua }}</strong>
