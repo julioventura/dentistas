@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UtilService } from '../../shared/utils/util.service';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   selector: 'app-redes',
@@ -10,38 +11,32 @@ import { UtilService } from '../../shared/utils/util.service';
   styleUrls: ['./redes.component.scss']
 })
 export class RedesComponent implements OnChanges {
-  @Input() userProfile: any;
-  @Input() darkMode: boolean = false;
 
-  // Propriedade para rastrear se os dados estão carregados
-  dadosCarregados = false;
 
-  constructor(public util: UtilService) { }
+  constructor(public util: UtilService,
+    public userService: UserService
+  ) { }
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('RedesComponent - ngOnChanges chamado');
 
-    // Verificar se o userProfile mudou
-    if (changes['userProfile']) {
-      console.log('RedesComponent - userProfile atualizado:', this.userProfile);
+    // Verificar se o userService.userProfile mudou
+    if (changes['userService.userProfile']) {
+      console.log('RedesComponent - userService.userProfile atualizado:', this.userService.userProfile);
 
-      // Marcar dados como carregados se userProfile existir
-      this.dadosCarregados = false;
 
-      // Debugging: verificar a estrutura do objeto userProfile
-      if (this.userProfile) {
-        // console.log('RedesComponent - Estrutura completa do userProfile:', JSON.stringify(this.userProfile));
-        console.log('userProfile:', this.userProfile);
+      // Debugging: verificar a estrutura do objeto userService.userProfile
+      if (this.userService.userProfile) {
+        // console.log('RedesComponent - Estrutura completa do userService.userProfile:', JSON.stringify(this.userService.userProfile));
+        console.log('userService.userProfile:', this.userService.userProfile);
 
-        this.dadosCarregados = true;
-
-        console.log('this.userProfile.instagram', this.userProfile.instagram);
-        console.log('this.userProfile.facebook', this.userProfile.facebook);
-        console.log('this.userProfile.linkedin', this.userProfile.linkedin);
-        console.log('this.userProfile.youtube', this.userProfile.youtube);
-        console.log('this.userProfile.twitter', this.userProfile.twitter);
-        console.log('this.userProfile.tiktok', this.userProfile.tiktok);
-        console.log('this.userProfile.pinterest', this.userProfile.pinterest);
+        console.log('this.userService.userProfile.instagram', this.userService.userProfile.instagram);
+        console.log('this.userService.userProfile.facebook', this.userService.userProfile.facebook);
+        console.log('this.userService.userProfile.linkedin', this.userService.userProfile.linkedin);
+        console.log('this.userService.userProfile.youtube', this.userService.userProfile.youtube);
+        console.log('this.userService.userProfile.twitter', this.userService.userProfile.twitter);
+        console.log('this.userService.userProfile.tiktok', this.userService.userProfile.tiktok);
+        console.log('this.userService.userProfile.pinterest', this.userService.userProfile.pinterest);
 
       }
 
@@ -51,14 +46,14 @@ export class RedesComponent implements OnChanges {
 
   // Verificar se o usuário tem pelo menos uma rede social configurada
   hasRedesSociais(): boolean {
-    if (this.userProfile &&
-      (this.userProfile.instagram ||
-        this.userProfile.facebook ||
-        this.userProfile.linkedin ||
-        this.userProfile.youtube ||
-        this.userProfile.twitter ||
-        this.userProfile.tiktok ||
-        this.userProfile.pinterest)) {
+    if (this.userService.userProfile &&
+      (this.userService.userProfile.instagram ||
+        this.userService.userProfile.facebook ||
+        this.userService.userProfile.linkedin ||
+        this.userService.userProfile.youtube ||
+        this.userService.userProfile.twitter ||
+        this.userService.userProfile.tiktok ||
+        this.userService.userProfile.pinterest)) {
       return true;
     }
     else {
@@ -68,79 +63,80 @@ export class RedesComponent implements OnChanges {
 
   // Métodos para navegar até URLs de redes sociais
   navigateToInstagram(): void {
-    if (this.userProfile?.instagram) {
-      this.util.go_url(this.userProfile.instagram);
+    if (this.userService.userProfile.instagram) {
+
+      this.util.go_url(this.userService.userProfile.instagram);
     }
   }
 
   navigateToFacebook(): void {
-    if (this.userProfile?.facebook) {
-      this.util.go_url(this.userProfile.facebook);
+    if (this.userService.userProfile?.facebook) {
+      this.util.go_url(this.userService.userProfile.facebook);
     }
   }
 
   navigateToLinkedin(): void {
-    if (this.userProfile?.linkedin) {
-      this.util.go_url(this.userProfile.linkedin);
+    if (this.userService.userProfile?.linkedin) {
+      this.util.go_url(this.userService.userProfile.linkedin);
     }
   }
 
   navigateToYoutube(): void {
-    if (this.userProfile?.youtube) {
-      this.util.go_url(this.userProfile.youtube);
+    if (this.userService.userProfile?.youtube) {
+      this.util.go_url(this.userService.userProfile.youtube);
     }
   }
 
   navigateToTwitter(): void {
-    if (this.userProfile?.twitter) {
-      this.util.go_url(this.userProfile.twitter);
+    if (this.userService.userProfile?.twitter) {
+      this.util.go_url(this.userService.userProfile.twitter);
     }
   }
 
   navigateToTiktok(): void {
-    if (this.userProfile?.tiktok) {
-      this.util.go_url(this.userProfile.tiktok);
+    if (this.userService.userProfile?.tiktok) {
+      this.util.go_url(this.userService.userProfile.tiktok);
     }
   }
 
   navigateToPinterest(): void {
-    if (this.userProfile?.pinterest) {
-      this.util.go_url(this.userProfile.pinterest);
+    if (this.userService.userProfile?.pinterest) {
+      this.util.go_url(this.userService.userProfile.pinterest);
     }
   }
 
   // Instagram
   getInstagramUrl(): string {
-    return this.userProfile?.instagram || '';
+    return this.userService.userProfile?.instagram || '';
   }
 
   // Facebook
   getFacebookUrl(): string {
-    return this.userProfile?.facebook || '';
+    return this.userService.userProfile?.facebook || '';
   }
 
   // LinkedIn
   getLinkedinUrl(): string {
-    return this.userProfile?.linkedin || '';
+    return this.userService.userProfile?.linkedin || '';
   }
 
   // YouTube
   getYoutubeUrl(): string {
-    return this.userProfile?.youtube || '';
+    return this.userService.userProfile?.youtube || '';
   }
 
   // Twitter
   getTwitterUrl(): string {
-    return this.userProfile?.twitter || '';
+    return this.userService.userProfile?.twitter || '';
   }
 
   // TikTok
   getTikTokUrl(): string {
-    return this.userProfile?.tiktok || '';
+    return this.userService.userProfile?.tiktok || '';
   }
 
   // Pinterest
   getPinterestUrl(): string {
-    return this.userProfile?.pinterest || '';
+    return this.userService.userProfile?.pinterest || '';
   }
 }

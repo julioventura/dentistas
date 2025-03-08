@@ -54,20 +54,6 @@
       }
     }
   }
-  
-  &.dark-mode {
-    .secundario {
-      color: #adb5bd;
-    }
-    
-    .contato-info {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    i {
-      color: #5dade2;
-    }
-  }
 }
 
 .component-card {
@@ -79,11 +65,6 @@
   margin-bottom: 20px;
   height: 100%;
   
-  &.dark-mode {
-    background-color: #222;
-    color: #f0f0f0;
-  }
-  
   .component-header {
     display: flex;
     align-items: center;
@@ -93,10 +74,6 @@
       color: $primary-color;
       font-size: 20px;
       margin-right: 10px;
-      
-      .dark-mode & {
-        color: $primary-color-light;
-      }
     }
     
     h2 {
@@ -120,10 +97,6 @@
       
       strong {
         color: $secondary-color;
-        
-        .dark-mode & {
-          color: $secondary-color-light;
-        }
       }
     }
   }
@@ -135,11 +108,6 @@
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 6px;
-    
-    .dark-mode & {
-      background-color: #333;
-      color: #aaa;
-    }
   }
 }
 

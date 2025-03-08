@@ -61,26 +61,6 @@
       background-color: #2980b9;
     }
   }
-  
-  &.dark-mode {
-    .contato-item {
-      .label {
-        color: #adb5bd;
-      }
-      
-      i {
-        color: #5dade2;
-      }
-    }
-    
-    .btn-contato {
-      background-color: #5dade2;
-      
-      &:hover {
-        background-color: #3498db;
-      }
-    }
-  }
 }
 
 .valor {

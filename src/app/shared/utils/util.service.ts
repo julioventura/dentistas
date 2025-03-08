@@ -360,7 +360,18 @@ export class UtilService {
   }
 
   go_url(url: string) {
-    window.open(url, '_blank'); // Abre em uma nova aba ou janela
+
+    // Garantir que a URL tem o protocolo correto
+    if (url && url.trim() !== '') {
+      // Se a URL não começar com http:// ou https://, adicionar https://
+      if (!/^https?:\/\//i.test(url)) {
+        url = 'https://' + url;
+      }
+      
+      window.open(url, '_blank'); // Abre em uma nova aba ou janela
+    } else {
+      console.warn('URL inválida ou vazia');
+    }
   }
 
 

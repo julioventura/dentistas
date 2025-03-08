@@ -155,18 +155,6 @@ p {
 .block-container {
     margin: 1rem 0;
     font-size: 0.9rem;
-
-    &.dark-mode {
-        color: #ecf0f1;
-
-        .block-info {
-            >div {
-                i {
-                    color: #3498db;
-                }
-            }
-        }
-    }
 }
 
 .block-title {
@@ -219,10 +207,6 @@ p {
 
                 &.secundario {
                     color: #0a5307;
-
-                    .dark-mode & {
-                        color: #bdc3c7;
-                    }
                 }
             }
         }
@@ -265,10 +249,6 @@ p {
 
         .hora {
             color: #7f8c8d;
-
-            .dark-mode & {
-                color: #bdc3c7;
-            }
         }
     }
 }
@@ -375,20 +355,6 @@ p {
 
         .list {
             padding-bottom: 12px;
-        }
-    }
-
-    &.dark-mode {
-        background: #333;
-        color: #f8f9fa;
-
-        .card-header {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-            h3 {
-                color: #f8f9fa;
-            }
         }
     }
 }

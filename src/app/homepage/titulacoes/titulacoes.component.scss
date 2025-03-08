@@ -66,31 +66,4 @@
       font-weight: 500;
     }
   }
-  
-  &.dark-mode {
-    .titulacao-grupo h4 {
-      color: #f8f9fa;
-      
-      i {
-        color: #5dade2;
-      }
-    }
-    
-    .titulacao-item {
-      border-left-color: rgba(93, 173, 226, 0.4);
-      
-      .instituicao {
-        color: #ccc;
-      }
-      
-      .periodo {
-        color: #adb5bd;
-      }
-    }
-    
-    .especialidade-lista .badge {
-      background-color: rgba(93, 173, 226, 0.2);
-      color: #5dade2;
-    }
-  }
 }

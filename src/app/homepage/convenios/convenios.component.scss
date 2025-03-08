@@ -98,46 +98,4 @@
       color: #555;
     }
   }
-  
-  &.dark-mode {
-    .convenio-item {
-      background-color: rgba(52, 152, 219, 0.2);
-    }
-    
-    .info-particular {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .no-convenios {
-      color: #bdc3c7;
-    }
-    
-    .convenio-item i {
-      color: #2ecc71;
-    }
-    
-    .sem-convenios {
-      background-color: rgba(255, 255, 255, 0.05);
-      
-      i {
-        color: #95a5a6;
-      }
-      
-      p {
-        color: #ccc;
-      }
-    }
-    
-    .observacao {
-      border-top-color: rgba(255, 255, 255, 0.1);
-      
-      i {
-        color: #5dade2;
-      }
-      
-      p {
-        color: #ccc;
-      }
-    }
-  }
 }

@@ -128,54 +128,6 @@
       color: #555;
     }
   }
-
-  &.dark-mode {
-    .rede-item {
-      &.instagram {
-        background-color: rgba(225, 48, 108, 0.15);
-      }
-
-      &.facebook {
-        background-color: rgba(59, 89, 152, 0.15);
-      }
-
-      &.linkedin {
-        background-color: rgba(0, 119, 181, 0.15);
-      }
-
-      &.youtube {
-        background-color: rgba(255, 0, 0, 0.15);
-      }
-
-      &.twitter {
-        background-color: rgba(29, 161, 242, 0.15);
-      }
-
-      &.tiktok {
-        background-color: rgba(0, 0, 0, 0.15);
-      }
-
-      &.pinterest {
-        background-color: rgba(230, 0, 35, 0.15);
-      }
-
-      &.website {
-        background-color: rgba(52, 152, 219, 0.15);
-      }
-    }
-
-    .sem-redes {
-      background-color: rgba(255, 255, 255, 0.05);
-
-      i {
-        color: #95a5a6;
-      }
-
-      p {
-        color: #ccc;
-      }
-    }
-  }
 }
 
 .loading-message {
