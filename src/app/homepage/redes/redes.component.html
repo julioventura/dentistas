@@ -2,59 +2,10 @@
   <div class="card-header">
     <h3>Redes Sociais</h3>
   </div>
-
+  
   <div class="card-body">
-    <!-- Indicador de carregamento -->
-    <div *ngIf="!dadosCarregados" class="loading-message">
-      <i class="fas fa-spinner fa-spin"></i>
-      <span>Carregando redes sociais...</span>
-    </div>
-    
-    <!-- Conteúdo quando dados estiverem carregados -->
-    <div class="redes-lista">
-
-      <!-- Instagram -->
-      <div class="rede-item instagram" (click)="navigateToInstagram()">
-        <i class="fab fa-instagram"></i>
-        <span>{{ userProfile.instagram }}</span>
-      </div>
-
-      <!-- Facebook -->
-      <div class="rede-item facebook" (click)="navigateToFacebook()">
-        <i class="fab fa-facebook-f"></i>
-        <span>{{ userProfile.facebook }}</span>
-      </div>
-
-      <!-- LinkedIn -->
-      <div class="rede-item linkedin" (click)="navigateToLinkedin()">
-        <i class="fab fa-linkedin-in"></i>
-        <span>{{ userProfile.linkedin }}</span>
-      </div>
-
-      <!-- YouTube -->
-      <div  class="rede-item youtube" (click)="navigateToYoutube()">
-        <i class="fab fa-youtube"></i>
-        <span>{{ userProfile.youtube }}</span>
-      </div>
-
-      <!-- Twitter -->
-      <div class="rede-item twitter" (click)="navigateToTwitter()">
-        <i class="fab fa-twitter"></i>
-        <span>{{ userProfile.twitter }}</span>
-      </div>
-
-      <!-- TikTok -->
-      <div class="rede-item tiktok" (click)="navigateToTiktok()">
-        <i class="fab fa-tiktok"></i>
-        <span>{{ userProfile.tiktok }}</span>
-      </div>
-
-      <!-- Pinterest -->
-      <div class="rede-item pinterest" (click)="navigateToPinterest()">
-        <i class="fab fa-pinterest-p"></i>
-        <span>{{ userProfile.pinterest }}</span>
-      </div>
-    </div>
-
+    <!-- Usar o HTML gerado no componente -->
+    <div [innerHTML]="redesHtml">r</div>
   </div>
+  
 </div>

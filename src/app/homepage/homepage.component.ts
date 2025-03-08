@@ -22,7 +22,6 @@ import { ConveniosComponent } from "./convenios/convenios.component";
 import { RedesComponent } from "./redes/redes.component";
 import { CartaoComponent } from "./cartao/cartao.component";
 import { CapaComponent } from "./capa/capa.component";
-import { MapsComponent } from "../shared/maps/maps.component";
 import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.component";
 
 @Component({
@@ -42,7 +41,6 @@ import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.compo
     RedesComponent,
     CartaoComponent,
     CapaComponent,
-    MapsComponent,
     WhatsappButtonComponent
 ]
 })
