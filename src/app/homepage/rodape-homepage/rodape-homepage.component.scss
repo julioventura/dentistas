@@ -2,185 +2,25 @@
 @import '../homepage.component.scss';
 
 .footer {
-  background-color: unset;
   color: #000000;
-  padding: 1rem 0 0;
-  border: 0px solid #7896c0;
-  border-bottom: none;
-  border-radius: 20px;
-  
-  .container {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 0 15px;
-  }
-  
-  .footer-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    
-    
-    > div {
-      flex: 1;
-      min-width: 200px;
-      padding: 0 15px;
-    }
-  }
-  
-  .footer-logo {
-    h2 {
-      margin: 0 0 5px;
-      font-size: 1.6rem;
-      color: #3498db;
-    }
-    
-    p {
-      margin: 0;
-      font-size: 0.9rem;
-    }
-  }
-  
-  h3 {
-    position: relative;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    text-align: left;
-    background: unset;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 50px;
-      height: 2px;
-      background-color: #3498db;
-    }
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    
-    li {
-      margin-bottom: 0.5rem;
-      
-      a {
-        color: #000000;
-        text-decoration: none;
-        transition: none;
-        
-        &:hover, &:active, &:visited, &:focus {
-          color: #000000;
-        }
-      }
-    }
-  }
-  
-  .social-icons {
-    display: flex;
-    gap: 15px;
-    
-    .social-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      color: #ecf0f1;
-      transition: all 0.3s ease;
-      
-      &:hover {
-        background-color: #3498db;
-        transform: translateY(-3px);
-      }
-    }
-  }
+  padding: 0;
+  height: 1rem;
+  margin: 0;
 
-
-  .footer-legal {
-    text-align: right;
-    
-    ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    
-    h3,
-    li {
-      text-align: right;
-    }
-    
-    h3::after {
-      left: auto;
-      right: 0;
-    }
-  }
-  
-  .footer-contact {
-    text-align: center;
-    
-    ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    
-    h3,
-    li {
-      text-align: center;
-    }
-    
-    h3::after {
-      left: 50%;
-      transform: translateX(-50%);
-    }
-  }
+     
 
   // Add a general rule for any links in the footer
-  .footer a {
+  a {
     color: #000000 !important;
+    text-decoration: none;
+    color: $primary-color !important;
+    padding: 0 1rem;
+    font: 0.8em sans-serif;
     
     &:hover, &:active, &:visited, &:focus {
       color: #000000 !important;
     }
   }
 
-  // Brand section styling
-  .footer-brand {
-    margin-bottom: 1.5rem;
-    padding: 0 15px;
-  }
-  
-  .brand-name {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #000000;
-    margin-bottom: 0.75rem;
-    position: relative;
-    padding-bottom: 0.5rem;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 60px;
-      height: 3px;
-      background-color: #3498db;
-    }
-  }
-  
-  .brand-desc {
-    font-size: 16px;
-    color: #000000;
-    text-align: left;
-    margin-top: 0.75rem;
-    line-height: 1.5;
-    font-weight: normal;
-  }
+
 }

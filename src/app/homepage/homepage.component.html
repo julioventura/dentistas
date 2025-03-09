@@ -19,22 +19,25 @@
 
   <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
   <div id="bottom_block" class="container">
+
     <div class="content-grid two-columns">
       <app-cartao></app-cartao>
       <app-contato></app-contato>
       <app-enderecos></app-enderecos>
       <app-horarios></app-horarios>
-      <app-convenios></app-convenios>
-      <app-titulacoes></app-titulacoes>
     </div>
+
     <!-- Área de Conteúdo em grid com uma coluna para os componentes internos -->
     <div class="content-grid one-column">
       <app-redes></app-redes>
     </div>
-    <div class="espacador_vertical_duplo"></div>
+
+    <div class="content-grid two-columns">
+      <app-convenios></app-convenios>
+      <app-titulacoes></app-titulacoes>
+    </div>
+
   </div>
-  
-  <!-- <app-maps></app-maps> -->
 
   <!-- Rodapé -->
   <app-rodape-homepage></app-rodape-homepage>

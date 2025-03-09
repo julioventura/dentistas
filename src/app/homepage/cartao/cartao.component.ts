@@ -11,11 +11,8 @@ import { UserService } from '../../shared/user.service';
 })
 export class CartaoComponent {
   
-
   public qrCodeUrl: string = 'https://dentistas.com.br/assets/qrcode_dentistascombr.png';
-  googleMapsUrl: string = '';
 
- 
   constructor(public userService: UserService) { }
 
   

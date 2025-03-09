@@ -6,7 +6,7 @@ import { UtilService } from '../shared/utils/util.service';
 import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import { getProfileFormConfig, getGroupedProfileFields, ProfileField } from '../shared/constants/profile-fields.constants';
+import { getProfileFormConfig, getGroupedProfileFields, ProfileField } from './profile-fields.constants';
 import { finalize } from 'rxjs/operators';
 import { from } from 'rxjs';
 

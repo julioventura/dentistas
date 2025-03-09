@@ -16,8 +16,9 @@ footer {
 }
   
 #usuario_logado {
-  font-size: 6pt;
+  font-size: 8pt;
   font-weight: normal;
+    padding-top: 10px;
 }
 
 section {
@@ -39,6 +40,7 @@ section {
     img {
       width: 30px;
       height: 30px;
+      padding: 0 15px;
     }
   }
 }

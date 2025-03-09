@@ -20,16 +20,33 @@
     // Definir proporção de um cartão de visita padrão (9:5)
     width: 100%;
     max-width: 450px; // 9cm em pixels (approx 50px/cm)
-    height: 250px; // 5cm em pixels (approx 50px/cm)
+    aspect-ratio: 9 / 5; // Mantém proporção automaticamente 
+    height: auto; // Permite que a altura seja calculada pela proporção
     margin: 0 auto;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
+    @supports not (aspect-ratio: 9 / 5) {
+      height: 0;
+      padding-bottom: calc((5 / 9) * 100%); // Altura = Largura * (5/9)
+      position: relative;
+      
+      .cartao-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    }
+
     @media (max-width: 500px) {
+      aspect-ratio: auto;
       height: auto;
       min-height: 250px;
+      padding-bottom: 0;
     }
 
     &.dark-theme {
@@ -130,8 +147,8 @@
   }
 
   .cartao-qrcode {
-    width: 70px;
-    height: 70px;
+    width: 85px;
+    height: 85px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -189,7 +206,7 @@
   }
 }
 
-.map-actions {
+.button-group-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -197,7 +214,7 @@
   margin: 1.5rem 1.5rem;
   width: calc(100% - 3rem);
 
-  .map-link {
+  .button-group-link {
     flex: 1;
     padding: 0.75rem 1rem;
     border-radius: 4px;
@@ -238,7 +255,7 @@
   @media (max-width: 480px) {
     flex-direction: column;
 
-    .map-link {
+    .button-group-link {
       width: 100%;
     }
   }

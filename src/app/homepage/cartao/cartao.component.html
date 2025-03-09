@@ -26,9 +26,15 @@
       <div class="cartao-content">
         <div class="cartao-info">
 
-          <div class="info-item" *ngIf="userService.userProfile?.cro">
+          <!-- <div class="info-item" *ngIf="userService.userProfile?.cro">
             <i class="fas fa-id-card"></i>
             <span>CRO: {{ userService.userProfile.cro }}</span>
+          </div> -->
+          &nbsp;<br>
+
+          <div class="info-item" *ngIf="userService.userProfile?.whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            <span>{{ userService.userProfile.whatsapp }}</span>
           </div>
 
           <div class="info-item" *ngIf="userService.userProfile?.telefone">
@@ -41,9 +47,9 @@
             <span>{{ userService.userProfile.email }}</span>
           </div>
 
-          <div class="info-item" *ngIf="userService.userProfile?.endereco">
+          <div class="info-item" *ngIf="userService.userProfile?.site">
             <i class="fas fa-globe"></i>
-            <span>{{ userService.userProfile.endereco.site}}</span>
+            <span>{{ userService.userProfile.site}}</span>
           </div>
 
         </div>
@@ -55,25 +61,18 @@
 
     </div>
 
-    <!-- <div class="cartao-acoes">
-      <button class="btn-salvar">
-        <i class="fas fa-download"></i> Salvar Cartão
-      </button>
+    <!-- ======================================== -->
 
-      <button class="btn-compartilhar">
-        <i class="fas fa-share-alt"></i> Compartilhar
-      </button>
-    </div>
- -->
+    <div class="button-group-actions">
 
-    <div class="map-actions">
-      <a [href]="" target="_blank" class="map-link primary">
+      <a [href]="" target="_blank" class="button-group-link primary">
         <i class="fas fa-download"></i> Salvar Cartão
 
       </a>
-      <a [href]="" target="_blank" class="map-link primary">
+      <a [href]="" target="_blank" class="button-group-link primary">
         <i class="fas fa-share-alt"></i> Compartilhar
       </a>
+
     </div>
 
 

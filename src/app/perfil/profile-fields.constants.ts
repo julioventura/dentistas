@@ -77,7 +77,14 @@ export const PROFILE_FORM_FIELDS: ProfileField[] = [
     placeholder: '(99) 9999-9999',
     group: '02. Contato'
   },
-
+  {
+    controlName: 'site',
+    defaultValue: '',
+    label: 'Site',
+    type: 'url',
+    placeholder: '',
+    group: '02. Contato'
+  },
   
   // Informações Profissionais
   {

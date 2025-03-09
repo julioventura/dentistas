@@ -34,21 +34,22 @@
       <a href="" target="_blank" (click)="chat_whatsapp()">
         <img src="https://dentistas.com.br/assets/whatsapp-verde.png" alt="AJUDA COM IA" width="40" />
       </a>
-      <div class="social-label">Whatsapp<br>com IA</div>
+      <div class="social-label">Whatsapp com IA</div>
     </div>
 
     <div style="text-align: center;">
       <a href="/chatbot" target="_blank" >
         <img src="https://dentistas.com.br/assets/chat.png" alt="AJUDA COM IA" width="40" />
       </a>
-      <div class="social-label">CHATBOT<br>com IA</div>
+      <div class="social-label">Chatbot com IA</div>
     </div>
 
   </section>
 
   <!-- Exibe informações do usuário logado, se disponível -->
-  <div id="usuario_logado" *ngIf="user">
-    {{ambiente}} - {{ user.email }} {{ this.configuracoes.is_admin ? ' - ADMIN' : ''}}<br>
+  <div id="usuario_logado" *ngIf="user" class="usuario-logado">	
+    Usuário: {{ user.email }} {{ this.configuracoes.is_admin ? ' - ADMIN' : ''}} - {{ambiente}}
+          <p><b>Dentistas.com.br</b> - Conectando dentistas desde 1997</p>
     <span class='transparente'>{{ user.uid }}</span>
   </div>
 </footer>

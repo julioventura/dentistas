@@ -10,7 +10,7 @@ export class ConfigService {
 
   constructor() {
     // Define aqui suas configurações
-    this.ambiente = 'Dentistas.com.br - Versão 4.1.12 (em 07/03/2025)'; // Ambiente atual 
+    this.ambiente = 'Versão 4.1.13 (de 08/03/2025)'; // Ambiente atual 
   }
 
 
