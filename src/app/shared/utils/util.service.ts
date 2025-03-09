@@ -233,6 +233,38 @@ export class UtilService {
     }
   }
 
+  formatUrl(url: string, type: string = ''): string {
+    if (!url) return '';
+
+    url = url.trim();
+
+    // Se não tiver '@', verifica se tem protocolo http:// ou https://
+    // caso contrário, mantém a URL original (será tratada abaixo)
+    if (!url.includes('@')) {
+      url = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+    }
+    if (url.startsWith('http')) return url;
+
+    switch (type) {
+      case 'instagram':
+        return `https://www.instagram.com/${url}`;
+      case 'facebook':
+        return `https://www.facebook.com/${url}`;
+      case 'linkedin':
+        return `https://www.linkedin.com/in/${url}`;
+      case 'youtube':
+        return `https://www.youtube.com/channel/${url}`;
+      case 'twitter':
+        return `https://twitter.com/${url}`;
+      case 'tiktok':
+        return `https://www.tiktok.com/@${url}`;
+      case 'pinterest':
+        return `https://www.pinterest.com/${url}`;
+      default:
+        // Se não for um tipo conhecido, ou vazio, adiciona https:// se não tiver
+        return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+    }
+  }
 
   titulo_ajuste_plural(titulo: string) {
     switch (titulo) {

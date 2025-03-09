@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../shared/user.service';
 
@@ -18,18 +18,16 @@ interface Endereco {
   templateUrl: './endereco.component.html',
   styleUrls: ['./endereco.component.scss']
 })
-export class EnderecoComponent implements OnInit {
-  // Remover userProfile como Input
+export class EnderecoComponent {
+  // Removemos Input e ngOnInit
   
-  constructor(public userService: UserService) {}
-  
-  ngOnInit() {
-    // Sem código aqui - usaremos apenas o acesso direto pelo userService.userProfile
+  constructor(public userService: UserService) {
+    console.log('EnderecoComponent initialized');
   }
   
   // Método para obter os endereços do userProfile
   getEnderecos(): Endereco[] {
-    const userProfile = this.userService.userProfile; // Acesso direto
+    const userProfile = this.userService.userProfile;
     if (!userProfile?.enderecos) return [];
     
     // Se for string (formato antigo), tenta converter
