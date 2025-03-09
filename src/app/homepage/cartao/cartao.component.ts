@@ -10,27 +10,59 @@ import { UserService } from '../../shared/user.service';
   styleUrls: ['./cartao.component.scss']
 })
 export class CartaoComponent {
-  
   public qrCodeUrl: string = 'https://dentistas.com.br/assets/qrcode_dentistascombr.png';
 
-  constructor(public userService: UserService) { }
-
+  constructor(public userService: UserService) {
+    console.log('CartaoComponent initialized');
+  }
   
   getEnderecoCompleto(): string {
-    if (this.userService.userProfile) {
-        console.log("userService.userProfile:", this.userService.userProfile);
-
-      return `${this.userService.userProfile.endereco}, ${this.userService.userProfile.cidade} - ${this.userService.userProfile.estado}`;
+    const userProfile = this.userService.userProfile;
+    if (!userProfile) return '';
+    
+    // Tratamento para estrutura de endereços antiga ou nova
+    if (userProfile.endereco) {
+      return `${userProfile.endereco}, ${userProfile.cidade} - ${userProfile.estado}`;
+    } else if (userProfile.enderecos && userProfile.enderecos.length > 0) {
+      const endereco = Array.isArray(userProfile.enderecos) 
+        ? userProfile.enderecos[0] 
+        : JSON.parse(userProfile.enderecos)[0];
+      return `${endereco.rua}, ${endereco.complemento || ''} - ${endereco.bairro}`;
     }
-    return `${this.userService.userProfile.endereco.rua}, ${this.userService.userProfile.endereco.complemento} - ${this.userService.userProfile.endereco.bairro}`;
+    
+    return '';
   }
   
   getCidadeEstadoCep(): string {
-    if (this.userService.userProfile) {
-      return `${this.userService.userProfile.cidade} - ${this.userService.userProfile.estado}, CEP ${this.userService.userProfile.cep}`;
+    const userProfile = this.userService.userProfile;
+    if (!userProfile) return '';
+    
+    if (userProfile.cidade && userProfile.estado) {
+      return `${userProfile.cidade} - ${userProfile.estado}${userProfile.cep ? ', CEP ' + userProfile.cep : ''}`;
+    } else if (userProfile.enderecos && userProfile.enderecos.length > 0) {
+      const endereco = Array.isArray(userProfile.enderecos) 
+        ? userProfile.enderecos[0] 
+        : JSON.parse(userProfile.enderecos)[0];
+      return `${endereco.cidade} - ${endereco.estado}${endereco.cep ? ', CEP ' + endereco.cep : ''}`;
     }
-    else {
-      return '';
+    
+    return '';
+  }
+  
+  // Formatador de telefone para exibição
+  formatPhone(phone: string): string {
+    if (!phone) return '';
+    
+    // Remove todos os caracteres não-numéricos
+    const numbers = phone.replace(/\D/g, '');
+    
+    // Formata baseado no tamanho
+    if (numbers.length === 11) { // Celular com DDD
+      return `(${numbers.substring(0, 2)}) ${numbers.substring(2, 7)}-${numbers.substring(7)}`;
+    } else if (numbers.length === 10) { // Fixo com DDD
+      return `(${numbers.substring(0, 2)}) ${numbers.substring(2, 6)}-${numbers.substring(6)}`;
     }
+    
+    return phone; // Retorna original se não conseguir formatar
   }
 }

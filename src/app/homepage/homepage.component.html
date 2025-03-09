@@ -1,25 +1,9 @@
 <div class="homepage">
-  <!-- Chatbot Widget (movido para o topo) -->
-  <app-chatbot-widget class="top-positioned" [dentistId]="userProfile?.uid || ''"
-    [dentistName]="userProfile?.nome || 'Dentista'" *ngIf="userProfile && !isLoading"
-    (expansionChange)="onChatbotExpansionChange($event)">
-  </app-chatbot-widget>
-
-  <!-- WhatsApp Button - colocando com visibilidade garantida para depuração -->
-  <app-whatsapp-button [phoneNumber]="formatWhatsApp(userProfile?.whatsapp) || ''"
-    [message]="'Olá, gostaria de falar com ' + (userProfile?.nome || 'vocês') + '.'"
-    [isChatbotExpanded]="isChatbotExpanded" *ngIf="userProfile">
-  </app-whatsapp-button>
-
-  <!-- Cabeçalho e navegação -->
-  <!-- <app-cabecalho-homepage [userProfile]="userProfile"></app-cabecalho-homepage> -->
-
   <!-- Capa (Hero) com imagem de fundo e overlay -->
   <app-capa></app-capa>
 
   <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
   <div id="bottom_block" class="container">
-
     <div class="content-grid two-columns">
       <app-cartao></app-cartao>
       <app-contato></app-contato>
@@ -36,9 +20,5 @@
       <app-convenios></app-convenios>
       <app-titulacoes></app-titulacoes>
     </div>
-
   </div>
-
-  <!-- Rodapé -->
-  <app-rodape-homepage></app-rodape-homepage>
 </div>

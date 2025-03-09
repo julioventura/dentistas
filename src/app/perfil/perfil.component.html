@@ -96,8 +96,8 @@
           </div>
         </div>
 
+        <!-- HORARIOS (ARRAY SEPARADA DO FORM ACIMA) -->
         <h3 [ngClass]="setClass('grupo-titulo')">{{ '05. Horários de Atendimento' }}</h3>
-
         <!-- Editor de horários de atendimento -->
         <div class="form-field perfil-editor">
           <label for="horarios" [ngClass]="setClass('detail-label')" [style.width]="customLabelWidth">
@@ -140,12 +140,12 @@
                 </div>
               </div>
 
-                <!-- Botão de adicionar -->
-                <div class="button-container">
-                  <button type="button" class="btn-add" [disabled]="!novoDia || !novoHorario" (click)="addHorario()">
-                    <i class="fas fa-plus"></i> Adicionar
-                  </button>
-                </div>
+              <!-- Botão de adicionar -->
+              <div class="button-container">
+                <button type="button" class="btn-add" [disabled]="!novoDia || !novoHorario" (click)="addHorario()">
+                  <i class="fas fa-plus"></i> Adicionar
+                </button>
+              </div>
 
             </div>
 
@@ -158,9 +158,10 @@
           </div>
         </div>
 
-<br>
-        <h3 [ngClass]="setClass('grupo-titulo')">{{ '06. Endereços' }}</h3>
+        <br>
 
+        <!-- ENDERECOS (ARRAY SEPARADA DO FORM ACIMA) -->
+        <h3 [ngClass]="setClass('grupo-titulo')">{{ '06. Endereços' }}</h3>
         <!-- Editor de endereços alternativos -->
         <div class="form-field perfil-editor">
           <label [ngClass]="setClass('detail-label')"></label>
@@ -256,10 +257,71 @@
             <div *ngIf="enderecos.length === 0" class="empty-message"
               [ngClass]="{'view-mode': !isEditing, 'edit-mode': isEditing}">
               <span *ngIf="!isEditing">Nenhum endereço adicional cadastrado.</span>
-              <span *ngIf="isEditing">Nenhum endereço adicional cadastrado. Adicione os endereços acima.</span>
+              <span *ngIf="isEditing">Nenhum endereço adicional cadastrado. Adicione endereços acima.</span>
             </div>
           </div>
         </div>
+
+
+        <!-- CONVENIOS (ARRAY SEPARADA DO FORM ACIMA) -->
+        <h3 [ngClass]="setClass('grupo-titulo')">{{ '07. Convênios' }}</h3>
+        <!-- Editor de convenios -->
+        <div class="form-field perfil-editor">
+          <label for="convenios" [ngClass]="setClass('detail-label')" [style.width]="customLabelWidth">
+          </label>
+
+          <div class="perfil-container">
+            <!-- Lista de convenios em modo visualização -->
+            <div *ngIf="!isEditing && convenios.length > 0" class="perfil-list view-mode">
+              <div *ngFor="let convenio of convenios" class="perfil-item">
+                <div class="perfil-content">
+                  <strong>{{ convenio.nomeConvenio }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lista de convenios em modo edição (com botões de remover) -->
+            <div *ngIf="isEditing && convenios.length > 0" class="perfil-list edit-mode">
+              <div *ngFor="let convenio of convenios; let i = index" class="perfil-item">
+                <div class="perfil-content">
+                  <strong>{{ convenio.nomeConvenio }}</strong> 
+                </div>
+                <button type="button" class="btn-remove" (click)="removeConvenio(i)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Formulário para adicionar novo convenio (apenas em modo edição) -->
+            <div *ngIf="isEditing" class="add-perfil-form">
+              <div class="input-group">
+
+                <div class="input-field">
+                  <label for="nomeConvenio" class="input-label">Convênios:</label>
+                  <input type="text" id="nomeConvenio" class="detail-value edit-mode" placeholder=""
+                    [(ngModel)]="nomeConvenio" [ngModelOptions]="{standalone: true}">
+                </div>
+
+              </div>
+
+              <!-- Botão de adicionar -->
+              <div class="button-container">
+                <button type="button" class="btn-add" [disabled]="!nomeConvenio" (click)="addConvenio()">
+                  <i class="fas fa-plus"></i> Adicionar
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Mensagem quando não há horários cadastrados -->
+            <div *ngIf="convenios.length === 0" class="empty-message">
+              <span class="help-text {{isEditing ? 'edit-mode' : 'view-mode'}}">Nenhum convênio cadastrado.</span>
+            </div>
+          </div>
+        </div>
+
+        <br>
+
 
       </form>
     </div>

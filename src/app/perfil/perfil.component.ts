@@ -25,6 +25,11 @@ interface Endereco {
   telefone: string;
 }
 
+interface Convenio {
+  nomeConvenio: string;
+}
+
+
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.component.html',
@@ -41,7 +46,7 @@ export class PerfilComponent implements OnInit {
   isSaving = false;
   usernameError = '';
   originalUsername = '';
-  
+
   // Configuração de layout
   customLabelWidthValue: number = 100;
   customLabelWidth: string = `${this.customLabelWidthValue}px`;
@@ -52,6 +57,7 @@ export class PerfilComponent implements OnInit {
   horarios: Horario[] = [];
   novoDia: string = '';
   novoHorario: string = '';
+  nomeConvenio: string = '';
 
   // Em perfil.component.ts - dentro da classe PerfilComponent
   // Arrays para gerenciar os endereços
@@ -63,6 +69,11 @@ export class PerfilComponent implements OnInit {
     estado: '',
     cep: '',
     telefone: ''
+  };
+
+  convenios: Convenio[] = [];
+  novoConvenio: Convenio = {
+    nomeConvenio: ''
   };
 
   constructor(
@@ -114,7 +125,7 @@ export class PerfilComponent implements OnInit {
 
   loadUserProfile() {
     this.isLoading = true;
-    
+
     if (!this.userEmail) {
       console.error('Cannot load profile: userEmail is not set');
       this.errorMessage = 'Email do usuário não encontrado';
@@ -123,14 +134,14 @@ export class PerfilComponent implements OnInit {
     }
 
     console.log('Loading profile for email:', this.userEmail);
-    
+
     this.firestoreService.getRegistroById('usuarios/dentistascombr/users', this.userEmail).subscribe(
       (userData: any) => {
         if (userData) {
           console.log('User profile data retrieved:', userData);
           this.userProfileData = userData;
           this.originalUsername = userData.username || '';
-          
+
           localStorage.setItem('userData', JSON.stringify(userData));
           this.updateFormWithProfileData();
         } else {
@@ -151,17 +162,17 @@ export class PerfilComponent implements OnInit {
     if (this.userProfileData) {
       // Resetar valores antes de preencher
       this.profileForm.reset();
-      
+
       // Preencher com os dados do perfil
       const formValues = Object.keys(this.profileForm.controls)
         .reduce((acc, key) => {
-          acc[key] = this.userProfileData[key] || 
-                    (key === 'email' ? this.userEmail : '');
+          acc[key] = this.userProfileData[key] ||
+            (key === 'email' ? this.userEmail : '');
           return acc;
         }, {} as Record<string, any>);
-      
+
       this.profileForm.patchValue(formValues);
-      
+
       // Carregar horários se existirem
       if (this.userProfileData.horarios && Array.isArray(this.userProfileData.horarios)) {
         this.horarios = [...this.userProfileData.horarios];
@@ -175,7 +186,7 @@ export class PerfilComponent implements OnInit {
       } else {
         this.horarios = [];
       }
-      
+
       if (!this.userProfileData.email && this.userEmail) {
         this.userProfileData.email = this.userEmail;
       }
@@ -203,7 +214,7 @@ export class PerfilComponent implements OnInit {
   editar(): void {
     this.isEditing = true;
     this.profileForm.enable(); // Habilita todos os campos para edição
-    
+
     // Aplicar validadores ao entrar em modo de edição
     this.profileForm.get('nome')?.setValidators([Validators.required]);
     this.profileForm.get('username')?.setValidators([
@@ -211,12 +222,12 @@ export class PerfilComponent implements OnInit {
       Validators.minLength(3)
     ]);
     this.profileForm.get('email')?.setValidators([Validators.required, Validators.email]);
-    
+
     // Atualizar os validadores
     this.profileForm.get('nome')?.updateValueAndValidity();
     this.profileForm.get('username')?.updateValueAndValidity();
     this.profileForm.get('email')?.updateValueAndValidity();
-    
+
     // Desabilitar o campo email para garantir que não seja alterado
     this.profileForm.get('email')?.disable();
   }
@@ -232,12 +243,12 @@ export class PerfilComponent implements OnInit {
 
   checkUsername(): void {
     const username = this.profileForm.get('username')?.value;
-    
+
     if (!username) {
       this.usernameError = '';
       return;
     }
-    
+
     // Não validar se for o mesmo username original
     if (username === this.originalUsername) {
       this.usernameError = '';
@@ -250,7 +261,7 @@ export class PerfilComponent implements OnInit {
       this.usernameError = 'Username pode conter apenas letras, números, underscore e ponto.';
       return;
     }
-    
+
     if (username.length < 3) {
       this.usernameError = 'Username deve ter pelo menos 3 caracteres.';
       return;
@@ -273,16 +284,16 @@ export class PerfilComponent implements OnInit {
 
     // Garantir que os endereços estão sincronizados com o formulário antes de salvar
     const formValues = this.profileForm.getRawValue();
-    
+
     // Usar spread operator para criar um novo objeto e evitar modificar o original
     const dataToSave = {
       ...formValues,
       horarios: this.horarios,
-      enderecos: this.enderecos // Incluímos os endereços aqui como array
+      enderecos: this.enderecos,
+      convenios: this.convenios
     };
 
-    console.log('Salvando endereços:', this.enderecos);
-    console.log('Objeto completo para salvar:', dataToSave);
+    console.log('Salvando dados do perfil:', dataToSave);
 
     // Prosseguir com o salvamento...
     const userId = this.userProfileData.id || this.userEmail;
@@ -295,6 +306,10 @@ export class PerfilComponent implements OnInit {
         this.isEditing = false;
         // Atualizar dados locais
         this.userProfileData = { ...this.userProfileData, ...dataToSave };
+
+        // IMPORTANTE: Atualizar no UserService para refletir em toda a aplicação
+        this.userService.setUserProfile(this.userProfileData);
+
         // Desativar formulário após salvar
         this.profileForm.disable();
       }, error => {
@@ -328,20 +343,20 @@ export class PerfilComponent implements OnInit {
     }
     return value;
   }
-  
+
   // Helper method to check if a field is invalid
   isFieldInvalid(fieldName: string): boolean {
     const control = this.profileForm.get(fieldName);
     return control ? (control.invalid && (control.dirty || control.touched)) : false;
   }
-  
+
   // Helper method to get error message for a field
   getErrorMessage(fieldName: string): string {
     const control = this.profileForm.get(fieldName);
     if (!control || !control.errors) {
       return '';
     }
-    
+
     if (control.errors['required']) {
       return 'Este campo é obrigatório';
     }
@@ -354,17 +369,17 @@ export class PerfilComponent implements OnInit {
     if (control.errors['minlength']) {
       return `Mínimo de ${control.errors['minlength'].requiredLength} caracteres`;
     }
-    
+
     return 'Campo inválido';
   }
-  
+
   // Handle field blur event for validation
   onFieldBlur(fieldName: string): void {
     if (fieldName === 'username') {
       this.checkUsername();
     }
   }
-  
+
   // Handle field change event
   onFieldChange(event: Event, fieldName: string): void {
     this.onFieldChanged({ field: fieldName, value: (event.target as HTMLInputElement).value });
@@ -376,22 +391,23 @@ export class PerfilComponent implements OnInit {
         dia: this.novoDia.trim(),
         horario: this.novoHorario.trim()
       });
-      
+
       // Atualiza o valor no formulário
       this.profileForm.patchValue({
         horarios: this.horarios
       });
-      
+
       // Limpa os campos
       this.novoDia = '';
       this.novoHorario = '';
     }
   }
-  
+
+
   removeHorario(index: number) {
     if (index >= 0 && index < this.horarios.length) {
       this.horarios.splice(index, 1);
-      
+
       // Atualiza o valor no formulário
       this.profileForm.patchValue({
         horarios: this.horarios
@@ -404,8 +420,8 @@ export class PerfilComponent implements OnInit {
     // Validação básica - precisa ter pelo menos rua e cidade
     if (this.novoEndereco.rua && this.novoEndereco.cidade) {
       // Adiciona uma cópia do endereço (não a referência)
-      this.enderecos.push({...this.novoEndereco});
-      
+      this.enderecos.push({ ...this.novoEndereco });
+
       // Limpa o formulário para o próximo endereço
       this.novoEndereco = {
         rua: '',
@@ -415,7 +431,7 @@ export class PerfilComponent implements OnInit {
         cep: '',
         telefone: ''
       };
-      
+
       // Atualiza o valor no formulário principal
       this.profileForm.patchValue({
         enderecos: this.enderecos
@@ -426,11 +442,44 @@ export class PerfilComponent implements OnInit {
   removeEndereco(index: number) {
     if (index >= 0 && index < this.enderecos.length) {
       this.enderecos.splice(index, 1);
-      
+
       // Atualiza o valor no formulário
       this.profileForm.patchValue({
         enderecos: this.enderecos
       });
     }
   }
+
+
+  addConvenio() {
+    if (this.nomeConvenio && this.novoConvenio) {
+      this.convenios.push({
+        nomeConvenio: this.nomeConvenio.trim(),
+      });
+
+      // Atualiza o valor no formulário
+      this.profileForm.patchValue({
+        convenios: this.convenios
+      });
+
+      // Limpa os campos
+      this.nomeConvenio = '';
+    }
+  }
+
+
+  removeConvenio(index: number) {
+    if (index >= 0 && index < this.convenios.length) {
+      this.convenios.splice(index, 1);
+
+      // Atualiza o valor no formulário
+      this.profileForm.patchValue({
+        convenios: this.convenios
+      });
+    }
+  }
+
+
+
+
 }

@@ -3,6 +3,8 @@
 
 /* filepath: /c:/contexto/dentistas/src/app/homepage/convenios/convenios.component.scss */
 .convenios-card {
+  color: #3498db;
+
   .convenios-lista {
     display: flex;
     flex-wrap: wrap;
@@ -45,7 +47,7 @@
   .no-convenios {
     display: flex;
     align-items: center;
-    color: #7f8c8d;
+    color: red;
     
     i {
       font-size: 1.25rem;
@@ -56,6 +58,7 @@
     p {
       margin: 0;
       font-size: 0.95rem;
+      color: $primary-color;
     }
   }
   
@@ -67,7 +70,7 @@
     border-radius: 4px;
     
     i {
-      color: #7f8c8d;
+      color: red;
       margin-right: 10px;
       margin-top: 2px;
     }
