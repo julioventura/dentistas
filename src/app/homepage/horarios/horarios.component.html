@@ -4,7 +4,7 @@
   </div>
 
   <div class="card-body">
-    <div class="horarios-lista">
+    <div class="horarios-lista" *ngIf="hasHorarios(); else semHorarios">
       <div class="horario-item" *ngFor="let horario of getHorarios()">
 
         <div class="card-body list">
@@ -22,7 +22,14 @@
         </div>
 
       </div>
-
     </div>
+
+    <!-- Template para quando não há endereços -->
+    <ng-template #semHorarios>
+      <div class="empty-message">
+        Nenhum horário cadastrado
+      </div>
+    </ng-template>
+
   </div>
 </div>

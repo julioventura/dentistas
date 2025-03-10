@@ -11,19 +11,8 @@ import { UserService } from '../../shared/user.service';
 })
 export class ContatoComponent {
 
-  constructor(public userService: UserService) { }
+  constructor(public userService: UserService) { 
+    console.log('ContatoComponent constructor');
+  }
 
-  
-  // Métodos chamados no template HTML
-  getTelefone(): string {
-    return this.userService.userProfile.telefone || '';
-  }
-  
-  getWhatsapp(): string {
-    return this.userService.userProfile.whatsapp || '';
-  }
-  
-  getEmail(): string {
-    return this.userService.userProfile.email || '';
-  }
 }

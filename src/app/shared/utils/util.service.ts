@@ -433,5 +433,22 @@ export class UtilService {
 
 
 
+  // Formatador de telefone para exibição
+  formatarTelefone (tel: string): string {
+    if (!tel) return '';
+
+    // Remove todos os caracteres não-numéricos
+    const numbers = tel.replace(/\D/g, '');
+
+    // Formata baseado no tamanho
+    if (numbers.length === 11) { // Celular com DDD
+      return `(${numbers.substring(0, 2)}) ${numbers.substring(2, 7)}-${numbers.substring(7)}`;
+    } else if (numbers.length === 10) { // Fixo com DDD
+      return `(${numbers.substring(0, 2)}) ${numbers.substring(2, 6)}-${numbers.substring(6)}`;
+    }
+
+    return tel; // Retorna original se não conseguir formatar
+  }
+
 
 }

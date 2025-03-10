@@ -17,10 +17,7 @@ interface Horario {
 }) 
 export class HorariosComponent {
  
-  constructor(public userService: UserService) {} 
-
-  // Dados padrão
-  horariosDefault: Horario[] = [];      
+  constructor(public userService: UserService) {}  
   
   getHorarios(): Horario[] {
     if (!this.userService.userProfile?.horarios) return [];
@@ -41,5 +38,12 @@ export class HorariosComponent {
     }
 
     return [];
+  }
+
+
+  // Verifica se existem endereços para exibir
+  hasHorarios(): boolean {
+    const horarios = this.getHorarios();
+    return horarios.length > 0;
   }
 }

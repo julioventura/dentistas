@@ -19,7 +19,6 @@ interface Endereco {
   styleUrls: ['./endereco.component.scss']
 })
 export class EnderecoComponent {
-  // Removemos Input e ngOnInit
   
   constructor(public userService: UserService) {
     console.log('EnderecoComponent initialized');

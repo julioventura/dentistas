@@ -20,6 +20,7 @@ import { RedesComponent } from "./redes/redes.component";
 import { CartaoComponent } from "./cartao/cartao.component";
 import { CapaComponent } from "./capa/capa.component";
 import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.component";
+import { RodapeHomepageComponent } from "./rodape-homepage/rodape-homepage.component";
 
 @Component({
   selector: 'app-homepage',
@@ -37,7 +38,8 @@ import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.compo
     RedesComponent,
     CartaoComponent,
     CapaComponent,
-    WhatsappButtonComponent
+    WhatsappButtonComponent,
+    RodapeHomepageComponent
 ]
 })
 export class HomepageComponent implements OnInit {
