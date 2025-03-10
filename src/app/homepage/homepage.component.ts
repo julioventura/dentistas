@@ -7,13 +7,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FirestoreService } from '../shared/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../shared/user.service';
-import { UtilService } from '../shared/utils/util.service';
 import { CommonModule } from '@angular/common';
 import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.component';
-import { RodapeHomepageComponent } from './rodape-homepage/rodape-homepage.component';
 import { EnderecoComponent } from "./endereco/endereco.component";
 import { ContatoComponent } from "./contato/contato.component";
 import { TitulacoesComponent } from "./titulacoes/titulacoes.component";
@@ -32,7 +29,6 @@ import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.compo
   imports: [
     CommonModule,
     ChatbotWidgetComponent,
-    RodapeHomepageComponent,
     EnderecoComponent,
     ContatoComponent,
     TitulacoesComponent,
@@ -60,10 +56,8 @@ export class HomepageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
     public userService: UserService, // Agora é public para acesso nos templates
-    private util: UtilService
   ) { }
 
   ngOnInit() {
