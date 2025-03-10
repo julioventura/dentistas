@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   selector: 'app-titulacoes',
@@ -9,64 +10,30 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./titulacoes.component.scss']
 })
 export class TitulacoesComponent {
-  @Input() userProfile: any; // Recebe dados do perfil
-  
-  // Dados padrão, usados apenas se userProfile não for fornecido
-  endereco = {
-    rua: 'Av. Paulista, 1000',
-    complemento: 'Sala 501',
-    bairro: 'Bela Vista',
-    cidade: 'São Paulo',
-    estado: 'SP',
-    cep: '01310-100',
-    telefone: '(11) 3456-7890',
-    email: 'contato@dentistaapp.com.br'
-  };
-  
-  horarios = [
-    { dia: 'Segunda a Sexta', horario: '08:00 - 19:00' },
-    { dia: 'Sábado', horario: '09:00 - 16:00' }
-  ];
-  
-  // Adicionando a propriedade formacaoPadrao que estava faltando
-  formacaoPadrao = [
-    { 
-      curso: 'Graduação em Odontologia',
-      instituicao: 'Universidade de São Paulo (USP)',
-      ano: '2010'
-    },
-    {
-      curso: 'Especialização em Ortodontia',
-      instituicao: 'Associação Brasileira de Odontologia (ABO)',
-      ano: '2012'
-    }
-  ];
 
-  getEnderecoCompleto(): string {
-    if (this.userProfile) {
-        console.log("userProfile:", this.userProfile);
+  public userProfile: any;
+  formacao: string = '';
+  especialidades: string = '';
 
-      return `${this.userProfile.endereco}, ${this.userProfile.cidade} - ${this.userProfile.estado}`;
-    }
-    return `${this.endereco.rua}, ${this.endereco.complemento} - ${this.endereco.bairro}`;
-  }
-  
-  getCidadeEstadoCep(): string {
-    if (this.userProfile) {
-      return `${this.userProfile.cidade} - ${this.userProfile.estado}, CEP ${this.userProfile.cep}`;
-    }
-    else {
-      return '';
-    }
+  constructor(
+    public userService: UserService
+  ) {
+    console.log('TitulacoesComponent constructor');
   }
 
-  getFormacao() {
-    return this.userProfile?.formacao || this.formacaoPadrao;
+  ngOnInit() {
+    console.log('TitulacoesComponent initialized');
+    
+    // Move subscription to ngOnInit and load user data if needed
+    this.userService.getUserProfileData().subscribe(profile => {
+      this.userProfile = profile;
+      console.log('User profile loaded:', this.userProfile);
+      
+      this.formacao = this.userProfile.formacao || '';
+      this.especialidades = this.userProfile.especialidades || ''; 
+      console.log('Formação:', this.formacao);
+      console.log('Especialidades:', this.especialidades);
+    });
   }
 
-  getEspecialidades() {
-    // Esse campo pode ser um string no PROFILE_FORM_FIELDS, mas pode precisar ser um array na exibição
-    const especialidades = this.userProfile?.especialidades || '';
-    return typeof especialidades === 'string' ? especialidades.split(',').map(e => e.trim()) : [];
-  }
 }

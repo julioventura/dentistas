@@ -2,6 +2,11 @@
 @import '../homepage.component.scss';
 
 /* filepath: /c:/contexto/dentistas/src/app/homepage/titulacoes/titulacoes.component.scss */
+
+p {
+  color: $primary-color;
+}
+
 .titulacoes-card {
   .titulacao-grupo {
     margin-bottom: 1.5rem;
@@ -29,41 +34,19 @@
     margin-bottom: 1rem;
     padding-left: 10px;
     border-left: 2px solid rgba(52, 152, 219, 0.3);
+    color: $primary-color;
+    font-size: small;
     
     &:last-child {
       margin-bottom: 0;
     }
-    
-    .curso {
-      font-weight: 500;
-      margin: 0 0 0.2rem;
-    }
-    
-    .instituicao {
-      font-size: 0.9rem;
-      margin: 0 0 0.2rem;
-      color: #555;
-    }
-    
-    .periodo {
-      font-size: 0.85rem;
-      margin: 0;
-      color: #6c757d;
-    }
+  
   }
   
-  .especialidade-lista {
+  .titulacao-lista {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     
-    .badge {
-      background-color: rgba(52, 152, 219, 0.15);
-      color: #2980b9;
-      border-radius: 20px;
-      padding: 0.35rem 0.8rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
   }
 }
