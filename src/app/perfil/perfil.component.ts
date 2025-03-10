@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { UtilService } from '../shared/utils/util.service';
@@ -194,7 +193,8 @@ export class PerfilComponent implements OnInit {
       // Carregar endereços se existirem
       if (this.userProfileData.enderecos && Array.isArray(this.userProfileData.enderecos)) {
         this.enderecos = [...this.userProfileData.enderecos];
-      } else if (typeof this.userProfileData.enderecos === 'string') {
+      } 
+      else if (typeof this.userProfileData.enderecos === 'string') {
         try {
           this.enderecos = JSON.parse(this.userProfileData.enderecos);
         } catch (e) {
@@ -204,6 +204,25 @@ export class PerfilComponent implements OnInit {
       } else {
         this.enderecos = [];
       }
+
+      // Carregar convenios se existirem
+      if (this.userProfileData.convenios && Array.isArray(this.userProfileData.convenios)) {
+        this.convenios = [...this.userProfileData.convenios];
+      }
+      else if (typeof this.userProfileData.convenios === 'string') {
+        try {
+          this.convenios = JSON.parse(this.userProfileData.convenios);
+        } catch (e) {
+          console.error('Erro ao converter convenios:', e);
+          this.convenios = [];
+        }
+      } else {
+        this.convenios = [];
+      }
+
+
+
+
     }
   }
 
