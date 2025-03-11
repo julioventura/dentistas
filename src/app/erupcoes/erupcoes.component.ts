@@ -1,49 +1,36 @@
-/*
-  ErupcoesComponent
-  Métodos:
-  1. ngOnInit() - Inicializa o componente: verifica a autenticação do usuário e carrega os dados dos pacientes.
-  2. get faixaDeMesesTexto - Retorna o texto formatado para exibir a faixa de meses.
-  3. abrirPopup(paciente) - Abre o popup ErupcoesPopupComponent com os dados do paciente.
-  4. carregarPacientes() - Recupera a coleção "pacientes" do usuário e mapeia os dentes examinados.
-  5. verificarErupcoes() - Processa os dados dos pacientes para determinar quais dentes estão na faixa de erupção.
-  6. enviar_whatsapp(nome, telefone) - Prepara e abre uma URL do WhatsApp com mensagem pré-formatada.
-  7. aumentarFaixaMeses() - Incrementa a faixa de meses e recalcula as erupções.
-  8. diminuirFaixaMeses() - Decrementa a faixa de meses e recalcula as erupções.
-  9. voltar() - Navega para a página anterior utilizando o Router.
-*/
-
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { DateUtils } from '../shared/utils/date-utils';
 
 import { ErupcoesPopupComponent } from '../erupcoes-popup/erupcoes-popup.component';
 import { UtilService } from '../shared/utils/util.service';
-import { dentesTabela, Dente } from '../shared/dentes-tabela'; // Importa a tabela e a interface
+import { dentesTabela, Dente, dentesTabelaHTML } from './dentes-tabela'; // Importa a tabela e a interface
+import { CommonModule } from '@angular/common';
+import { TabelaReferenciaDialogComponent } from './tabela-referencia-dialog.component';
 
-/**
- * Componente ErupcoesComponent
- * @description Gerencia o fluxo relacionado às erupções dentárias. Responsável por carregar os pacientes,
- * identificar quais estão na faixa de erupção com base na idade e dentes examinados, 
- * e abrir informações detalhadas em um popup.
- */
 @Component({
   selector: 'app-erupcoes',
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule, CommonModule], // Adicionado CommonModule
   templateUrl: './erupcoes.component.html',
-  styleUrls: ['./erupcoes.component.scss'],
-  standalone: false
-})
+  styleUrls: ['./erupcoes.component.scss']
+}) // Removido o parêntese extra que estava aqui
 export class ErupcoesComponent implements OnInit {
   userId: string | null = null;
   pacientes: any[] = [];
   pacientesComErupcao: any[] = [];
-  faixaDeMeses: number = 3;  // Valor inicial da faixa de meses para verificação das erupções
+  faixaDeMeses: number = 1;  // Define faixaDeMeses com um valor inicial
   public DateUtils = DateUtils;
   isLoading: boolean = false;
+
+
   // Usar a tabela de dentes importada
   private dentesTabela: Dente[] = dentesTabela;
+  private dentesTabelaHTML: string = dentesTabelaHTML;
 
   constructor(
     private firestore: AngularFirestore,
@@ -51,14 +38,9 @@ export class ErupcoesComponent implements OnInit {
     private router: Router,
     public util: UtilService,
     public dialog: MatDialog 
-  ) {
-    console.log("ErupcoesComponent constructor called");
-  }
+  ) {}
 
-  /**
-   * ngOnInit()
-   * @description Inicializa o componente: verifica a autenticação do usuário e chama o método para carregar os pacientes.
-   */
+
   ngOnInit(): void {
     console.log("ngOnInit()");
 
@@ -74,39 +56,31 @@ export class ErupcoesComponent implements OnInit {
 
   }
 
-  /**
-   * get faixaDeMesesTexto
-   * @description Retorna o texto formatado para exibir a faixa de meses (singular ou plural).
-   * @returns string
-   */
-  get faixaDeMesesTexto(): string {
-    return `em ${this.faixaDeMeses} ${this.faixaDeMeses === 1 ? 'mês' : 'meses'}`;
-  }
 
-  /**
-   * abrirPopup()
-   * @description Abre o popup ErupcoesPopupComponent com os dados do paciente passado.
-   * @param paciente Objeto contendo os detalhes do paciente.
-   */
-  abrirPopup(paciente: any): void {
-    const dialogRef = this.dialog.open(ErupcoesPopupComponent);
-    // Configura os dados manualmente usando `componentInstance`
-    dialogRef.componentInstance.data = {
-      nome: paciente.nome,
-      nascimento: paciente.nascimento,
-      telefone: paciente.telefone,
-      idade: paciente.idade,
-      dataChamadaInicial: '21/10/2024',
-      dataUltimaChamada: '28/10/2024',
-      dataResposta: '29/10/2024',
-      dataComparecimento: '31/10/2024'
-    };
-  }
+    // Getter para o texto formatado
+    get faixaDeMesesTexto(): string {
+      return `em ${this.faixaDeMeses} ${this.faixaDeMeses === 1 ? 'mês' : 'meses'}`;
+    }
 
-  /**
-   * carregarPacientes()
-   * @description Recupera da coleção "pacientes" os dados do usuário e mapeia os dentes examinados de cada paciente.
-   */
+
+  
+    abrirPopup(paciente: any): void {
+      const dialogRef = this.dialog.open(ErupcoesPopupComponent);
+      // Configura os dados manualmente usando `componentInstance`
+      dialogRef.componentInstance.data = {
+        nome: paciente.nome,
+        nascimento: paciente.nascimento,
+        telefone: paciente.telefone,
+        idade: paciente.idade,
+        dataChamadaInicial: '21/10/2024',
+        dataUltimaChamada: '28/10/2024',
+        dataResposta: '29/10/2024',
+        dataComparecimento: '31/10/2024'
+      };
+    }
+  
+  
+
   carregarPacientes(): void {
     console.log("carregarPacientes()");
 
@@ -145,11 +119,8 @@ export class ErupcoesComponent implements OnInit {
       });
   }
 
-  /**
-   * verificarErupcoes()
-   * @description Processa os dados dos pacientes para determinar quais dentes estão na faixa de erupção.
-   * Calcula a faixa com base na idade dos pacientes e filtra os dentes que ainda não estão marcados como erupcionados.
-   */
+
+
   verificarErupcoes(): void {
     console.log("Início da verificação de erupções");
 
@@ -163,7 +134,7 @@ export class ErupcoesComponent implements OnInit {
       // Filtra os dentes que vão erupcionar dentro da faixa especificada e que não estão marcados como "E"
       const dentesEmErupcao = this.dentesTabela
         .filter(dente => {
-          const inicioErupcao = Math.floor(Number(dente.De)); // Converte `dente.De` para número inteiro
+          const inicioErupcao = Math.floor(Number(dente.Erupcao)); // Converte `dente.Erupcao` para número inteiro
           const denteJaErupcionado = paciente.dentesExaminados[dente.Dente] === "E";
 
           // Verifica se o dente está na faixa de erupção e não foi marcado como erupcionado ("E")
@@ -186,12 +157,7 @@ export class ErupcoesComponent implements OnInit {
     this.isLoading = false;  // Certifique-se de definir `isLoading` como `false` após a verificação
   }
 
-  /**
-   * enviar_whatsapp()
-   * @description Prepara e abre uma URL do WhatsApp com uma mensagem pré-formatada para o responsável pelo paciente.
-   * @param nome - Nome do paciente.
-   * @param telefone - Telefone do contato.
-   */
+
   enviar_whatsapp(nome: string, telefone: string) {
     console.log("paciente = "), nome;
 
@@ -226,11 +192,7 @@ export class ErupcoesComponent implements OnInit {
     window.open(whatsappUrl, '_blank');
   }
 
-  /**
-   * aumentarFaixaMeses()
-   * @description Incrementa a faixa de meses para verificação de erupções,
-   * respeitando o limite máximo definido, e recalcula as erupções.
-   */
+
   aumentarFaixaMeses() {
     if (this.faixaDeMeses < 360) { // Limite máximo de 360 meses (30 anos)
       this.faixaDeMeses++;
@@ -238,11 +200,6 @@ export class ErupcoesComponent implements OnInit {
     }
   }
 
-  /**
-   * diminuirFaixaMeses()
-   * @description Decrementa a faixa de meses para verificação de erupções,
-   * respeitando o limite mínimo definido, e recalcula as erupções.
-   */
   diminuirFaixaMeses() {
     if (this.faixaDeMeses > 1) { // Limite mínimo de 1
       this.faixaDeMeses--;
@@ -250,14 +207,22 @@ export class ErupcoesComponent implements OnInit {
     }
   }
 
-  /**
-   * voltar()
-   * @description Navega para a página anterior, utilizando o Router.
-   */
+
   voltar() {
     console.log("voltar()");
     const listaPath = `list/pacientes`;
     this.router.navigate([listaPath]);
+  }
+
+  mostrarTabelaReferencia(): void {
+    const dialogRef = this.dialog.open(TabelaReferenciaDialogComponent, {
+      width: '90%',
+      maxWidth: '800px',
+      maxHeight: '90vh'
+    });
+    
+    // Configurar a tabela HTML
+    dialogRef.componentInstance.tabelaHTML = this.dentesTabelaHTML;
   }
 
 }

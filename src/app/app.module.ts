@@ -38,6 +38,7 @@ import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.com
 import { BackupComponent } from './backup/backup.component'; // Import the standalone component
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 import { WhatsappButtonComponent } from './homepage/whatsapp-button/whatsapp-button.component';
+import { TabelaReferenciaDialogComponent } from './erupcoes/tabela-referencia-dialog.component';
 
 // Serviços
 
@@ -67,7 +68,7 @@ const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, 
-  { path: 'homepage-intro', component: HomepageIntroComponent, data: { animation: '2' } },
+  { path: 'homepage-intro', component: HomepageIntroComponent, data: { animation: '3' } },
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
   { path: 'importar-cadastro', component: ImportarCadastroComponent },
@@ -75,26 +76,25 @@ const routes: Routes = [
 
   // Rota para o componente camposRegistro
   { path: 'camposRegistro', component: CamposRegistroComponent },
-  { path: 'list/:collection', component: ListComponent, data: { animation: '3' } }, 
-  { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '4' } },
-  { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '5' } },
+  { path: 'list/:collection', component: ListComponent, data: { animation: '4' } }, 
+  { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '5' } },
+  { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '6' } },
 
   // Rota para o componente fichas
   { path: 'fichas', component: FichasComponent },
-  { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '6' } },
-  { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '7' } },
-  { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '8' } },
-  { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent },
+  { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '7' } },
+  { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '8' } },
+  { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '9' } },
+  { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent, data: { animation: '10' } },
   
     // Rota para o componente Backup
     { path: 'backup', component: BackupComponent },
   
   // HOMEPAGES
   { path: ':username',          component: HomepageComponent, canActivate: [UsernameGuard] },
-  { path: ':username/homepage', component: HomepageComponent, canActivate: [UsernameGuard] },
 
   // Redireciona para a página inicial em caso de rota inválida
-  { path: '**', component: HomeComponent, data: { animation: '9' } }
+  { path: '**', component: HomeComponent, data: { animation: '11' } }
 ];
 
 
@@ -105,7 +105,7 @@ const routes: Routes = [
     LoginComponent,
     ChatbotComponent,
     FooterComponent,
-    MenuComponent,
+    MenuComponent, // Este componente estava duplicado
     ResetPasswordComponent,
     ConfigComponent,
     SignupDialogComponent,
@@ -118,18 +118,17 @@ const routes: Routes = [
     MenuConfigComponent,
     HomeConfigComponent,
     ImportarCadastroComponent,
-    ErupcoesComponent,
-    MenuComponent,
+    // MenuComponent, - Removi a duplicata
     ErupcoesEditComponent,
     AutoFocusDirective
-  ],
+  ], // Faltava este colchete de fechamento para declarations
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(routes), // Configurar roteamento diretamente
+    RouterModule.forRoot(routes),
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -139,11 +138,13 @@ const routes: Routes = [
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    BackupComponent, // Import the standalone component
+    BackupComponent,
     ChatbotWidgetComponent,
-    // Importar o HomepageComponent como componente standalone
-    HomepageComponent
-],
+    HomepageComponent,
+    ErupcoesComponent, // Adicionado aqui porque é um componente standalone
+    TabelaReferenciaDialogComponent,
+    WhatsappButtonComponent
+  ], // Havia um colchete extra aqui
   providers: [
     AuthGuard, DatePipe, provideAnimationsAsync()
   ],

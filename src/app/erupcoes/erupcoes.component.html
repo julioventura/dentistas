@@ -6,7 +6,7 @@
         </div>
         <h1 class="title">Erupções Dentárias Previstas</h1>
         <div class="actions">
-            <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
+            <img src="https://dentistas.com.br/assets/lista_checked.png" class="navegacao" (click)="mostrarTabelaReferencia()">
         </div>
     </div>
 
@@ -56,8 +56,10 @@
         </table>
     </div>
 
-    <!-- Paginação (caso aplicável no futuro) -->
-    <div *ngIf="!isLoading && pacientesComErupcao.length > 0" class="pagination_total">
-        <span>{{ pacientesComErupcao.length }} registros</span>
+    <!-- Paginação -->
+    <div class="footer-actions">
+        <div *ngIf="!isLoading && pacientesComErupcao.length > 0" class="pagination_total">
+            <span>{{ pacientesComErupcao.length }} registros</span>
+        </div>
     </div>
 </div>
