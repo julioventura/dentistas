@@ -53,7 +53,7 @@ export const CAMPOS_FICHAS_ATENDIMENTOS: Campo[] = [
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
   { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-  { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
+  // { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
 ];
 
 export const CAMPOS_FICHAS_TRATAMENTOS: Campo[] = [
@@ -61,7 +61,7 @@ export const CAMPOS_FICHAS_TRATAMENTOS: Campo[] = [
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
   { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-  { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
+  // { grupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
 ];
 
 export const CAMPOS_FICHAS_DENTES: Campo[] = [
@@ -240,11 +240,11 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '19) Grampo do Isolamento', nome: 'grampoIsolamento', tipo: 'text', label: 'Grampo do Isolamento Absoluto' },
 
   // Preparo Químico-Mecânico: Técnica de Instrumentação
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'Manual' },
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'Rotação contínua - ROTATÓRIA' },
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'Reciprocante' },
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'OSCILATÓRIA' },
-  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao', tipo: 'boolean', label: 'Híbrida' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao1', tipo: 'boolean', label: 'Manual' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao2', tipo: 'boolean', label: 'Rotação contínua - ROTATÓRIA' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao3', tipo: 'boolean', label: 'Reciprocante' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao4', tipo: 'boolean', label: 'OSCILATÓRIA' },
+  { grupo: '20) Técnica de Instrumentação', nome: 'tecnicaInstrumentacao5', tipo: 'boolean', label: 'Híbrida' },
   
   // Canais Radiculares
   // CAD – comprimento aparente do dente 

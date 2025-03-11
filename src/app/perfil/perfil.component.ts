@@ -437,7 +437,7 @@ export class PerfilComponent implements OnInit {
   // Em perfil.component.ts - dentro da classe PerfilComponent
   addEndereco() {
     // Validação básica - precisa ter pelo menos rua e cidade
-    if (this.novoEndereco.rua && this.novoEndereco.cidade) {
+    if (this.novoEndereco.rua) {
       // Adiciona uma cópia do endereço (não a referência)
       this.enderecos.push({ ...this.novoEndereco });
 

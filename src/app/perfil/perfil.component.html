@@ -64,18 +64,18 @@
 
                 <ng-container *ngSwitchCase="'textarea'">
                   <textarea [formControlName]="field.controlName" [id]="field.controlName"
-                    [placeholder]="field.placeholder || ''"
+                    [placeholder]="field.placeholder && isEditing || ''"
                     [ngClass]="{'detail-value view-mode': !isEditing, 'detail-value edit-mode': isEditing}"
                     [attr.disabled]="!isEditing ? '' : null" [class.error]="isFieldInvalid(field.controlName)"
                     (blur)="onFieldBlur(field.controlName)" (change)="onFieldChange($event, field.controlName)"
-                    rows="4">
+                    rows="2">
                   </textarea>
                 </ng-container>
 
                 <!-- Input padrão para os demais campos -->
                 <ng-container *ngSwitchDefault>
                   <input [type]="field.type || 'text'" [formControlName]="field.controlName" [id]="field.controlName"
-                    [placeholder]="field.placeholder || ''"
+                    [placeholder]="field.placeholder && isEditing || ''"
                     [ngClass]="{'detail-value view-mode': !isEditing, 'detail-value edit-mode': isEditing}"
                     [attr.disabled]="!isEditing ? '' : null" [class.error]="isFieldInvalid(field.controlName)"
                     (blur)="onFieldBlur(field.controlName)" (change)="onFieldChange($event, field.controlName)">
@@ -246,8 +246,7 @@
 
               <!-- Botão de adicionar -->
               <div class="button-container">
-                <button type="button" class="btn-add" [disabled]="!novoEndereco.rua || !novoEndereco.cidade"
-                  (click)="addEndereco()">
+                <button type="button" class="btn-add" [disabled]="!novoEndereco.rua" (click)="addEndereco()">
                   <i class="fas fa-plus"></i> Adicionar
                 </button>
               </div>
@@ -285,7 +284,7 @@
             <div *ngIf="isEditing && convenios.length > 0" class="perfil-list edit-mode">
               <div *ngFor="let convenio of convenios; let i = index" class="perfil-item">
                 <div class="perfil-content">
-                  <strong>{{ convenio.nomeConvenio }}</strong> 
+                  <strong>{{ convenio.nomeConvenio }}</strong>
                 </div>
                 <button type="button" class="btn-remove" (click)="removeConvenio(i)">
                   <i class="fas fa-times"></i>

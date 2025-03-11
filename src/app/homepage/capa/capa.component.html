@@ -12,7 +12,7 @@
       <div class="info-section">
         <div class="title-area">
           <h1>{{ userService.userProfile?.nome || 'Nome do Profissional' }}</h1>
-          <h2>{{ userService.userProfile?.tituloProfissional || 'Titulo profissional' }}</h2>
+          <h2>{{ userService.userProfile?.  titulo_profissional || 'Titulo profissional' }}</h2>
         </div>
         
         <div class="badges-row" *ngIf="userService.userProfile?.especialidades?.length">
@@ -20,14 +20,7 @@
             {{ esp }}
           </span>
         </div>
-        
-        <!-- <div class="action-buttons">
-          <a href="https://wa.me/{{ getWhatsappFormatado() }}" target="_blank" class="btn secondary">
-            <i class="fab fa-whatsapp"></i> 
-            WhatsApp
-          </a>
-        </div> -->
-        
+               
       </div>
     </div>
   </div>

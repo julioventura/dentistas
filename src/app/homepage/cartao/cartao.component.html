@@ -13,8 +13,8 @@
         </div> -->
 
         <div class="cartao-nome">
-          <h4>{{ userService.userProfile?.nome || 'Nome do Profissional' }}</h4>
-          <p>{{ userService.userProfile?.tituloProfissional || 'Titulo Profissional' }}</p>
+          <h4>{{ userService.userProfile.nome || 'Nome do Profissional' }}</h4>
+          <p>{{ userService.userProfile.  titulo_profissional || 'Titulo Profissional' }}</p>
           <p>{{ userService.userProfile?.especialidade || 'Especialidades' }}</p>
         </div>
 
@@ -64,18 +64,13 @@
     <!-- ======================================== -->
 
     <div class="button-group-actions">
-
       <a [href]="" target="_blank" class="button-group-link primary">
-        <i class="fas fa-download"></i> Salvar Cartão
-
+        <i class="fas fa-download"></i> Salvar
       </a>
       <a [href]="" target="_blank" class="button-group-link primary">
-        <i class="fas fa-share-alt"></i> Compartilhar
+        <i class="fas fa-share-alt"></i> Enviar
       </a>
-
     </div>
-
-
 
   </div>
 </div>

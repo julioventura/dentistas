@@ -27,19 +27,8 @@ export class EnderecoComponent {
   // Método para obter os endereços do userProfile
   getEnderecos(): Endereco[] {
     const userProfile = this.userService.userProfile;
-    if (!userProfile?.enderecos) return [];
+    if (!userProfile.enderecos) return [];
     
-    // Se for string (formato antigo), tenta converter
-    if (typeof userProfile.enderecos === 'string') {
-      try {
-        return JSON.parse(userProfile.enderecos);
-      } catch (e) {
-        console.error('Erro ao converter endereços', e);
-        return [];
-      }
-    }
-    
-    // Se já for array
     if (Array.isArray(userProfile.enderecos)) {
       return userProfile.enderecos;
     }
