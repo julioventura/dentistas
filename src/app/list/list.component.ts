@@ -413,7 +413,7 @@ export class ListComponent implements OnInit {
             this.firestore.collection(configPath).doc(this.collection).set({ campos: camposPadrao })
               .then(() => {
                 console.log(`Configuração criada para a coleção "${this.collection}".`);
-                alert(`Configuração padrão criada para a coleção "${this.collection}". Você pode personalizar os campos em "Configurações".`);
+                // alert(`Configuração padrão criada para a coleção "${this.collection}". Você pode personalizar os campos em "Configurações".`);
               })
               .catch((error) => {
                 console.error('Erro ao criar configuração de campos padrão:', error);

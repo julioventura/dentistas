@@ -54,17 +54,8 @@ input {
   margin-left: 0px;
 }
 
-.grupo-titulo {
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin: 25px 0 10px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 3px;
-
-}
-
 .record-details {
-  --label-width: 150px; // Valor padrão
+  --label-width: 200px; // Valor padrão
 
   .detail-container {
     display: flex;
@@ -109,7 +100,7 @@ input {
 
 // Estilo para o título dos grupos
 .grupo-titulo {
-  font-size: 1em;
+   font-size: 0.8rem;
   font-weight: 500;
   margin-bottom: 6px;
   margin-top: 20px;
@@ -117,10 +108,8 @@ input {
   padding-left: 5px;
   text-align: left;
   line-height: 1.5em;
-
-  border: 1px solid $primary-color-medio;
+  border: 1px solid $primary-color-light;
   border-radius: 4px;
-  background-color: $primary-color-medio;
-  color: white; // Azul no modo de visualização
+  background-color: $background-light;
 
 }

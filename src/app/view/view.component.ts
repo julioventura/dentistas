@@ -312,22 +312,29 @@ export class ViewComponent implements OnInit {
     }
   }
 
+
   /**
-   * hasNonEmptyField(grupo: any[]): boolean
-   * 
-   * Parâmetros:
-   * - grupo: any[] - Array de campos a serem verificados.
-   * Funcionalidade:
-   * - Verifica se há algum campo no grupo com valor definido e não vazio.
-   * Retorna: boolean - true se houver algum campo com valor definido e não vazio, false caso contrário.
+   * Verifica se pelo menos um campo do grupo possui valor não vazio
+   * Considera como vazios: null, undefined, string vazia, 0 (número), '0' (string)
+   * Para campos booleanos/checkbox, só considera não vazio se for true
    */
-  hasNonEmptyField(grupo: any[]): boolean {
-    return grupo.some(campo => {
+  hasNonEmptyField(campos: any[]): boolean {
+    if (!campos || campos.length === 0) return false;
+    
+    return campos.some(campo => {
       const valor = this.FormService.registro[campo.nome];
+      
+      // Para campos booleanos/checkbox, só considera não vazio se o valor for true
       if (campo.tipo === 'boolean' || campo.tipo === 'checkbox') {
         return valor === true;
       }
-      return valor !== null && valor !== undefined && valor !== '';
+      
+      // Para outros tipos, aplica a mesma lógica do template
+      return valor !== null && 
+             valor !== undefined && 
+             valor !== '' &&
+             valor !== 0 &&
+             valor !== '0';
     });
   }
 }

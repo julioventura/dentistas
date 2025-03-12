@@ -34,6 +34,7 @@
                 <tr>
                     <th>#</th> <!-- Número da linha -->
                     <th>Nome</th>
+                    <th>Nascimento</th>
                     <th>Idade</th>
                     <th>Erupcionando</th>
                     <th>Zap</th> <!-- Coluna de contato -->
@@ -44,6 +45,7 @@
                 <tr *ngFor="let paciente of pacientesComErupcao; index as i" (click)="abrirPopup(paciente)">
                     <td>{{ i + 1 }}</td>
                     <td>{{ paciente.nome }}</td>
+                    <td>{{ paciente.nascimento | date: 'dd/MM/yyyy' }}</td>
                     <td>{{ DateUtils.idade(paciente.nascimento) }}</td>
                     <td>{{ paciente.dentesEmErupcao?.join(', ') || 'Nenhum dente erupcionando' }}</td>
                     <td>
