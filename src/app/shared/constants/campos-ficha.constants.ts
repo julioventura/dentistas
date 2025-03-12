@@ -22,6 +22,13 @@ export const CAMPOS_FICHAS_EXAMES: Campo[] = [
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
   { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: 'Anamnese', nome: 'queixaPrincipal', tipo: 'text', label: 'Queixa Principal' },
+  { grupo: 'Anamnese', nome: 'emTratamentoMedico', tipo: 'boolean', label: 'Está em tratamento médico?' },
+  { grupo: 'Anamnese', nome: 'motivoTratamentoMedico', tipo: 'text', label: 'Motivo do tratamento médico' },
+  { grupo: 'Anamnese', nome: 'usaMedicamento', tipo: 'boolean', label: 'Toma medicamentos?' },
+  { grupo: 'Anamnese', nome: 'quaisMedicamentos', tipo: 'text', label: 'Quais medicamentos?' },
+  { grupo: 'Anamnese', nome: 'motivoMedicamentos', tipo: 'text', label: 'Motivo dos medicamentos' },
+
 ];
 
 export const CAMPOS_FICHAS_DOCUMENTOS: Campo[] = [
@@ -92,12 +99,6 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
   { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Evolução' },
-  { grupo: '', nome: 'queixaPrincipal', tipo: 'text', label: 'Queixa Principal' },
-  { grupo: '', nome: 'emTratamentoMedico', tipo: 'boolean', label: 'Está em tratamento médico?' },
-  { grupo: '', nome: 'motivoTratamentoMedico', tipo: 'text', label: 'Motivo do tratamento médico' },
-  { grupo: '', nome: 'usaMedicamento', tipo: 'boolean', label: 'Toma medicamentos?' },
-  { grupo: '', nome: 'quaisMedicamentos', tipo: 'text', label: 'Quais medicamentos?' },
-  { grupo: '', nome: 'motivoMedicamentos', tipo: 'text', label: 'Motivo dos medicamentos' },
 
   // Encaminhamento e Dente (campos comentados não foram incluídos)
 

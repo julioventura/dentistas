@@ -33,6 +33,8 @@ export class FormService {
     public nome_in_collection: string = ''; // Nome extraído do registro, usado na interface
     public collection: string = '';
     public subcollection: string = '';
+    camposNaoAgrupados: any[] = [];
+    gruposCampos: { [key: string]: any[] } = {};
 
     constructor(
         private firestoreService: FirestoreService<any>,
@@ -178,6 +180,20 @@ export class FormService {
                             this.fichaForm.enable();
                             console.log("Formulário habilitado.");
                         }
+
+                        // Separar campos por grupo
+                        this.camposNaoAgrupados = this.campos.filter(campo => !campo.grupo || campo.grupo === '');
+                        
+                        // Agrupar campos por grupo
+                        this.gruposCampos = {};
+                        this.campos
+                          .filter(campo => campo.grupo && campo.grupo !== '')
+                          .forEach(campo => {
+                            if (!this.gruposCampos[campo.grupo]) {
+                              this.gruposCampos[campo.grupo] = [];
+                            }
+                            this.gruposCampos[campo.grupo].push(campo);
+                          });
 
                         this.isLoading = false;
                         console.log('isLoading == false');

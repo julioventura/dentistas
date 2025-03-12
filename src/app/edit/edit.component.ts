@@ -59,7 +59,10 @@ export class EditComponent implements OnInit, AfterViewInit {
   formReady: boolean = false;
   customLabelWidthValue: number = 300;
   customLabelWidth: string = `${this.customLabelWidthValue}px`;
-
+  
+  // Adicione esta propriedade para controlar grupos expandidos
+  gruposExpandidos: { [key: string]: boolean } = {};
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -84,6 +87,10 @@ export class EditComponent implements OnInit, AfterViewInit {
    */
   ngOnInit() {
     console.log('ngOnInit()');
+    
+    // Inicializa todos os grupos como colapsados
+    this.gruposExpandidos = {};
+    
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
@@ -107,26 +114,22 @@ export class EditComponent implements OnInit, AfterViewInit {
           this.voltar();
         } else {
           if (this.subcollection) {
-            console.log('Carregando ficha interna...');
-            console.log('loadFicha()');
-            console.log('Colledction :', this.collection);
-            console.log('Subcolledction :', this.subcollection);
-            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
+            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
+              .then(() => {
+                // Inicializar todos os grupos como fechados após carregar os dados
+                this.inicializarGruposFechados();
+              });
           } else {
-            console.log('Colledction :', this.collection);
-            console.log('loadRegistro()');
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
-              .then(() => console.log('Formulário carregado para edição.'))
-              .catch(erro => console.error('Erro ao carregar registro:', erro));
+              .then(() => {
+                // Inicializar todos os grupos como fechados após carregar os dados
+                this.inicializarGruposFechados();
+              });
           }
         }
-        // Define o subtítulo com base no nome do registro (obtido via FormService)
+        
         this.subtitulo_da_pagina = this.FormService.nome_in_collection;
-        console.log('subtitulo_da_pagina:', this.subtitulo_da_pagina);
-
-        // Ajuste da largura inicial dos labels
         this.customLabelWidthValue = 200;
-
         this.updateCustomLabelWidth();
 
       } else {
@@ -134,7 +137,22 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.util.goHome();
       }
     });
-    console.log('Formulário de visualização inicializado.');
+  }
+  
+  // Método para inicializar todos os grupos como fechados
+  inicializarGruposFechados() {
+    if (this.FormService.gruposCampos) {
+      Object.keys(this.FormService.gruposCampos).forEach(grupo => {
+        this.gruposExpandidos[grupo] = false;
+      });
+    }
+    console.log('Grupos inicializados como fechados:', this.gruposExpandidos);
+  }
+  
+  // Método para alternar a visibilidade de um grupo
+  toggleGrupo(grupoNome: string): void {
+    console.log(`Alternando grupo ${grupoNome} de ${this.gruposExpandidos[grupoNome]} para ${!this.gruposExpandidos[grupoNome]}`);
+    this.gruposExpandidos[grupoNome] = !this.gruposExpandidos[grupoNome];
   }
 
   /**

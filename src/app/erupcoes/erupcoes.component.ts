@@ -6,7 +6,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { DateUtils } from '../shared/utils/date-utils';
 
-import { ErupcoesPopupComponent } from '../erupcoes-popup/erupcoes-popup.component';
+import { ErupcoesPopupComponent } from './erupcoes-popup/erupcoes-popup.component';
 import { UtilService } from '../shared/utils/util.service';
 import { dentesTabela, Dente, dentesTabelaHTML } from './dentes-tabela'; // Importa a tabela e a interface
 import { CommonModule } from '@angular/common';

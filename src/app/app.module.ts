@@ -34,7 +34,6 @@ import { HomeConfigComponent } from './home/home-config/home-config.component';
 import { HomepageIntroComponent } from './homepage/homepage-intro/homepage-intro.component';
 import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
-import { EditComponent as ErupcoesEditComponent } from './erupcoes/edit/edit.component';
 import { BackupComponent } from './backup/backup.component'; // Import the standalone component
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 import { WhatsappButtonComponent } from './homepage/whatsapp-button/whatsapp-button.component';
@@ -119,7 +118,6 @@ const routes: Routes = [
     HomeConfigComponent,
     ImportarCadastroComponent,
     // MenuComponent, - Removi a duplicata
-    ErupcoesEditComponent,
     AutoFocusDirective
   ], // Faltava este colchete de fechamento para declarations
   imports: [

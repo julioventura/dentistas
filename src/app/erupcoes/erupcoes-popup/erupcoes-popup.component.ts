@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DateUtils } from '../shared/utils/date-utils';
+import { DateUtils } from '../../shared/utils/date-utils';
 
 interface DialogData {
   nome: string;
