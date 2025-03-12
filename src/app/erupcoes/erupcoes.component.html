@@ -23,9 +23,9 @@
     <div *ngIf="isLoading" class="aviso">
         <p>Carregando...</p>
     </div>
-    <div *ngIf="!isLoading && pacientesComErupcao.length === 0" class="aviso">
+    <!-- <div *ngIf="!isLoading && pacientesComErupcao.length === 0" class="aviso">
         <p>Nenhum paciente tem dentes erupcionando este mês.</p>
-    </div>
+    </div> -->
 
     <!-- Tabela de resultados -->
     <div *ngIf="!isLoading && pacientesComErupcao.length > 0" class="registros-table">
@@ -34,7 +34,6 @@
                 <tr>
                     <th>#</th> <!-- Número da linha -->
                     <th>Nome</th>
-                    <th>Nascimento</th>
                     <th>Idade</th>
                     <th>Erupcionando</th>
                     <th>Zap</th> <!-- Coluna de contato -->
@@ -45,7 +44,6 @@
                 <tr *ngFor="let paciente of pacientesComErupcao; index as i" (click)="abrirPopup(paciente)">
                     <td>{{ i + 1 }}</td>
                     <td>{{ paciente.nome }}</td>
-                    <td>{{ paciente.nascimento }}</td>
                     <td>{{ DateUtils.idade(paciente.nascimento) }}</td>
                     <td>{{ paciente.dentesEmErupcao?.join(', ') || 'Nenhum dente erupcionando' }}</td>
                     <td>

@@ -226,36 +226,57 @@ export class ListComponent implements OnInit {
         `/edit/${this.collection}`;
       console.log("collectionRoute ", collectionRoute);
 
-      this.firestoreService.gerarProximoCodigo(collectionPath).then((novoCodigo) => {
+      // Primeiro garantimos que os campos estão carregados
+      const carregarCampos = this.subcollection ? 
+        this.FormService.carregarCamposFichas(this.userId, this.subcollection) :
+        Promise.resolve(this.FormService.campos);
+        
+      // Converte para Promise se for Observable, ou mantém se já for Promise
+      const carregarCamposPromise = carregarCampos instanceof Promise ? 
+        carregarCampos : 
+        new Promise<any[]>(resolve => carregarCampos.subscribe(campos => resolve(campos)));
+      
+      carregarCamposPromise.then(() => {
+        // Após campos carregados, geramos o código e criamos o registro
+        return this.firestoreService.gerarProximoCodigo(collectionPath);
+      })
+      .then((novoCodigo) => {
         const novoRegistro: any = {};
         novoRegistro.id = this.firestoreService.createId();
         novoRegistro.codigo = novoCodigo;
         console.log("novoRegistro.id =", novoRegistro.id);
         console.log("novoRegistro.codigo =", novoRegistro.codigo);
-    
-        if (this.userId && this.subcollection) {
-          this.FormService.carregarCamposFichas(this.userId, this.subcollection);
+        
+        // Valores comuns independente do tipo de coleção
+        novoRegistro['data'] = this.getDataAtual(); // Data de hoje
+        
+        if (this.subcollection) {
           novoRegistro.ficha_id = this.id;
-          this.FormService.campos.forEach(campo => {
-            novoRegistro[campo.nome] = '';
-          });
-          novoRegistro['data'] = this.getDataAtual(); // Data de hoje
-        } 
-        else {
-          this.FormService.campos.forEach(campo => {
-            novoRegistro[campo.nome] = '';
-            novoRegistro['data'] = this.getDataAtual(); // Data de hoje
-          });
         }
-
-        this.firestoreService.addRegistro(collectionPath, novoRegistro).then(() => {
-          console.log("Criou registro " + novoRegistro.id);
-          this.router.navigate([collectionRoute, novoRegistro.id]);
-        })
-        .catch((error) => {
-          console.error('Erro ao incluir novo registro:', error);
-          alert('Erro ao incluir novo registro.');
+        
+        // Inicializa os campos com valores apropriados para seus tipos
+        this.FormService.campos.forEach(campo => {
+          if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
+            novoRegistro[campo.nome] = false;
+          } else if (campo.tipo === 'number') {
+            novoRegistro[campo.nome] = 0;
+          } else if (campo.tipo === 'date') {
+            novoRegistro[campo.nome] = campo.nome === 'data' ? this.getDataAtual() : '';
+          } else {
+            novoRegistro[campo.nome] = '';
+          }
         });
+        
+        // Adicionar o registro e navegar
+        return this.firestoreService.addRegistro(collectionPath, novoRegistro)
+          .then(() => {
+            console.log("Criou registro " + novoRegistro.id);
+            this.router.navigate([collectionRoute, novoRegistro.id]);
+          });
+      })
+      .catch((error) => {
+        console.error('Erro ao incluir novo registro:', error);
+        alert('Erro ao incluir novo registro.');
       });
     }
   }

@@ -139,8 +139,6 @@ export class ErupcoesComponent implements OnInit {
         const pacienteMeses = Math.floor(Number(paciente.meses));
         const faixaMaxima = pacienteMeses + this.faixaDeMeses;
 
-        console.log(`Nome: ${paciente.nome}, Meses: ${pacienteMeses}, Limite: ${faixaMaxima}`);
-
         const dentesEmErupcao = this.dentesTabela
           .filter(dente => {
             const inicioErupcao = Math.floor(Number(dente.Erupcao));
