@@ -22,8 +22,10 @@ input {
 
 .slider-wrapper {
   display: flex;
-  align-items: center; /* alinha todos os filhos ao centro verticalmente */
-  gap: 10px; /* espaço entre slider e texto */
+  align-items: center;
+  /* alinha todos os filhos ao centro verticalmente */
+  gap: 10px;
+  /* espaço entre slider e texto */
 
   /* Caso o texto esteja "baixo" em relação ao knob do slider, você pode:
      1) aumentar o line-height do texto
@@ -31,13 +33,14 @@ input {
      3) usar um pequeno transform para subir o texto */
 
   .small {
-    line-height: 1.2; 
+    line-height: 1.2;
     /* ou */
     /* transform: translateY(-1px); */
   }
 }
 
-.record-details .detail-container .detail-value, .dynamic-form-container .detail-container .detail-value {
+.record-details .detail-container .detail-value,
+.dynamic-form-container .detail-container .detail-value {
   border: 0px;
 }
 
@@ -49,7 +52,7 @@ input {
   margin-bottom: 4px;
   background-color: unset;
   margin-left: 0px;
-} 
+}
 
 .grupo-titulo {
   font-weight: bold;
@@ -62,20 +65,20 @@ input {
 
 .record-details {
   --label-width: 150px; // Valor padrão
-  
+
   .detail-container {
     display: flex;
     margin-bottom: 0px;
-    
+
     .detail-label {
       width: var(--label-width);
       flex-shrink: 0;
       padding-right: 10px;
     }
-    
+
     .detail-value {
       flex-grow: 1;
-      
+
       &[readonly] {
         color: #333;
         font-size: 14px;
@@ -94,11 +97,30 @@ input {
 // Novo estilo para o container do slider
 .width-control {
   display: inline-block;
-  border: 1px solid $primary-color;       // Borda de 1px
-  border-radius: 6px;           // Border-radius de 6px
-  background-color: #fff;       // Fundo branco opaco
+  border: 1px solid $primary-color; // Borda de 1px
+  border-radius: 6px; // Border-radius de 6px
+  background-color: #fff; // Fundo branco opaco
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
   padding: 3px;
   padding-right: 12px;
   padding-left: 0px;
+}
+
+
+// Estilo para o título dos grupos
+.grupo-titulo {
+  font-size: 1em;
+  font-weight: 500;
+  margin-bottom: 6px;
+  margin-top: 20px;
+  padding-bottom: 0px;
+  padding-left: 5px;
+  text-align: left;
+  line-height: 1.5em;
+
+  border: 1px solid $primary-color-medio;
+  border-radius: 4px;
+  background-color: $primary-color-medio;
+  color: white; // Azul no modo de visualização
+
 }

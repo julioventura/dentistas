@@ -451,4 +451,85 @@ export class UtilService {
   }
 
 
+  // Método para normalizar datas para o padrão dd/mm/yyyy
+  public normalizarFormatoData(data: string): string {
+    if (!data) return '';
+
+    try {
+      // Remover espaços em branco extras
+      data = data.trim();
+
+      // Identificar o formato pela presença de separadores
+      if (data.includes('-')) {
+        // Formato com hífen (yyyy-mm-dd ou dd-mm-yyyy)
+        const partes = data.split('-');
+
+        if (partes[0].length === 4) {
+          // É yyyy-mm-dd, converter para dd/mm/yyyy
+          const [ano, mes, dia] = partes;
+          return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
+        } else {
+          // É dd-mm-yyyy, converter para dd/mm/yyyy
+          const [dia, mes, ano] = partes;
+          return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
+        }
+      } else if (data.includes('/')) {
+        // Formato com barra (dd/mm/yyyy ou yyyy/mm/dd)
+        const partes = data.split('/');
+
+        if (partes[0].length === 4) {
+          // É yyyy/mm/dd, converter para dd/mm/yyyy
+          const [ano, mes, dia] = partes;
+          return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
+        } else {
+          // Já está em dd/mm/yyyy, apenas garantir o formato correto
+          const [dia, mes, ano] = partes;
+          return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano.length === 2 ? '20' + ano : ano}`;
+        }
+      }
+
+      // Se não tem separador reconhecido, assume que está em um formato desconhecido
+      console.warn('Formato de data não reconhecido:', data);
+      return data;
+    } catch (error) {
+      console.error('Erro ao normalizar data:', data, error);
+      return data; // Em caso de erro, retorna a data original
+    }
+  }
+
+
+  // Método para calcular idade em meses a partir da data de nascimento (dd/mm/yyyy)
+  public calcularIdadeEmMeses(dataNascimento: string): number {
+    if (!dataNascimento) return 0;
+
+    dataNascimento = this.normalizarFormatoData(dataNascimento);
+    
+    try {
+      // Extrair componentes da data (formato dd/mm/yyyy)
+      const partes = dataNascimento.split('/');
+      const dia = parseInt(partes[0], 10);
+      const mes = parseInt(partes[1], 10) - 1; // Mês em JS é 0-indexed
+      const ano = parseInt(partes[2], 10);
+
+      const dataNasc = new Date(ano, mes, dia);
+      const hoje = new Date();
+
+      // Cálculo da diferença em meses
+      const diffAnos = hoje.getFullYear() - dataNasc.getFullYear();
+      const diffMeses = hoje.getMonth() - dataNasc.getMonth();
+      const idadeMeses = (diffAnos * 12) + diffMeses;
+
+      // Ajuste para quando o dia do mês atual é menor que o dia de nascimento
+      if (hoje.getDate() < dia) {
+        return idadeMeses - 1;
+      }
+
+      return idadeMeses;
+    } catch (error) {
+      console.error('Erro ao calcular idade em meses:', error);
+      return 0;
+    }
+  }
+
+
 }

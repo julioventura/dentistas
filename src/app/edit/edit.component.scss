@@ -12,23 +12,24 @@
 
 // styles.scss
 .header {
+
   .back-btn,
   .add-btn {
-      background-color: $primary-color;
-      color: $white;
-      border: none;
-      padding: 0px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 20px;
-      font-weight: bolder;
-      width: 40px;
-      height: 40px;
+    background-color: $primary-color;
+    color: $white;
+    border: none;
+    padding: 0px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bolder;
+    width: 40px;
+    height: 40px;
   }
 
   .back-btn:hover,
   .add-btn:hover {
-      background-color: $primary-hover;
+    background-color: $primary-hover;
   }
 }
 
@@ -74,14 +75,20 @@
     }
 
     textarea {
-      background-color: #fff6ed; /* Cor de fundo */
-      border: 1px solid #ccc;     /* Cor e espessura da borda */
-      color: #333;                /* Cor do texto */
-      font-size: 16px;            /* Tamanho da fonte */
+      background-color: #fff6ed;
+      /* Cor de fundo */
+      border: 1px solid #ccc;
+      /* Cor e espessura da borda */
+      color: #333;
+      /* Cor do texto */
+      font-size: 16px;
+      /* Tamanho da fonte */
 
       &:focus {
-        background-color: #ffdcb6; /* Cor de fundo ao focar */
-        border: 1pt solid red;     /* Cor e espessura da borda */
+        background-color: #ffdcb6;
+        /* Cor de fundo ao focar */
+        border: 1pt solid red;
+        /* Cor e espessura da borda */
       }
     }
 
@@ -92,8 +99,10 @@
       text-align: left;
 
       &:focus {
-        background-color: #ffdcb6; /* Cor de fundo ao focar */
-        outline: none;             /* Remove o outline padrão ao focar */
+        background-color: #ffdcb6;
+        /* Cor de fundo ao focar */
+        outline: none;
+        /* Remove o outline padrão ao focar */
         color: $red-dark;
         border: 1pt solid $red;
         font-weight: bold;
@@ -101,18 +110,23 @@
     }
 
     .detail-value {
-      width: 100%; /* Ocupará 100% da largura disponível */
-      box-sizing: border-box; /* Inclui o padding e border dentro da largura */
+      width: 100%;
+      /* Ocupará 100% da largura disponível */
+      box-sizing: border-box;
+      /* Inclui o padding e border dentro da largura */
     }
 
     input {
       background-color: #fff;
 
       &:focus {
-        background-color: #ffdcb6; /* Cor de fundo ao focar */
-        outline: none;            /* Remove o outline padrão ao focar */
-        border-color: #ff7373;     /* Cor da borda ao focar */
-      } 
+        background-color: #ffdcb6;
+        /* Cor de fundo ao focar */
+        outline: none;
+        /* Remove o outline padrão ao focar */
+        border-color: #ff7373;
+        /* Cor da borda ao focar */
+      }
     }
   }
 }
@@ -123,8 +137,10 @@
   transition: background-color 0.3s ease;
 
   &:focus {
-    background-color: #ffdcb6; /* Cor de fundo ao focar */
-    border: 2pt solid red;     /* Cor e espessura da borda */
+    background-color: #ffdcb6;
+    /* Cor de fundo ao focar */
+    border: 2pt solid red;
+    /* Cor e espessura da borda */
   }
 }
 
@@ -141,7 +157,8 @@ input {
 }
 
 .detail-label {
-  flex: 0 0 var(--label-width); /* opcional: adicione padding/margem se desejar separar do conteúdo */
+  flex: 0 0 var(--label-width);
+  /* opcional: adicione padding/margem se desejar separar do conteúdo */
   padding-right: 5px;
 }
 
@@ -151,15 +168,17 @@ input {
 
 .slider-wrapper {
   display: flex;
-  align-items: center; /* alinha todos os filhos ao centro verticalmente */
-  gap: 10px; /* espaço entre slider e texto */
+  align-items: center;
+  /* alinha todos os filhos ao centro verticalmente */
+  gap: 10px;
+  /* espaço entre slider e texto */
 
   /* Caso o texto esteja "baixo" em relação ao knob do slider, você pode:
      1) aumentar o line-height do texto
      2) ajustar a font-size ou 
      3) usar um pequeno transform para subir o texto */
   .small {
-    line-height: 1.2; 
+    line-height: 1.2;
     /* ou */
     /* transform: translateY(-1px); */
   }
@@ -168,9 +187,9 @@ input {
 // Novo estilo para o container do slider
 .width-control {
   display: inline-block;
-  border: 1px solid $red;       // Borda de 1px
-  border-radius: 6px;           // Border-radius de 6px
-  background-color: #fff;       // Fundo branco opaco
+  border: 1px solid $red; // Borda de 1px
+  border-radius: 6px; // Border-radius de 6px
+  background-color: #fff; // Fundo branco opaco
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
   padding: 3px;
   padding-right: 12px;
@@ -181,7 +200,7 @@ input {
 .full-width-container {
   display: block;
   width: 100%;
-  padding: 0;      // Remove padding/bordas extras
+  padding: 0; // Remove padding/bordas extras
   border: none;
 }
 
@@ -215,13 +234,16 @@ input {
   margin: 10px 1px 0px 1px;
 }
 
-.mat-display-large, .mat-typography .mat-display-large, .mat-typography h1 {
+.mat-display-large,
+.mat-typography .mat-display-large,
+.mat-typography h1 {
   font: 400 3.562rem / 4rem Roboto, sans-serif;
   letter-spacing: -0.016rem;
   margin: 0 0 0.0em;
 }
 
-.navegacao, .navegacao_direita {
+.navegacao,
+.navegacao_direita {
   width: 50px;
   height: 50px;
   cursor: pointer;
@@ -232,7 +254,7 @@ input {
 .profile-form {
   .field-group {
     margin-bottom: 20px;
-    
+
     .group-title {
       font-weight: bold;
       color: $red-dark;
@@ -240,47 +262,48 @@ input {
       padding-bottom: 5px;
       border-bottom: 1px solid $red-light;
     }
-    
+
     .field-row {
       display: flex;
       align-items: center;
       margin-bottom: 10px;
-      
+
       label {
         min-width: var(--label-width, 150px);
         padding-right: 10px;
         color: $red-dark;
       }
-      
+
       .field-input {
         flex: 1;
-        
-        input, textarea {
+
+        input,
+        textarea {
           width: 100%;
           border: 1px solid $red-light;
           padding: 8px;
           border-radius: 4px;
-          
+
           &:focus {
             border-color: $red;
             outline: none;
             box-shadow: 0 0 3px rgba(255, 0, 0, 0.3);
           }
-          
+
           &:disabled {
             background-color: #f9f9f9;
             color: #666;
           }
-          
+
           &.error {
             border-color: #f44336;
           }
         }
-        
+
         textarea {
           min-height: 80px;
         }
-        
+
         .error-message {
           color: #f44336;
           font-size: 0.8em;
@@ -289,31 +312,31 @@ input {
       }
     }
   }
-  
+
   .form-actions {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-    
+
     button {
       padding: 10px 20px;
       border-radius: 4px;
       border: none;
       cursor: pointer;
-      
+
       &.primary {
         background-color: $primary-color;
         color: white;
-        
+
         &:hover {
           background-color: $primary-hover;
         }
       }
-      
+
       &.secondary {
         background-color: #ccc;
         color: #333;
-        
+
         &:hover {
           background-color: #bbb;
         }
@@ -343,8 +366,28 @@ input {
 
 .edit-mode {
   .field-input {
-    input, textarea, select {
+
+    input,
+    textarea,
+    select {
       transition: all 0.2s ease;
     }
   }
+}
+
+
+// Estilo para o título dos grupos
+.grupo-titulo {
+  font-size: 1em;
+  font-weight: 500;
+  margin-bottom: 6px;
+  margin-top: 20px;
+  padding-bottom: 0px;
+  padding-left: 5px;
+  line-height: 1.5em;
+  
+  border: 1px solid $red-medio;  text-align: left;
+  border-radius: 4px;
+  background-color: $red-medio;
+  color: white; // Azul no modo de visualização
 }

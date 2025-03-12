@@ -14,8 +14,8 @@
   </div>
 
   <!-- <div *ngIf="subtitulo_da_pagina" class="record-header">
-          {{ subtitulo_da_pagina }}
-        </div> -->
+    {{ subtitulo_da_pagina }}
+  </div> -->
 
 
   <!-- Exibir mensagem de carregamento enquanto os dados estão sendo buscados -->
@@ -46,7 +46,7 @@
 
           <tr *ngIf="!this.subcollection">
             <th>Nome</th>
-            <th class="right">Código</th>
+            <th class="right">Nascimento</th>
           </tr>
 
           <tr *ngIf="this.subcollection">
@@ -71,7 +71,7 @@
 
             <ng-container *ngIf="!this.subcollection">
               <td>{{ registro.nome ? registro.nome : '(vazio)' }}</td>
-              <td class="right">{{ registro.codigo }}</td>
+              <td class="right">{{ util.normalizarFormatoData(registro.nascimento) }}</td>
             </ng-container>
 
             <ng-container *ngIf="this.subcollection">
@@ -104,7 +104,8 @@
     <!-- LINHA 2 -->
     <div class="pagination_total">
       <span></span>
-      <span>{{ registrosPaginados.length }} de {{ filteredTotal }} registros {{ filteredTotal != totalRegistros ? 'filtrados (' + totalRegistros + ' totais)' : '' }}</span>
+      <span>{{ registrosPaginados.length }} de {{ filteredTotal }} registros {{ filteredTotal != totalRegistros ?
+        'filtrados (' + totalRegistros + ' totais)' : '' }}</span>
       <span></span>
     </div>
 
@@ -120,7 +121,7 @@
     <div class="rodape">
       <img src="https://dentistas.com.br/assets/chatbot2.png" class="navegacao" (click)="util.go('erupcoes')"><br>
     </div>
-    
+
     <div class="actions">
       <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
       <!-- <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao"> -->
