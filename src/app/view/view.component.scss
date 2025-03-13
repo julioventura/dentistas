@@ -56,10 +56,14 @@ input {
 
 .record-details {
   --label-width: 200px; // Valor padrão
+  margin-top: 10px;
+  padding-top: 10px;
 
   .detail-container {
     display: flex;
     margin-bottom: 0px;
+    margin-top: 10px;
+    align-items: center;
 
     .detail-label {
       width: var(--label-width);
@@ -73,8 +77,8 @@ input {
       &[readonly] {
         color: #333;
         font-size: 14px;
-        background-color: #fff;
-        border-bottom: 0px solid #eee; // Dinâmico para os modos
+        background-color: #efefef;
+        // border-bottom: 0px solid #eee; // Dinâmico para os modos
         padding: 7px 10px 7px 10px;
       }
     }
@@ -100,16 +104,18 @@ input {
 
 // Estilo para o título dos grupos
 .grupo-titulo {
-   font-size: 0.8rem;
+  font-size: 0.9em;
   font-weight: 500;
+  line-height: 1.5em;
+  text-align: left;
+  color: $primary-color;
+
+  background-color: #ffffff;
   margin-bottom: 6px;
-  margin-top: 20px;
+  margin-top: 30px;
   padding-bottom: 0px;
   padding-left: 5px;
-  text-align: left;
-  line-height: 1.5em;
-  border: 1px solid $primary-color-light;
-  border-radius: 4px;
-  background-color: $background-light;
+
+  border-bottom: 2px solid $primary-color-light;
 
 }

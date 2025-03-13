@@ -3,7 +3,6 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
 import { DateUtils } from '../shared/utils/date-utils';
 
 import { ErupcoesPopupComponent } from './erupcoes-popup/erupcoes-popup.component';

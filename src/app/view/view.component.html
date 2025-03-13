@@ -101,8 +101,7 @@
       [style.--label-width]="customLabelWidth">
 
 
-      <form [formGroup]="FormService.fichaForm" class="record-details borda_reta_topo"
-        [style.--label-width]="customLabelWidth">
+      <form [formGroup]="FormService.fichaForm" [style.--label-width]="customLabelWidth">
 
         <!-- Campos fixos (sem grupo) -->
         <div *ngFor="let campo of fixedFields">
@@ -151,9 +150,6 @@
 
         <!-- Grupo de campos ajustáveis -->
         <div class="full-width-container">
-
-
-
 
           <div class="record-details" [style.--label-width]="customLabelWidth">
 
