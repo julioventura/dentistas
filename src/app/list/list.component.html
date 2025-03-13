@@ -76,7 +76,7 @@
 
             <ng-container *ngIf="this.subcollection">
               <td>{{ registro.nome }}</td>
-              <td class="right">{{ registro.data }}</td>
+              <td class="right">{{ util.normalizarFormatoData(registro.data) }}</td>
             </ng-container>
 
           </tr>

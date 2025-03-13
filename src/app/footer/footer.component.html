@@ -1,4 +1,5 @@
 <footer>
+  
   <!-- Seção de Redes Sociais - ícones alinhados horizontalmente -->
   <section *ngIf="show_footer" class="social-section">
 
@@ -6,28 +7,24 @@
       <a href="" (click)="logout()">
         <img src="https://dentistas.com.br/assets/voltar_red.png" alt="Sair" width="40" />
       </a>
-      <div class="social-label">SAIR</div>
     </div>
 
     <div style="text-align: center;">
       <a href="https://facebook.com/dentistas.com.br" target="_blank">
         <img src="https://dentistas.com.br/assets/facebook.png" alt="Facebook" width="40" />
       </a>
-      <div class="social-label">Facebook</div>
     </div>
 
     <div style="text-align: center;">
       <a href="https://www.instagram.com/dentistascombr/" target="_blank">
         <img src="https://dentistas.com.br/assets/instagram.png" alt="Instagram" width="40" />
       </a>
-      <div class="social-label">Instagram</div>
     </div>
 
     <div style="text-align: center;">
       <a href="https://www.youtube.com/@dentistascombr" target="_blank">
         <img src="https://dentistas.com.br/assets/youtube.png" alt="YouTube" width="40" />
       </a>
-      <div class="social-label">YouTube</div>
     </div>
 
   </section>
@@ -35,8 +32,8 @@
   <!-- Exibe informações do usuário logado, se disponível -->
   <div id="usuario_logado" *ngIf="user" class="usuario-logado">	
     Usuário: <b>{{ user.email }} {{ this.configuracoes.is_admin ? ' - ADMIN' : ''}}</b><br>
-    {{ambiente}}
-          <p><b>Dentistas.com.br</b> - Conectando dentistas desde 1997</p>
+    {{ambiente}}<br>
     <span class='transparente'>{{ user.uid }}</span>
   </div>
+
 </footer>

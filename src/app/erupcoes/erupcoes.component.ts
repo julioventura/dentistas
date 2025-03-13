@@ -9,16 +9,15 @@ import { DateUtils } from '../shared/utils/date-utils';
 import { ErupcoesPopupComponent } from './erupcoes-popup/erupcoes-popup.component';
 import { UtilService } from '../shared/utils/util.service';
 import { dentesTabela, Dente, dentesTabelaHTML } from './dentes-tabela'; // Importa a tabela e a interface
-import { CommonModule } from '@angular/common';
 import { TabelaReferenciaDialogComponent } from './tabela-referencia-dialog.component';
 
 @Component({
   selector: 'app-erupcoes',
-  standalone: true,
-  imports: [MatDialogModule, MatButtonModule, CommonModule], // Adicionado CommonModule
+  standalone: false,
   templateUrl: './erupcoes.component.html',
   styleUrls: ['./erupcoes.component.scss']
-}) // Removido o parêntese extra que estava aqui
+}) 
+
 export class ErupcoesComponent implements OnInit {
   userId: string | null = null;
   pacientes: any[] = [];

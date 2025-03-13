@@ -17,7 +17,7 @@ import { UtilService } from '../shared/utils/util.service';
   selector: 'app-fichas',
   templateUrl: './fichas.component.html',
   styleUrls: ['./fichas.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class FichasComponent implements OnInit {
   // Seleciona "padrao" inicialmente para a coleção

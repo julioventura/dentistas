@@ -66,16 +66,16 @@ const routes: Routes = [
   { path: 'menu', component: MenuComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'config', component: ConfigComponent },
-  { path: 'perfil', component: PerfilComponent, data: { animation: '2' } }, 
+  { path: 'perfil', component: PerfilComponent, data: { animation: '2' } },
   { path: 'homepage-intro', component: HomepageIntroComponent, data: { animation: '3' } },
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
   { path: 'importar-cadastro', component: ImportarCadastroComponent },
-  { path: 'erupcoes', component: ErupcoesComponent }, 
+  { path: 'erupcoes', component: ErupcoesComponent },
 
   // Rota para o componente camposRegistro
   { path: 'camposRegistro', component: CamposRegistroComponent },
-  { path: 'list/:collection', component: ListComponent, data: { animation: '4' } }, 
+  { path: 'list/:collection', component: ListComponent, data: { animation: '4' } },
   { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '5' } },
   { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '6' } },
 
@@ -85,12 +85,12 @@ const routes: Routes = [
   { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '8' } },
   { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '9' } },
   { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent, data: { animation: '10' } },
-  
-    // Rota para o componente Backup
-    { path: 'backup', component: BackupComponent },
-  
+
+  // Rota para o componente Backup
+  { path: 'backup', component: BackupComponent },
+
   // HOMEPAGES
-  { path: ':username',          component: HomepageComponent, canActivate: [UsernameGuard] },
+  { path: ':username', component: HomepageComponent, canActivate: [UsernameGuard] },
 
   // Redireciona para a página inicial em caso de rota inválida
   { path: '**', component: HomeComponent, data: { animation: '11' } }
@@ -117,6 +117,7 @@ const routes: Routes = [
     MenuConfigComponent,
     HomeConfigComponent,
     ImportarCadastroComponent,
+    ErupcoesComponent,
     // MenuComponent, - Removi a duplicata
     AutoFocusDirective
   ], // Faltava este colchete de fechamento para declarations
@@ -139,10 +140,9 @@ const routes: Routes = [
     BackupComponent,
     ChatbotWidgetComponent,
     HomepageComponent,
-    ErupcoesComponent, // Adicionado aqui porque é um componente standalone
     TabelaReferenciaDialogComponent,
     WhatsappButtonComponent
-  ], // Havia um colchete extra aqui
+  ], 
   providers: [
     AuthGuard, DatePipe, provideAnimationsAsync()
   ],
