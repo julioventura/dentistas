@@ -452,61 +452,75 @@ export class UtilService {
 
 
   // Método para normalizar datas para o padrão dd/mm/yyyy
-  public normalizarFormatoData(data: string): string {
-    if (!data) return '';
-
-    try {
-      // Remover espaços em branco extras
-      data = data.trim();
-
-      // Identificar o formato pela presença de separadores
-      if (data.includes('-')) {
-        // Formato com hífen (yyyy-mm-dd ou dd-mm-yyyy)
-        const partes = data.split('-');
-
-        if (partes[0].length === 4) {
-          // É yyyy-mm-dd, converter para dd/mm/yyyy
-          const [ano, mes, dia] = partes;
-          return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
-        } else {
-          // É dd-mm-yyyy, converter para dd/mm/yyyy
-          const [dia, mes, ano] = partes;
-          return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
-        }
-      } else if (data.includes('/')) {
-        // Formato com barra (dd/mm/yyyy ou yyyy/mm/dd)
-        const partes = data.split('/');
-
-        if (partes[0].length === 4) {
-          // É yyyy/mm/dd, converter para dd/mm/yyyy
-          const [ano, mes, dia] = partes;
-          return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
-        } else {
-          // Já está em dd/mm/yyyy, apenas garantir o formato correto
-          const [dia, mes, ano] = partes;
-          return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano.length === 2 ? '20' + ano : ano}`;
-        }
-      }
-
-      // Se não tem separador reconhecido, assume que está em um formato desconhecido
-      console.warn('Formato de data não reconhecido:', data);
-      return data;
-    } catch (error) {
-      console.error('Erro ao normalizar data:', data, error);
-      return data; // Em caso de erro, retorna a data original
+  public normalizarFormatoData(data: string): string | null {
+    if (!data) return null;
+    
+    // Remover espaços em branco extras
+    data = data.trim();
+    
+    // Handle malformed dates like "03/112018" (missing slash between month and year)
+    if (data.match(/^\d{2}\/\d{6}$/)) {
+      // Insert slash between month and year
+      data = data.substring(0, 3) + data.substring(3, 5) + '/' + data.substring(5);
     }
+    
+    // Identificar o formato pela presença de separadores
+    if (data.includes('-')) {
+      // Formato com hífen (yyyy-mm-dd ou dd-mm-yyyy)
+      const partes = data.split('-');
+      
+      // Safety check - ensure all parts exist before accessing
+      if (!partes || partes.length < 3) {
+        console.warn('Formato de data com hífen inválido:', data);
+        return null;
+      }
+  
+      if (partes[0].length === 4) {
+        // É yyyy-mm-dd, converter para dd/mm/yyyy
+        const [ano, mes, dia] = partes;
+        return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
+      } else {
+        // É dd-mm-yyyy, converter para dd/mm/yyyy
+        const [dia, mes, ano] = partes;
+        return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
+      }
+    } else if (data.includes('/')) {
+      // Formato com barra (dd/mm/yyyy ou yyyy/mm/dd)
+      const partes = data.split('/');
+      
+      // Safety check - ensure all parts exist before accessing
+      if (!partes || partes.length < 3) {
+        console.warn('Formato de data com barra inválido:', data);
+        return null;
+      }
+  
+      if (partes[0].length === 4) {
+        // É yyyy/mm/dd, converter para dd/mm/yyyy
+        const [ano, mes, dia] = partes;
+        return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
+      } else {
+        // Já está em dd/mm/yyyy, apenas garantir o formato correto
+        const [dia, mes, ano] = partes;
+        return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano.length === 2 ? '20' + ano : ano}`;
+      }
+    }
+  
+    // Se não tem separador reconhecido, assume que está em um formato desconhecido
+    console.warn('Formato de data não reconhecido:', data);
+    return data;
   }
 
 
   // Método para calcular idade em meses a partir da data de nascimento (dd/mm/yyyy)
-  public calcularIdadeEmMeses(dataNascimento: string): number {
+  public calcularIdadeEmMeses(dataNascimento: string | null): number {
     if (!dataNascimento) return 0;
 
-    dataNascimento = this.normalizarFormatoData(dataNascimento);
+    const normalizedDate = this.normalizarFormatoData(dataNascimento);
+    if (!normalizedDate) return 0; // Return 0 if date couldn't be normalized
     
     try {
       // Extrair componentes da data (formato dd/mm/yyyy)
-      const partes = dataNascimento.split('/');
+      const partes = normalizedDate.split('/');
       const dia = parseInt(partes[0], 10);
       const mes = parseInt(partes[1], 10) - 1; // Mês em JS é 0-indexed
       const ano = parseInt(partes[2], 10);
