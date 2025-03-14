@@ -177,7 +177,7 @@
           </div>
 
 
-          <div class="record-details borda_reta_topo pt-0">
+          <div class="record-details borda_reta_topo ">
 
             <!-- Grupo de campos ajustáveis -->
             <div class="full-width-container" *ngIf="adjustableFields.length > 0">
@@ -194,13 +194,13 @@
                 </div>
                 <div class="grupo-campos" [ngClass]="{'grupo-hidden': !gruposExpandidos[grupo.key]}">
 
-
+                  
+                  <!-- IMPLEMENTE AQUI UM LOOP SEMELHANTE PARA OS SUBGRUPOS, E DENMTRO DELES O CODIGO ABAIXO PARA SEUS CAMPOS MAS em vez de "let campo of grupo.value" será por subgrupo.value -->
 
                   <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
 
 
-
-                    <div class="detail-container">
+                   <div class="detail-container">
 
                       <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
 

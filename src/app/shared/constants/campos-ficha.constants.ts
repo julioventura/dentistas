@@ -253,7 +253,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   // CPT – comprimento provisório de trabalho 
   // IAI - Instrumento inicial apical (Primeiro instrumento do preparo apical)
   // CRD – comprimento real do dente 
-  // IM – Instrumento de memória (Último instrumento do preparo apical)
+  // IM – Instrumento de memória (Último do preparo apical)
   
   // Canal 1
   { grupo: '21a) Canais Radiculares - Canal 1', nome: 'canal1Nome', tipo: 'text', label: 'Canal 1 - Nome/Sigla' },
@@ -265,7 +265,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '21a) Canais Radiculares - Canal 1', nome: 'canal1CRT', tipo: 'number', label: 'Canal 1 - CRT – comprimento real de trabalho' },
   { grupo: '21a) Canais Radiculares - Canal 1', nome: 'canal1IAF', tipo: 'text', label: 'Canal 1 - IAF – Instrumento apical foraminal (Patência)' },
   { grupo: '21a) Canais Radiculares - Canal 1', nome: 'canal1IAI', tipo: 'text', label: 'Canal 1 - IAI - Instrumento inicial apical' },
-  { grupo: '21a) Canais Radiculares - Canal 1', nome: 'canal1IM', tipo: 'text', label: 'Canal 1 -IM – Instrumento de memória (Último instrumento do preparo apical)' },
+  { grupo: '21a) Canais Radiculares - Canal 1', nome: 'canal1IM', tipo: 'text', label: 'Canal 1 -IM – Instrumento de memória (Último do preparo apical)' },
   
   // Canal 2
   { grupo: '21b) Canais Radiculares - Canal 2', nome: 'canal2Nome', tipo: 'text', label: 'Canal 2 - Nome/Sigla' },
@@ -277,7 +277,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '21b) Canais Radiculares - Canal 2', nome: 'canal2CRT', tipo: 'number', label: 'Canal 2 - CRT – comprimento real de trabalho' },
   { grupo: '21b) Canais Radiculares - Canal 2', nome: 'canal2IAF', tipo: 'text', label: 'Canal 2 - IAF – Instrumento apical foraminal (Patência)' },
   { grupo: '21b) Canais Radiculares - Canal 2', nome: 'canal2IAI', tipo: 'text', label: 'Canal 2 - IAI - Instrumento inicial apical' },
-  { grupo: '21b) Canais Radiculares - Canal 2', nome: 'canal2IM', tipo: 'text', label: 'Canal 2 -IM – Instrumento de memória (Último instrumento do preparo apical)' },
+  { grupo: '21b) Canais Radiculares - Canal 2', nome: 'canal2IM', tipo: 'text', label: 'Canal 2 -IM – Instrumento de memória (Último do preparo apical)' },
   
   // Canal 3
   { grupo: '21c) Canais Radiculares - Canal 3', nome: 'canal3Nome', tipo: 'text', label: 'Canal 3 - Nome/Sigla' },
@@ -289,7 +289,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '21c) Canais Radiculares - Canal 3', nome: 'canal3CRT', tipo: 'number', label: 'Canal 3 - CRT – comprimento real de trabalho' },
   { grupo: '21c) Canais Radiculares - Canal 3', nome: 'canal3IAF', tipo: 'text', label: 'Canal 3 - IAF – Instrumento apical foraminal (Patência)' },
   { grupo: '21c) Canais Radiculares - Canal 3', nome: 'canal3IAI', tipo: 'text', label: 'Canal 3 - IAI - Instrumento inicial apical' },
-  { grupo: '21c) Canais Radiculares - Canal 3', nome: 'canal3IM', tipo: 'text', label: 'Canal 3 -IM – Instrumento de memória (Último instrumento do preparo apical)' },
+  { grupo: '21c) Canais Radiculares - Canal 3', nome: 'canal3IM', tipo: 'text', label: 'Canal 3 -IM – Instrumento de memória (Último do preparo apical)' },
   
   // Canal 4
   { grupo: '21d) Canais Radiculares - Canal 4', nome: 'canal4Nome', tipo: 'text', label: 'Canal 4 - Nome/Sigla' },
@@ -301,7 +301,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '21d) Canais Radiculares - Canal 4', nome: 'canal4CRT', tipo: 'number', label: 'Canal 4 - CRT – comprimento real de trabalho' },
   { grupo: '21d) Canais Radiculares - Canal 4', nome: 'canal4IAF', tipo: 'text', label: 'Canal 4 - IAF – Instrumento apical foraminal (Patência)' },
   { grupo: '21d) Canais Radiculares - Canal 4', nome: 'canal4IAI', tipo: 'text', label: 'Canal 4 - IAI - Instrumento inicial apical' },
-  { grupo: '21d) Canais Radiculares - Canal 4', nome: 'canal4IM', tipo: 'text', label: 'Canal 4 -IM – Instrumento de memória (Último instrumento do preparo apical)' },
+  { grupo: '21d) Canais Radiculares - Canal 4', nome: 'canal4IM', tipo: 'text', label: 'Canal 4 -IM – Instrumento de memória (Último do preparo apical)' },
   
   // Canal 5
   { grupo: '21e) Canais Radiculares - Canal 5', nome: 'canal5Nome', tipo: 'text', label: 'Canal 5 - Nome/Sigla' },
@@ -313,7 +313,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '21e) Canais Radiculares - Canal 5', nome: 'canal5CRT', tipo: 'number', label: 'Canal 5 - CRT – comprimento real de trabalho' },
   { grupo: '21e) Canais Radiculares - Canal 5', nome: 'canal5IAF', tipo: 'text', label: 'Canal 5 - IAF – Instrumento apical foraminal (Patência)' },
   { grupo: '21e) Canais Radiculares - Canal 5', nome: 'canal5IAI', tipo: 'text', label: 'Canal 5 - IAI - Instrumento inicial apical' },
-  { grupo: '21e) Canais Radiculares - Canal 5', nome: 'canal5IM', tipo: 'text', label: 'Canal 5 -IM – Instrumento de memória (Último instrumento do preparo apical)' },
+  { grupo: '21e) Canais Radiculares - Canal 5', nome: 'canal5IM', tipo: 'text', label: 'Canal 5 -IM – Instrumento de memória (Último do preparo apical)' },
 
   // Irrigação
   { grupo: '22) Irrigação', nome: 'hipoclorito', tipo: 'text', label: 'Hipoclorito de sódio (%)' },

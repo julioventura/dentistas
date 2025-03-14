@@ -14,7 +14,7 @@
   background-color: #ffffff;
   padding: 4px 15px;
   margin-bottom: 6px;
-  margin-top: 20px;
+  margin-top: 0px;
 
   border-bottom: 2px solid $red-light;
   cursor: pointer;
@@ -403,53 +403,37 @@ input {
   border: 1px solid $red-light;
   border-radius: 8px 0;
   overflow: hidden;
-}
 
-
-.grupo-campos {
-  padding: 0;
-  max-height: 1000px; // Altura máxima para animação
-  overflow: hidden;
-  transition: max-height 0.2s ease, padding 0.2s ease;
-
-  &.grupo-hidden {
-    max-height: 0;
-    padding: 0;
-    border-bottom: none;
-  }
-
-  .detail-container {
-    padding: 2px 5px;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-}
-
-// Adicione estes estilos ao final do arquivo
-
-.grupo-section {
   margin-bottom: 15px;
   border: 1px solid $red-light;
   border-radius: 4px;
   overflow: hidden;
 }
 
-
 .grupo-campos {
-  padding: 10px 0;
-  max-height: 2000px;
+  max-height: 1000px; // Altura máxima para animação
   overflow: hidden;
   transition: max-height 0.2s ease, padding 0.2s ease;
+  padding: 0px 0;
+
+  .detail-container {
+    padding: 10px 0px 0px 30px;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 5px;
+    }
+  }
 
   &.grupo-hidden {
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+    padding: 0;
+    border-bottom: none;
     border-top: none;
+    max-height: 0;
   }
 }
+
+
 
 
 .record-details .detail-container .detail-value,
@@ -483,7 +467,7 @@ input {
 
 input {
   &:focus {
-    outline: 2px solid $red;
+    outline: none;
     border: 2px solid $red;
   }
 }
