@@ -327,35 +327,29 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '07) Medicação Intracanal', subgrupo: 'Consulta 4', nome: 'medicacaoIntracanalConsulta4d', tipo: 'boolean', label: 'Hidróxido de cálcio' },
   
   // Grampo do Isolamento
-  { grupo: '08) Técnicas', subgrupo: 'Grampo do Isolamento', nome: 'grampoIsolamento', tipo: 'text', label: 'Grampo do Isolamento Absoluto' },
-
+  { grupo: '08) Técnica', subgrupo: 'Grampo do Isolamento', nome: 'grampoIsolamento', tipo: 'text', label: 'Grampo do Isolamento Absoluto' },
   // Preparo Químico-Mecânico: Técnica de Instrumentação
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao1', tipo: 'boolean', label: 'Manual' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao2', tipo: 'boolean', label: 'Rotação contínua - ROTATÓRIA' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao3', tipo: 'boolean', label: 'Reciprocante' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao4', tipo: 'boolean', label: 'OSCILATÓRIA' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao5', tipo: 'boolean', label: 'Híbrida' },
-
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao1', tipo: 'boolean', label: 'Manual' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao2', tipo: 'boolean', label: 'Rotação contínua - ROTATÓRIA' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao3', tipo: 'boolean', label: 'Reciprocante' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao4', tipo: 'boolean', label: 'OSCILATÓRIA' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Instrumentação', nome: 'tecnicaInstrumentacao5', tipo: 'boolean', label: 'Híbrida' },
   // Irrigação
-  { grupo: '08) Técnicas', subgrupo: 'Irrigação', nome: 'hipoclorito', tipo: 'text', label: 'Hipoclorito de sódio (%)' },
-  { grupo: '08) Técnicas', subgrupo: 'Irrigação', nome: 'clorexidinaLiquida', tipo: 'boolean', label: 'Clorexidina Líquida (2%)' },
-  { grupo: '08) Técnicas', subgrupo: 'Irrigação', nome: 'clorexidinaGel', tipo: 'boolean', label: 'Clorexidina Gel (2%)' },
-  { grupo: '08) Técnicas', subgrupo: 'Irrigação', nome: 'edta', tipo: 'boolean', label: 'EDTA a 17%' },
-  { grupo: '08) Técnicas', subgrupo: 'Irrigação', nome: 'ObsIrrigacao', tipo: 'text', label: 'Observaçao sobre a irrigação' },
-
+  { grupo: '08) Técnica', subgrupo: 'Irrigação', nome: 'hipoclorito', tipo: 'text', label: 'Hipoclorito de sódio (%)' },
+  { grupo: '08) Técnica', subgrupo: 'Irrigação', nome: 'clorexidinaLiquida', tipo: 'boolean', label: 'Clorexidina Líquida (2%)' },
+  { grupo: '08) Técnica', subgrupo: 'Irrigação', nome: 'clorexidinaGel', tipo: 'boolean', label: 'Clorexidina Gel (2%)' },
+  { grupo: '08) Técnica', subgrupo: 'Irrigação', nome: 'edta', tipo: 'boolean', label: 'EDTA a 17%' },
+  { grupo: '08) Técnica', subgrupo: 'Irrigação', nome: 'ObsIrrigacao', tipo: 'text', label: 'Observaçao sobre a irrigação' },
   // Potencialização da substância química
-  { grupo: '08) Técnicas', subgrupo: 'Potencialização da substância química', nome: 'potencializacao', tipo: 'boolean', label: 'Potencialização da substância química?' },
-  { grupo: '08) Técnicas', subgrupo: 'Potencialização da substância química', nome: 'tecnicaPotencializacao', tipo: 'text', label: 'Técnica de potencialização' },
-
+  { grupo: '08) Técnica', subgrupo: 'Potencialização da substância química', nome: 'potencializacao', tipo: 'boolean', label: 'Potencialização da substância química?' },
+  { grupo: '08) Técnica', subgrupo: 'Potencialização da substância química', nome: 'tecnicaPotencializacao', tipo: 'text', label: 'Técnica de potencialização' },
   // Técnica de Obturação
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Obturação', nome: 'tecnicaObturação1', tipo: 'boolean', label: 'Cone único' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Obturação', nome: 'tecnicaObturação2', tipo: 'boolean', label: 'Condensação lateral' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Obturação', nome: 'tecnicaObturação3', tipo: 'boolean', label: 'Termoplastificada' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Obturação', nome: 'tecnicaObturação4', tipo: 'boolean', label: 'Plug de MTA' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Obturação', nome: 'coneSelecionado', tipo: 'text', label: 'Cone selecionado' },
-  { grupo: '08) Técnicas', subgrupo: 'Técnica de Obturação', nome: 'cimentoObturador', tipo: 'text', label: 'Cimento obturador' },
-
-
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Obturação', nome: 'tecnicaObturação1', tipo: 'boolean', label: 'Cone único' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Obturação', nome: 'tecnicaObturação2', tipo: 'boolean', label: 'Condensação lateral' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Obturação', nome: 'tecnicaObturação3', tipo: 'boolean', label: 'Termoplastificada' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Obturação', nome: 'tecnicaObturação4', tipo: 'boolean', label: 'Plug de MTA' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Obturação', nome: 'coneSelecionado', tipo: 'text', label: 'Cone selecionado' },
+  { grupo: '08) Técnica', subgrupo: 'Técnica de Obturação', nome: 'cimentoObturador', tipo: 'text', label: 'Cimento obturador' },
 
   // Selamento Coronário Provisório Consulta 1
   { grupo: '09) Selamento Coronário Provisório', subgrupo: 'Consulta 1', nome: 'selamentoCoronarProvisorioConsulta1a', tipo: 'boolean', label: 'Teflon' },
