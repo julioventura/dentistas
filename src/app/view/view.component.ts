@@ -192,6 +192,18 @@ export class ViewComponent implements OnInit {
     }, {} as { [key: string]: any[] });
   }
 
+  // Group campos by their subgrupo property
+  groupBySubgrupo(campos: any[]): { [key: string]: any[] } {
+    return campos.reduce((subgroups, campo) => {
+      const subgrupo = campo.subgrupo || '';
+      if (!subgroups[subgrupo]) {
+        subgroups[subgrupo] = [];
+      }
+      subgroups[subgrupo].push(campo);
+      return subgroups;
+    }, {} as { [key: string]: any[] });
+  }
+
   // Funções trackBy para melhor performance no ngFor
   trackByKey(index: number, item: KeyValue<string, any[]>): string {
     return item.key;

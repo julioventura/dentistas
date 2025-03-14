@@ -417,6 +417,20 @@ input {
   justify-content: space-between;
   align-items: center;
 
+    font-size: 0.9em;
+      font-weight: 500;
+      line-height: 1.5em;
+      text-align: left;
+    
+      margin-bottom: 6px;
+      margin-top: 30px;
+      padding-bottom: 0px;
+      padding-left: 5px;
+    
+      background-color: $red-medio-dark;
+      color: #fff;
+      // border-bottom: 2px solid $primary-color;
+
 
   span {
     font-size: 12px;
@@ -424,7 +438,7 @@ input {
   }
 
   &:hover {
-    background-color: $red-medio-dark;
+    background-color: $red-dark;
     color: white;
   }
 
@@ -436,10 +450,11 @@ input {
 // Estilos para os subgrupos
 .subgrupo-titulo {
   font-size: 0.85em;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.4em;
   text-align: left;
-  color: #410002;
+  // color: #410002;
+  color: $red-dark;
   // background-color: $red-medio;
   background-color: #dbb9b9;
   padding: 3px 15px 3px 30px;
@@ -456,9 +471,11 @@ input {
   }
 
   &:hover {
-    background-color: $red-medio-dark;
+    background-color: $red;
     color: $white;
   }
+
+
 }
 
 .subgrupo-campos {

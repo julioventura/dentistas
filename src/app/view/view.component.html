@@ -162,63 +162,71 @@
                   {{ grupo.key }}
                 </div>
 
-                <!-- Exibe apenas os campos não vazios -->
-                <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
-                  <div class="detail-container"
-                    *ngIf="FormService.registro[campo.nome] !== null &&
-                          FormService.registro[campo.nome] !== undefined &&
-                          FormService.registro[campo.nome] !== '0' &&
-                          FormService.registro[campo.nome] !== 0 &&
-                          FormService.registro[campo.nome] !== '' &&
-                          (campo.tipo === 'boolean' || campo.tipo === 'checkbox' ? FormService.registro[campo.nome] === true : true)">
-
-                    <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
-
-                    <ng-container [ngSwitch]="campo.tipo">
-                      <!-- URL: campo clicável -->
-                      <ng-container *ngSwitchCase="'url'">
-                        <div (click)="openUrl(FormService.registro[campo.nome])" style="cursor:pointer;">
-                          <input type="url" [value]="FormService.registro[campo.nome]" class="detail-value url" readonly>
-                        </div>
-                      </ng-container>
-
-                      <!-- Textarea -->
-                      <ng-container *ngSwitchCase="'textarea'">
-                        <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" readonly></textarea>
-                      </ng-container>
-
-                      <!-- Checkbox -->
-                      <ng-container *ngSwitchCase="'checkbox'">
-                        <input type="checkbox" [formControlName]="campo.nome" [id]="campo.nome" readonly>
-                      </ng-container>
-
-                      <!-- Boolean -->
-                      <ng-container *ngSwitchCase="'boolean'">
-                        <input type="checkbox" [formControlName]="campo.nome" [id]="campo.nome" readonly>
-                      </ng-container>
-                      
-                      <!-- Text -->
-                      <ng-container *ngSwitchCase="'text'">
-                        <input type="text" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
-                      </ng-container>
-                      
-                      <!-- Number -->
-                      <ng-container *ngSwitchCase="'number'">
-                        <input type="number" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
-                      </ng-container>
-                      
-                      <!-- Date -->
-                      <ng-container *ngSwitchCase="'date'">
-                        <input type="date" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
-                      </ng-container>
-
-                      <!-- Demais tipos -->
-                      <ng-container *ngSwitchDefault>
-                        <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
-                      </ng-container>
-                    </ng-container>
+                <!-- Agrupar por subgrupos dentro de cada grupo -->
+                <ng-container *ngFor="let subgrupoObj of groupBySubgrupo(grupo.value) | keyvalue: sortByKeys; trackBy: trackByKey">
+                  <!-- Mostrar título do subgrupo apenas se não for vazio e contiver campos não vazios -->
+                  <div *ngIf="subgrupoObj.key && subgrupoObj.key !== '' && hasNonEmptyField(subgrupoObj.value)" class="subgrupo-titulo">
+                    {{ subgrupoObj.key }}
                   </div>
-                </div>
+
+                  <!-- Exibe apenas os campos não vazios -->
+                  <div *ngFor="let campo of subgrupoObj.value; trackBy: trackByCampo">
+                    <div class="detail-container"
+                      *ngIf="FormService.registro[campo.nome] !== null &&
+                            FormService.registro[campo.nome] !== undefined &&
+                            FormService.registro[campo.nome] !== '0' &&
+                            FormService.registro[campo.nome] !== 0 &&
+                            FormService.registro[campo.nome] !== '' &&
+                            (campo.tipo === 'boolean' || campo.tipo === 'checkbox' ? FormService.registro[campo.nome] === true : true)">
+
+                      <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+
+                      <ng-container [ngSwitch]="campo.tipo">
+                        <!-- URL: campo clicável -->
+                        <ng-container *ngSwitchCase="'url'">
+                          <div (click)="openUrl(FormService.registro[campo.nome])" style="cursor:pointer;">
+                            <input type="url" [value]="FormService.registro[campo.nome]" class="detail-value url" readonly>
+                          </div>
+                        </ng-container>
+
+                        <!-- Textarea -->
+                        <ng-container *ngSwitchCase="'textarea'">
+                          <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2" readonly></textarea>
+                        </ng-container>
+
+                        <!-- Checkbox -->
+                        <ng-container *ngSwitchCase="'checkbox'">
+                          <input type="checkbox" [formControlName]="campo.nome" [id]="campo.nome" readonly>
+                        </ng-container>
+
+                        <!-- Boolean -->
+                        <ng-container *ngSwitchCase="'boolean'">
+                          <input type="checkbox" [formControlName]="campo.nome" [id]="campo.nome" readonly>
+                        </ng-container>
+                        
+                        <!-- Text -->
+                        <ng-container *ngSwitchCase="'text'">
+                          <input type="text" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+                        </ng-container>
+                        
+                        <!-- Number -->
+                        <ng-container *ngSwitchCase="'number'">
+                          <input type="number" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+                        </ng-container>
+                        
+                        <!-- Date -->
+                        <ng-container *ngSwitchCase="'date'">
+                          <input type="date" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+                        </ng-container>
+
+                        <!-- Demais tipos -->
+                        <ng-container *ngSwitchDefault>
+                          <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" readonly>
+                        </ng-container>
+                      </ng-container>
+                    </div>
+                  </div>
+                </ng-container>
               </ng-container>
             </div>
 
