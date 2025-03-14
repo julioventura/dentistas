@@ -2,43 +2,6 @@
 
 
 
-// Estilo para o cabeçalho dos grupos
-.grupo-titulo {
-
-  font-size: 0.9em;
-  font-weight: 500;
-  line-height: 1.5em;
-  text-align: left;
-  color: #a80000;
-
-  background-color: #ffffff;
-  padding: 4px 15px;
-  margin-bottom: 6px;
-  margin-top: 10px;
-
-  border-bottom: 2px solid $red-light;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-
-  span {
-    font-size: 12px;
-    transition: transform 0.3s ease;
-  }
-
-  &:hover {
-    background-color: $red-medio;
-    color: white;
-  }
-
-  i {
-    transition: transform 0.3s ease;
-  }
-}
-
-
 // styles.scss
 .header {
 
@@ -152,12 +115,10 @@
   background-color: #fff6ed;
   border: 1pt solid red;
   transition: background-color 0.3s ease;
-
+  margin: 0;;
   &:focus {
     background-color: $red-light;
-    /* Cor de fundo ao focar */
     border: 2pt solid red;
-    /* Cor e espessura da borda */
   }
 }
 
@@ -319,7 +280,7 @@ input {
         }
 
         textarea {
-          min-height: 80px;
+          // min-height: 80px;
         }
 
         .error-message {
@@ -436,14 +397,51 @@ input {
   }
 }
 
+// Estilo para o cabeçalho dos grupos
+.grupo-titulo {
+
+  font-size: 0.9em;
+  font-weight: 500;
+  line-height: 1.5em;
+  text-align: left;
+  color: #a80000;
+
+  background-color: #ffffff;
+  padding: 4px 15px;
+  margin-bottom: 6px;
+  margin-top: 10px;
+
+  border-bottom: 2px solid $red-light;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+
+  span {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    background-color: $red-medio-dark;
+    color: white;
+  }
+
+  i {
+    transition: transform 0.3s ease;
+  }
+}
+
 // Estilos para os subgrupos
 .subgrupo-titulo {
   font-size: 0.85em;
   font-weight: 400;
   line-height: 1.4em;
   text-align: left;
-  color: #a80000;
-  background-color: #ffe6d7;
+  color: #410002;
+  // background-color: $red-medio;
+  background-color: #dbb9b9;
   padding: 3px 15px 3px 30px;
   margin-bottom: 4px;
   border-bottom: 1px solid $red-light;
@@ -458,8 +456,8 @@ input {
   }
 
   &:hover {
-    background-color: lighten($red-medio, 20%);
-    color: $red-dark;
+    background-color: $red-medio-dark;
+    color: $white;
   }
 }
 
@@ -468,9 +466,11 @@ input {
   overflow: hidden;
   transition: max-height 0.2s ease, padding 0.2s ease;
   padding: 0;
+  background: #feeaea;
+  border: 1px solid $red-light;
 
   .detail-container {
-    padding: 0px 0px 0px 50px; // Indentação maior para campos de subgrupo
+    padding: 0px 0px 0px 30px; // Indentação maior para campos de subgrupo
   }
 
   &.subgrupo-hidden {

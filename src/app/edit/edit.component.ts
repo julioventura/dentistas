@@ -57,7 +57,7 @@ export class EditComponent implements OnInit, AfterViewInit {
   routePath: string = '';
   arquivos: { [key: string]: File } = {};
   formReady: boolean = false;
-  customLabelWidthValue: number = 300;
+  customLabelWidthValue: number = 200;
   customLabelWidth: string = `${this.customLabelWidthValue}px`;
   
   // Adicione esta propriedade para controlar grupos expandidos
@@ -121,19 +121,24 @@ export class EditComponent implements OnInit, AfterViewInit {
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
               .then(() => {
                 // Inicializar todos os grupos como fechados após carregar os dados
-                this.inicializarGruposExpandidos();
+                this.inicializarGruposESubgrupos();
               });
           } else {
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
               .then(() => {
                 // Inicializar todos os grupos como fechados após carregar os dados
-                this.inicializarGruposExpandidos();
+                this.inicializarGruposESubgrupos();
               });
           }
         }
         
         this.subtitulo_da_pagina = this.FormService.nome_in_collection;
-        this.customLabelWidthValue = 200;
+        if (this.subcollection) {
+          this.customLabelWidthValue = 350;
+        }
+        else {
+          this.customLabelWidthValue = 150;
+        }
         this.updateCustomLabelWidth();
 
       } else {
@@ -189,6 +194,31 @@ export class EditComponent implements OnInit, AfterViewInit {
       });
     }
     console.log('Grupos e subgrupos inicializados como expandidos');
+  }
+  
+  // Inicializar grupos expandidos e subgrupos colapsados
+  inicializarGruposESubgrupos() {
+    if (this.FormService.campos) {
+      const grupos = this.groupByGrupo(this.FormService.campos);
+      
+      Object.keys(grupos).forEach(grupoNome => {
+        // Iniciar grupos expandidos
+        this.gruposExpandidos[grupoNome] = false;
+        
+        // Verificar se o grupo tem subgrupos
+        const campos = grupos[grupoNome];
+        if (this.hasSubgrupos(campos)) {
+          const subgrupos = this.getUniqueSubgrupos(campos);
+          subgrupos.forEach(subgrupo => {
+            if (subgrupo) {
+              // Iniciar subgrupos colapsados (não expandidos)
+              this.subgruposExpandidos[`${grupoNome}-${subgrupo}`] = false;
+            }
+          });
+        }
+      });
+    }
+    console.log('Grupos inicializados como expandidos, subgrupos como colapsados');
   }
   
   // Método para alternar a visibilidade de um grupo
