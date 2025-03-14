@@ -80,14 +80,14 @@
     .url {
       color: $red-dark;
       background-color: white;
-      border: 1pt solid $red;
+      border: 2px solid $red;
       text-align: left;
 
       &:focus {
-        background-color: $red-light;
+        background-color: $white;
         outline: none;
         color: $red-dark;
-        border: 1pt solid $red;
+        border: 2pt solid $red;
         font-weight: bold;
       }
     }
@@ -115,9 +115,10 @@
   background-color: #fff6ed;
   border: 1pt solid red;
   transition: background-color 0.3s ease;
-  margin: 0;;
+  margin: 0;
+
   &:focus {
-    background-color: $red-light;
+    background-color: $white;
     border: 2pt solid red;
   }
 }
@@ -266,7 +267,7 @@ input {
             border-color: $red;
             outline: none;
             box-shadow: 0 0 3px rgba(255, 0, 0, 0.3);
-            background-color: $red-light;
+            background-color: $white;
           }
 
           &:disabled {
@@ -277,10 +278,6 @@ input {
           &.error {
             border-color: #f44336;
           }
-        }
-
-        textarea {
-          // min-height: 80px;
         }
 
         .error-message {
@@ -411,25 +408,36 @@ input {
   margin-bottom: 6px;
   margin-top: 10px;
 
-  border-bottom: 2px solid $red-light;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-    font-size: 0.9em;
-      font-weight: 500;
-      line-height: 1.5em;
-      text-align: left;
-    
-      margin-bottom: 6px;
-      margin-top: 30px;
-      padding-bottom: 0px;
-      padding-left: 5px;
-    
-      background-color: $red-medio-dark;
-      color: #fff;
-      // border-bottom: 2px solid $primary-color;
+  font-size: 0.9em;
+  font-weight: 500;
+  line-height: 1.5em;
+  text-align: left;
+
+  margin-bottom: 0px;
+  margin-top: 30px;
+  padding-bottom: 3px;
+  padding-left: 10px;
+
+  background-color: $red-medio-dark;
+  color: #fff;
+  // border-bottom: 2px solid $primary-color;
+
+  font-size: 0.9em;
+  font-weight: 500;
+  line-height: 1.5em;
+  text-align: left;
+
+  margin-bottom: 6px;
+  margin-top: 30px;
+  padding-bottom: 0px;
+  padding-left: 5px;
+
+
 
 
   span {
@@ -457,13 +465,27 @@ input {
   // color: $red-dark;
   // background-color: $red-medio;
   background-color: #dbb9b9;
-  padding: 3px 15px 3px 30px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid $red-light;
+  padding: 3px 15px 3px 10px;
+  // margin-bottom: 4px;
+  // border-bottom: 1px solid $red-light;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+
+  font-size: 0.85em;
+  font-weight: 500;
+  line-height: 1.4em;
+  text-align: left;
+  margin-bottom: 0px;
+  margin-top: 15px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 15px;
+  border: 1px solid $red;
+  border-bottom: 1px;
+
 
   span {
     font-size: 10px;
@@ -511,28 +533,40 @@ input {
   }
 }
 
-.record-details .detail-container .detail-value {
-  color: $red-dark;
-  font-size: 16px;
-  font-weight: 600;
-  text-align: left;
-  background-color: #fff6ed;
-}
+.record-details .detail-container {
 
-.record-details .detail-container textarea :focus {
-  color: $red-dark;
-  font-size: 16px;
-  font-weight: 600;
-  text-align: left;
-  background-color: #fff6ed;
-  outline: none;
   border: 1px solid $red;
-}
 
+  .detail-label {
+    padding-left: 10px;
+  }
 
-input {
-  &:focus {
+  .detail-value {
+    margin: 5px;
+    border: 1px solid $red;
+    color: $red-dark;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    background-color: #fff6ed;
+  }
+
+  textarea :focus {
+    color: $red-dark;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    background-color: #fff6ed;
     outline: none;
-    border: 2px solid $red;
+    border: 1px solid $red;
+  }
+
+  input {
+    &:focus {
+      outline: none;
+      border: 2px solid $red;
+      background: $white;
+    }
+
   }
 }

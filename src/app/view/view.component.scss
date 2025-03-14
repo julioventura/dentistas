@@ -112,8 +112,9 @@ input {
 
   margin-bottom: 6px;
   margin-top: 30px;
-  padding-bottom: 0px;
-  padding-left: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 10px;
 
   background-color: $primary-color;
   color: #fff;
@@ -125,18 +126,49 @@ input {
 
 .subgrupo-titulo {
   font-size: 0.85em;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.4em;
   text-align: left;
   color: #2A7AC3;
   background-color: #daecff;
-  margin-bottom: 4px;
-  margin-top: 30px;
-  padding-bottom: 0px;
+  margin-bottom: 0px;
+  margin-top: 15px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   padding-left: 15px;
+  border: 1px solid $primary-color;
+  border-bottom: 1px;
 }
+
 textarea {
   color: $primary-color;
   font-size: 16px;
 
+}
+
+.record-details .detail-container {
+  margin: 0;
+  padding: 0;
+  padding-left: 5px;
+  border-bottom: 1px solid #93c6f4;
+  background: aliceblue;
+  border: 1px solid $primary-color;
+
+  .detail-label {
+    padding-left: 10px;
+  }
+
+  .detail-value {
+    margin: 5px;
+    border: 1px solid $primary-color;
+    background: white;
+  }
+
+  textarea {
+    box-shadow: unset;
+  }
+
+  // .url {
+  //   box-shadow: unset;
+  // }
 }
