@@ -63,6 +63,9 @@ export class EditComponent implements OnInit, AfterViewInit {
   // Adicione esta propriedade para controlar grupos expandidos
   gruposExpandidos: { [key: string]: boolean } = {};
   
+  // Adicione esta propriedade para controlar subgrupos expandidos
+  subgruposExpandidos: { [key: string]: boolean } = {};
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -90,6 +93,7 @@ export class EditComponent implements OnInit, AfterViewInit {
     
     // Inicializa todos os grupos como colapsados
     this.gruposExpandidos = {};
+    this.subgruposExpandidos = {};
     
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
@@ -117,13 +121,13 @@ export class EditComponent implements OnInit, AfterViewInit {
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
               .then(() => {
                 // Inicializar todos os grupos como fechados após carregar os dados
-                this.inicializarGruposFechados();
+                this.inicializarGruposExpandidos();
               });
           } else {
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
               .then(() => {
                 // Inicializar todos os grupos como fechados após carregar os dados
-                this.inicializarGruposFechados();
+                this.inicializarGruposExpandidos();
               });
           }
         }
@@ -141,18 +145,93 @@ export class EditComponent implements OnInit, AfterViewInit {
   
   // Método para inicializar todos os grupos como fechados
   inicializarGruposFechados() {
-    if (this.FormService.gruposCampos) {
-      Object.keys(this.FormService.gruposCampos).forEach(grupo => {
-        this.gruposExpandidos[grupo] = false;
+    if (this.FormService.campos) {
+      const grupos = this.groupByGrupo(this.FormService.campos);
+      
+      Object.keys(grupos).forEach(grupoNome => {
+        this.gruposExpandidos[grupoNome] = false;
+        
+        // Verificar se o grupo tem subgrupos
+        const campos = grupos[grupoNome];
+        if (this.hasSubgrupos(campos)) {
+          const subgrupos = this.getUniqueSubgrupos(campos);
+          subgrupos.forEach(subgrupo => {
+            if (subgrupo) {
+              this.subgruposExpandidos[`${grupoNome}-${subgrupo}`] = false;
+            }
+          });
+        }
       });
     }
-    console.log('Grupos inicializados como fechados:', this.gruposExpandidos);
+    console.log('Grupos e subgrupos inicializados como fechados');
+  }
+  
+  // Método para inicializar grupos e subgrupos
+  inicializarGruposExpandidos() {
+    if (this.FormService.campos) {
+      const grupos = this.groupByGrupo(this.FormService.campos);
+      
+      Object.keys(grupos).forEach(grupoNome => {
+        // Iniciar grupos expandidos
+        this.gruposExpandidos[grupoNome] = true;
+        
+        // Verificar se o grupo tem subgrupos
+        const campos = grupos[grupoNome];
+        if (this.hasSubgrupos(campos)) {
+          const subgrupos = this.getUniqueSubgrupos(campos);
+          subgrupos.forEach(subgrupo => {
+            if (subgrupo) {
+              // Iniciar subgrupos expandidos
+              this.subgruposExpandidos[`${grupoNome}-${subgrupo}`] = true;
+            }
+          });
+        }
+      });
+    }
+    console.log('Grupos e subgrupos inicializados como expandidos');
   }
   
   // Método para alternar a visibilidade de um grupo
   toggleGrupo(grupoNome: string): void {
     console.log(`Alternando grupo ${grupoNome} de ${this.gruposExpandidos[grupoNome]} para ${!this.gruposExpandidos[grupoNome]}`);
     this.gruposExpandidos[grupoNome] = !this.gruposExpandidos[grupoNome];
+  }
+
+  // Método para alternar a visibilidade de um subgrupo
+  toggleSubgrupo(subgrupoKey: string): void {
+    console.log(`Alternando subgrupo ${subgrupoKey} de ${this.subgruposExpandidos[subgrupoKey]} para ${!this.subgruposExpandidos[subgrupoKey]}`);
+    this.subgruposExpandidos[subgrupoKey] = !this.subgruposExpandidos[subgrupoKey];
+  }
+  
+  // Método para obter subgrupos únicos em um conjunto de campos
+  getUniqueSubgrupos(campos: any[]): string[] {
+    const subgrupos = campos.map(campo => campo.subgrupo || '');
+    return [...new Set(subgrupos)];
+  }
+  
+  // Método para agrupar campos por subgrupo
+  groupBySubgrupo(campos: any[]): { [key: string]: any[] } {
+    // Se não houver campos com subgrupo, cria um grupo vazio
+    if (!this.hasSubgrupos(campos)) {
+      return { '': campos };
+    }
+    
+    return campos.reduce((acc, campo) => {
+      const subgrupo = campo.subgrupo || '';
+      if (!acc[subgrupo]) {
+        acc[subgrupo] = [];
+      }
+      acc[subgrupo].push(campo);
+      return acc;
+    }, {} as { [key: string]: any[] });
+  }
+  
+  // Método para verificar se um grupo tem subgrupos
+  hasSubgrupos(campos: any[]): boolean {
+    if (!campos || campos.length === 0) return false;
+    
+    // Verifica se pelo menos um campo tem um subgrupo não vazio
+    return campos.some(campo => campo.subgrupo && campo.subgrupo.trim() !== '');
   }
 
   /**
@@ -455,6 +534,11 @@ export class EditComponent implements OnInit, AfterViewInit {
 
   trackByCampo(index: number, campo: any): string {
     return campo.nome;
+  }
+  
+  // Track by function para subgrupos
+  trackBySubgrupo(index: number, item: KeyValue<string, any[]>): string {
+    return item.key;
   }
   
 }

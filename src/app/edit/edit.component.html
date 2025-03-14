@@ -195,56 +195,58 @@
                 <div class="grupo-campos" [ngClass]="{'grupo-hidden': !gruposExpandidos[grupo.key]}">
 
                   
-                  <!-- IMPLEMENTE AQUI UM LOOP SEMELHANTE PARA OS SUBGRUPOS, E DENMTRO DELES O CODIGO ABAIXO PARA SEUS CAMPOS MAS em vez de "let campo of grupo.value" será por subgrupo.value -->
-
-                  <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
-
-
-                   <div class="detail-container">
-
-                      <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
-
-                      <ng-container [ngSwitch]="campo.tipo">
-
-                        <!-- URL -->
-                        <ng-container *ngSwitchCase="'url'">
-                          <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value url">
-                        </ng-container>
-
-                        <!-- Textarea -->
-                        <ng-container *ngSwitchCase="'textarea'">
-                          <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2"
-                            placeholder="Digite o conteúdo"></textarea>
-                        </ng-container>
-
-                        <!-- Campo texto -->
-                        <ng-container *ngSwitchCase="'text'">
-                          <input type="text" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
-                            (change)="FormService.onFieldChange($event, campo.nome)" />
-                        </ng-container>
-
-                        <!-- Campo data -->
-                        <ng-container *ngSwitchCase="'date'">
-                          <input type="date" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
-                        </ng-container>
-
-                        <!-- Campos booleanos: checkbox -->
-                        <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome"
-                          [id]="campo.nome">
-                        <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome"
-                          [id]="campo.nome">
-
-                        <!-- Outros tipos de campo -->
-                        <ng-container *ngSwitchDefault>
-                          <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome"
-                            class="detail-value" />
-                        </ng-container>
-
-                      </ng-container>
-
+                  <!-- Implementação do loop para subgrupos -->
+                  <ng-container *ngFor="let subgrupoObj of groupBySubgrupo(grupo.value) | keyvalue; trackBy: trackBySubgrupo">
+    
+                    <!-- Título do subgrupo se existir -->
+                    <div *ngIf="subgrupoObj.key" class="subgrupo-titulo" (click)="toggleSubgrupo(grupo.key + '-' + subgrupoObj.key)">
+                      {{ subgrupoObj.key }}
+                      <span *ngIf="subgruposExpandidos[grupo.key + '-' + subgrupoObj.key]">▲</span>
+                      <span *ngIf="!subgruposExpandidos[grupo.key + '-' + subgrupoObj.key]">▼</span>
                     </div>
+    
+                    <!-- Campos do subgrupo -->
+                    <div class="subgrupo-campos" [ngClass]="{'subgrupo-hidden': !subgruposExpandidos[grupo.key + '-' + subgrupoObj.key]}">
+                      <div *ngFor="let campo of subgrupoObj.value; trackBy: trackByCampo">
+                        <div class="detail-container">
+                          <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
 
-                  </div>
+                          <ng-container [ngSwitch]="campo.tipo">
+                            <!-- URL -->
+                            <ng-container *ngSwitchCase="'url'">
+                              <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value url">
+                            </ng-container>
+
+                            <!-- Textarea -->
+                            <ng-container *ngSwitchCase="'textarea'">
+                              <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2"
+                                placeholder="Digite o conteúdo"></textarea>
+                            </ng-container>
+
+                            <!-- Campo texto -->
+                            <ng-container *ngSwitchCase="'text'">
+                              <input type="text" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value"
+                                (change)="FormService.onFieldChange($event, campo.nome)" />
+                            </ng-container>
+
+                            <!-- Campo data -->
+                            <ng-container *ngSwitchCase="'date'">
+                              <input type="date" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
+                            </ng-container>
+
+                            <!-- Campos booleanos: checkbox -->
+                            <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+                            <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+
+                            <!-- Outros tipos de campo -->
+                            <ng-container *ngSwitchDefault>
+                              <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
+                            </ng-container>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
 
                 </div>
 
@@ -261,4 +263,137 @@
 
   </div>
 
+</div>
+
+<div class="container container_principal" [@fadeAnimation]>
+  <div id='01' class="dynamic-form-container" *ngIf="FormService.fichaForm && FormService.campos.length > 0">
+    <div id="02" *ngIf="!FormService.isLoading && subcollection">
+      <form [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()" [style.--label-width]="customLabelWidth">
+        <div class="record-details borda_reta_topo">
+          <div class="record-details borda_reta_topo ">
+            <div class="full-width-container" *ngIf="adjustableFields.length > 0">
+              <div *ngFor="let grupo of groupByGrupo(adjustableFields) | keyvalue; trackBy: trackByKey">
+                <!-- Título do Grupo (sempre visível e clicável) -->
+                <div class="grupo-titulo" (click)="toggleGrupo(grupo.key)" *ngIf="grupo.key">
+                  {{ grupo.key }}
+                  <span *ngIf="gruposExpandidos[grupo.key]">▲</span>
+                  <span *ngIf="!gruposExpandidos[grupo.key]">▼</span>
+                </div>
+                
+                <!-- Conteúdo do grupo (expansível) -->
+                <div class="grupo-campos" [ngClass]="{'grupo-hidden': !gruposExpandidos[grupo.key]}">
+                  <!-- Verificar se o grupo tem subgrupos -->
+                  <ng-container *ngIf="hasSubgrupos(grupo.value); else noSubgrupos">
+                    <!-- Implementação para grupos COM subgrupos -->
+                    <ng-container *ngFor="let subgrupoObj of groupBySubgrupo(grupo.value) | keyvalue; trackBy: trackBySubgrupo">
+                      
+                      <!-- Título do subgrupo se existir -->
+                      <div *ngIf="subgrupoObj.key" class="subgrupo-titulo" (click)="toggleSubgrupo(grupo.key + '-' + subgrupoObj.key)">
+                        {{ subgrupoObj.key }}
+                        <span *ngIf="subgruposExpandidos[grupo.key + '-' + subgrupoObj.key]">▲</span>
+                        <span *ngIf="!subgruposExpandidos[grupo.key + '-' + subgrupoObj.key]">▼</span>
+                      </div>
+                      
+                      <!-- Campos do subgrupo -->
+                      <div class="subgrupo-campos" [ngClass]="{'subgrupo-hidden': !subgruposExpandidos[grupo.key + '-' + subgrupoObj.key]}">
+                        <div *ngFor="let campo of subgrupoObj.value; trackBy: trackByCampo">
+                          <div class="detail-container">
+                            <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+                            
+                            <ng-container [ngSwitch]="campo.tipo">
+                              <!-- Switch cases para diferentes tipos de campos... -->
+                              <!-- URL -->
+                              <ng-container *ngSwitchCase="'url'">
+                                <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value url">
+                              </ng-container>
+
+                              <!-- Textarea -->
+                              <ng-container *ngSwitchCase="'textarea'">
+                                <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2"
+                                  placeholder="Digite o conteúdo"></textarea>
+                              </ng-container>
+
+                              <!-- Campo texto -->
+                              <ng-container *ngSwitchCase="'text'">
+                                <input type="text" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
+                              </ng-container>
+
+                              <!-- Campo data -->
+                              <ng-container *ngSwitchCase="'date'">
+                                <input type="date" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
+                              </ng-container>
+
+                              <!-- Campos booleanos: checkbox -->
+                              <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+                              <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+
+                              <!-- Campos numéricos -->
+                              <ng-container *ngSwitchCase="'number'">
+                                <input type="number" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
+                              </ng-container>
+
+                              <!-- Default para outros tipos -->
+                              <ng-container *ngSwitchDefault>
+                                <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
+                              </ng-container>
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                  
+                  <!-- Template para grupos SEM subgrupos -->
+                  <ng-template #noSubgrupos>
+                    <div *ngFor="let campo of grupo.value; trackBy: trackByCampo">
+                      <div class="detail-container">
+                        <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
+                        
+                        <ng-container [ngSwitch]="campo.tipo">
+                          <!-- URL -->
+                          <ng-container *ngSwitchCase="'url'">
+                            <input type="url" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value url">
+                          </ng-container>
+
+                          <!-- Textarea -->
+                          <ng-container *ngSwitchCase="'textarea'">
+                            <textarea [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" rows="2"
+                              placeholder="Digite o conteúdo"></textarea>
+                          </ng-container>
+
+                          <!-- Campo texto -->
+                          <ng-container *ngSwitchCase="'text'">
+                            <input type="text" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
+                          </ng-container>
+
+                          <!-- Campo data -->
+                          <ng-container *ngSwitchCase="'date'">
+                            <input type="date" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value">
+                          </ng-container>
+
+                          <!-- Campos booleanos: checkbox -->
+                          <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+                          <input *ngSwitchCase="'boolean'" type="checkbox" [formControlName]="campo.nome" [id]="campo.nome">
+
+                          <!-- Campos numéricos -->
+                          <ng-container *ngSwitchCase="'number'">
+                            <input type="number" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
+                          </ng-container>
+
+                          <!-- Default para outros tipos -->
+                          <ng-container *ngSwitchDefault>
+                            <input [type]="campo.tipo" [formControlName]="campo.nome" [id]="campo.nome" class="detail-value" />
+                          </ng-container>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

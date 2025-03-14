@@ -14,7 +14,7 @@
   background-color: #ffffff;
   padding: 4px 15px;
   margin-bottom: 6px;
-  margin-top: 0px;
+  margin-top: 10px;
 
   border-bottom: 2px solid $red-light;
   cursor: pointer;
@@ -410,11 +410,13 @@ input {
   overflow: hidden;
 }
 
+// Estilos para os grupos
 .grupo-campos {
   max-height: 1000px; // Altura máxima para animação
   overflow: hidden;
+  // transition: max-height 0.4s ease;
   transition: max-height 0.2s ease, padding 0.2s ease;
-  padding: 0px 0;
+  padding: 0 0;
 
   .detail-container {
     padding: 10px 0px 0px 30px;
@@ -426,15 +428,61 @@ input {
   }
 
   &.grupo-hidden {
+    max-height: 0;
+    overflow: hidden;
     padding: 0;
     border-bottom: none;
     border-top: none;
+  }
+}
+
+// Estilos para os subgrupos
+.subgrupo-titulo {
+  font-size: 0.85em;
+  font-weight: 400;
+  line-height: 1.4em;
+  text-align: left;
+  color: #a80000;
+  background-color: #ffe6d7;
+  padding: 3px 15px 3px 30px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid $red-light;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  span {
+    font-size: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    background-color: lighten($red-medio, 20%);
+    color: $red-dark;
+  }
+}
+
+.subgrupo-campos {
+  max-height: 800px; // Altura máxima para animação
+  overflow: hidden;
+  transition: max-height 0.2s ease, padding 0.2s ease;
+  padding: 0;
+
+  .detail-container {
+    padding: 0px 0px 0px 50px; // Indentação maior para campos de subgrupo
+  }
+
+  &.subgrupo-hidden {
+    padding: 0;
     max-height: 0;
   }
 }
 
-
-
+// Estilo padrão para os campos sem subgrupos
+.grupo-campos:not(.grupo-hidden)>.detail-container {
+  padding: 8px 0px 0px 15px;
+}
 
 .record-details .detail-container .detail-value,
 .dynamic-form-container .detail-container .detail-value {
