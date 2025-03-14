@@ -271,17 +271,17 @@
         display: none;
       }
       
-      &::before {
+      // &::before {
         // content: '🤖'; // Robô (melhor para chatbot)
         // Outras opções:
-        content: '💬'; // Balão de fala
+        // content: '💬'; // Balão de fala
         // content: '🔍'; // Lupa
         // content: '💡'; // Lâmpada
         // content: '\f075'; // Font Awesome - chat (requer @import da fonte)
-        // content: '\f086'; // Font Awesome - comentários
-        font-size: 24px;
-        color: white;
-      }
+        // content: '\f544'; // Font Awesome - robot
+      //   font-size: 24px;
+      //   color: white;
+      // }
     }
   }
   

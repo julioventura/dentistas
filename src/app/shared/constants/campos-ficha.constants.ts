@@ -95,24 +95,22 @@ export const CAMPOS_FICHAS_RISCO: Campo[] = [
 
 export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   // Dados principais 
-  { grupo: '', nome: 'nome', tipo: 'number', label: 'Dente' },
-  { grupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-  { grupo: '', nome: 'obs', tipo: 'textarea', label: 'Evolução' },
+  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'number', label: 'Dente' },
+  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Evolução' },
 
-  // Encaminhamento e Dente (campos comentados não foram incluídos)
-
-  // Aspectos Clínicos da Coroa
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'higido', tipo: 'boolean', label: 'Hígida' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'alteracaoCor', tipo: 'boolean', label: 'Alteração de cor' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'ausente', tipo: 'boolean', label: 'Ausente' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'carie', tipo: 'boolean', label: 'Cárie' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'fratura', tipo: 'boolean', label: 'Fratura' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'coroaPermanente', tipo: 'boolean', label: 'Coroa Permanente' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'restaurado', tipo: 'boolean', label: 'Restaurada' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'exposicaoPulpar', tipo: 'boolean', label: 'Exposição pulpar' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'coroaProvisoria', tipo: 'boolean', label: 'Provisória' },
-  { grupo: '01) Aspectos Clínicos da Coroa', nome: 'selamentoProvisorio', tipo: 'boolean', label: 'Selamento provisório' },
+  // Aspectos Clínicos da Coroa - usando subgrupos
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Integridade', nome: 'higido', tipo: 'boolean', label: 'Hígida' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Integridade', nome: 'ausente', tipo: 'boolean', label: 'Ausente' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Alterações', nome: 'alteracaoCor', tipo: 'boolean', label: 'Alteração de cor' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Alterações', nome: 'carie', tipo: 'boolean', label: 'Cárie' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Alterações', nome: 'fratura', tipo: 'boolean', label: 'Fratura' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Restaurações', nome: 'coroaPermanente', tipo: 'boolean', label: 'Coroa Permanente' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Restaurações', nome: 'restaurado', tipo: 'boolean', label: 'Restaurada' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Restaurações', nome: 'coroaProvisoria', tipo: 'boolean', label: 'Provisória' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Pulpar', nome: 'exposicaoPulpar', tipo: 'boolean', label: 'Exposição pulpar' },
+  { grupo: '01) Aspectos Clínicos da Coroa', subgrupo: 'Pulpar', nome: 'selamentoProvisorio', tipo: 'boolean', label: 'Selamento provisório' },
 
   // Aspectos Clínicos dos Tecidos Moles
   { grupo: '02) Aspectos Clínicos dos Tecidos Moles', nome: 'edemaintraoral', tipo: 'boolean', label: 'Edema intra-oral' },

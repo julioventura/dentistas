@@ -1,5 +1,7 @@
 @import '../../styles.scss';
 
+
+
 // Estilo para o cabeçalho dos grupos
 .grupo-titulo {
 
@@ -96,30 +98,26 @@
 
     input:focus,
     select:focus {
-      outline: 1px;
+      outline: none;
       border: 1px solid $red;
     }
 
     textarea {
       background-color: #fff6ed;
-      /* Cor de fundo */
-      border: 1px solid $red-medio;
-      /* Cor e espessura da borda */
-      color: #333;
-      /* Cor do texto */
+      border: 1px solid $red;
       font-size: 16px;
-      /* Tamanho da fonte */
 
       &:focus {
+        outline: none;
         background-color: $red-light;
         border: 1px solid red;
       }
     }
 
     .url {
-      color: #a80000;
+      color: $red-dark;
       background-color: white;
-      border: 1pt solid #a80000;
+      border: 1pt solid $red;
       text-align: left;
 
       &:focus {
@@ -139,14 +137,12 @@
     }
 
     input {
-      background-color: #fff;
+      background-color: #fff6ed;
 
       &:focus {
         background-color: $red-light;
         outline: none;
-        /* Remove o outline padrão ao focar */
-        border-color: #ff7373;
-        /* Cor da borda ao focar */
+        border: 1px solid $red;
       }
     }
   }
@@ -459,4 +455,35 @@ input {
 .record-details .detail-container .detail-value,
 .dynamic-form-container .detail-container .detail-value {
   border: 1px solid $red;
+
+  &.focus {
+    outline: none;
+    border: 1px solid $red-dark;
+  }
+}
+
+.record-details .detail-container .detail-value {
+  color: $red-dark;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  background-color: #fff6ed;
+}
+
+.record-details .detail-container textarea :focus {
+  color: $red-dark;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  background-color: #fff6ed;
+  outline: none;
+  border: 1px solid $red;
+}
+
+
+input {
+  &:focus {
+    outline: 2px solid $red;
+    border: 2px solid $red;
+  }
 }

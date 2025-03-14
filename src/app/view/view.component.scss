@@ -2,6 +2,7 @@
 
 input {
   border: 0;
+  margin-bottom: 10px;
 }
 
 .detail-container {
@@ -61,8 +62,8 @@ input {
 
   .detail-container {
     display: flex;
-    margin-bottom: 0px;
-    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
     align-items: center;
 
     .detail-label {
@@ -75,10 +76,10 @@ input {
       flex-grow: 1;
 
       &[readonly] {
-        color: #333;
-        font-size: 14px;
+        color: $primary-color;
+        font-size: 16px;
+        font-weight: 600;
         background-color: #efefef;
-        // border-bottom: 0px solid #eee; // Dinâmico para os modos
         padding: 7px 10px 7px 10px;
       }
     }
@@ -117,5 +118,11 @@ input {
   padding-left: 5px;
 
   border-bottom: 2px solid $primary-color-light;
+
+}
+
+textarea {
+  color: $primary-color;
+  font-size: 16px;
 
 }

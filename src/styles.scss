@@ -457,16 +457,17 @@ label {
 
 .aviso {
     // container para avisos de status apos realizar tarefas
-    background-color: $primary-color-light;
-    padding: 40px 20px 30px 20px;
-    border-radius: 10px;
     margin-top: 30px;
+    background-color: $red-light;
+    padding: 40px 20px 30px 20px;
+    border: 2px solid $red;
+    border-radius: 10px;
     box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4);
+    
     text-align: center;
-    border: 2px solid;
     font-size: large;
     font-weight: bold;
-    color: $primary-color;
+    color: $red-dark;
 }
 
 // FORMULARIOS DE VIEW.COMPONENT E view_only.COMPONENT E LIST-FICHAS E REGISTROS,COMPONENT
