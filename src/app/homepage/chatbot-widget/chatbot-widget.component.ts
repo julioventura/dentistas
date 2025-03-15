@@ -28,6 +28,7 @@ export class ChatbotWidgetComponent implements OnInit {
   isBotTyping: boolean = false;
   isFullscreen: boolean = false;
   isExpanded: boolean = false;
+  isFirstUserMessage: boolean = true; // Flag para controlar a primeira mensagem
   
   constructor() {
     console.log('ChatbotWidget constructor called');
@@ -35,7 +36,7 @@ export class ChatbotWidgetComponent implements OnInit {
   
   ngOnInit(): void {
     console.log('ChatbotWidget initialized with dentistName:', this.dentistName);
-    this.addBotMessage(`Olá! Sou o assistente virtual do(a) ${this.dentistName}. Como posso ajudar?`);
+    this.addBotMessage(`Olá! Qual o seu nome?`);
   }
   
   toggleChat(): void {
@@ -75,8 +76,15 @@ export class ChatbotWidgetComponent implements OnInit {
     
     setTimeout(() => {
       this.isBotTyping = false;
-      this.addBotMessage(`Resposta automática para: "${userText}"`);
       
+      // Apenas exibe a saudação personalizada na primeira mensagem
+      if (this.isFirstUserMessage) {
+        this.addBotMessage(`Olá ${userText}!`);
+        this.isFirstUserMessage = false;
+      }
+      
+      this.addBotMessage(`Estarei pronto em alguns dias!  ;-)`);
+
       // Log do histórico
       this.logConversationHistory();
     }, 1000);
