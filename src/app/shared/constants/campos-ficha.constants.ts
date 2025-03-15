@@ -246,7 +246,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   // IM – Instrumento de memória (Último do preparo apical)
   
   // Canal 1
-  { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1Nome', tipo: 'text', label: 'Nome/Sigla' },
+  { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1Nome', tipo: 'text', label: 'Nome/Sigla' , expandido: true},
   { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1Ref', tipo: 'text', label: 'Referência Coronária' },
   { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1CAD', tipo: 'number', label: 'CAD – comprimento aparente do dente' },
   { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1CRI', tipo: 'number', label: 'CRI – comprimento real do instrumento (CAD-2)' },
