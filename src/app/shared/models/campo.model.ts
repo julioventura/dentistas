@@ -4,5 +4,8 @@ export interface Campo {
   label: string;
   grupo?: string;
   subgrupo?: string; 
+  expandido?: boolean;
+  obrigatorio?: boolean;
+  mascara?: string;
   options?: string[];
 }

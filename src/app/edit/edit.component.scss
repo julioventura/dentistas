@@ -440,7 +440,7 @@ input {
   justify-content: space-between;
   align-items: center;
 
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 0px;
 
   padding-top: 2px;
@@ -513,7 +513,7 @@ input {
     font-size: 16px;
     font-weight: 600;
     text-align: left;
-    background-color: #fff6ed;
+    background-color: $white;
   }
 
   textarea :focus {

@@ -131,27 +131,18 @@
       <form [formGroup]="FormService.fichaForm" (ngSubmit)="onSubmit()" [style.--label-width]="customLabelWidth">
         <div class="record-details borda_reta_topo">
 
-          <!-- Campos fixos (sem grupo) -->
-          <!-- <div *ngFor="let campo of fixedFields">
-            <div class="detail-container">
-              <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label> -->
-              <!-- Manter os ngSwitch como no original -->
-              <!-- <ng-container [ngSwitch]="campo.tipo"> -->
-                <!-- ... código existente ... -->
-              <!-- </ng-container>
-            </div>
-          </div> -->
-
           <div class="record-details borda_reta_topo">
             <!-- Grupo de campos ajustáveis -->
             <div class="full-width-container" *ngIf="adjustableFields.length > 0">
               <div *ngFor="let grupo of groupByGrupo(adjustableFields) | keyvalue; trackBy: trackByKey">
                 <!-- MUDANÇA: Remover condição *ngIf="grupo.key" para mostrar todos os grupos -->
+                 
                 <div class="grupo-titulo" (click)="toggleGrupo(grupo.key)">
                   {{ grupo.key || 'Campos Gerais' }}
                   <span *ngIf="gruposExpandidos[grupo.key]">▲</span>
                   <span *ngIf="!gruposExpandidos[grupo.key]">▼</span>
                 </div>
+
                 <div class="grupo-campos" [ngClass]="{'grupo-hidden': !gruposExpandidos[grupo.key]}">
                   
                   <!-- Implementação do loop para subgrupos -->
