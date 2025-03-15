@@ -380,15 +380,15 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   { grupo: '09) Selamento Coronário Provisório', subgrupo: 'Consulta 4', nome: 'selamentoCoronarProvisorioConsulta4e', tipo: 'boolean', label: 'Ionômero de vidro' },
 
   // Extras
-  { grupo: '10) Extras', subgrupo: '...', nome: 'extras1', tipo: 'boolean', label: 'Remoção de retentor intracanal' },
-  { grupo: '10) Extras', subgrupo: '...', nome: 'extras2', tipo: 'boolean', label: 'Remoção de instrumento fraturado' },
-  { grupo: '10) Extras', subgrupo: '...', nome: 'extras3', tipo: 'boolean', label: 'Fechamento de perfuração' },
-  { grupo: '10) Extras', subgrupo: '...', nome: 'extras4', tipo: 'boolean', label: 'Calcificação' },
+  { grupo: '10) Extras', subgrupo: '', nome: 'extras1', tipo: 'boolean', label: 'Remoção de retentor intracanal' },
+  { grupo: '10) Extras', subgrupo: '', nome: 'extras2', tipo: 'boolean', label: 'Remoção de instrumento fraturado' },
+  { grupo: '10) Extras', subgrupo: '', nome: 'extras3', tipo: 'boolean', label: 'Fechamento de perfuração' },
+  { grupo: '10) Extras', subgrupo: '', nome: 'extras4', tipo: 'boolean', label: 'Calcificação' },
 
   // Tomografia Computadorizada
-  { grupo: '11) Tomografia Computadorizada de Feixe Cônico', subgrupo: '...', nome: 'tomografiaNecessaria', tipo: 'boolean', label: 'Necessária?' },
-  { grupo: '11) Tomografia Computadorizada de Feixe Cônico', subgrupo: '...', nome: 'tomografiaMotivo', tipo: 'text', label: 'Motivo' },
-  { grupo: '11) Tomografia Computadorizada de Feixe Cônico', subgrupo: '...', nome: 'tomografiaResultado', tipo: 'textarea', label: 'Resultado' },
+  { grupo: '11) Tomografia Computadorizada de Feixe Cônico', subgrupo: '', nome: 'tomografiaNecessaria', tipo: 'boolean', label: 'Necessária?' },
+  { grupo: '11) Tomografia Computadorizada de Feixe Cônico', subgrupo: '', nome: 'tomografiaMotivo', tipo: 'text', label: 'Motivo' },
+  { grupo: '11) Tomografia Computadorizada de Feixe Cônico', subgrupo: '', nome: 'tomografiaResultado', tipo: 'textarea', label: 'Resultado' },
 ];
 
 export const CAMPOS_FICHAS_DENTES_PERIO: Campo[] = [

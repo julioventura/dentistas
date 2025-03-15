@@ -392,44 +392,22 @@ input {
   font-size: 0.9em;
   font-weight: 500;
   line-height: 1.5em;
-  text-align: left;
-  color: #a80000;
-
-  padding: 4px 15px;
-  margin-bottom: 6px;
-  margin-top: 10px;
-
+  color: $white;
+  background-color: $red-titulo;
+  
   cursor: pointer;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-
-  font-size: 0.9em;
-  font-weight: 500;
-  line-height: 1.5em;
   text-align: left;
+  align-items: center;
 
   margin-bottom: 0px;
   margin-top: 30px;
-  padding-bottom: 3px;
+
+  padding: 4px 15px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   padding-left: 10px;
-
-  background-color: $red-titulo;
-  color: $white;
-  // border-bottom: 2px solid $primary-color;
-
-  font-size: 0.9em;
-  font-weight: 500;
-  line-height: 1.5em;
-  text-align: left;
-
-  margin-bottom: 6px;
-  margin-top: 30px;
-  padding-bottom: 0px;
-  padding-left: 5px;
-
-
-
 
   span {
     font-size: 12px;
@@ -452,20 +430,24 @@ input {
   color: $red-dark;
   background-color: $red-subtitulo;
 
+  font-size: 0.85em;
+  font-weight: 500;
+  line-height: 1.4em;
+  text-align: left;
+
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  font-size: 0.85em;
-  font-weight: 500;
-  line-height: 1.4em;
-  text-align: left;
   margin-top: 15px;
   margin-bottom: 0px;
+
   padding-top: 2px;
+  padding-right: 15px;
   padding-bottom: 2px;
   padding-left: 15px;
+
   border: 1px solid $red-dark;
 
   span {
@@ -474,8 +456,8 @@ input {
   }
 
   &:hover {
-    background-color: $red;
-    color: $white;
+    background-color: $red-subtitulo-hover;
+    color: $red-dark;
   }
 
 
@@ -490,7 +472,7 @@ input {
   border: 1px solid $red-light;
 
   .detail-container {
-    padding: 0px 0px 0px 30px; // Indentação maior para campos de subgrupo
+    padding: 0px 0px 0px 5px; // Indentação maior para campos de subgrupo
   }
 
   &.subgrupo-hidden {

@@ -537,8 +537,7 @@ export class EditComponent implements OnInit, AfterViewInit {
    * Retorna: Array de objetos de campo.
    */
   get adjustableFields(): any[] {
-    const fixed = ['nome', 'data', 'nuvem', 'obs'];
-    return this.FormService.campos.filter(campo => !fixed.includes(campo.nome));
+    return this.FormService.campos.filter(campo => campo.grupo && campo.grupo !== '');
   }
 
   /**
@@ -569,6 +568,29 @@ export class EditComponent implements OnInit, AfterViewInit {
   // Track by function para subgrupos
   trackBySubgrupo(index: number, item: KeyValue<string, any[]>): string {
     return item.key;
+  }
+  
+  /**
+   * Verifica se um grupo contém pelo menos um campo (independente de valor)
+   */
+  hasFields(campos: any[]): boolean {
+    return campos && campos.length > 0;
+  }
+
+  /**
+   * Verifica se um grupo tem pelo menos um campo válido para exibição
+   * No caso de edição, todos os campos são considerados válidos
+   */
+  hasValidFields(campos: any[]): boolean {
+    if (!campos || campos.length === 0) return false;
+    return true; // Na edição, todos os campos podem ser editados
+  }
+
+  /**
+   * Verifica se um subgrupo realmente existe e tem conteúdo
+   */
+  isValidSubgrupo(subgrupoKey: string): boolean {
+    return subgrupoKey !== undefined && subgrupoKey !== null && subgrupoKey.trim() !== '';
   }
   
 }
