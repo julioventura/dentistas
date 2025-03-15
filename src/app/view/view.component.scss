@@ -60,6 +60,8 @@ input {
   margin-top: 10px;
   padding-top: 10px;
 
+
+
   .detail-container {
     display: flex;
     margin-bottom: 5px;
@@ -79,7 +81,6 @@ input {
         color: $primary-color;
         font-size: 16px;
         font-weight: 600;
-        background-color: #efefef;
         padding: 7px 10px 7px 10px;
       }
     }
@@ -110,7 +111,7 @@ input {
   line-height: 1.5em;
   text-align: left;
 
-  margin-bottom: 6px;
+  margin-bottom: 0px;
   margin-top: 30px;
   padding-top: 2px;
   padding-bottom: 2px;
@@ -131,13 +132,12 @@ input {
   text-align: left;
   color: #2A7AC3;
   background-color: #daecff;
-  margin-bottom: 0px;
   margin-top: 15px;
+  margin-bottom: 0px;
   padding-top: 2px;
   padding-bottom: 2px;
   padding-left: 15px;
   border: 1px solid $primary-color;
-  border-bottom: 1px;
 }
 
 textarea {
@@ -150,9 +150,9 @@ textarea {
   margin: 0;
   padding: 0;
   padding-left: 5px;
-  border-bottom: 1px solid #93c6f4;
   background: aliceblue;
   border: 1px solid $primary-color;
+  border-top: 0px;
 
   .detail-label {
     padding-left: 10px;

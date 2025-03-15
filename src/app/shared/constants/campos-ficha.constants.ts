@@ -100,11 +100,11 @@ export const CAMPOS_FICHAS_RISCO: Campo[] = [
 
 export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   // Dados principais 
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'number', label: 'Dente' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'queixa', tipo: 'textarea', label: 'Queixa Principal' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Evolução' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'number', label: 'Dente' },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'queixa', tipo: 'textarea', label: 'Queixa Principal' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Evolução' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 
   // Aspectos Clínicos da Coroa - usando subgrupos
   { grupo: '01) Aspectos Clínicos', subgrupo: 'Integridade da Coroa', nome: 'higido', tipo: 'boolean', label: 'Hígida' },

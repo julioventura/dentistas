@@ -94,7 +94,6 @@
 
     .detail-value {
       width: 100%;
-      /* Ocupará 100% da largura disponível */
       box-sizing: border-box;
       /* Inclui o padding e border dentro da largura */
     }
@@ -371,18 +370,11 @@ input {
 // Estilos para os grupos
 .grupo-campos {
   max-height: 1000px; // Altura máxima para animação
-  overflow: hidden;
-  // transition: max-height 0.4s ease;
   transition: max-height 0.2s ease, padding 0.2s ease;
   padding: 0 0;
 
   .detail-container {
     padding: 10px 0px 0px 30px;
-
-    &:last-child {
-      border-bottom: none;
-      margin-bottom: 5px;
-    }
   }
 
   &.grupo-hidden {
@@ -403,7 +395,6 @@ input {
   text-align: left;
   color: #a80000;
 
-  background-color: #ffffff;
   padding: 4px 15px;
   margin-bottom: 6px;
   margin-top: 10px;
@@ -423,8 +414,8 @@ input {
   padding-bottom: 3px;
   padding-left: 10px;
 
-  background-color: $red-medio-dark;
-  color: #fff;
+  background-color: $red-titulo;
+  color: $white;
   // border-bottom: 2px solid $primary-color;
 
   font-size: 0.9em;
@@ -457,35 +448,25 @@ input {
 
 // Estilos para os subgrupos
 .subgrupo-titulo {
-  font-size: 0.85em;
-  font-weight: 500;
-  line-height: 1.4em;
-  text-align: left;
-  color: #410002;
-  // color: $red-dark;
-  // background-color: $red-medio;
-  background-color: #dbb9b9;
-  padding: 3px 15px 3px 10px;
-  // margin-bottom: 4px;
-  // border-bottom: 1px solid $red-light;
+
+  color: $red-dark;
+  background-color: $red-subtitulo;
+
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-
   font-size: 0.85em;
   font-weight: 500;
   line-height: 1.4em;
   text-align: left;
-  margin-bottom: 0px;
   margin-top: 15px;
+  margin-bottom: 0px;
   padding-top: 2px;
   padding-bottom: 2px;
   padding-left: 15px;
-  border: 1px solid $red;
-  border-bottom: 1px;
-
+  border: 1px solid $red-dark;
 
   span {
     font-size: 10px;
@@ -536,6 +517,8 @@ input {
 .record-details .detail-container {
 
   border: 1px solid $red;
+  border-top: 0px;
+
 
   .detail-label {
     padding-left: 10px;
@@ -569,4 +552,10 @@ input {
     }
 
   }
+
+}
+
+.record-details {
+  margin-top: 10px;
+  padding-top: 10px;
 }
