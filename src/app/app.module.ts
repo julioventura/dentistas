@@ -38,6 +38,7 @@ import { BackupComponent } from './backup/backup.component'; // Import the stand
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 import { WhatsappButtonComponent } from './homepage/whatsapp-button/whatsapp-button.component';
 import { TabelaReferenciaDialogComponent } from './erupcoes/tabela-referencia-dialog.component';
+import { ChatbotWidgetComponent } from "./homepage/chatbot-widget/chatbot-widget.component";
 
 // Serviços
 
@@ -53,7 +54,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ChatbotWidgetComponent } from "./homepage/chatbot-widget/chatbot-widget.component";
 
 // Importar o HomepageComponent como componente standalone
 import { HomepageComponent } from './homepage/homepage.component';

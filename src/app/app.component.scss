@@ -29,3 +29,21 @@ body {
   border-radius: 10px;
   box-shadow: $box-shadow;
 }
+
+/* Estilos para o chatbot flutuante global */
+.global-chatbot-widget {
+  position: fixed;
+  right: 25px;
+  bottom: 30px;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .global-chatbot-widget {
+    right: 15px;
+    bottom: 80px; /* Espaço para evitar conflito com menu móvel */
+  }
+}
