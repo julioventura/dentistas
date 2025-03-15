@@ -202,23 +202,32 @@ export class EditComponent implements OnInit, AfterViewInit {
       const grupos = this.groupByGrupo(this.FormService.campos);
       
       Object.keys(grupos).forEach(grupoNome => {
-        // Iniciar grupos expandidos
-        this.gruposExpandidos[grupoNome] = false;
+        const campos = grupos[grupoNome];
+        
+        // Verificar se algum campo no grupo tem a propriedade expandido=true
+        const temCampoExpandido = campos.some(campo => campo.expandido === true);
+        
+        // Iniciar o grupo como expandido se algum campo tiver a propriedade expandido=true
+        this.gruposExpandidos[grupoNome] = temCampoExpandido;
         
         // Verificar se o grupo tem subgrupos
-        const campos = grupos[grupoNome];
         if (this.hasSubgrupos(campos)) {
           const subgrupos = this.getUniqueSubgrupos(campos);
+          
           subgrupos.forEach(subgrupo => {
             if (subgrupo) {
-              // Iniciar subgrupos colapsados (não expandidos)
-              this.subgruposExpandidos[`${grupoNome}-${subgrupo}`] = false;
+              // Verificar se algum campo no subgrupo tem a propriedade expandido=true
+              const camposSubgrupo = campos.filter(campo => campo.subgrupo === subgrupo);
+              const temSubgrupoExpandido = camposSubgrupo.some(campo => campo.expandido === true);
+              
+              // Iniciar o subgrupo como expandido se algum campo tiver a propriedade expandido=true
+              this.subgruposExpandidos[`${grupoNome}-${subgrupo}`] = temSubgrupoExpandido;
             }
           });
         }
       });
     }
-    console.log('Grupos inicializados como expandidos, subgrupos como colapsados');
+    console.log('Grupos e subgrupos inicializados com base na propriedade expandido');
   }
   
   // Método para alternar a visibilidade de um grupo
