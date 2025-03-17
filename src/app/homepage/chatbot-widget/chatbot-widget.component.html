@@ -1,43 +1,25 @@
-<div class="chatbot-container" [class.minimized]="isMinimized" [class.fullscreen]="isFullscreen">
-  <div class="chat-header" (click)="isMinimized ? toggleChat() : null">
-    <i *ngIf="isMinimized" class="fa-solid fa-robot fa-xl"></i>
-
-    <!-- Botão fullscreen isolado de outros eventos -->
-    <button 
-      class="toggle-fullscreen-btn" 
-      *ngIf="!isMinimized" 
-      (click)="console.log('Botão de fullscreen clicado'); $event.stopPropagation(); toggleFullscreen()"
-      style="margin-right: 5px; padding: 5px; border-radius: 4px;">
-      <i class="material-icons">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</i>
-    </button>
-    
-    <span class="chatbot-title" *ngIf="!isMinimized">Assistente Virtual de I.A.</span>
-    <button class="close-btn" *ngIf="!isMinimized" (click)="$event.stopPropagation(); toggleChat()">
-      <i class="material-icons">close</i>
-    </button>
+<div class="chatbot-widget" [ngClass]="{'minimized': isMinimized, 'expanded': !isMinimized}">
+  <!-- Cabeçalho: ao clicar alterna entre minimizado e expandido -->
+  <div class="chat-header" (click)="toggleChat()">
+    <!-- Exibido quando expandido -->
+    <ng-container *ngIf="!isMinimized">
+      <span class="chatbot-title">Assistente Virtual de I.A.</span>
+      <button class="minimize-btn" (click)="toggleChat(); $event.stopPropagation()">–</button>
+    </ng-container>
+    <!-- Ícone minimizado -->
+    <ng-container *ngIf="isMinimized">
+      <i class="chatbot-icon fa-solid fa-robot"></i>
+    </ng-container>
   </div>
 
+  <!-- Corpo do chat: exibido apenas quando expandido -->
   <div class="chat-body" *ngIf="!isMinimized">
-    <div class="chat-messages">
-      <div *ngFor="let message of messages" class="message" [ngClass]="message.sender">
-        <div class="message-content">{{ message.content }}</div>
-        <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
-      </div>
-      <div *ngIf="isBotTyping" class="message bot typing">
-        <div class="typing-indicator">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-    </div>
-
+    <!-- Conteúdo do chat (pode ser modificado conforme necessário) -->
+    <div class="message">Bem-vindo! Como posso ajudar?</div>
+    <!-- Outros elementos de mensagem, input, etc. -->
     <div class="chat-input-container">
-      <input type="text" class="chat-input" placeholder="Digite sua mensagem..." [(ngModel)]="userInput"
-        (keyup.enter)="sendMessage()">
-      <button class="send-btn" (click)="sendMessage()">
-        <i class="material-icons">send</i>
-      </button>
+      <input type="text" class="chat-input" placeholder="Digite sua mensagem..." />
+      <button class="chat-send-btn">Enviar</button>
     </div>
   </div>
 </div>
