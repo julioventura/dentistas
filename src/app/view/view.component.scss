@@ -5,6 +5,16 @@ input {
   margin-bottom: 0px;
 }
 
+.record-details {
+    margin-top: 16px;
+    padding-top: 16px;
+} 
+
+.record-details-top {
+  border-bottom: 1px solid $primary-color;
+  height: 2px;
+}
+
 .detail-container {
   display: flex;
   align-items: center;
@@ -55,34 +65,26 @@ input {
   margin-left: 0px;
 }
 
-.record-details {
-  --label-width: 200px; // Valor padrão
-  margin-top: 10px;
-  padding-top: 10px;
+.record-details .detail-container {
+  display: flex;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  align-items: center;
 
+  .detail-label {
+    width: var(--label-width);
+    flex-shrink: 0;
+    padding-right: 10px;
+  }
 
+  .detail-value {
+    flex-grow: 1;
 
-  .detail-container {
-    display: flex;
-    margin-bottom: 5px;
-    margin-top: 5px;
-    align-items: center;
-
-    .detail-label {
-      width: var(--label-width);
-      flex-shrink: 0;
-      padding-right: 10px;
-    }
-
-    .detail-value {
-      flex-grow: 1;
-
-      &[readonly] {
-        color: $primary-color;
-        font-size: 16px;
-        font-weight: 600;
-        padding: 7px 10px 7px 10px;
-      }
+    &[readonly] {
+      color: $primary-color;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 7px 10px 7px 10px;
     }
   }
 }
@@ -111,8 +113,9 @@ input {
   line-height: 1.5em;
   text-align: left;
 
-  margin-bottom: 0px;
-  margin-top: 30px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+
   padding-top: 2px;
   padding-bottom: 2px;
   padding-left: 10px;
@@ -164,11 +167,8 @@ textarea {
     background: white;
   }
 
-  textarea {
+  textarea,
+  input {
     box-shadow: unset;
   }
-
-  // .url {
-  //   box-shadow: unset;
-  // }
 }

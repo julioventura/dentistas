@@ -38,6 +38,11 @@
   color: $red-dark;
 }
 
+.record-details-top {
+  border-bottom: 1px solid $red;
+  height: 2px;
+}
+
 // Estilos dos detalhes do registro
 .record-details,
 .dynamic-form-container {
@@ -202,14 +207,6 @@ input {
   padding: 10px 0;
   padding-bottom: 0px;
   margin-left: 0px;
-}
-
-.record-details {
-  background-color: #ffffff;
-  border-radius: 6px;
-  box-shadow: unset;
-  border: 1px solid #f00;
-  margin: 10px 1px 0px 1px;
 }
 
 .mat-display-large,
@@ -394,15 +391,15 @@ input {
   line-height: 1.5em;
   color: $white;
   background-color: $red-titulo;
-  
+
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   text-align: left;
   align-items: center;
 
-  margin-bottom: 0px;
-  margin-top: 30px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 
   padding: 4px 15px;
   padding-top: 2px;
@@ -538,6 +535,15 @@ input {
 }
 
 .record-details {
-  margin-top: 10px;
-  padding-top: 10px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
+
+  border: 0;
+
+  padding: 1px 1px 0px 1px;
+  padding-top: 20px;
+
+  margin-top: 16px;
+  padding: 16px;
 }
