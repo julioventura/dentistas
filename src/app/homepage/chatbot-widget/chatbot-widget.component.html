@@ -1,12 +1,18 @@
 <div class="chatbot-container" [class.minimized]="isMinimized" [class.fullscreen]="isFullscreen">
   <div class="chat-header" (click)="isMinimized ? toggleChat() : null">
-    <i *ngIf="isMinimized" class="fa-solid fa-robot fa-xl" ></i>
+    <i *ngIf="isMinimized" class="fa-solid fa-robot fa-xl"></i>
 
-    <button class="toggle-fullscreen-btn" *ngIf="!isMinimized" (click)="toggleFullscreen(); $event.stopPropagation()">
+    <!-- Botão fullscreen isolado de outros eventos -->
+    <button 
+      class="toggle-fullscreen-btn" 
+      *ngIf="!isMinimized" 
+      (click)="console.log('Botão de fullscreen clicado'); $event.stopPropagation(); toggleFullscreen()"
+      style="margin-right: 5px; padding: 5px; border-radius: 4px;">
       <i class="material-icons">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</i>
     </button>
+    
     <span class="chatbot-title" *ngIf="!isMinimized">Assistente Virtual de I.A.</span>
-    <button class="close-btn" *ngIf="!isMinimized" (click)="toggleChat(); $event.stopPropagation()">
+    <button class="close-btn" *ngIf="!isMinimized" (click)="$event.stopPropagation(); toggleChat()">
       <i class="material-icons">close</i>
     </button>
   </div>
