@@ -38,8 +38,8 @@ body.no-scroll {
 /* Estilos para o chatbot flutuante global */
 .global-chatbot-widget {
   position: fixed;
-  right: 25px;
-  bottom: 30px;
+  right: 0px;
+  top: 100px;
   z-index: 9999;
   transition: all 0.3s ease;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
