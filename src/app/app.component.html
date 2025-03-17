@@ -1,16 +1,10 @@
-<div [@routeAnimations]="prepareRoute(outlet)">
-    <router-outlet #outlet="outlet"></router-outlet>
+<div [@routeAnimations]="prepareRoute(routerOutlet)">
+  <router-outlet #routerOutlet="outlet"></router-outlet>
 </div>
 
 <ng-container *ngIf="showFooter">
-    <app-footer></app-footer>
+  <app-footer></app-footer>
 </ng-container>
 
 <!-- Chatbot Widget Global Flutuante -->
-<app-chatbot-widget 
-    class="global-chatbot-widget"
-    [dentistId]="'currentUserId'"
-    [dentistName]="'Assistente'"
-    (expansionChange)="'onChatbotExpansionChange($event)'"
-    *ngIf="'isAuthenticated'">
-</app-chatbot-widget>
+<app-chatbot-widget></app-chatbot-widget>

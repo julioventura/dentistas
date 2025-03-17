@@ -1,9 +1,6 @@
 <div class="homepage">
   <!-- Chatbot Widget (movido para o topo) -->
-  <app-chatbot-widget class="top-positioned" [dentistId]="userProfile.uid || ''"
-    [dentistName]="userProfile?.nome || 'Dentista'" *ngIf="userProfile && !isLoading"
-    (expansionChange)="onChatbotExpansionChange($event)">
-  </app-chatbot-widget>
+<app-chatbot-widget></app-chatbot-widget>
 
   <!-- WhatsApp Button - colocando com visibilidade garantida para depuração -->
   <app-whatsapp-button [phoneNumber]="formatWhatsApp(userProfile.whatsapp) || ''"

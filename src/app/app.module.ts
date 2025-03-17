@@ -59,8 +59,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { HomepageComponent } from './homepage/homepage.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: 'home', component: HomeComponent, data: { animation: '1' } },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'chatbot', component: ChatbotComponent },
   { path: 'menu', component: MenuComponent },

@@ -23,6 +23,14 @@ export class UserService {
   private userProfileSubject = new BehaviorSubject<any>(null);
   public userProfile$ = this.userProfileSubject.asObservable();
   
+  // Dados do chatbot (você pode setar esses valores conforme seu fluxo)
+  dentistId: string = 'k3';
+  dentistName: string = 'Clínica K3';
+
+  // Status do chatbot: true = expandido, false = minimizado
+  private _chatbotExpanded = new BehaviorSubject<boolean>(false);
+  chatbotExpanded$ = this._chatbotExpanded.asObservable();
+
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
@@ -238,5 +246,9 @@ export class UserService {
         }
       })
     );
+  }
+
+  setChatbotExpanded(expanded: boolean): void {
+    this._chatbotExpanded.next(expanded);
   }
 }

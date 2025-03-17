@@ -1,22 +1,28 @@
-<div class="chatbot-widget" [ngClass]="{'minimized': isMinimized, 'expanded': !isMinimized}">
-  <!-- Cabeçalho: ao clicar alterna entre minimizado e expandido -->
+<div class="chatbot-widget" 
+     [@expandAnimation]="isMinimized ? 'minimized' : 'expanded'"
+     [ngClass]="{
+       'minimized': isMinimized,
+       'expanded': !isMinimized && !isMaximized,
+       'maximized': !isMinimized && isMaximized
+     }">
+  <!-- Cabeçalho -->
   <div class="chat-header" (click)="toggleChat()">
-    <!-- Exibido quando expandido -->
-    <ng-container *ngIf="!isMinimized">
-      <span class="chatbot-title">Assistente Virtual de I.A.</span>
-      <button class="minimize-btn" (click)="toggleChat(); $event.stopPropagation()">–</button>
-    </ng-container>
-    <!-- Ícone minimizado -->
     <ng-container *ngIf="isMinimized">
       <i class="chatbot-icon fa-solid fa-robot"></i>
     </ng-container>
+    <ng-container *ngIf="!isMinimized">
+      <button class="maximize-btn" (click)="toggleMaximize(); $event.stopPropagation()">
+        <i *ngIf="!isMaximized" class="fa-solid fa-expand"></i>
+        <i *ngIf="isMaximized" class="fa-solid fa-compress"></i>
+      </button>
+      <span class="chatbot-title">Assistente Virtual de I.A.</span>
+      <button class="minimize-btn" (click)="toggleChat(); $event.stopPropagation()">–</button>
+    </ng-container>
   </div>
-
-  <!-- Corpo do chat: exibido apenas quando expandido -->
+  
+  <!-- Corpo do chat – exibido apenas se não estiver minimizado -->
   <div class="chat-body" *ngIf="!isMinimized">
-    <!-- Conteúdo do chat (pode ser modificado conforme necessário) -->
-    <div class="message">Bem-vindo! Como posso ajudar?</div>
-    <!-- Outros elementos de mensagem, input, etc. -->
+    <div class="message">Olá! Como posso ajudar?</div>
     <div class="chat-input-container">
       <input type="text" class="chat-input" placeholder="Digite sua mensagem..." />
       <button class="chat-send-btn">Enviar</button>
