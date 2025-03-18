@@ -50,7 +50,7 @@
           <h3 [ngClass]="setClass('grupo-titulo')">{{ group.key }}</h3>
 
           <!-- Percorre os campos de cada grupo -->
-          <div *ngFor="let field of group.value" class="detail-container">
+          <div *ngFor="let field of group.value" [ngClass]="setClass('detail-container')">
             <label [for]="field.controlName" [ngClass]="setClass('detail-label')" [style.width]="customLabelWidth">
               {{ field.label }}:
             </label>
@@ -95,9 +95,8 @@
             </div>
           </div>
 
-          <div class="bottom-line"></div>
-        
-        
+          <div [ngClass]="setClass('bottom-line')"> </div>
+                
         </div>
 
         <!-- HORARIOS (ARRAY SEPARADA DO FORM ACIMA) -->

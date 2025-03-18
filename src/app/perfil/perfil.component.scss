@@ -114,29 +114,34 @@ h2,
   padding-bottom: 0;
 
   &.view-mode {
-    color: $primary-color;
+    color: $primary-color; // Azul no modo de visualização
+    border-left: 1px solid $primary-color;
+    border-right: 1px solid $primary-color;
+    border-bottom: 1px solid $primary-color;
     background-color: $primary-color-light;
   }
 
   &.edit-mode {
-    color: $red-dark;
+    color: $red-dark; // Vermelho escuro no modo de edição
+    border-left: 1px solid $red;
+    border-right: 1px solid $red;
+    border-bottom: 1px solid $red;
     background-color: $red-lighter;
     margin-top: 10px;
   }
+
 }
 
 .bottom-line {
-  border-bottom: 1px solid $red;
-  padding-top: 5px;
+  // border-bottom: 1px solid $red;
+  // padding-top: 5px;
   background-color: $red-lighter;
-  border-left: 1px solid $red;
-  border-right: 1px solid $red;
+  // border-left: 1px solid $red;
+  // border-right: 1px solid $red;
+  height: 3px;
 
   &.view-mode {
-    border-bottom: 1px solid $primary-color-light;
-    background-color: $primary-color-light;
-      border-left: 1px solid $primary-color;
-        border-right: 1px solid $primary-color;
+    border: 0;
   }
 }
 
@@ -188,8 +193,8 @@ h2,
     padding-bottom: 4px;
     padding: 0px 5px;
     border: 0;
-    border-left: 1px solid $red;
-    border-right: 1px solid $red;
+    // border-left: 1px solid $red;
+    // border-right: 1px solid $red;
     align-items: flex-start;
 
     .detail-label {
@@ -197,13 +202,7 @@ h2,
       padding-right: 10px;
       padding-top: 1px;
 
-      &.view-mode {
-        color: $primary-color; // Azul no modo de visualização
-      }
 
-      &.edit-mode {
-        color: $red-dark; // Vermelho escuro no modo de edição
-      }
     }
 
     .field-input-container {
