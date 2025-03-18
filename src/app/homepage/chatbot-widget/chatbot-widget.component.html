@@ -22,10 +22,21 @@
   
   <!-- Corpo do chat – exibido apenas se não estiver minimizado -->
   <div class="chat-body" *ngIf="!isMinimized">
-    <div class="message">Olá! Como posso ajudar?</div>
+    <!-- Exibe o histórico de mensagens -->
+    <div *ngFor="let msg of conversation" class="message">
+      <span [ngClass]="{'user-message': msg.sender==='user', 'bot-message': msg.sender==='bot'}">
+        {{ msg.content }}
+      </span>
+    </div>
+    
+    <!-- Container de input para enviar nova mensagem -->
     <div class="chat-input-container">
-      <input type="text" class="chat-input" placeholder="Digite sua mensagem..." />
-      <button class="chat-send-btn">Enviar</button>
+      <input type="text"
+             class="chat-input"
+             placeholder="Digite sua mensagem..."
+             [(ngModel)]="userInput"
+             (keyup.enter)="sendMessage()" />
+      <button class="chat-send-btn" (click)="sendMessage()">Enviar</button>
     </div>
   </div>
 </div>

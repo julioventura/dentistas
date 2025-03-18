@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -92,7 +92,7 @@ export class ChatbotWidgetComponent implements OnInit {
          this.addBotMessage(`Olá, ${userMsg}! O chatbot estará disponível em alguns dias.`);
     } else {
          // Para as mensagens subsequentes
-         this.addBotMessage("Estamos em obras. ;-)");
+         this.addBotMessage("Volte em breve!  ;-)");
     }
     this.userInput = '';
   }

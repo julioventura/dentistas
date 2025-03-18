@@ -33,7 +33,8 @@
   &.expanded {
     /* Estado expandido normal */
     width: calc(100vw - 40px);
-    max-width: 400px; /* Largura máxima desejada */
+    max-width: 400px;
+    /* Largura máxima desejada */
     max-height: calc(100vh - 40px);
     background-color: #fff;
     border-radius: 10px;
@@ -59,8 +60,10 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 20px; /* Padding interno */
-    box-sizing: border-box; /* Adicionado para incluir padding no cálculo do width e height */
+    padding: 20px;
+    /* Padding interno */
+    box-sizing: border-box;
+    /* Inclui padding no cálculo do width e height */
   }
 }
 
@@ -108,38 +111,114 @@
   overflow-y: auto;
   font-size: 14px;
   background-color: #f5f5f5;
+
+  .message {
+    max-width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 10px;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+  }
+
+  .bot-balao {
+    max-width: 70%;
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 10px;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+  }
+
+  .user-balao {
+    max-width: 70%;
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 10px;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+  }
+
+
+  /* Balão para as mensagens do chatbot (alinhados à esquerda) */
+  .user-message {
+    background-color: lighten($primary-color, 40%); // Versão mais clara da cor primária
+    color: $primary-color-dark;
+    align-self: flex-start;
+    position: relative;
+    margin-right: auto;
+    padding: 10px 14px; // Mais espaçamento interno
+    border: 1px solid lighten($primary-color, 35%);
+    border-radius: 15px;
+  }
+
+  .user-message:after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent lighten($primary-color, 40%) transparent transparent;
+  }
+
+  /* Balão para as mensagens do usuário (alinhados à direita) */
+  .bot-message {
+    // background-color: #2A7AC3;
+    color: $primary-color-dark;
+    font-weight: 500;
+    align-self: flex-end;
+    /* margin-left: auto; */
+    /* position: relative; */
+    /* max-width: 70%; */
+    padding: 10px 14px;
+  }
+
+  .bot-message:after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent $primary-color;
+  }
 }
 
 /* Container de input */
-.chat-input-container {
-  display: flex;
-  gap: 8px;
-  padding: 10px;
-  background-color: #fff;
-  border-top: 1px solid #ddd;
+    .chat-input-container {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      background-color: #fff;
+      border-top: 1px solid #ddd;
 
-  .chat-input {
-    flex: 1;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
+      .chat-input {
+        flex: 1;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
 
-  .chat-send-btn {
-    padding: 8px 12px;
-    background-color: #4a67de;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-}
+      .chat-send-btn {
+        padding: 8px 12px;
+        background-color: #4a67de;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    }
 
-/* Ajustes responsivos */
-@media (max-width: 480px) {
-  .chatbot-widget.expanded,
-  .chatbot-widget.maximized {
-    max-width: calc(100vw - 40px);
-  }
-}
+    /* Ajustes responsivos */
+    @media (max-width: 480px) {
+
+      .chatbot-widget.expanded,
+      .chatbot-widget.maximized {
+        max-width: calc(100vw - 40px);
+      }
+    }
