@@ -109,6 +109,38 @@ h2,
 
 }
 
+.field-group {
+  background-color: $white;
+  padding-bottom: 0;
+
+  &.view-mode {
+    color: $primary-color;
+    background-color: $primary-color-light;
+  }
+
+  &.edit-mode {
+    color: $red-dark;
+    background-color: $red-lighter;
+    margin-top: 10px;
+  }
+}
+
+.bottom-line {
+  border-bottom: 1px solid $red;
+  padding-top: 5px;
+  background-color: $red-lighter;
+  border-left: 1px solid $red;
+  border-right: 1px solid $red;
+
+  &.view-mode {
+    border-bottom: 1px solid $primary-color-light;
+    background-color: $primary-color-light;
+      border-left: 1px solid $primary-color;
+        border-right: 1px solid $primary-color;
+  }
+}
+
+
 // Estilos do formulário de perfil
 .profile-form {
   background-color: #fff;
@@ -144,17 +176,20 @@ h2,
     }
 
     &.edit-mode {
-      color: $red-dark; // Vermelho escuro no modo de edição
-      border-color: $red-light;
+      color: $white; // Vermelho escuro no modo de edição
+      border: 1px solid $red;
+      background-color: $red-dark;
     }
   }
 
   // Container de cada campo
   .detail-container {
     display: flex;
-    margin-bottom: 4px;
-    padding: 0;
-    border-bottom: 0;
+    padding-bottom: 4px;
+    padding: 0px 5px;
+    border: 0;
+    border-left: 1px solid $red;
+    border-right: 1px solid $red;
     align-items: flex-start;
 
     .detail-label {
@@ -675,9 +710,22 @@ textarea {
   }
 
   .add-perfil-form {
-    border: 1px solid $red-light;
+    border: 1px solid #ff0000;
+    border: 2px solid #ffdfdf;
+    /* border-color: #ffdfdf; */
     border-radius: 4px;
     padding: 16px;
+
+    &.view-mode {
+      color: $primary-color;
+      background-color: $primary-color-light;
+    }
+
+    &.edit-mode {
+      color: $red-dark;
+      background-color: $red-lighter;
+    }
+
 
     .input-group {
       display: flex;

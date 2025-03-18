@@ -1,6 +1,4 @@
-<div class="chatbot-widget" 
-     [@expandAnimation]="isMinimized ? 'minimized' : 'expanded'"
-     [ngClass]="{
+<div class="chatbot-widget" [@expandAnimation]="isMinimized ? 'minimized' : 'expanded'" [ngClass]="{
        'minimized': isMinimized,
        'expanded': !isMinimized && !isMaximized,
        'maximized': !isMinimized && isMaximized
@@ -19,23 +17,20 @@
       <button class="minimize-btn" (click)="toggleChat(); $event.stopPropagation()">–</button>
     </ng-container>
   </div>
-  
+
   <!-- Corpo do chat – exibido apenas se não estiver minimizado -->
   <div class="chat-body" *ngIf="!isMinimized">
     <!-- Exibe o histórico de mensagens -->
-    <div *ngFor="let msg of conversation" class="message">
-      <span [ngClass]="{'user-message': msg.sender==='user', 'bot-message': msg.sender==='bot'}">
+    <div *ngFor="let msg of conversation">
+      <div [ngClass]="msg.sender==='user' ? 'user-balao' : 'bot-balao'">
         {{ msg.content }}
-      </span>
+      </div>
     </div>
-    
+
     <!-- Container de input para enviar nova mensagem -->
     <div class="chat-input-container">
-      <input type="text"
-             class="chat-input"
-             placeholder="Digite sua mensagem..."
-             [(ngModel)]="userInput"
-             (keyup.enter)="sendMessage()" />
+      <input type="text" class="chat-input" placeholder="Digite sua mensagem..." [(ngModel)]="userInput"
+        (keyup.enter)="sendMessage()" />
       <button class="chat-send-btn" (click)="sendMessage()">Enviar</button>
     </div>
   </div>
