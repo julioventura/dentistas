@@ -100,8 +100,7 @@
 
 
     <!-- Para subcollections -->
-    <div id="02" *ngIf="!FormService.isLoading && subcollection" class="record-details">
-      <!-- <div id="02" *ngIf="!FormService.isLoading && subcollection" class="record-details"> -->
+    <div id="02" *ngIf="!FormService.isLoading && subcollection">
 
       <form [formGroup]="FormService.fichaForm" [style.--label-width]="customLabelWidth">
         <!-- Campos fixos (sem grupo) -->
