@@ -47,7 +47,7 @@
       [style.--label-width]="customLabelWidth">
 
 
-      <div class="record-details-top">&nbsp;</div>
+      <!-- <div class="record-details-top">&nbsp;</div> -->
       <div id="01" *ngFor="let campo of FormService.campos">
 
         <div
@@ -164,7 +164,7 @@
                 </div>
 
                 <!-- Agrupar por subgrupos dentro de cada grupo -->
-                <div class="record-details-top">&nbsp;</div>
+                <!-- <div class="record-details-top">&nbsp;</div> -->
 
                 <ng-container
                   *ngFor="let subgrupoObj of groupBySubgrupo(grupo.value) | keyvalue: sortByKeys; trackBy: trackByKey">

@@ -17,13 +17,19 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background-color: #4a67de;
+    
+    // Ancorar verticalmente no centro
+    top: calc(50% - 25px);
+    right: 20px;
+    
+    background-color: $primary-color; // Usa a variável para cor
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.425);
 
     .chat-header {
       background-color: unset;
     }
 
-    /* Ícone centralizado */
+    /* Ícone centralizado com sombra para efeito 3D */
     .chatbot-icon {
       font-size: 24px;
       color: #fff;
@@ -65,6 +71,22 @@
     box-sizing: border-box;
     /* Inclui padding no cálculo do width e height */
   }
+}
+
+/* Posiciona o ícone minimizado no topo da página */
+.chatbot-widget.minimized.top-icon {
+  top: 20px; // 20px de margem do topo
+}
+
+/* Posiciona o ícone minimizado no centro vertical da página */
+.chatbot-widget.minimized.center-icon {
+  top: calc(50% - 25px); // 25px = metade da altura (50px/2)
+}
+
+/* Posiciona o ícone minimizado na base da página */
+.chatbot-widget.minimized.bottom-icon {
+  top: auto;
+  bottom: 20px; // 20px de margem da base
 }
 
 /* Cabeçalho do chat */

@@ -1,5 +1,5 @@
 <div class="chatbot-widget" [@expandAnimation]="isMinimized ? 'minimized' : 'expanded'" [ngClass]="{
-       'minimized': isMinimized,
+       'minimized bottom-icon': isMinimized,
        'expanded': !isMinimized && !isMaximized,
        'maximized': !isMinimized && isMaximized
      }">
