@@ -121,7 +121,7 @@ input {
 
   background-color: $primary-color;
   color: #fff;
-  // border-bottom: 2px solid $primary-color;
+  border-radius: 5px;
 
 }
 
@@ -140,6 +140,8 @@ input {
   padding-bottom: 2px;
   padding-left: 15px;
   border: 1px solid $primary-color;
+  border: 1px solid #badbff;
+  border-radius: 5px;
 }
 
 textarea {

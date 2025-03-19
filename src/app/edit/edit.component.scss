@@ -56,18 +56,25 @@
 
     .detail-value {
       color: $red-dark;
-      border: 1px solid $red-dark;
+      border: 1px solid $red;
+
+            &:focus {
+                outline: none;
+                background-color: $red-light;
+                border: 2px solid $red;
+              }
     }
 
     input,
     select {
       font-size: 14px;
-    }
+      background-color: white;
 
-    input:focus,
-    select:focus {
-      outline: none;
-      border: 1px solid $red;
+      &:focus {
+        outline: none;
+        background-color: $red-light;
+        border: 2px solid $red;
+      }
     }
 
     textarea {
@@ -78,7 +85,7 @@
       &:focus {
         outline: none;
         background-color: $red-light;
-        border: 1px solid red;
+        border: 2px solid $red;
       }
     }
 
@@ -89,10 +96,10 @@
       text-align: left;
 
       &:focus {
-        background-color: $white;
+        background-color: $red-light;
         outline: none;
         color: $red-dark;
-        border: 2pt solid $red;
+        border: 2px solid $red;
         font-weight: bold;
       }
     }
@@ -406,6 +413,8 @@ input {
   padding-bottom: 2px;
   padding-left: 10px;
 
+  border-radius: 5px;
+
   span {
     font-size: 12px;
     transition: transform 0.3s ease;
@@ -425,7 +434,8 @@ input {
 .subgrupo-titulo {
 
   color: $red-dark;
-  background-color: $red-subtitulo;
+  background-color: $red-light;
+  border-radius: 5px;
 
   font-size: 0.85em;
   font-weight: 500;
@@ -438,14 +448,13 @@ input {
   align-items: center;
 
   margin-top: 10px;
-  margin-bottom: 0px;
+  margin-bottom: 10px;
 
   padding-top: 2px;
   padding-right: 15px;
   padding-bottom: 2px;
   padding-left: 15px;
 
-  border: 1px solid $red-dark;
 
   span {
     font-size: 10px;
@@ -467,9 +476,10 @@ input {
   padding: 0;
   background: #feeaea;
   border: 1px solid $red-light;
+  border-bottom: 0;
 
   .detail-container {
-    padding: 0px 0px 0px 5px; // Indentação maior para campos de subgrupo
+    padding: 0px 2px 0px 5px;
   }
 
   &.subgrupo-hidden {
@@ -495,8 +505,7 @@ input {
 
 .record-details .detail-container {
 
-  border: 1px solid $red;
-  border-top: 0px;
+  border-bottom: 1px solid $red-light;
   background: $red-lighter;
 
   .detail-label {

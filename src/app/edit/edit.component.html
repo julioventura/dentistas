@@ -35,7 +35,7 @@
 
       <!-- Campos não agrupados -->
       <div class="record-details">
-        <div class="record-details-top">&nbsp;</div>
+        <!-- <div class="record-details-top">&nbsp;</div> -->
         <div id="01" *ngFor="let campo of FormService.camposNaoAgrupados">
           <div *ngIf="campo.nome !== 'id'" class="detail-container">
             <label [for]="campo.nome" class="detail-label">{{ campo.label }}</label>
@@ -148,7 +148,7 @@
                 <span *ngIf="!gruposExpandidos[grupo.key]">▼</span>
               </div>
 
-              <div class="record-details-top">&nbsp;</div>
+              <!-- <div class="record-details-top">&nbsp;</div> -->
 
 
               <div class="grupo-campos" [ngClass]="{'grupo-hidden': !gruposExpandidos[grupo.key]}">
