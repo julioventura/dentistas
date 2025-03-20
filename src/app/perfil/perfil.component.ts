@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { UtilService } from '../shared/utils/util.service';
@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { getProfileFormConfig, getGroupedProfileFields, ProfileField } from './profile-fields.constants';
 import { finalize } from 'rxjs/operators';
 import { from } from 'rxjs';
+import { CanComponentDeactivate } from '../shared/guards/can-deactivate.guard';
 
 interface Horario {
   dia: string;
@@ -35,7 +36,7 @@ interface Convenio {
   styleUrls: ['./perfil.component.scss'],
   standalone: false
 })
-export class PerfilComponent implements OnInit {
+export class PerfilComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   profileForm: FormGroup;
   userProfileData: any = {};
   isLoading = true;
@@ -74,6 +75,9 @@ export class PerfilComponent implements OnInit {
   novoConvenio: Convenio = {
     nomeConvenio: ''
   };
+
+  // (Opcional) Armazena a referência para o handler do beforeunload
+  private boundBeforeUnloadHandler!: (event: BeforeUnloadEvent) => void;
 
   constructor(
     private fb: FormBuilder,
@@ -120,6 +124,10 @@ export class PerfilComponent implements OnInit {
         this.horarios = [];
       }
     }
+
+    // Se desejar também prevenir o fechamento/reload da página com alterações não salvas:
+    this.boundBeforeUnloadHandler = this.beforeUnloadHandler.bind(this);
+    window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
   }
 
   loadUserProfile() {
@@ -338,14 +346,14 @@ export class PerfilComponent implements OnInit {
   }
 
   voltar(): void {
-    if (this.isEditing) {
-      if (confirm('Deseja sair sem salvar as alterações?')) {
+    if (!this.hasUnsavedChanges() || confirm('Existem alterações não salvas. Deseja realmente sair?')) {
+      if (this.isEditing) {
         this.isEditing = false;
         this.loadUserProfile();
         this.profileForm.disable();
+      } else {
+        this.router.navigate(['/']);
       }
-    } else {
-      this.router.navigate(['/']);
     }
   }
 
@@ -498,7 +506,31 @@ export class PerfilComponent implements OnInit {
     }
   }
 
-
-
+  // Método para identificar alterações não salvas
+  private hasUnsavedChanges(): boolean {
+    // Exemplo: se estiver em modo de edição e houver alterações, retorne true.
+    return this.isEditing; // Ajuste essa condição conforme sua lógica
+  }
+  
+  // Método chamado pelo CanDeactivateGuard
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges()) {
+      return confirm('Existem alterações não salvas. Deseja realmente sair?');
+    }
+    return true;
+  }
+  
+  // Opicional: trata o evento de beforeunload
+  beforeUnloadHandler(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges()) {
+      event.preventDefault();
+      event.returnValue = 'Existem alterações não salvas!';
+    }
+  }
+  
+  ngOnDestroy(): void {
+    window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
+    // Outros códigos de destruição...
+  }
 
 }

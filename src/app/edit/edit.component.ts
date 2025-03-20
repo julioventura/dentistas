@@ -20,7 +20,7 @@
  * 13. camposAgrupados (getter): Retorna os campos agrupados para utilização no template.
  */
 
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
@@ -32,6 +32,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { CamposService } from '../shared/campos.service'; // Serviço para carregar campos de coleções
 import { KeyValue } from '@angular/common';
 import { fadeAnimation } from '../animations/fade.animation';
+import { CanComponentDeactivate } from '../shared/guards/can-deactivate.guard';
 
 @Component({
   selector: 'app-edit',
@@ -41,7 +42,7 @@ import { fadeAnimation } from '../animations/fade.animation';
   encapsulation: ViewEncapsulation.Emulated, // Sobre encapsulamento, para permitir uso global de variáveis CSS (None)
   animations: [fadeAnimation]
 })
-export class EditComponent implements OnInit, AfterViewInit {
+export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanComponentDeactivate {
   @ViewChild('nomeInput') nomeInput?: ElementRef;
   userId: string | null = null;
   collection!: string;
@@ -65,6 +66,8 @@ export class EditComponent implements OnInit, AfterViewInit {
   
   // Adicione esta propriedade para controlar subgrupos expandidos
   subgruposExpandidos: { [key: string]: boolean } = {};
+  
+  private boundBeforeUnloadHandler!: (event: BeforeUnloadEvent) => void;
   
   constructor(
     private route: ActivatedRoute,
@@ -146,6 +149,10 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.util.goHome();
       }
     });
+
+    // Armazena a referência para remover depois
+    this.boundBeforeUnloadHandler = this.beforeUnloadHandler.bind(this);
+    window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
   }
   
   // Método para inicializar todos os grupos como fechados
@@ -417,13 +424,18 @@ export class EditComponent implements OnInit, AfterViewInit {
    * - Navega à rota definida.
    * Retorna: void.
    */
-  voltar() {
-    console.log("voltar()");
-    console.log("subcollection =", this.subcollection);
-    const viewPath = this.subcollection ?
+  voltar(): void {
+      if (confirm('Deseja sair sem salvar as alterações?')) {
+        // Opcional: recarregar os dados originais ou resetar o formulário
+        this.FormService.fichaForm.reset(this.FormService.registro);
+        this.router.navigate([this.getViewPath()]);
+      }
+  }
+
+  private getViewPath(): string {
+    return this.subcollection ?
       `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
       `view/${this.collection}/${this.id}`;
-    this.router.navigate([viewPath]);
   }
 
   /**
@@ -600,6 +612,31 @@ export class EditComponent implements OnInit, AfterViewInit {
    */
   isValidSubgrupo(subgrupoKey: string): boolean {
     return subgrupoKey !== undefined && subgrupoKey !== null && subgrupoKey.trim() !== '';
+  }
+  
+  private hasUnsavedChanges(): boolean {
+    return this.FormService.fichaForm && this.FormService.fichaForm.dirty;
+  }
+
+  // Método chamado pelo CanDeactivateGuard
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges()) {
+      return confirm('Existem alterações não salvas. Deseja realmente sair?');
+    }
+    return true;
+  }
+  
+  beforeUnloadHandler(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges()) {
+      // Previne o fechamento/recarregamento e exibe a mensagem padrão do navegador
+      event.preventDefault();
+      event.returnValue = 'Existem alterações não salvas!';
+    }
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
+    // Seu código de destruição existente...
   }
   
 }

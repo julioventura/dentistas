@@ -39,6 +39,7 @@ import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 import { WhatsappButtonComponent } from './homepage/whatsapp-button/whatsapp-button.component';
 import { TabelaReferenciaDialogComponent } from './erupcoes/tabela-referencia-dialog.component';
 import { ChatbotWidgetComponent } from "./homepage/chatbot-widget/chatbot-widget.component";
+import { CanDeactivateGuard } from './shared/guards/can-deactivate.guard';
 
 // Serviços
 
@@ -66,7 +67,7 @@ const routes: Routes = [
   { path: 'menu', component: MenuComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'config', component: ConfigComponent },
-  { path: 'perfil', component: PerfilComponent, data: { animation: '2' } },
+  { path: 'perfil', component: PerfilComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '2' } },
   { path: 'homepage-intro', component: HomepageIntroComponent, data: { animation: '3' } },
   { path: 'menu-config', component: MenuConfigComponent },
   { path: 'home-config', component: HomeConfigComponent },
@@ -77,14 +78,14 @@ const routes: Routes = [
   { path: 'camposRegistro', component: CamposRegistroComponent },
   { path: 'list/:collection', component: ListComponent, data: { animation: '4' } },
   { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '5' } },
-  { path: 'edit/:collection/:id', component: EditComponent, data: { animation: '6' } },
+  { path: 'edit/:collection/:id', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '6' } },
 
   // Rota para o componente fichas
   { path: 'fichas', component: FichasComponent },
   { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '7' } },
   { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '8' } },
-  { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, data: { animation: '9' } },
-  { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent, data: { animation: '10' } },
+  { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '9' } },
+  { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '10' } },
 
   // Rota para o componente Backup
   { path: 'backup', component: BackupComponent },
