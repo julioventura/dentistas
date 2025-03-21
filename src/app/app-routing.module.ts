@@ -1,0 +1,61 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+// Componentes da aplicação
+import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
+import { ChatbotComponent } from './chatbot/chatbot.component';
+import { MenuComponent } from './menu/menu.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ConfigComponent } from './config/config.component';
+import { PerfilComponent } from './perfil/perfil.component';
+import { HomepageIntroComponent } from './homepage/homepage-intro/homepage-intro.component';
+import { MenuConfigComponent } from './menu/menu-config/menu-config.component';
+import { HomeConfigComponent } from './home/home-config/home-config.component';
+import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
+import { ErupcoesComponent } from './erupcoes/erupcoes.component';
+import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
+import { ListComponent } from './list/list.component';
+import { ViewComponent } from './view/view.component';
+import { EditComponent } from './edit/edit.component';
+import { FichasComponent } from './fichas/fichas.component';
+import { BackupComponent } from './backup/backup.component';
+import { HomepageComponent } from './homepage/homepage.component';
+
+// Guards
+import { CanDeactivateGuard } from './shared/guards/can-deactivate.guard';
+import { UsernameGuard } from './shared/guards/username.guard';
+
+const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'chatbot', component: ChatbotComponent },
+  { path: 'menu', component: MenuComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'config', component: ConfigComponent },
+  { path: 'perfil', component: PerfilComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '2' } },
+  { path: 'homepage-intro', component: HomepageIntroComponent, data: { animation: '3' } },
+  { path: 'menu-config', component: MenuConfigComponent },
+  { path: 'home-config', component: HomeConfigComponent },
+  { path: 'importar-cadastro', component: ImportarCadastroComponent },
+  { path: 'erupcoes', component: ErupcoesComponent },
+  { path: 'camposRegistro', component: CamposRegistroComponent },
+  { path: 'list/:collection', component: ListComponent, data: { animation: '4' } },
+  { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '5' } },
+  { path: 'edit/:collection/:id', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '6' } },
+  { path: 'fichas', component: FichasComponent },
+  { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '7' } },
+  { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '8' } },
+  { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '9' } },
+  { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '10' } },
+  { path: 'backup', component: BackupComponent },
+  { path: ':username', component: HomepageComponent, canActivate: [UsernameGuard] },
+  { path: '**', component: HomeComponent, data: { animation: '11' } }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }

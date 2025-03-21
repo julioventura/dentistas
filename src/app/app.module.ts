@@ -58,6 +58,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 // Importar o HomepageComponent como componente standalone
 import { HomepageComponent } from './homepage/homepage.component';
+import { AppRoutingModule } from './app-routing.module';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -128,7 +129,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(routes),
+    AppRoutingModule, // Importamos o módulo de rotas separado
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
