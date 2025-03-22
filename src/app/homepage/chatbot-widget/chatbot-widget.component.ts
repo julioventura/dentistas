@@ -1,15 +1,9 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { UserService } from '../../shared/user.service';
-
-// Interface de mensagem (pode estar em um arquivo separado, se preferir)
-export interface Message {
-  content: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-}
+import { AiChatService, Message } from './ai-chat.service';
 
 @Component({
   selector: 'app-chatbot-widget',
@@ -41,10 +35,9 @@ export interface Message {
   ]
 })
 export class ChatbotWidgetComponent implements OnInit {
+  @Input() dentistId: string = '';
+  @Input() dentistName: string = '';
 
-  dentistId!: string;
-  dentistName!: string;
-  
   // Estado de visualização do widget
   isMinimized = true;
   isMaximized = false;
@@ -53,15 +46,33 @@ export class ChatbotWidgetComponent implements OnInit {
   conversation: Message[] = [];
   userInput: string = '';
   waitingForName: boolean = true;  // Controla se estamos aguardando a resposta com o nome
+  sessionId: string = ''; // Add this property
+  isLoading: boolean = false; // Add this property
 
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService,
+    private aiChatService: AiChatService // Add this service
+  ) { }
 
   ngOnInit(): void {
-    this.dentistId = this.userService.dentistId;
-    this.dentistName = this.userService.dentistName;
+    // Use dados do dentista do serviço se não fornecidos via Input
+    if (!this.dentistId) {
+      this.dentistId = this.userService.dentistId;
+    }
+    if (!this.dentistName) {
+      this.dentistName = this.userService.dentistName;
+    }
+    
     this.userService.setChatbotExpanded(!this.isMinimized);
-    // Envia a mensagem inicial
-    this.addBotMessage("Olá! Qual é o seu nome?");
+    
+    // Criar uma nova sessão de chat
+    this.aiChatService.createNewSession(this.dentistId).subscribe(
+      sessionId => {
+        this.sessionId = sessionId;
+        // Envia a mensagem inicial
+        this.addBotMessage("Olá! Qual é o seu nome?");
+      }
+    );
   }
 
   addBotMessage(message: string): void {
@@ -71,6 +82,12 @@ export class ChatbotWidgetComponent implements OnInit {
          timestamp: new Date()
     };
     this.conversation.push(msg);
+    
+    // Salva a mensagem no histórico
+    if (this.sessionId) {
+      this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, msg)
+        .subscribe();
+    }
   }
 
   addUserMessage(message: string): void {
@@ -84,17 +101,59 @@ export class ChatbotWidgetComponent implements OnInit {
 
   sendMessage(): void {
     if (!this.userInput.trim()) return;
-    const userMsg = this.userInput.trim();
-    this.addUserMessage(userMsg);
-    if (this.waitingForName) {
-         // Primeira resposta: trata o valor como nome
-         this.waitingForName = false;
-         this.addBotMessage(`Olá, ${userMsg}! O chatbot estará disponível em alguns dias.`);
-    } else {
-         // Para as mensagens subsequentes
-         this.addBotMessage("Volte em breve!  ;-)");
+    
+    const userMessage: Message = {
+      content: this.userInput,
+      sender: 'user',
+      timestamp: new Date()
+    };
+    
+    // Adiciona mensagem do usuário à conversa
+    this.conversation.push(userMessage);
+    
+    // Salva a mensagem do usuário no histórico
+    if (this.sessionId) {
+      this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, userMessage)
+        .subscribe();
     }
-    this.userInput = '';
+    
+    const messageText = this.userInput;
+    this.userInput = ''; // Limpa o input
+    
+    // Se estamos esperando o nome do usuário
+    if (this.waitingForName) {
+      this.waitingForName = false;
+      this.addBotMessage(`Prazer em conhecê-lo, ${messageText}! Como posso ajudá-lo hoje?`);
+      return;
+    }
+    
+    // Mostra indicador de carregamento
+    this.isLoading = true;
+    
+    // Chama o serviço de IA
+    const context = { 
+      dentistName: this.dentistName,
+      conversation: this.conversation 
+    };
+    
+    this.aiChatService.sendMessage(messageText, this.sessionId, this.dentistId, context)
+      .subscribe({
+        next: (response) => {
+          // Adiciona resposta do bot à conversa
+          this.conversation.push(response);
+          // Salva a resposta do bot no histórico
+          if (this.sessionId) {
+            this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, response)
+              .subscribe();
+          }
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error getting response from AI', err);
+          this.addBotMessage('Desculpe, tive um problema ao processar sua mensagem. Por favor, tente novamente.');
+          this.isLoading = false;
+        }
+      });
   }
 
   toggleChat(): void {

@@ -10,5 +10,7 @@ export const environment = {
     measurementId: "G-657HTS1CNX"
   },
   aiChatApiUrl: 'https://api.dentistas.com.br/ai', // URL da API de chatbot
-
+  openaiApiKey: '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', // DentistascombrApp
+  openaiApiUrl: 'https://api.openai.com/v1/chat/completions',
+  openaiModel: 'gpt-4o-mini'
 };

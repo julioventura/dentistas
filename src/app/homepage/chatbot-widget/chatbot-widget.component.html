@@ -1,37 +1,55 @@
-<div class="chatbot-widget" [@expandAnimation]="isMinimized ? 'minimized' : 'expanded'" [ngClass]="{
-       'minimized bottom-icon': isMinimized,
-       'expanded': !isMinimized && !isMaximized,
-       'maximized': !isMinimized && isMaximized
-     }">
-  <!-- Cabeçalho -->
-  <div class="chat-header" (click)="toggleChat()">
-    <ng-container *ngIf="isMinimized">
-      <i class="chatbot-icon fa-solid fa-robot"></i>
-    </ng-container>
-    <ng-container *ngIf="!isMinimized">
-      <button class="maximize-btn" (click)="toggleMaximize(); $event.stopPropagation()">
-        <i *ngIf="!isMaximized" class="fa-solid fa-expand"></i>
-        <i *ngIf="isMaximized" class="fa-solid fa-compress"></i>
+<div class="chatbot-container" 
+     [ngClass]="{'minimized': isMinimized, 'maximized': isMaximized}" 
+     (click)="isMinimized ? toggleChat() : null">
+  <div class="chatbot-header">
+    <!-- Botão de maximizar (no lado esquerdo) -->
+    <div class="chatbot-maximize" *ngIf="!isMinimized">
+      <button class="maximize-button" (click)="$event.stopPropagation(); toggleMaximize()">
+        <i class="fas" [ngClass]="isMaximized ? 'fa-compress' : 'fa-expand'"></i>
       </button>
-      <span class="chatbot-title">Assistente Virtual de I.A.</span>
-      <button class="minimize-btn" (click)="toggleChat(); $event.stopPropagation()">–</button>
-    </ng-container>
-  </div>
-
-  <!-- Corpo do chat – exibido apenas se não estiver minimizado -->
-  <div class="chat-body" *ngIf="!isMinimized">
-    <!-- Exibe o histórico de mensagens -->
-    <div *ngFor="let msg of conversation">
-      <div [ngClass]="msg.sender==='user' ? 'user-balao' : 'bot-balao'">
-        {{ msg.content }}
-      </div>
     </div>
 
-    <!-- Container de input para enviar nova mensagem -->
-    <div class="chat-input-container">
-      <input type="text" class="chat-input" placeholder="Digite sua mensagem..." [(ngModel)]="userInput"
-        (keyup.enter)="sendMessage()" />
-      <button class="chat-send-btn" (click)="sendMessage()">Enviar</button>
+    <!-- Título (centralizado) -->
+    <div class="chatbot-title">
+      <i class="fas fa-robot"></i>
+      <span>Assistente Virtual</span>
+    </div>
+    
+    <!-- Controles (lado direito) -->
+    <div class="chatbot-controls">
+      <button class="minimize-button" (click)="$event.stopPropagation(); toggleChat()">
+        <i class="fas" [ngClass]="isMinimized ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </button>
+    </div>
+  </div>
+  
+  <div class="chatbot-body" *ngIf="!isMinimized">
+    <div class="messages-container">
+      <div *ngFor="let message of conversation" 
+           class="message-bubble" 
+           [ngClass]="message.sender === 'user' ? 'user-message' : 'bot-message'">
+        <div class="message-content">{{ message.content }}</div>
+      </div>
+      
+      <!-- Indicador de carregamento -->
+      <div *ngIf="isLoading" class="message-bubble bot-message">
+        <div class="message-content typing-indicator">
+          <span>Digitando</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="input-container">
+      <input 
+        type="text"
+        placeholder="Digite sua mensagem..."
+        [(ngModel)]="userInput"
+        (keyup.enter)="sendMessage()"
+        class="message-input"
+      >
+      <button class="send-button" (click)="sendMessage()">
+        <i class="fas fa-paper-plane"></i>
+      </button>
     </div>
   </div>
 </div>

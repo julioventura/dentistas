@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';  // Importe o CommonModule
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpClientModule } from '@angular/common/http';
 
 // Firebase e Firestore
 import { AngularFireModule } from '@angular/fire/compat';
@@ -139,6 +140,7 @@ const routes: Routes = [
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    HttpClientModule,
     BackupComponent,
     ChatbotWidgetComponent,
     HomepageComponent,
