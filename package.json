@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "setup": "node setup-env.js",
+    "prestart": "npm run setup",
+    "prebuild": "npm run setup"
   },
   "private": true,
   "dependencies": {

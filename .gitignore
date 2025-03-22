@@ -42,14 +42,11 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Ignore the environments folder
-src/environments/
-"node_modules/" 
-"*.zip"
-
-# Adicione ao .gitignore
+# Environment files - Adicione estas linhas
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.development
+.env.test
+.env.production
+src/environments/environment.ts
+src/environments/environment.prod.ts
