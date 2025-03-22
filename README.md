@@ -24,11 +24,10 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 
 ## Configuração do Ambiente
 
-Para configurar o ambiente de desenvolvimento:
-
-1. Crie um arquivo `environment.ts` na pasta `src/environments/` baseado no modelo `environment.template.ts`
-2. Substitua `SUA_CHAVE_API_AQUI` pela sua chave de API OpenAI
-3. Nunca comite o arquivo `environment.ts` (ele está no .gitignore)
+1. Copie `.env.template` para `.env` na raiz do projeto
+2. Adicione sua própria chave da API OpenAI ao arquivo `.env`
+3. Execute `npm run setup` para gerar os arquivos de ambiente
+4. Nunca comite arquivos `.env` ou `environment.ts`
 
 ## Further help
 
