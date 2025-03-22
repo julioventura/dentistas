@@ -64,7 +64,10 @@ export class AiChatService {
    * Envia uma mensagem para a API da OpenAI e retorna a resposta
    */
   sendMessage(message: string, sessionId: string, dentistId: string, context?: any): Observable<Message> {
-    console.log('Sending message to OpenAI:', message, 'for session:', sessionId);
+    console.log('Enviando mensagem para OpenAI:', message);
+    
+    // Verificação da chave API - ADICIONE ESTA LINHA
+    console.log("Usando chave API:", environment.openaiApiKey.substring(0, 5) + "...");
     
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -90,8 +93,14 @@ export class AiChatService {
           max_tokens: 1000
         };
         
+        // Log do payload - ADICIONE ESTA LINHA
+        console.log('Payload para OpenAI:', payload);
+        
         return this.http.post<OpenAIResponse>(this.openaiApiUrl, payload, { headers }).pipe(
           map(response => {
+            // Log da resposta - ADICIONE ESTA LINHA
+            console.log('Resposta da OpenAI:', response);
+            
             const botMessage: Message = {
               content: response.choices[0].message.content.trim(),
               sender: 'bot',
@@ -100,7 +109,12 @@ export class AiChatService {
             return botMessage;
           }),
           catchError(error => {
-            console.error('Error calling OpenAI API:', error);
+            // Log detalhado do erro - ADICIONE ESTA LINHA
+            console.error('Erro detalhado ao chamar API:', error);
+            if (error.error && error.error.error) {
+              console.error('Mensagem de erro da OpenAI:', error.error.error);
+            }
+            
             return this.createFallbackResponse();
           })
         );

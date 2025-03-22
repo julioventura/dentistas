@@ -1,4 +1,4 @@
-// ARQUIVO DE CONFIGURAÇÃO REAL - SEM CHAVES SENSÍVEIS
+// ARQUIVO DE CONFIGURAÇÃO GERADO AUTOMATICAMENTE
 export const environment = {
   production: false,
   firebaseConfig: {
@@ -11,7 +11,7 @@ export const environment = {
     measurementId: "G-657HTS1CNX"
   },
   aiChatApiUrl: 'https://api.dentistas.com.br/ai',
-  openaiApiKey: 'SUA_CHAVE_AQUI_NAO_COMMITAR', // NUNCA coloque a chave real aqui
+  openaiApiKey: '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',
   openaiApiUrl: 'https://api.openai.com/v1/chat/completions',
   openaiModel: 'gpt-4o-mini'
 };

@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "setup": "node setup-env.js",
-    "prestart": "npm run setup",
+    "prestart": "node setup-env.js",
     "prebuild": "npm run setup"
   },
   "private": true,
