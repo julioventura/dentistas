@@ -24,9 +24,14 @@ export class UserService {
   public userProfile$ = this.userProfileSubject.asObservable();
   
   // Dados do chatbot (você pode setar esses valores conforme seu fluxo)
-  dentistId: string = 'k3';
-  dentistName: string = 'Clínica K3';
-
+  // Contexto do chatbot para armazenar dados dinâmicos
+  public context: any = {
+    dentistId: 'Ludovico',
+    dentistName: 'Clínica Dente Feliz',
+    location: 'Rua Amapá, 55 - Moema - São Paulo, SP',
+    patientName: 'João Silva'
+  };
+ 
   // Status do chatbot: true = expandido, false = minimizado
   private _chatbotExpanded = new BehaviorSubject<boolean>(false);
   chatbotExpanded$ = this._chatbotExpanded.asObservable();

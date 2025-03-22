@@ -35,8 +35,6 @@ import { AiChatService, Message } from './ai-chat.service';
   ]
 })
 export class ChatbotWidgetComponent implements OnInit {
-  @Input() dentistId: string = '';
-  @Input() dentistName: string = '';
 
   // Estado de visualização do widget
   isMinimized = true;
@@ -55,18 +53,10 @@ export class ChatbotWidgetComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Use dados do dentista do serviço se não fornecidos via Input
-    if (!this.dentistId) {
-      this.dentistId = this.userService.dentistId;
-    }
-    if (!this.dentistName) {
-      this.dentistName = this.userService.dentistName;
-    }
-    
     this.userService.setChatbotExpanded(!this.isMinimized);
-    
+
     // Criar uma nova sessão de chat
-    this.aiChatService.createNewSession(this.dentistId).subscribe(
+    this.aiChatService.createNewSession(this.userService.context.dentistId).subscribe(
       sessionId => {
         this.sessionId = sessionId;
         // Envia a mensagem inicial
@@ -75,16 +65,32 @@ export class ChatbotWidgetComponent implements OnInit {
     );
   }
 
+  get dentistId(): string {
+    return this.userService.context.dentistId;
+  }
+
+  get dentistName(): string {
+    return this.userService.context.dentistName;
+  }
+
+  get dentistLocation(): string {
+    return this.userService.context.location;
+  }
+
+  get patientName(): string {
+    return this.userService.context.patientName;
+  }
+
   addBotMessage(message: string): void {
     const msg: Message = {
-         content: message,
-         sender: 'bot',
-         timestamp: new Date()
+      content: message,
+      sender: 'bot',
+      timestamp: new Date()
     };
     this.conversation.push(msg);
-    
+
     // Salva a mensagem no histórico
-    if (this.sessionId) {
+    if(this.sessionId) {
       this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, msg)
         .subscribe();
     }
@@ -92,50 +98,51 @@ export class ChatbotWidgetComponent implements OnInit {
 
   addUserMessage(message: string): void {
     const msg: Message = {
-         content: message,
-         sender: 'user',
-         timestamp: new Date()
+      content: message,
+      sender: 'user',
+      timestamp: new Date()
     };
     this.conversation.push(msg);
   }
 
   sendMessage(): void {
     if (!this.userInput.trim()) return;
-    
+
     const userMessage: Message = {
       content: this.userInput,
       sender: 'user',
       timestamp: new Date()
     };
-    
+
     // Adiciona mensagem do usuário à conversa
     this.conversation.push(userMessage);
-    
+
     // Salva a mensagem do usuário no histórico
     if (this.sessionId) {
       this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, userMessage)
         .subscribe();
     }
-    
+
     const messageText = this.userInput;
     this.userInput = ''; // Limpa o input
-    
+
     // Se estamos esperando o nome do usuário
     if (this.waitingForName) {
       this.waitingForName = false;
       this.addBotMessage(`Prazer em conhecê-lo, ${messageText}! Como posso ajudá-lo hoje?`);
       return;
     }
-    
+
     // Mostra indicador de carregamento
     this.isLoading = true;
-    
+
     // Chama o serviço de IA
-    const context = { 
+    const context = {
       dentistName: this.dentistName,
-      conversation: this.conversation 
+      conversation: this.conversation,
+      location: this.dentistLocation
     };
-    
+
     this.aiChatService.sendMessage(messageText, this.sessionId, this.dentistId, context)
       .subscribe({
         next: (response) => {

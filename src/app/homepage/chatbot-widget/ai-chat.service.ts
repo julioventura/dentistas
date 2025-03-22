@@ -50,9 +50,9 @@ export class AiChatService {
   private openaiModel = environment.openaiModel;
   
   private fallbackResponses = [
-    "Desculpe, não consegui processar sua solicitação no momento. Como posso ajudar de outra forma?",
-    "Estou com dificuldades para responder sua pergunta. Podemos tentar novamente?",
-    "Parece que tive um problema ao buscar essa informação. Posso ajudar com outra questão sobre odontologia?"
+    "Desculpe, não consegui processar sua solicitação no momento.",
+    "Estou com dificuldades para responder sua pergunta.",
+    "Tive um problema ao buscar essa informação. Posso ajudar com outra questão sobre odontologia?"
   ];
   
   constructor(
@@ -79,9 +79,12 @@ export class AiChatService {
       switchMap(config => { // Aqui trocamos map por switchMap para achatamento correto das Observables
         // Define o sistema de prompt base com informações do dentista
         const systemPrompt = config.systemPrompt || 
-          `Você é um assistente virtual odontológico para o consultório do Dr(a). ${context?.dentistName || 'Doutor'}. 
-          Forneça informações sobre procedimentos odontológicos, higiene bucal e agende consultas de forma cordial e profissional.
-          Limite suas respostas a conhecimentos odontológicos e ajuda ao paciente.`;
+          `Você é um assistente virtual odontológico para o consultório do Dr(a). ${context?.dentistName || 'Fulano'}. 
+          Forneça informações sobre Odontologia, de forma cordial e profissional.
+          O dentista é especializado em ${context?.specialty || 'odontologia geral'}.
+          O consultório está localizado em ${context?.location || 'Rio de Janeiro'}.
+          O paciente tem o nome de ${context?.patientName || 'Paciente Desconhecido'}.
+          `;
           
         const payload = {
           model: this.openaiModel,
