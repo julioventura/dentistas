@@ -46,7 +46,6 @@ interface OpenAIResponse {
 })
 export class AiChatService {
   private openaiApiUrl = environment.openaiApiUrl;
-  private openaiApiKey = environment.openaiApiKey;
   private openaiModel = environment.openaiModel;
   
   private fallbackResponses = [
@@ -71,7 +70,7 @@ export class AiChatService {
     
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.openaiApiKey}`
+      'Authorization': `Bearer ${environment.openaiApiKey}`
     });
     
     // Obtém configuração do chatbot para este dentista
@@ -98,6 +97,7 @@ export class AiChatService {
         
         // Log do payload - ADICIONE ESTA LINHA
         console.log('Payload para OpenAI:', payload);
+        console.log('Autenticando com chave API:', environment.openaiApiKey); 
         
         return this.http.post<OpenAIResponse>(this.openaiApiUrl, payload, { headers }).pipe(
           map(response => {

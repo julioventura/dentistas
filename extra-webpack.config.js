@@ -1,9 +1,11 @@
 const Dotenv = require('dotenv-webpack');
+const path = require('path');
 
 module.exports = {
   plugins: [
     new Dotenv({
-      systemvars: true, // Carrega variáveis do sistema também
+      systemvars: true,
+      path: path.resolve(__dirname, '.env')
     })
   ]
 };

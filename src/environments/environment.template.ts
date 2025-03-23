@@ -11,7 +11,9 @@ export const environment = {
     measurementId: "G-657HTS1CNX"
   },
   aiChatApiUrl: 'https://api.dentistas.com.br/ai',
-  openaiApiKey: 'SUA_CHAVE_API_AQUI', // Substituir pela sua chave real em environment.ts
+  get openaiApiKey() {
+    return process.env.OPENAI_API_KEY || '';
+  },
   openaiApiUrl: 'https://api.openai.com/v1/chat/completions',
   openaiModel: 'gpt-4o-mini'
 };
