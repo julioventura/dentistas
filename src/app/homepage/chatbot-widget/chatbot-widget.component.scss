@@ -21,6 +21,7 @@
     border-radius: 50%;
     background-color: $primary-color;
     cursor: pointer;
+    box-shadow: none;
     
     .chatbot-body, .chatbot-title span {
       display: none;
