@@ -37,6 +37,7 @@
     "zone.js": "~0.14.10"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "^18.0.0",
     "@angular-devkit/build-angular": "^18.2.11",
     "@angular/cli": "^18.2.11",
     "@angular/compiler-cli": "^18.2.11",
@@ -45,6 +46,7 @@
     "@types/qrcode": "^1.5.5",
     "@types/xlsx": "^0.0.35",
     "dotenv": "^16.4.7",
+    "dotenv-webpack": "^8.1.0",
     "husky": "^8.0.0",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
