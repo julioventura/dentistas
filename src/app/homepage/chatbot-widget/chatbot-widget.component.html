@@ -24,18 +24,15 @@
   </div>
   
   <div class="chatbot-body" *ngIf="!isMinimized">
-    <div class="messages-container">
+    <div class="messages-container" #messagesContainer (scroll)="onMessagesScroll()">
       <div *ngFor="let message of conversation" 
-           class="message-bubble" 
-           [ngClass]="message.sender === 'user' ? 'user-message' : 'bot-message'">
-        <div class="message-content">{{ message.content }}</div>
+           [ngClass]="message.sender === 'user' ? 'message-bubble user-message' : 'message-bubble bot-message'">
+        {{ message.content }}
       </div>
       
       <!-- Indicador de carregamento -->
-      <div *ngIf="isLoading" class="message-bubble bot-message">
-        <div class="message-content typing-indicator">
-          <span>Digitando</span>
-        </div>
+      <div *ngIf="isLoading" class="message-bubble bot-message typing-indicator">
+        <span>Digitando</span>
       </div>
     </div>
     

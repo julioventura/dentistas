@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -34,7 +34,12 @@ import { AiChatService, Message } from './ai-chat.service';
     ])
   ]
 })
-export class ChatbotWidgetComponent implements OnInit {
+export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterViewInit {
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+  private shouldScrollToBottom = true;
+  private userScrolled = false;
+  private lastScrollTop = 0;
+  private scrollTimeout: any = null;
 
   // Estado de visualização do widget
   isMinimized = true;
@@ -65,6 +70,31 @@ export class ChatbotWidgetComponent implements OnInit {
     );
   }
 
+  ngAfterViewChecked() {
+    // Só rola para o final se for uma nova mensagem e o usuário não estiver rolando
+    if (this.shouldScrollToBottom && !this.userScrolled) {
+      this.scrollToBottom();
+    }
+  }
+  
+  // Método para rolar para o final da conversa com delay para garantir que funcione após renderização
+  scrollToBottom(): void {
+    // Não rola se o usuário estiver visualizando mensagens antigas
+    if (this.userScrolled) return;
+    
+    try {
+      if (this.messagesContainer) {
+        // Usa requestAnimationFrame para garantir que ocorra no próximo frame de renderização
+        requestAnimationFrame(() => {
+          const element = this.messagesContainer.nativeElement;
+          element.scrollTop = element.scrollHeight;
+        });
+      }
+    } catch (err) { 
+      console.error('Erro ao tentar rolar para o final:', err); 
+    }
+  }
+
   get dentistId(): string {
     return this.userService.context.dentistId;
   }
@@ -88,12 +118,21 @@ export class ChatbotWidgetComponent implements OnInit {
       timestamp: new Date()
     };
     this.conversation.push(msg);
+    
+    // Rola para o final apenas se o usuário não estiver visualizando mensagens anteriores
+    if (!this.userScrolled) {
+      this.shouldScrollToBottom = true;
+    }
 
     // Salva a mensagem no histórico
     if(this.sessionId) {
       this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, msg)
         .subscribe();
     }
+
+    // Resetar o controle de rolagem quando uma nova mensagem for adicionada
+    this.userScrolled = false;
+    this.shouldScrollToBottom = true;
   }
 
   addUserMessage(message: string): void {
@@ -103,8 +142,14 @@ export class ChatbotWidgetComponent implements OnInit {
       timestamp: new Date()
     };
     this.conversation.push(msg);
+    this.shouldScrollToBottom = true;
+
+    // Resetar o controle de rolagem quando uma nova mensagem for adicionada
+    this.userScrolled = false;
+    this.shouldScrollToBottom = true;
   }
 
+  // Modificar sendMessage para garantir a rolagem após adicionar uma mensagem
   sendMessage(): void {
     if (!this.userInput.trim()) return;
 
@@ -148,6 +193,7 @@ export class ChatbotWidgetComponent implements OnInit {
         next: (response) => {
           // Adiciona resposta do bot à conversa
           this.conversation.push(response);
+          this.shouldScrollToBottom = true;
           // Salva a resposta do bot no histórico
           if (this.sessionId) {
             this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, response)
@@ -161,6 +207,17 @@ export class ChatbotWidgetComponent implements OnInit {
           this.isLoading = false;
         }
       });
+
+    // Defina que deve rolar para o fim
+    this.shouldScrollToBottom = true;
+    
+    // Quando uma nova mensagem é enviada, voltamos a permitir a rolagem automática,
+    // mesmo que o usuário tenha rolado anteriormente
+    this.userScrolled = false;
+    this.shouldScrollToBottom = true;
+    
+    // Chame o scroll manualmente também para garantir
+    this.scrollToBottom();
   }
 
   toggleChat(): void {
@@ -180,5 +237,53 @@ export class ChatbotWidgetComponent implements OnInit {
   @HostListener('window:resize')
   onResize(): void {
     // Se necessário, implemente ajustes responsivos aqui.
+  }
+
+  // Adicione também um detector de rolagem manual para não interferir com a interação do usuário
+  onMessagesScroll(): void {
+    if (!this.messagesContainer) return;
+  
+    const element = this.messagesContainer.nativeElement;
+    const scrollTop = element.scrollTop;
+    
+    // Limpa o timeout anterior para evitar chamadas múltiplas
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+    }
+    
+    // Se o usuário está rolando para cima (scrollTop diminuindo)
+    if (scrollTop < this.lastScrollTop) {
+      this.userScrolled = true;
+      this.shouldScrollToBottom = false;
+    }
+    
+    // Verifica se chegou ao final da conversa
+    const atBottom = element.scrollHeight - scrollTop - element.clientHeight < 30;
+    if (atBottom) {
+      // Espera um momento para garantir que não é um bounce da rolagem
+      this.scrollTimeout = setTimeout(() => {
+        this.userScrolled = false;
+        this.shouldScrollToBottom = true;
+      }, 200);
+    }
+    
+    this.lastScrollTop = scrollTop;
+  }
+
+  ngAfterViewInit() {
+    if (this.messagesContainer) {
+      this.scrollToBottom();
+      
+      // Observa mudanças no tamanho do elemento
+      if (window.ResizeObserver) {
+        const resizeObserver = new ResizeObserver(() => {
+          if (!this.userScrolled) {
+            this.scrollToBottom();
+          }
+        });
+        
+        resizeObserver.observe(this.messagesContainer.nativeElement);
+      }
+    }
   }
 }
