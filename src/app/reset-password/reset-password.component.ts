@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Altere para AngularFireAuth
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';  // Importando FormsModule
 
 @Component({
   selector: 'app-reset-password',

@@ -5,9 +5,56 @@ input {
   margin-bottom: 0px;
 }
 
+.record-details .detail-container .detail-value,
+.dynamic-form-container .detail-container .detail-value {
+  border: 0px;
+}
+
 .record-details {
   margin-top: 16px;
   padding-top: 16px;
+}
+
+.record-details .detail-container {
+  margin: 0;
+  padding: 0;
+  padding-left: 5px;
+  border: 0;
+
+  display: flex;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  align-items: center;
+
+  .detail-label {
+    padding-left: 10px;
+  }
+
+  .detail-value {
+    margin: 5px;
+    border-bottom: 1px solid $primary-color-light;
+    // border-radius: 2px;
+  }
+
+  textarea,
+  input {
+    box-shadow: unset;
+  }
+
+  .detail-label {
+    width: var(--label-width);
+    flex-shrink: 0;
+    padding-right: 10px;
+  }
+
+  .detail-value {
+    flex-grow: 1;
+
+    &[readonly] {
+      font-weight: 500;
+    }
+
+  }
 }
 
 .record-details-top {
@@ -50,10 +97,6 @@ input {
   }
 }
 
-.record-details .detail-container .detail-value,
-.dynamic-form-container .detail-container .detail-value {
-  border: 0px;
-}
 
 .sticky-slider {
   position: sticky;
@@ -65,28 +108,6 @@ input {
   margin-left: 0px;
 }
 
-.record-details .detail-container {
-  display: flex;
-  margin-bottom: 5px;
-  margin-top: 5px;
-  align-items: center;
-
-  .detail-label {
-    width: var(--label-width);
-    flex-shrink: 0;
-    padding-right: 10px;
-  }
-
-  .detail-value {
-    flex-grow: 1;
-
-    &[readonly] {
-      font-size: 16px;
-      font-weight: 600;
-      padding: 7px 10px 2px 10px;
-    }
-  }
-}
 
 .full-width-container {
   width: 100%;
@@ -128,7 +149,7 @@ input {
 // Add this CSS for styling the subgroup titles
 
 .subgrupo-titulo {
-  font-size: 0.85em;
+  font-size: 0.8em;
   font-weight: 500;
   line-height: 1.4em;
   text-align: left;
@@ -146,28 +167,6 @@ input {
 
 textarea {
   color: $primary-color;
-  font-size: 16px;
+  font-size: 14px;
 
-}
-
-.record-details .detail-container {
-  margin: 0;
-  padding: 0;
-  padding-left: 5px;
-  border: 0;
-
-  .detail-label {
-    padding-left: 10px;
-  }
-
-  .detail-value {
-    margin: 5px;
-    border-bottom: 1px solid $primary-color-light;
-    border-radius: 0;
-  }
-
-  textarea,
-  input {
-    box-shadow: unset;
-  }
 }

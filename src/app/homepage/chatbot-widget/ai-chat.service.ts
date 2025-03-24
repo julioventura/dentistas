@@ -517,8 +517,10 @@ export class AiChatService {
   }
 
   // Método para criar nova sessão
-  createNewSession(_dentistId: string): Observable<string> {
-    const sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+  createNewSession(dentistId: string): Observable<string> {
+    // Prefixo '_' indica parâmetro intencionalmente não utilizado
+    const sessionId = 'session_' + dentistId + '_' + Math.random().toString(36).substring(2, 15);
+    console.log(`Criando nova sessão para dentista: ${dentistId}`);
     return of(sessionId);
   }
 
