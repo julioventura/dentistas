@@ -87,6 +87,13 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         this.currentContext = context;
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       });
+    
+    // Também subscrever diretamente ao contexto de navegação para debugging
+    this.userService.navigationContext$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(navContext => {
+        console.log('Navegação atual:', navContext);
+      });
 
     // Inicializa a sessão do chat
     this.aiChatService.createNewSession(this.dentistId).subscribe(

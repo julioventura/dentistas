@@ -9,6 +9,15 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SubcolecaoService } from '../../shared/subcolecao.service';
 
+// Interface para Navegação
+export interface NavigationContext {
+  viewType?: string;
+  collection?: string;
+  id?: string;
+  subcollection?: string;
+  itemId?: string;
+}
+
 // Interface de Contexto
 export interface ChatContext {
   currentView?: {
@@ -65,71 +74,57 @@ export class AiChatService {
     private router: Router,
     private subcolecaoService: SubcolecaoService
   ) {
-    // Monitora navegação para atualizar contexto
+    // Monitorar o contexto de navegação do UserService
+    this.userService.navigationContext$.subscribe(navContext => {
+      this.updateContextFromNavigation(navContext);
+    });
+    
+    // Continuar monitorando eventos de navegação para casos especiais
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       tap((event: NavigationEnd) => {
-        this.updateContextFromRoute(event.url);
+        // Apenas para logging e casos especiais não capturados pelo UserService
+        console.log('Navegação detectada pelo AiChatService:', event.url);
       })
     ).subscribe();
   }
 
-  // Método para atualizar contexto baseado na rota
-  private updateContextFromRoute(route: string): void {
+  // Novo método para atualizar o contexto a partir do navegation context
+  private updateContextFromNavigation(navContext: NavigationContext): void {
     // Reset de contexto
     this.currentContext = {};
     
-    // Analisar a URL para extrair informações relevantes
-    const segments = route.split('/').filter(Boolean);
-    
-    if (segments.length > 0) {
-      // Detectar o tipo de página atual
-      let viewType = segments[0];
+    if (navContext.viewType) {
+      this.currentContext.currentView = {
+        type: navContext.viewType
+      };
       
-      // Detectar visualização de ficha ou item de subcoleção
-      if (viewType === 'view-ficha' && segments.length >= 2) {
-        viewType = segments[1]; // A coleção principal é o segundo segmento em view-ficha
+      // Adicionar collection como activeCollection
+      if (navContext.collection) {
+        this.currentContext.activeCollection = navContext.collection;
         
-        // Configurar visualização para uma ficha específica
-        this.currentContext.currentView = { 
-          type: 'view-ficha',
-          id: segments.length >= 3 ? segments[2] : undefined
-        };
-        
-        // Se temos "fichas" como parte do caminho, a subcoleção vem depois
-        if (segments.length >= 5 && segments[3] === 'fichas') {
-          this.currentContext.activeCollection = viewType;
-          this.currentContext.activeSubcollections = [segments[4]];
-          
-          // Se temos um ID de ficha específico, carregamos seus detalhes
-          if (segments.length >= 7) {
-            this.loadFichaDetails(viewType, segments[2], segments[4], segments[6]);
-          }
-        } else {
-          // Carrega dados da coleção principal
-          this.loadContextDataForView(viewType, segments.length >= 3 ? segments[2] : undefined);
+        // Se temos um ID, tentamos carregar os detalhes da entidade
+        if (navContext.id) {
+          this.currentContext.currentView.id = navContext.id;
+          this.loadEntityDetails(navContext.collection, navContext.id);
         }
-      } else {
-        // Configuração para visualizações padrão (list, view, edit)
-        this.currentContext.currentView = { 
-          type: viewType,
-          id: segments.length > 1 ? segments[1] : undefined
-        };
         
-        // Tenta identificar a coleção a partir do segundo segmento ou do terceiro em alguns casos
-        let collectionSegment = segments[1];
-        
-        // Para rotas como /view/pacientes/123, a coleção é 'pacientes'
-        if (['view', 'edit', 'new'].includes(viewType) && segments.length > 1) {
-          this.currentContext.activeCollection = collectionSegment;
+        // Se temos uma subcollection, adicionamos à lista de subcollections
+        if (navContext.subcollection) {
+          this.currentContext.activeSubcollections = [navContext.subcollection];
           
-          // Se temos um ID, carregar detalhes dessa entidade
-          if (segments.length > 2) {
-            this.loadContextDataForView(collectionSegment, segments[2]);
+          // Se temos um item específico da subcollection
+          if (navContext.itemId) {
+            this.loadFichaDetails(
+              navContext.collection, 
+              navContext.id!, 
+              navContext.subcollection, 
+              navContext.itemId
+            );
           }
-        } else {
-          // Para outros casos, tenta usar o viewType diretamente como coleção ou inferir
-          this.loadContextDataForView(viewType, segments.length > 1 ? segments[1] : undefined);
+        } else if (navContext.id) {
+          // Se temos um ID mas não uma subcollection, verificamos subcoleções disponíveis
+          this.checkAvailableSubcollections(navContext.collection, navContext.id);
         }
       }
     }
@@ -139,6 +134,12 @@ export class AiChatService {
     
     // Emitir a atualização do contexto para componentes inscritos
     this.contextSubject.next({...this.currentContext});
+  }
+
+  // Este método pode ser removido ou simplificado já que o principal trabalho é feito pelo UserService
+  private updateContextFromRoute(route: string): void {
+    // Log apenas para debugging
+    console.log('Route update (handled by UserService):', route);
   }
   
   // Método melhorado para carregar dados específicos para o contexto

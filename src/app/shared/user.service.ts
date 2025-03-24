@@ -4,7 +4,17 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from '../shared/firestore.service'; // Serviço para manipular o Firestore
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
 import { Observable, of, from, BehaviorSubject } from 'rxjs';
-import { map, catchError, switchMap, tap } from 'rxjs/operators';
+import { map, catchError, switchMap, tap, filter } from 'rxjs/operators';
+import { Router, NavigationEnd } from '@angular/router';
+
+// Interface para o contexto de navegação
+export interface NavigationContext {
+  collection?: string;
+  id?: string;
+  subcollection?: string;
+  itemId?: string;
+  viewType?: string; // list, view, edit, etc.
+}
 
 @Injectable({
   providedIn: 'root'
@@ -36,10 +46,15 @@ export class UserService {
   private _chatbotExpanded = new BehaviorSubject<boolean>(false);
   chatbotExpanded$ = this._chatbotExpanded.asObservable();
 
+  // Adicionar o contexto de navegação
+  private navigationContextSubject = new BehaviorSubject<NavigationContext>({});
+  public navigationContext$ = this.navigationContextSubject.asObservable();
+
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private firestoreService: FirestoreService<any>
+    private firestoreService: FirestoreService<any>,
+    private router: Router
   ) {
     console.log('UserService initialized');
     // Carregar dados do usuário autenticado no inicialização do serviço
@@ -51,6 +66,13 @@ export class UserService {
         }
       })
     ).subscribe();
+
+    // Monitorar mudanças de rota para atualizar o contexto
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.updateContextFromUrl(event.url);
+    });
   }
 
   // Getter para userProfile - acesso direto simplificado
@@ -253,7 +275,70 @@ export class UserService {
     );
   }
 
+  // Método para atualizar o contexto com base na URL
+  private updateContextFromUrl(url: string): void {
+    // Extrair os segmentos da URL
+    const segments = url.split('/').filter(Boolean);
+    const context: NavigationContext = {};
+    
+    if (segments.length > 0) {
+      // Determinar o tipo de view (list, view, edit, etc.)
+      context.viewType = segments[0];
+      
+      // Padrões de URL comuns
+      if (segments[0] === 'list' && segments.length > 1) {
+        context.collection = segments[1];
+      } 
+      else if (['view', 'edit', 'new'].includes(segments[0]) && segments.length > 1) {
+        context.collection = segments[1];
+        if (segments.length > 2) context.id = segments[2];
+      }
+      else if (segments[0] === 'view-ficha' && segments.length >= 3) {
+        context.collection = segments[1];
+        context.id = segments[2];
+        
+        if (segments.length >= 5 && segments[3] === 'fichas') {
+          context.subcollection = segments[4];
+          
+          if (segments.length >= 6) context.itemId = segments[6];
+        }
+      }
+      else if (segments[0] === 'edit-ficha' && segments.length >= 7) {
+        context.collection = segments[1];
+        context.id = segments[2];
+        
+        if (segments[3] === 'fichas') {
+          context.subcollection = segments[4];
+          if (segments[6]) context.itemId = segments[6];
+        }
+      }
+    }
+    
+    console.log('Contexto de navegação atualizado:', context);
+    this.navigationContextSubject.next(context);
+  }
+
+  // Métodos para acessar o contexto de navegação
+  getCurrentCollection(): string | undefined {
+    return this.navigationContextSubject.value.collection;
+  }
+  
+  getCurrentId(): string | undefined {
+    return this.navigationContextSubject.value.id;
+  }
+  
+  getCurrentSubcollection(): string | undefined {
+    return this.navigationContextSubject.value.subcollection;
+  }
+
   setChatbotExpanded(expanded: boolean): void {
     this._chatbotExpanded.next(expanded);
+  }
+
+  // Método para atualizar o contexto manualmente
+  updateNavigationContext(context: Partial<NavigationContext>): void {
+    const currentContext = this.navigationContextSubject.value;
+    const updatedContext = { ...currentContext, ...context };
+    this.navigationContextSubject.next(updatedContext);
   }
 }
