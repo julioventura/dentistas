@@ -100,7 +100,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       sessionId => {
         this.sessionId = sessionId;
         // Mensagem de boas-vindas
-        this.addBotMessage("Olá! Como posso ajudar hoje?");
+        this.addBotMessage("Olá! Como devo te chamar?");
       }
     );
   }
@@ -150,7 +150,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     // Se estamos esperando o nome do usuário
     if (this.waitingForName) {
       this.waitingForName = false;
-      this.addBotMessage(`Prazer em conhecê-lo, ${messageText}! Como posso ajudá-lo hoje?`);
+      this.addBotMessage(`Prazer, ${messageText}! Como posso ajudar?`);
       return;
     }
 
@@ -185,7 +185,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         },
         error: (err) => {
           console.error('Erro ao obter resposta da IA', err);
-          this.addBotMessage('Desculpe, tive um problema ao processar sua mensagem. Por favor, tente novamente.');
+          this.addBotMessage('Tive um problema com a mensagem. Tente novamente.');
           this.isLoading = false;
         }
       });
