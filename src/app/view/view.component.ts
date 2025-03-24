@@ -21,6 +21,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/form.service';
 import { fadeAnimation } from '../animations/fade.animation';
+import { UserService } from '../shared/user.service';
 
 @Component({
   selector: 'app-view',
@@ -56,7 +57,8 @@ export class ViewComponent implements OnInit {
     private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
     public util: UtilService,
-    public FormService: FormService
+    public FormService: FormService,
+    private userService: UserService // Adicionar este serviço
   ) { }
 
   /**
@@ -109,11 +111,23 @@ export class ViewComponent implements OnInit {
             console.log('loadFicha()');
             console.log('Colledction :', this.collection);
             console.log('Subcolledction :', this.subcollection);
-            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only);
+            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
+              .then(() => {
+                // Após carregar os dados da ficha, salvar no UserService
+                if (this.FormService.registro) {
+                  this.userService.setCurrentRecord(this.fichaId, this.FormService.registro);
+                }
+              });
           } else {
             console.log('Colledction :', this.collection);
             console.log('loadRegistro()');
-            this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only);
+            this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
+              .then(() => {
+                // Após carregar os dados do registro, salvar no UserService
+                if (this.FormService.registro) {
+                  this.userService.setCurrentRecord(this.id, this.FormService.registro);
+                }
+              });
           }
 
           // Define o subtítulo com base no nome do registro (obtido via FormService)

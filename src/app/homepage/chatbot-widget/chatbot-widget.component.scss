@@ -331,6 +331,10 @@
       text-overflow: ellipsis;
       max-width: 150px;
       
+      &.record-name {
+        font-weight: 500; // Nome mais destacado
+      }
+      
       // Estilo para nomes de coleção/subcoleção
       span {
         &:not(:last-child):after {

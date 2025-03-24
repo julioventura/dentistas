@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild, AfterViewChecked, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -271,7 +271,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   /**
    * Formata o nome da coleção para exibição
    */
-  formatCollectionName(collection: string): string {
+  formatCollectionName(collection?: string): string {
+    if (!collection) return '';
     // Mapeamento de nomes de coleção para versões mais amigáveis
     const collectionNameMap: {[key: string]: string} = {
       'pacientes': 'Pacientes',
@@ -292,7 +293,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   /**
    * Formata o nome da subcoleção para exibição
    */
-  formatSubcollectionName(subcollection: string): string {
+  formatSubcollectionName(subcollection?: string): string {
+    if (!subcollection) return '';
     // Mapeamento de nomes de subcoleção para versões mais amigáveis
     const subcollectionNameMap: {[key: string]: string} = {
       'anamnese': 'Anamnese',
@@ -307,6 +309,26 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     // Retorna o nome formatado ou capitaliza o original se não estiver no mapa
     return subcollectionNameMap[subcollection.toLowerCase()] || 
            this.capitalizeFirstLetter(subcollection);
+  }
+
+  /**
+   * Formata o nome do registro para exibição
+   */
+  formatRecordName(name?: string): string {
+    if (!name) return '';
+    
+    const maxLength = 25;
+    return name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
+  }
+
+  /**
+   * Formata o ID para exibição
+   */
+  formatId(id?: string): string {
+    if (!id) return '';
+    
+    const maxLength = 8;
+    return id.length > maxLength ? `${id.substring(0, 6)}...` : id;
   }
 
   /**

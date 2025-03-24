@@ -27,7 +27,11 @@ export interface ChatContext {
   };
   activeCollection?: string;
   activeSubcollections?: string[];
-  pageData?: any;
+  currentRecord?: {
+    id: string;
+    data: any; // Dados completos do registro
+  };
+  pageData?: any; // Mantido por compatibilidade
 }
 
 // Interface para mensagem
@@ -77,6 +81,33 @@ export class AiChatService {
     // Monitorar o contexto de navegação do UserService
     this.userService.navigationContext$.subscribe(navContext => {
       this.updateContextFromNavigation(navContext);
+      
+      // Se o contexto tem um registro, atualizar explicitamente o currentRecord
+      if (navContext.currentRecord) {
+        this.currentContext.currentRecord = {
+          id: navContext.currentRecord.id,
+          data: navContext.currentRecord.data
+        };
+        
+        // Se o contexto tem uma visualização mas não tem nome, tentar pegar do registro
+        if (this.currentContext.currentView && !this.currentContext.currentView.name && navContext.currentRecord.data) {
+          const recordData = navContext.currentRecord.data;
+          
+          // Tentar diferentes campos possíveis para o nome
+          const possibleNameFields = ['nome', 'name', 'title', 'titulo', 'descricao'];
+          for (const field of possibleNameFields) {
+            if (recordData[field]) {
+              this.currentContext.currentView.name = recordData[field];
+              break;
+            }
+          }
+        }
+        
+        // Emitir atualização após adicionar o registro
+        this.contextSubject.next({...this.currentContext});
+        
+        console.log('Contexto atualizado com dados do registro:', this.currentContext);
+      }
     });
     
     // Continuar monitorando eventos de navegação para casos especiais
@@ -107,6 +138,9 @@ export class AiChatService {
         if (navContext.id) {
           this.currentContext.currentView.id = navContext.id;
           this.loadEntityDetails(navContext.collection, navContext.id);
+        } else {
+          // Se não temos ID, chamamos loadContextDataForView para pelo menos configurar informações básicas
+          this.loadContextDataForView(navContext.collection, undefined);
         }
         
         // Se temos uma subcollection, adicionamos à lista de subcollections
@@ -136,12 +170,6 @@ export class AiChatService {
     this.contextSubject.next({...this.currentContext});
   }
 
-  // Este método pode ser removido ou simplificado já que o principal trabalho é feito pelo UserService
-  private updateContextFromRoute(route: string): void {
-    // Log apenas para debugging
-    console.log('Route update (handled by UserService):', route);
-  }
-  
   // Método melhorado para carregar dados específicos para o contexto
   private loadContextDataForView(viewType: string, id?: string): void {
     // Defina conjuntos conhecidos de coleções principais
@@ -186,28 +214,48 @@ export class AiChatService {
   
   // Método para carregar detalhes de uma entidade específica
   private loadEntityDetails(collectionType: string, id: string): void {
-    // Determinar o caminho correto da coleção
     const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
     const collectionPath = `users/${userId}/${collectionType}`;
     
-    // Carregar dados da entidade
-    this.firestore.doc(`${collectionPath}/${id}`).get().subscribe(doc => {
-      if (doc.exists) {
-        const entityData = doc.data() as any;
-        
-        // Atualizar nome da entidade no contexto
-        if (this.currentContext.currentView) {
-          this.currentContext.currentView.name = entityData.nome || `${collectionType}: ${id}`;
+    // Versão atualizada da API
+    this.firestore.doc(`${collectionPath}/${id}`).get().subscribe({
+      next: (doc) => {
+        if (doc.exists) {
+          const entityData = doc.data() as any;
+          console.log('Dados carregados:', entityData);
+          
+          // Atualizar nome da entidade no contexto
+          if (this.currentContext.currentView) {
+            this.currentContext.currentView.name = entityData.nome || 
+                                                  entityData.title || 
+                                                  entityData.titulo || 
+                                                  `${collectionType}: ${id}`;
+            
+            console.log('Nome atualizado para:', this.currentContext.currentView.name);
+          }
+          
+          // Armazenar dados estruturados do registro atual
+          this.currentContext.currentRecord = {
+            id: id,
+            data: entityData
+          };
+          
+          // Manter pageData por compatibilidade
+          this.currentContext.pageData = entityData;
+          
+          // Verificar subcoleções disponíveis para esta entidade
+          this.checkAvailableSubcollections(collectionType, id);
+          
+          // Importante: emitir o contexto atualizado após todas as modificações
+          this.contextSubject.next({...this.currentContext});
+          
+          console.log('Contexto atualizado após carregar dados:', this.currentContext);
+        } else {
+          console.log(`Documento não encontrado: ${collectionPath}/${id}`);
         }
-        
-        // Armazenar dados da página
-        this.currentContext.pageData = entityData;
-        
-        // Verificar subcoleções disponíveis para esta entidade
-        this.checkAvailableSubcollections(collectionType, id);
-        
-        // Emitir o contexto atualizado
-        this.contextSubject.next({...this.currentContext});
+      },
+      error: (error) => {
+        console.error('Erro ao carregar detalhes:', error);
       }
     });
   }
@@ -218,23 +266,45 @@ export class AiChatService {
     const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
     const fichaPath = `users/${userId}/${collectionType}/${entityId}/fichas/${subcollection}/itens/${fichaId}`;
     
+    console.log(`Carregando detalhes da ficha: ${fichaPath}`);
+    
     // Carregar dados da ficha
-    this.firestore.doc(fichaPath).get().subscribe(doc => {
-      if (doc.exists) {
-        const fichaData = doc.data() as any;
-        
-        // Atualizar informações no contexto
-        if (this.currentContext.currentView) {
-          this.currentContext.currentView.name = fichaData.nome || 
-            fichaData.titulo || 
-            `${subcollection}: ${fichaId}`;
+    this.firestore.doc(fichaPath).get().subscribe({
+      next: (doc) => {
+        if (doc.exists) {
+          const fichaData = doc.data() as any;
+          console.log('Dados da ficha carregados:', fichaData);
+          
+          // Atualizar informações no contexto
+          if (this.currentContext.currentView) {
+            // Usar diferentes campos possíveis para o nome, com fallback
+            this.currentContext.currentView.name = fichaData.nome || 
+                                                  fichaData.title || 
+                                                  fichaData.titulo || 
+                                                  `${subcollection}: ${fichaId}`;
+                                                  
+            console.log('Nome da ficha definido como:', this.currentContext.currentView.name);
+          }
+          
+          // Armazenar dados estruturados do registro de ficha atual
+          this.currentContext.currentRecord = {
+            id: fichaId,
+            data: fichaData
+          };
+          
+          // Manter pageData por compatibilidade
+          this.currentContext.pageData = fichaData;
+          
+          // Emitir o contexto atualizado
+          this.contextSubject.next({...this.currentContext});
+          
+          console.log('Contexto atualizado após carregar ficha:', this.currentContext);
+        } else {
+          console.log(`Ficha não encontrada: ${fichaPath}`);
         }
-        
-        // Armazenar dados da página
-        this.currentContext.pageData = fichaData;
-        
-        // Emitir o contexto atualizado
-        this.contextSubject.next({...this.currentContext});
+      },
+      error: (error) => {
+        console.error('Erro ao carregar detalhes da ficha:', error);
       }
     });
   }
@@ -391,26 +461,32 @@ export class AiChatService {
     if (context.collection) {
       prompt += `\nColeção atual: ${context.collection}\n`;
       
-      // Se houver dados da página
-      if (context.pageData) {
-        const data = context.pageData;
-        prompt += "Informações disponíveis sobre o registro:\n";
+      // Se houver um registro específico
+      if (context.currentRecord?.id) {
+        prompt += `Registro ID: ${context.currentRecord.id}\n`;
         
-        // Mostrar alguns campos principais que possam existir nos dados
-        if (data.nome) prompt += `- Nome: ${data.nome}\n`;
-        if (data.idade) prompt += `- Idade: ${data.idade} anos\n`;
-        if (data.telefone) prompt += `- Telefone: ${data.telefone}\n`;
-        if (data.email) prompt += `- Email: ${data.email}\n`;
-        if (data.ultimaConsulta) prompt += `- Última consulta: ${data.ultimaConsulta}\n`;
+        // Se houver dados do registro
+        if (context.currentRecord.data) {
+          const data = context.currentRecord.data;
+          prompt += "Informações do registro atual:\n";
+          
+          // Mostrar os campos principais do registro
+          Object.keys(data).forEach(key => {
+            // Filtrar apenas campos simples (strings, números, datas)
+            if (typeof data[key] !== 'object' && data[key] !== null) {
+              prompt += `- ${key}: ${data[key]}\n`;
+            }
+          });
+        }
       }
       
       // Se houver subcoleções disponíveis
       if (context.subcollections && context.subcollections.length > 0) {
-        prompt += "\nRegistros disponíveis para este paciente:\n";
+        prompt += "\nFichas disponíveis:\n";
         context.subcollections.forEach((subcol: string) => {
           prompt += `- ${subcol}\n`;
         });
-        prompt += "\nVocê pode fornecer sugestões ou análises baseadas nestes registros.\n";
+        prompt += "\nVocê pode fornecer sugestões ou análises baseadas nestas fichas.\n";
       }
     }
     
@@ -421,7 +497,7 @@ export class AiChatService {
   }
 
   // Método para obter configuração do chatbot para um dentista
-  getDentistChatbotConfig(dentistId: string): Observable<any> {
+  getDentistChatbotConfig(_dentistId: string): Observable<any> {
     // Aqui você pode buscar configurações personalizadas do chatbot para este dentista
     return of({
       systemPrompt: '',  // Se vazio, usará o prompt contextual padrão
@@ -441,18 +517,39 @@ export class AiChatService {
   }
 
   // Método para criar nova sessão
-  createNewSession(dentistId: string): Observable<string> {
+  createNewSession(_dentistId: string): Observable<string> {
     const sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
     return of(sessionId);
   }
 
   // Método para salvar mensagem no histórico
-  saveMessageToHistory(sessionId: string, dentistId: string, message: Message): Observable<boolean> {
+  saveMessageToHistory(_sessionId: string, _dentistId: string, _message: Message): Observable<boolean> {
     return of(true); // Simplificado; implemente a lógica real de armazenamento
   }
 
   // Método para obter o contexto atual
   getCurrentContext(): ChatContext {
     return this.currentContext;
+  }
+
+  // Método para obter um campo específico do registro atual
+  getRecordField(fieldName: string): any {
+    if (!this.currentContext.currentRecord?.data) return null;
+    return this.currentContext.currentRecord.data[fieldName];
+  }
+
+  // Método para verificar se um registro está carregado
+  hasRecord(): boolean {
+    return !!this.currentContext.currentRecord?.id;
+  }
+
+  // Método para obter o ID do registro atual
+  getCurrentRecordId(): string | null {
+    return this.currentContext.currentRecord?.id || null;
+  }
+
+  // Método para obter todos os dados do registro atual
+  getCurrentRecordData(): any {
+    return this.currentContext.currentRecord?.data || null;
   }
 }

@@ -14,6 +14,10 @@ export interface NavigationContext {
   subcollection?: string;
   itemId?: string;
   viewType?: string; // list, view, edit, etc.
+  currentRecord?: {   // Adicionado para armazenar dados do registro atual
+    id: string;
+    data: any;
+  };
 }
 
 @Injectable({
@@ -340,5 +344,42 @@ export class UserService {
     const currentContext = this.navigationContextSubject.value;
     const updatedContext = { ...currentContext, ...context };
     this.navigationContextSubject.next(updatedContext);
+  }
+
+  // Adicionar ao UserService - método para atualizar o registro atual
+  public setCurrentRecord(id: string, data: any): void {
+    const currentContext = this.navigationContextSubject.value;
+    const updatedContext = { 
+      ...currentContext, 
+      currentRecord: { 
+        id: id, 
+        data: data 
+      } 
+    };
+    console.log('UserService: Atualizando registro atual:', updatedContext);
+    this.navigationContextSubject.next(updatedContext);
+  }
+
+  // CORRIGIDO: Convertido para async/await
+  async updateUserData(userData: any): Promise<void> {
+    try {
+      // Verificar se o usuário está autenticado
+      const user = await this.afAuth.currentUser;
+      if (!user) {
+        console.error('Nenhum usuário autenticado');
+        return;
+      }
+
+      // Atualizar o perfil do usuário
+      await this.firestore
+        .collection('users')
+        .doc(user.uid)
+        .set(userData, { merge: true });
+        
+      console.log('Dados do usuário atualizados com sucesso');
+    } catch (error) {
+      console.error('Erro ao atualizar dados do usuário:', error);
+      throw error;
+    }
   }
 }
