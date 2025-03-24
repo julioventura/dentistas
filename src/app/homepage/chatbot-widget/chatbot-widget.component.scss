@@ -321,6 +321,7 @@
       font-weight: 600;
       color: $primary-color;
       margin-right: 4px;
+      white-space: nowrap;
     }
     
     .context-value {
@@ -329,6 +330,13 @@
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 150px;
+      
+      // Estilo para nomes de coleção/subcoleção
+      span {
+        &:not(:last-child):after {
+          content: ", ";
+        }
+      }
     }
   }
 }

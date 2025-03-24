@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { SubcolecaoService } from '../../shared/subcolecao.service';
 
 // Interface de Contexto
 export interface ChatContext {
@@ -20,7 +21,7 @@ export interface ChatContext {
   pageData?: any;
 }
 
-// Interface para mensagem (já deve existir, mantendo para referência)
+// Interface para mensagem
 export interface Message {
   content: string;
   sender: 'user' | 'bot';
@@ -44,7 +45,7 @@ export class AiChatService {
   private openaiModel = environment.openaiModel;
   private currentContext: ChatContext = {};
   
-  // Adicionar BehaviorSubject para emitir atualizações de contexto
+  // BehaviorSubject para emitir atualizações de contexto
   private contextSubject = new BehaviorSubject<ChatContext>({});
   public context$ = this.contextSubject.asObservable();
   
@@ -61,7 +62,8 @@ export class AiChatService {
     private http: HttpClient,
     private firestore: AngularFirestore,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private subcolecaoService: SubcolecaoService
   ) {
     // Monitora navegação para atualizar contexto
     this.router.events.pipe(
@@ -77,19 +79,58 @@ export class AiChatService {
     // Reset de contexto
     this.currentContext = {};
     
+    // Analisar a URL para extrair informações relevantes
     const segments = route.split('/').filter(Boolean);
     
     if (segments.length > 0) {
-      // Primeiro segmento é o tipo de visualização
-      const viewType = segments[0];
-      this.currentContext.currentView = { type: viewType };
+      // Detectar o tipo de página atual
+      let viewType = segments[0];
       
-      // Se há um segundo segmento, é um ID
-      if (segments.length > 1) {
-        this.currentContext.currentView.id = segments[1];
+      // Detectar visualização de ficha ou item de subcoleção
+      if (viewType === 'view-ficha' && segments.length >= 2) {
+        viewType = segments[1]; // A coleção principal é o segundo segmento em view-ficha
         
-        // Carrega dados específicos baseados no tipo de visualização
-        this.loadContextDataForView(viewType, segments[1]);
+        // Configurar visualização para uma ficha específica
+        this.currentContext.currentView = { 
+          type: 'view-ficha',
+          id: segments.length >= 3 ? segments[2] : undefined
+        };
+        
+        // Se temos "fichas" como parte do caminho, a subcoleção vem depois
+        if (segments.length >= 5 && segments[3] === 'fichas') {
+          this.currentContext.activeCollection = viewType;
+          this.currentContext.activeSubcollections = [segments[4]];
+          
+          // Se temos um ID de ficha específico, carregamos seus detalhes
+          if (segments.length >= 7) {
+            this.loadFichaDetails(viewType, segments[2], segments[4], segments[6]);
+          }
+        } else {
+          // Carrega dados da coleção principal
+          this.loadContextDataForView(viewType, segments.length >= 3 ? segments[2] : undefined);
+        }
+      } else {
+        // Configuração para visualizações padrão (list, view, edit)
+        this.currentContext.currentView = { 
+          type: viewType,
+          id: segments.length > 1 ? segments[1] : undefined
+        };
+        
+        // Tenta identificar a coleção a partir do segundo segmento ou do terceiro em alguns casos
+        let collectionSegment = segments[1];
+        
+        // Para rotas como /view/pacientes/123, a coleção é 'pacientes'
+        if (['view', 'edit', 'new'].includes(viewType) && segments.length > 1) {
+          this.currentContext.activeCollection = collectionSegment;
+          
+          // Se temos um ID, carregar detalhes dessa entidade
+          if (segments.length > 2) {
+            this.loadContextDataForView(collectionSegment, segments[2]);
+          }
+        } else {
+          // Para outros casos, tenta usar o viewType diretamente como coleção ou inferir
+          this.loadContextDataForView(viewType, segments.length > 1 ? segments[1] : undefined);
+        }
       }
     }
     
@@ -100,79 +141,125 @@ export class AiChatService {
     this.contextSubject.next({...this.currentContext});
   }
   
-  // Carrega dados específicos para o contexto baseado no tipo de visualização
+  // Método melhorado para carregar dados específicos para o contexto
   private loadContextDataForView(viewType: string, id?: string): void {
-    switch(viewType.toLowerCase()) {
-      case 'pacientes':
-        this.currentContext.activeCollection = 'pacientes';
-        if (id) {
-          // Carregar informações do paciente se ID fornecido
-          this.firestore.collection('pacientes').doc(id).get().subscribe(doc => {
-            if (doc.exists) {
-              const patientData = doc.data() as any;
-              if (this.currentContext.currentView) {
-                this.currentContext.currentView.name = patientData.nome;
-              }
-              this.currentContext.pageData = patientData;
-              
-              // Verifica quais subcoleções existem para este paciente
-              this.checkSubcollections(id);
-              
-              // Notificar inscritos sobre a mudança
-              this.contextSubject.next({...this.currentContext});
-            }
-          });
-        }
-        break;
-        
-      case 'agenda':
-        this.currentContext.activeCollection = 'agenda';
-        if (id) {
-          // Se for uma data específica
-          this.firestore.collection('agenda').doc(id).get().subscribe(doc => {
-            if (doc.exists) {
-              this.currentContext.pageData = doc.data();
-              if (this.currentContext.currentView) {
-                this.currentContext.currentView.name = `Agenda: ${id}`;
-              }
-              
-              // Notificar inscritos sobre a mudança
-              this.contextSubject.next({...this.currentContext});
-            }
-          });
-        } else {
-          // Agenda do dia atual
-          const today = new Date().toISOString().split('T')[0];
-          if (this.currentContext.currentView) {
-            this.currentContext.currentView.name = `Agenda: ${today}`;
-          }
-          
-          // Notificar inscritos sobre a mudança
-          this.contextSubject.next({...this.currentContext});
-        }
-        break;
+    // Defina conjuntos conhecidos de coleções principais
+    const knownCollections = ['pacientes', 'dentistas', 'fornecedores', 'produtos', 'agenda'];
+    
+    // Se o viewType corresponder a uma coleção conhecida, defina como activeCollection
+    if (knownCollections.includes(viewType.toLowerCase())) {
+      this.currentContext.activeCollection = viewType.toLowerCase();
       
-      default:
-        this.currentContext.activeCollection = viewType.toLowerCase();
-        
-        // Notificar inscritos sobre a mudança
-        this.contextSubject.next({...this.currentContext});
+      // Se temos um ID, carregamos os detalhes da entidade
+      if (id) {
+        this.loadEntityDetails(viewType, id);
+      }
+    } else {
+      // Para outros casos, tentar inferir o que é esta rota
+      switch(viewType.toLowerCase()) {
+        case 'dashboard':
+        case 'home':
+          this.currentContext.currentView!.name = 'Dashboard';
+          break;
+          
+        case 'config':
+        case 'configuracoes':
+          this.currentContext.currentView!.name = 'Configurações';
+          break;
+          
+        case 'list':
+          if (id) {
+            this.currentContext.activeCollection = id;
+            this.currentContext.currentView!.name = `Lista de ${id}`;
+          }
+          break;
+          
+        default:
+          // Se não conseguirmos identificar, usar o próprio viewType
+          if (!this.currentContext.activeCollection) {
+            this.currentContext.activeCollection = viewType;
+          }
+      }
     }
   }
   
-  // Verifica subcoleções existentes para um paciente
-  private checkSubcollections(patientId: string): void {
-    // Reset subcoleções ao checar novamente
+  // Método para carregar detalhes de uma entidade específica
+  private loadEntityDetails(collectionType: string, id: string): void {
+    // Determinar o caminho correto da coleção
+    const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
+    const collectionPath = `users/${userId}/${collectionType}`;
+    
+    // Carregar dados da entidade
+    this.firestore.doc(`${collectionPath}/${id}`).get().subscribe(doc => {
+      if (doc.exists) {
+        const entityData = doc.data() as any;
+        
+        // Atualizar nome da entidade no contexto
+        if (this.currentContext.currentView) {
+          this.currentContext.currentView.name = entityData.nome || `${collectionType}: ${id}`;
+        }
+        
+        // Armazenar dados da página
+        this.currentContext.pageData = entityData;
+        
+        // Verificar subcoleções disponíveis para esta entidade
+        this.checkAvailableSubcollections(collectionType, id);
+        
+        // Emitir o contexto atualizado
+        this.contextSubject.next({...this.currentContext});
+      }
+    });
+  }
+  
+  // Método para carregar detalhes de uma ficha específica
+  private loadFichaDetails(collectionType: string, entityId: string, subcollection: string, fichaId: string): void {
+    // Determinar o caminho correto da ficha
+    const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
+    const fichaPath = `users/${userId}/${collectionType}/${entityId}/fichas/${subcollection}/itens/${fichaId}`;
+    
+    // Carregar dados da ficha
+    this.firestore.doc(fichaPath).get().subscribe(doc => {
+      if (doc.exists) {
+        const fichaData = doc.data() as any;
+        
+        // Atualizar informações no contexto
+        if (this.currentContext.currentView) {
+          this.currentContext.currentView.name = fichaData.nome || 
+            fichaData.titulo || 
+            `${subcollection}: ${fichaId}`;
+        }
+        
+        // Armazenar dados da página
+        this.currentContext.pageData = fichaData;
+        
+        // Emitir o contexto atualizado
+        this.contextSubject.next({...this.currentContext});
+      }
+    });
+  }
+  
+  // Método para verificar subcoleções disponíveis para uma entidade
+  private checkAvailableSubcollections(collectionType: string, id: string): void {
+    // Resetar subcoleções existentes
     this.currentContext.activeSubcollections = [];
     
-    // Lista de subcoleções comuns para verificar
-    const subcollections = ['fichas', 'tratamentos', 'pagamentos', 'exames'];
+    // Obter todas as subcoleções possíveis do SubcolecaoService
+    const possibleSubcollections = this.subcolecaoService.getSubcolecoesDisponiveis().map(sc => sc.nome);
     
-    let pendingChecks = subcollections.length;
+    // Obter userId do UserService
+    const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
     
-    subcollections.forEach(subcollection => {
-      this.firestore.collection(`pacientes/${patientId}/${subcollection}`).get().subscribe(snapshot => {
+    // Contador para controlar quando todas as verificações foram concluídas
+    let pendingChecks = possibleSubcollections.length;
+    
+    // Verificar cada subcoleção possível
+    possibleSubcollections.forEach(subcollection => {
+      // Caminho para verificar a subcoleção
+      const subcollectionPath = `users/${userId}/${collectionType}/${id}/fichas/${subcollection}/itens`;
+      
+      this.firestore.collection(subcollectionPath).get().subscribe(snapshot => {
         if (!snapshot.empty) {
+          // Se a subcoleção não estiver vazia, adicioná-la à lista
           if (!this.currentContext.activeSubcollections) {
             this.currentContext.activeSubcollections = [];
           }
@@ -181,11 +268,12 @@ export class AiChatService {
           }
         }
         
-        // Decrementar pendingChecks
+        // Decrementar o contador de verificações pendentes
         pendingChecks--;
         
         // Se todas as verificações foram concluídas, emitir atualização
         if (pendingChecks === 0) {
+          // Emitir a atualização do contexto
           this.contextSubject.next({...this.currentContext});
         }
       });
@@ -195,18 +283,22 @@ export class AiChatService {
   // Log visual do contexto atual
   private logContextUpdate(): void {
     console.log('%c Contexto Atual do Chatbot ', 'background: #4b0082; color: white; padding: 2px;');
-    console.log(`%c👤 Usuário: ${this.userService.userProfile?.name || this.userService.userEmail || 'Anônimo'}`,'background: #4b0082; color: white; padding: 2px;');
-    console.log(`%c📍 Visualizando: ${this.currentContext.currentView?.type || 'Home'}${this.currentContext.currentView?.name ? ` - ${this.currentContext.currentView.name}` : ''}`, 'background: #4b0082; color: white; padding: 2px;');
-    console.log(`%c📋 Coleção: ${this.currentContext.activeCollection || 'N/A'}`, 'background: #4b0082; color: white; padding: 2px;');
+    console.log(`👤 Usuário: ${this.userService.userProfile?.name || this.userService.userEmail || 'Anônimo'}`);
+    console.log(`📍 Visualizando: ${this.currentContext.currentView?.type || 'Home'}${this.currentContext.currentView?.name ? ` - ${this.currentContext.currentView.name}` : ''}`);
+    console.log(`📋 Coleção: ${this.currentContext.activeCollection || 'N/A'}`);
     
     if (this.currentContext.activeSubcollections?.length) {
-      console.log(`%c📂 Subcoleções: ${this.currentContext.activeSubcollections.join(', ')}`, 'background: #4b0082; color: white; padding: 2px;');
+      console.log(`📂 Subcoleções: ${this.currentContext.activeSubcollections.join(', ')}`);
+    }
+    
+    if (this.currentContext.pageData) {
+      console.log('📄 Dados da página:', this.currentContext.pageData);
     }
   }
 
   // Método para enviar mensagem para a API
   sendMessage(message: string, sessionId: string, dentistId: string, context?: any): Observable<Message> {
-    console.log('%c Enviando mensagem para OpenAI:', message, 'background:rgb(65, 174, 127); color: white; padding: 2px;');
+    console.log('Enviando mensagem para OpenAI:', message);
     
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -215,7 +307,7 @@ export class AiChatService {
     
     // Obter configuração do chatbot
     return this.getDentistChatbotConfig(dentistId).pipe(
-      switchMap((config: any) => { // Tipado explicitamente como any
+      switchMap((config: any) => {
         // Mesclando contexto existente com novo contexto da página atual
         const enhancedContext = {
           ...context,
@@ -239,12 +331,13 @@ export class AiChatService {
             { role: 'system', content: systemPrompt },
             { role: 'user', content: message }
           ],
-          temperature: 0.3,
+          temperature: 0.7,
           max_tokens: 1000
         };
         
-        console.log('%c Payload para OpenAI: ', 'background: #4b0082; color: white; padding: 2px;', payload);
-
+        console.log('%c Payload para OpenAI: ', 'background: #4b0082; color: white; padding: 2px;');
+        console.log(payload);
+        
         return this.http.post<OpenAIResponse>(this.openaiApiUrl, payload, { headers }).pipe(
           map(response => {
             const botMessage: Message = {
@@ -270,8 +363,7 @@ export class AiChatService {
   // Método para construir um prompt de sistema contextualizado
   private buildContextualSystemPrompt(context: any): string {
     let prompt = `Você é um assistente virtual odontológico para o consultório do Dr(a). ${context.dentistName || 'Fulano'}.\n`;
-    prompt += `Forneça informações sobre Odontologia, de forma profissional.\n`;
-    prompt += `Dispense a frase final usual de oferecer atenção adicional como em 'Se precisar de mais informações, estou à disposição!'\n`; 
+    prompt += `Forneça informações sobre Odontologia, de forma cordial e profissional.\n`;
     
     // Adiciona informações profissionais do dentista
     if (context.dentistSpecialty) {
@@ -294,15 +386,17 @@ export class AiChatService {
       }
     }
     
-    // Se estiver vendo um paciente específico
-    if (context.currentView === 'pacientes' && context.patientName) {
-      prompt += `\nPaciente: ${context.patientName}\n`;
+    // Se estiver visualizando uma coleção específica
+    if (context.collection) {
+      prompt += `\nColeção atual: ${context.collection}\n`;
       
-      // Se houver dados do paciente na página
+      // Se houver dados da página
       if (context.pageData) {
         const data = context.pageData;
-        prompt += "Informações disponíveis sobre o paciente:\n";
+        prompt += "Informações disponíveis sobre o registro:\n";
         
+        // Mostrar alguns campos principais que possam existir nos dados
+        if (data.nome) prompt += `- Nome: ${data.nome}\n`;
         if (data.idade) prompt += `- Idade: ${data.idade} anos\n`;
         if (data.telefone) prompt += `- Telefone: ${data.telefone}\n`;
         if (data.email) prompt += `- Email: ${data.email}\n`;
@@ -313,24 +407,21 @@ export class AiChatService {
       if (context.subcollections && context.subcollections.length > 0) {
         prompt += "\nRegistros disponíveis para este paciente:\n";
         context.subcollections.forEach((subcol: string) => {
-          prompt += `- ${subcol}\n`; // Corrigido: fechamento incorreto da string
+          prompt += `- ${subcol}\n`;
         });
         prompt += "\nVocê pode fornecer sugestões ou análises baseadas nestes registros.\n";
       }
     }
     
     // Instruções finais
-    prompt += "\nResponda de forma concisa, profissional e útil. Evite respostas vagas.\n";
+    prompt += "\nResponda de forma concisa, profissional e útil. Evite respostas vagas. Forneça sugestões práticas quando apropriado.\n";
     
-    // Garantir que sempre retorne a string
-    return prompt; 
+    return prompt;
   }
 
   // Método para obter configuração do chatbot para um dentista
   getDentistChatbotConfig(dentistId: string): Observable<any> {
-    console.log(`Carregando configuração do chatbot para dentista ${dentistId}`);
     // Aqui você pode buscar configurações personalizadas do chatbot para este dentista
-    // Por enquanto, retorna configuração padrão
     return of({
       systemPrompt: '',  // Se vazio, usará o prompt contextual padrão
       temperature: 0.7,
@@ -343,28 +434,24 @@ export class AiChatService {
     const randomIndex = Math.floor(Math.random() * this.fallbackResponses.length);
     return of({
       content: this.fallbackResponses[randomIndex],
-      sender: 'bot' as 'bot',
+      sender: 'bot' as 'bot', // Explicitly cast to the literal type 'bot'
       timestamp: new Date()
     }).pipe(delay(500));
   }
 
   // Método para criar nova sessão
   createNewSession(dentistId: string): Observable<string> {
-    console.log(`Criando nova sessão para dentista ${dentistId}`);
     const sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
     return of(sessionId);
   }
 
   // Método para salvar mensagem no histórico
   saveMessageToHistory(sessionId: string, dentistId: string, message: Message): Observable<boolean> {
-    console.log(`Salvando mensagem para sessão ${sessionId}`);
-    // Aqui implementaria a lógica para salvar a mensagem
-    // Por enquanto, apenas simula sucesso
-    return of(true);
+    return of(true); // Simplificado; implemente a lógica real de armazenamento
   }
 
   // Método para obter o contexto atual
   getCurrentContext(): ChatContext {
-    return {...this.currentContext};
+    return this.currentContext;
   }
 }

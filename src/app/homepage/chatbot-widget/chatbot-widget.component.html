@@ -38,11 +38,15 @@
       </div>
       <div class="context-pill" *ngIf="currentContext.activeCollection">
         <span class="context-label">Coleção:</span>
-        <span class="context-value">{{ currentContext.activeCollection }}</span>
+        <span class="context-value">{{ formatCollectionName(currentContext.activeCollection) }}</span>
       </div>
       <div class="context-pill" *ngIf="currentContext.activeSubcollections?.length">
-        <span class="context-label">Dados:</span>
-        <span class="context-value">{{ currentContext.activeSubcollections?.join(', ') }}</span>
+        <span class="context-label">{{ currentContext.activeSubcollections && currentContext.activeSubcollections.length > 1 ? 'Fichas:' : 'Ficha:' }}</span>
+        <span class="context-value">
+          <span *ngFor="let subcol of currentContext.activeSubcollections; let last = last">
+            {{ formatSubcollectionName(subcol) }}{{ !last ? ', ' : '' }}
+          </span>
+        </span>
       </div>
     </div>
     

@@ -67,6 +67,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     private cdr: ChangeDetectorRef // Injetar ChangeDetectorRef
   ) { }
 
+  // Atualizar o método ngOnInit para se inscrever nas atualizações de contexto
+
   ngOnInit(): void {
     // Configuração inicial
     this.dentistId = this.userService.context?.dentistId || '';
@@ -81,8 +83,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     this.aiChatService.context$
       .pipe(takeUntil(this.destroy$))
       .subscribe(context => {
+        console.log('Chatbot atualizou contexto:', context);
         this.currentContext = context;
-        console.log('Componente atualizou contexto:', context);
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       });
 
@@ -257,5 +259,54 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     const element = this.messagesContainer.nativeElement;
     const atBottom = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 50;
     this.isScrolledToBottom = atBottom;
+  }
+
+  /**
+   * Formata o nome da coleção para exibição
+   */
+  formatCollectionName(collection: string): string {
+    // Mapeamento de nomes de coleção para versões mais amigáveis
+    const collectionNameMap: {[key: string]: string} = {
+      'pacientes': 'Pacientes',
+      'dentistas': 'Dentistas',
+      'fornecedores': 'Fornecedores',
+      'produtos': 'Produtos',
+      'estoque': 'Estoque',
+      'financeiro': 'Financeiro',
+      'tratamentos': 'Tratamentos',
+      'agendamentos': 'Agendamentos'
+    };
+
+    // Retorna o nome formatado ou capitaliza o original se não estiver no mapa
+    return collectionNameMap[collection.toLowerCase()] || 
+           this.capitalizeFirstLetter(collection);
+  }
+
+  /**
+   * Formata o nome da subcoleção para exibição
+   */
+  formatSubcollectionName(subcollection: string): string {
+    // Mapeamento de nomes de subcoleção para versões mais amigáveis
+    const subcollectionNameMap: {[key: string]: string} = {
+      'anamnese': 'Anamnese',
+      'exames': 'Exames',
+      'tratamentos': 'Tratamentos',
+      'pagamentos': 'Pagamentos',
+      'prontuario': 'Prontuário',
+      'orcamentos': 'Orçamentos',
+      'consultas': 'Consultas'
+    };
+
+    // Retorna o nome formatado ou capitaliza o original se não estiver no mapa
+    return subcollectionNameMap[subcollection.toLowerCase()] || 
+           this.capitalizeFirstLetter(subcollection);
+  }
+
+  /**
+   * Capitaliza a primeira letra de uma string
+   */
+  private capitalizeFirstLetter(text: string): string {
+    if (!text) return '';
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
 }
