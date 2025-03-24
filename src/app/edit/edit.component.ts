@@ -239,13 +239,13 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   
   // Método para alternar a visibilidade de um grupo
   toggleGrupo(grupoNome: string): void {
-    console.log(`Alternando grupo ${grupoNome} de ${this.gruposExpandidos[grupoNome]} para ${!this.gruposExpandidos[grupoNome]}`);
+    // console.log(`Alternando grupo ${grupoNome} de ${this.gruposExpandidos[grupoNome]} para ${!this.gruposExpandidos[grupoNome]}`);
     this.gruposExpandidos[grupoNome] = !this.gruposExpandidos[grupoNome];
   }
 
   // Método para alternar a visibilidade de um subgrupo
   toggleSubgrupo(subgrupoKey: string): void {
-    console.log(`Alternando subgrupo ${subgrupoKey} de ${this.subgruposExpandidos[subgrupoKey]} para ${!this.subgruposExpandidos[subgrupoKey]}`);
+    // console.log(`Alternando subgrupo ${subgrupoKey} de ${this.subgruposExpandidos[subgrupoKey]} para ${!this.subgruposExpandidos[subgrupoKey]}`);
     this.subgruposExpandidos[subgrupoKey] = !this.subgruposExpandidos[subgrupoKey];
   }
   

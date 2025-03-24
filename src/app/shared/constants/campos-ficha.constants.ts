@@ -1,27 +1,27 @@
 import { Campo } from '../models/campo.model';
 
 export const DEFAULT_CAMPOS_PADRAO: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Nome' },
-  { grupo: '', subgrupo: '', nome: 'codigo', tipo: 'text', label: 'Código' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'text', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Nome' },
+  { grupo: ' Principal', subgrupo: '', nome: 'codigo', tipo: 'text', label: 'Código' },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'text', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos' },
 ];
 
 export const DEFAULT_CAMPOS_PADRAO_FICHAS: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 export const CAMPOS_FICHAS_EXAMES: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
   
   { grupo: 'Exames', subgrupo: 'Anamnese', nome: 'queixaPrincipal', tipo: 'text', label: 'Queixa Principal' },
   { grupo: 'Exames', subgrupo: 'Anamnese', nome: 'emTratamentoMedico', tipo: 'boolean', label: 'Está em tratamento médico?' },
@@ -37,62 +37,62 @@ export const CAMPOS_FICHAS_EXAMES: Campo[] = [
 ];
 
 export const CAMPOS_FICHAS_DOCUMENTOS: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 
 export const CAMPOS_FICHAS_PLANOS: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 export const CAMPOS_FICHAS_PAGAMENTOS: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'forma', tipo: 'text', label: 'Forma de Pagamento' },
-  { grupo: '', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'forma', tipo: 'text', label: 'Forma de Pagamento' },
+  { grupo: ' Principal', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
 ];
 
 export const CAMPOS_FICHAS_ATENDIMENTOS: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-  // { grupo: '', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  // { grupo: ' Principal', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
 ];
 
 export const CAMPOS_FICHAS_TRATAMENTOS: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
-  // { grupo: '', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  // { grupo: ' Principal', subgrupo: '', nome: 'valor', tipo: 'number', label: 'Valor' },
 ];
 
 export const CAMPOS_FICHAS_DENTES: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Dente' },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Dente', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 
 export const CAMPOS_FICHAS_DIAGNOSTICOS: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo' },
+  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
   { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
   { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 export const CAMPOS_FICHAS_RISCO: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Dente' },
+  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Dente', obrigatorio: true, expandido: true },
   { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
   { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
   { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
@@ -392,15 +392,15 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
 ];
 
 export const CAMPOS_FICHAS_DENTES_PERIO: Campo[] = [
-  { grupo: 'Dentes Perio', subgrupo: 'subgrupo', nome: 'nome', tipo: 'text', label: 'Dente' },
-  { grupo: 'Dentes Perio', subgrupo: 'subgrupo', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: 'Dentes Perio', subgrupo: 'subgrupo', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: 'Dentes Perio', subgrupo: 'subgrupo', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: 'subgrupo', nome: 'nome', tipo: 'text', label: 'Dente', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: 'subgrupo', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: 'subgrupo', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: 'subgrupo', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 export const CAMPOS_FICHAS_ANAMNESE: Campo[] = [
-  { grupo: 'Anamnese', subgrupo: 'subgrupo', nome: 'nome', tipo: 'text', label: 'Titulo' },
-  { grupo: 'Anamnese', subgrupo: 'subgrupo', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: 'Anamnese', subgrupo: 'subgrupo', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: 'Anamnese', subgrupo: 'subgrupo', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: 'subgrupo', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: 'subgrupo', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: 'subgrupo', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: 'subgrupo', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
