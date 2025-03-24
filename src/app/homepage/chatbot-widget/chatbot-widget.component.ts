@@ -6,6 +6,7 @@ import { UserService } from '../../shared/user.service';
 import { AiChatService, Message, ChatContext } from './ai-chat.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chatbot-widget',
@@ -64,7 +65,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   constructor(
     private userService: UserService,
     private aiChatService: AiChatService,
-    private cdr: ChangeDetectorRef // Injetar ChangeDetectorRef
+    private cdr: ChangeDetectorRef, // Injetar ChangeDetectorRef
+    private router: Router
   ) { }
 
   // Atualizar o método ngOnInit para se inscrever nas atualizações de contexto
@@ -337,5 +339,36 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   private capitalizeFirstLetter(text: string): string {
     if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
+
+  /**
+   * Verifica se estamos em uma view de subcollection
+   */
+  isSubcollectionView(): boolean {
+    return this.currentContext?.currentView?.type === 'view-ficha' || 
+           this.currentContext?.currentView?.type === 'edit-ficha';
+  }
+
+  /**
+   * Verifica se a subcollection passada é a que estamos visualizando atualmente
+   */
+  isCurrentSubcollection(subcollection: string): boolean {
+    if (!this.currentContext || !this.router.url) return false;
+    
+    // Verifica se a URL contém o nome desta subcollection
+    return this.router.url.includes(`/fichas/${subcollection}/`);
+  }
+
+  /**
+   * Obtém o nome do registro da subcollection quando disponível
+   */
+  getSubcollectionRecordName(): string | null {
+    if (!this.isSubcollectionView() || !this.currentContext?.currentRecord?.data) {
+      return null;
+    }
+    
+    const data = this.currentContext.currentRecord.data;
+    // Tentar vários possíveis nomes de campo
+    return data.nome || data.title || data.titulo || null;
   }
 }

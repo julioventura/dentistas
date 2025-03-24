@@ -29,39 +29,39 @@
   <div class="chatbot-body" *ngIf="!isMinimized">
     <!-- Indicador de contexto -->
     <div id="context-indicator" class="context-indicator" *ngIf="showContextIndicator && currentContext">
-      <!-- Contexto (tipo de visualização) - CORRIGIDO -->
+      <!-- Contexto (tipo de visualização) -->
       <div class="context-pill" *ngIf="currentContext.currentView">
         <span class="context-label">Contexto:</span>
         <span class="context-value">
           {{ currentContext.currentView.type || 'Home' }}
-          <span *ngIf="currentContext.currentView.name"></span>
+          <span *ngIf="currentContext.currentView.name"> - {{ currentContext.currentView.name }}</span>
         </span>
       </div>
       
-      <!-- Coleção - CORRIGIDO -->
+      <!-- Coleção -->
       <div class="context-pill" *ngIf="currentContext.activeCollection">
         <span class="context-label">Coleção:</span>
         <span class="context-value">{{ formatCollectionName(currentContext.activeCollection) }}</span>
       </div>
       
-      <!-- Nome do registro (quando disponível) - CORRIGIDO -->
-      <div class="context-pill" *ngIf="currentContext.currentRecord?.data?.nome">
+      <!-- Nome do registro da collection principal -->
+      <div class="context-pill" *ngIf="currentContext.currentRecord?.data?.nome && !isSubcollectionView()">
         <span class="context-label">Nome:</span>
+        <!-- Adicionar proteção contra undefined com || '' -->
         <span class="context-value record-name">{{ formatRecordName(currentContext.currentRecord?.data?.nome || '') }}</span>
       </div>
       
-      <!-- ID do registro - CORRIGIDO -->
-      <!-- <div class="context-pill" *ngIf="currentContext.currentRecord?.id">
-        <span class="context-label">Registro:</span>
-        <span class="context-value">{{ formatId(currentContext.currentRecord?.id || '') }}</span>
-      </div> -->
-      
       <!-- Subcoleções - CORRIGIDO -->
       <div class="context-pill" *ngIf="currentContext.activeSubcollections?.length">
-        <span class="context-label">{{ (currentContext.activeSubcollections && currentContext.activeSubcollections.length > 1) ? 'Fichas:' : 'Ficha:' }}</span>
+        <!-- Usar o operador ! para informar ao TypeScript que sabemos que isto não é undefined -->
+        <span class="context-label">{{ (currentContext.activeSubcollections!.length > 1) ? 'Fichas:' : 'Ficha:' }}</span>
         <span class="context-value">
-          <span *ngFor="let subcol of currentContext.activeSubcollections; let last = last">
-            {{ formatSubcollectionName(subcol) }}{{ !last ? ', ' : '' }}
+          <span *ngFor="let subcol of currentContext.activeSubcollections!; let last = last">
+            {{ formatSubcollectionName(subcol) }}
+            <span *ngIf="subcol && isSubcollectionView() && isCurrentSubcollection(subcol) && getSubcollectionRecordName()">
+              : {{ getSubcollectionRecordName() }}
+            </span>
+            {{ !last ? ', ' : '' }}
           </span>
         </span>
       </div>
