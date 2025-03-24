@@ -16,41 +16,44 @@
   background-color: #fff;
   
   &.minimized {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: $primary-color;
-    cursor: pointer;
-    box-shadow: none;
+    width: 60px !important; // Adicionado !important
+    height: 60px !important; // Adicionado !important
+    border-radius: 50% !important; // Adicionado !important para garantir
+    background-color: $primary-color !important; // Garantir a cor mesmo no modo maximizado
+    transform: translateX(0) !important; // Remover qualquer transformação do modo maximizado
+    bottom: 20px !important; // Restaurar posição padrão
+    right: 20px !important; // Restaurar posição padrão
+    max-width: none !important; // Limpar restrições de maximizado
+    max-height: none !important; // Limpar restrições de maximizado
     
-    .chatbot-body, .chatbot-title span {
-      display: none;
+    .chatbot-body, .chatbot-title span, .context-button {
+      display: none !important; // Esconder o botão de contexto quando minimizado
     }
     
     .chatbot-header {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      border-radius: 50%;
+      height: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
       
       .chatbot-title {
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        width: 100%;
+        margin: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
         
         i {
-          margin-right: 0; /* Remove margem que existe no modo expandido */
-          font-size: 28px;
-          color: #fff;
-          animation: pulse 2s infinite;
+          margin-right: 0 !important; 
+          font-size: 28px !important;
+          color: #fff !important;
+          animation: pulse 2s infinite !important;
         }
       }
       
       .chatbot-controls, .chatbot-maximize {
-        display: none;
+        display: none !important;
       }
     }
   }
@@ -64,8 +67,9 @@
     right: 50%; // Centraliza horizontalmente
     transform: translateX(50%); // Complementa a centralização
     border-radius: 20px; // Bordas um pouco mais arredondadas
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); // Sombra mais pronunciada
-    
+    // box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); // Sombra mais pronunciada
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 1);
+
     .chatbot-body {
       height: calc(85vh - 50px); // Altura total menos a altura do cabeçalho
       max-height: 750px; // Limitador para telas muito grandes
@@ -134,6 +138,26 @@
     i {
       margin-right: 8px;
       font-size: 18px;
+    }
+    
+    span {
+      margin-right: 8px; // Adicionar margem à direita do texto para separar do botão
+    }
+    
+    // Ajustar estilo do botão de contexto integrado no título
+    .context-button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
     }
   }
   
@@ -273,6 +297,57 @@
   0%, 20% { content: "."; }
   40% { content: ".."; }
   60%, 100% { content: "..."; }
+}
+
+/* Estilos para o indicador de contexto */
+.context-indicator {
+  padding: 8px 10px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid #eaeaea;
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  
+  .context-pill {
+    background-color: #f0f8ff;
+    border: 1px solid #e1e8ed;
+    border-radius: 12px;
+    padding: 2px 8px;
+    display: flex;
+    align-items: center;
+    
+    .context-label {
+      font-weight: 600;
+      color: $primary-color;
+      margin-right: 4px;
+    }
+    
+    .context-value {
+      color: #555;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+  }
+}
+
+/* Ajuste para o botão de contexto */
+.context-button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  margin-right: 5px;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 /* Animações */

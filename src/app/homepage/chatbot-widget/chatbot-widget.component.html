@@ -9,13 +9,16 @@
       </button>
     </div>
 
-    <!-- Título (centralizado) -->
+    <!-- Título (centralizado) com botão de contexto integrado -->
     <div class="chatbot-title">
       <i class="fas fa-robot"></i>
-      <span>Assistente de I.A.</span>
+      <span>Chatbot de I.A.</span>
+      <button class="context-button" *ngIf="!isMinimized" (click)="$event.stopPropagation(); toggleContextIndicator()" title="Mostrar/ocultar contexto">
+        <i class="fas fa-info-circle"></i>
+      </button>
     </div>
     
-    <!-- Controles (lado direito) -->
+    <!-- Controles (lado direito) - remover botão de contexto daqui -->
     <div class="chatbot-controls">
       <button class="minimize-button" (click)="$event.stopPropagation(); toggleChat()">
         <i class="fas" [ngClass]="isMinimized ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
@@ -24,6 +27,25 @@
   </div>
   
   <div class="chatbot-body" *ngIf="!isMinimized">
+    <!-- Indicador de contexto -->
+    <div id="context-indicator" class="context-indicator" *ngIf="showContextIndicator && currentContext">
+      <div class="context-pill" *ngIf="currentContext.currentView">
+        <span class="context-label">Contexto:</span>
+        <span class="context-value">
+          {{ currentContext.currentView.type || 'Home' }}
+          <span *ngIf="currentContext.currentView.name"> - {{ currentContext.currentView.name }}</span>
+        </span>
+      </div>
+      <div class="context-pill" *ngIf="currentContext.activeCollection">
+        <span class="context-label">Coleção:</span>
+        <span class="context-value">{{ currentContext.activeCollection }}</span>
+      </div>
+      <div class="context-pill" *ngIf="currentContext.activeSubcollections?.length">
+        <span class="context-label">Dados:</span>
+        <span class="context-value">{{ currentContext.activeSubcollections?.join(', ') }}</span>
+      </div>
+    </div>
+    
     <div class="messages-container" #messagesContainer (scroll)="onMessagesScroll()">
       <div *ngFor="let message of conversation" 
            [ngClass]="message.sender === 'user' ? 'message-bubble user-message' : 'message-bubble bot-message'">

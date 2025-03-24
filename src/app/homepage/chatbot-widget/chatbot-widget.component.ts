@@ -1,9 +1,11 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, AfterViewChecked, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { UserService } from '../../shared/user.service';
-import { AiChatService, Message } from './ai-chat.service';
+import { AiChatService, Message, ChatContext } from './ai-chat.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chatbot-widget',
@@ -34,122 +36,86 @@ import { AiChatService, Message } from './ai-chat.service';
     ])
   ]
 })
-export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterViewInit {
-  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
-  private shouldScrollToBottom = true;
-  private userScrolled = false;
-  private lastScrollTop = 0;
-  private scrollTimeout: any = null;
+export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
+  
+  // Adicionar subject para unsubscribe ao destruir o componente
+  private destroy$ = new Subject<void>();
 
-  // Estado de visualização do widget
+  // Propriedades básicas do chatbot
   isMinimized = true;
   isMaximized = false;
-
-  // Propriedades para o diálogo
   conversation: Message[] = [];
-  userInput: string = '';
-  waitingForName: boolean = true;  // Controla se estamos aguardando a resposta com o nome
-  sessionId: string = ''; // Add this property
-  isLoading: boolean = false; // Add this property
+  userInput = '';
+  isLoading = false;
+  sessionId = '';
+  dentistId = '';
+  waitingForName = true;
+  shouldScrollToBottom = false;
+  isScrolledToBottom = true;
+  
+  // Propriedades do contexto
+  dentistName = '';
+  dentistLocation = '';
+  patientName = '';
+  currentContext: ChatContext | null = null;
+  showContextIndicator = false;
 
   constructor(
     private userService: UserService,
-    private aiChatService: AiChatService // Add this service
+    private aiChatService: AiChatService,
+    private cdr: ChangeDetectorRef // Injetar ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
+    // Configuração inicial
+    this.dentistId = this.userService.context?.dentistId || '';
+    this.dentistName = this.userService.context?.dentistName || '';
+    this.dentistLocation = this.userService.context?.location || '';
+    this.patientName = this.userService.context?.patientName || '';
+    
+    // Seta o estado para o UserService
     this.userService.setChatbotExpanded(!this.isMinimized);
+    
+    // Inscrever-se nas atualizações de contexto
+    this.aiChatService.context$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(context => {
+        this.currentContext = context;
+        console.log('Componente atualizou contexto:', context);
+        this.cdr.detectChanges(); // Forçar detecção de mudanças
+      });
 
-    // Criar uma nova sessão de chat
-    this.aiChatService.createNewSession(this.userService.context.dentistId).subscribe(
+    // Inicializa a sessão do chat
+    this.aiChatService.createNewSession(this.dentistId).subscribe(
       sessionId => {
         this.sessionId = sessionId;
-        // Envia a mensagem inicial
-        this.addBotMessage("Olá! Qual é o seu nome?");
+        // Mensagem de boas-vindas
+        this.addBotMessage("Olá! Como posso ajudar hoje?");
       }
     );
   }
 
-  ngAfterViewChecked() {
-    // Só rola para o final se for uma nova mensagem e o usuário não estiver rolando
-    if (this.shouldScrollToBottom && !this.userScrolled) {
+  ngAfterViewInit(): void {
+    if (this.messagesContainer && this.messagesContainer.nativeElement) {
       this.scrollToBottom();
     }
   }
-  
-  // Método para rolar para o final da conversa com delay para garantir que funcione após renderização
-  scrollToBottom(): void {
-    // Não rola se o usuário estiver visualizando mensagens antigas
-    if (this.userScrolled) return;
-    
-    try {
-      if (this.messagesContainer) {
-        // Usa requestAnimationFrame para garantir que ocorra no próximo frame de renderização
-        requestAnimationFrame(() => {
-          const element = this.messagesContainer.nativeElement;
-          element.scrollTop = element.scrollHeight;
-        });
-      }
-    } catch (err) { 
-      console.error('Erro ao tentar rolar para o final:', err); 
+
+  ngAfterViewChecked(): void {
+    if (this.shouldScrollToBottom && this.messagesContainer && this.messagesContainer.nativeElement) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false;
     }
   }
 
-  get dentistId(): string {
-    return this.userService.context.dentistId;
+  // Importante: implementar OnDestroy para evitar memory leaks
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  get dentistName(): string {
-    return this.userService.context.dentistName;
-  }
-
-  get dentistLocation(): string {
-    return this.userService.context.location;
-  }
-
-  get patientName(): string {
-    return this.userService.context.patientName;
-  }
-
-  addBotMessage(message: string): void {
-    const msg: Message = {
-      content: message,
-      sender: 'bot',
-      timestamp: new Date()
-    };
-    this.conversation.push(msg);
-    
-    // Rola para o final apenas se o usuário não estiver visualizando mensagens anteriores
-    if (!this.userScrolled) {
-      this.shouldScrollToBottom = true;
-    }
-
-    // Salva a mensagem no histórico
-    if(this.sessionId) {
-      this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, msg)
-        .subscribe();
-    }
-
-    // Resetar o controle de rolagem quando uma nova mensagem for adicionada
-    this.userScrolled = false;
-    this.shouldScrollToBottom = true;
-  }
-
-  addUserMessage(message: string): void {
-    const msg: Message = {
-      content: message,
-      sender: 'user',
-      timestamp: new Date()
-    };
-    this.conversation.push(msg);
-    this.shouldScrollToBottom = true;
-
-    // Resetar o controle de rolagem quando uma nova mensagem for adicionada
-    this.userScrolled = false;
-    this.shouldScrollToBottom = true;
-  }
-
-  // Modificar sendMessage para garantir a rolagem após adicionar uma mensagem
+  // Método para enviar mensagem do usuário
   sendMessage(): void {
     if (!this.userInput.trim()) return;
 
@@ -161,6 +127,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
 
     // Adiciona mensagem do usuário à conversa
     this.conversation.push(userMessage);
+    this.shouldScrollToBottom = true;
 
     // Salva a mensagem do usuário no histórico
     if (this.sessionId) {
@@ -181,11 +148,16 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     // Mostra indicador de carregamento
     this.isLoading = true;
 
-    // Chama o serviço de IA
+    // Atualiza o contexto antes de enviar
+    this.currentContext = this.aiChatService.getCurrentContext();
+
+    // Chama o serviço de IA com contexto ampliado
     const context = {
       dentistName: this.dentistName,
       conversation: this.conversation,
-      location: this.dentistLocation
+      location: this.dentistLocation,
+      patientName: this.patientName,
+      currentContext: this.currentContext
     };
 
     this.aiChatService.sendMessage(messageText, this.sessionId, this.dentistId, context)
@@ -194,7 +166,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
           // Adiciona resposta do bot à conversa
           this.conversation.push(response);
           this.shouldScrollToBottom = true;
-          // Salva a resposta do bot no histórico
+          
+          // Salva a resposta no histórico
           if (this.sessionId) {
             this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, response)
               .subscribe();
@@ -202,88 +175,87 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
           this.isLoading = false;
         },
         error: (err) => {
-          console.error('Error getting response from AI', err);
+          console.error('Erro ao obter resposta da IA', err);
           this.addBotMessage('Desculpe, tive um problema ao processar sua mensagem. Por favor, tente novamente.');
           this.isLoading = false;
         }
       });
-
-    // Defina que deve rolar para o fim
-    this.shouldScrollToBottom = true;
-    
-    // Quando uma nova mensagem é enviada, voltamos a permitir a rolagem automática,
-    // mesmo que o usuário tenha rolado anteriormente
-    this.userScrolled = false;
-    this.shouldScrollToBottom = true;
-    
-    // Chame o scroll manualmente também para garantir
-    this.scrollToBottom();
   }
 
-  toggleChat(): void {
-    if (this.isMaximized) {
-      this.isMaximized = false;
+  // Helper para adicionar mensagem do bot
+  addBotMessage(content: string): void {
+    const botMessage: Message = {
+      content,
+      sender: 'bot',
+      timestamp: new Date()
+    };
+    this.conversation.push(botMessage);
+    this.shouldScrollToBottom = true;
+    
+    // Salvar no histórico se temos uma sessão
+    if (this.sessionId) {
+      this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, botMessage)
+        .subscribe();
     }
-    this.isMinimized = !this.isMinimized;
-    this.userService.setChatbotExpanded(!this.isMinimized);
+  }
+
+  // Métodos para controlar a exibição do chatbot
+  // Método para alternar entre minimizado e expandido
+  toggleChat(): void {
+    // Se estiver maximizado, primeiro desmaximar, depois minimizar
+    if (this.isMaximized && !this.isMinimized) {
+      this.isMaximized = false;
+      
+      // Pequeno timeout para garantir que a transição de desmaximizar ocorra primeiro
+      setTimeout(() => {
+        this.isMinimized = true;
+        this.userService.setChatbotExpanded(false);
+      }, 50);
+    } else {
+      this.isMinimized = !this.isMinimized;
+      this.userService.setChatbotExpanded(!this.isMinimized);
+      
+      if (this.isMinimized) {
+        this.isMaximized = false; // Se minimizar, garantir que não esteja maximizado
+      }
+    }
+    
+    // Rolar para o final das mensagens se expandir
+    if (!this.isMinimized) {
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 100);
+    }
   }
 
   toggleMaximize(): void {
-    if (!this.isMinimized) {
-      this.isMaximized = !this.isMaximized;
-    }
-  }
-
-  @HostListener('window:resize')
-  onResize(): void {
-    // Se necessário, implemente ajustes responsivos aqui.
-  }
-
-  // Adicione também um detector de rolagem manual para não interferir com a interação do usuário
-  onMessagesScroll(): void {
-    if (!this.messagesContainer) return;
-  
-    const element = this.messagesContainer.nativeElement;
-    const scrollTop = element.scrollTop;
-    
-    // Limpa o timeout anterior para evitar chamadas múltiplas
-    if (this.scrollTimeout) {
-      clearTimeout(this.scrollTimeout);
-    }
-    
-    // Se o usuário está rolando para cima (scrollTop diminuindo)
-    if (scrollTop < this.lastScrollTop) {
-      this.userScrolled = true;
-      this.shouldScrollToBottom = false;
-    }
-    
-    // Verifica se chegou ao final da conversa
-    const atBottom = element.scrollHeight - scrollTop - element.clientHeight < 30;
-    if (atBottom) {
-      // Espera um momento para garantir que não é um bounce da rolagem
-      this.scrollTimeout = setTimeout(() => {
-        this.userScrolled = false;
-        this.shouldScrollToBottom = true;
-      }, 200);
-    }
-    
-    this.lastScrollTop = scrollTop;
-  }
-
-  ngAfterViewInit() {
-    if (this.messagesContainer) {
+    this.isMaximized = !this.isMaximized;
+    setTimeout(() => {
       this.scrollToBottom();
-      
-      // Observa mudanças no tamanho do elemento
-      if (window.ResizeObserver) {
-        const resizeObserver = new ResizeObserver(() => {
-          if (!this.userScrolled) {
-            this.scrollToBottom();
-          }
-        });
-        
-        resizeObserver.observe(this.messagesContainer.nativeElement);
+    }, 100);
+  }
+
+  // Toggle para mostrar/ocultar indicador de contexto
+  toggleContextIndicator(): void {
+    this.showContextIndicator = !this.showContextIndicator;
+  }
+
+  // Controle de rolagem
+  scrollToBottom(): void {
+    if (this.messagesContainer && this.messagesContainer.nativeElement) {
+      try {
+        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+      } catch (err) {
+        console.error('Erro ao rolar para o final:', err);
       }
     }
+  }
+
+  onMessagesScroll(): void {
+    if (!this.messagesContainer || !this.messagesContainer.nativeElement) return;
+    
+    const element = this.messagesContainer.nativeElement;
+    const atBottom = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 50;
+    this.isScrolledToBottom = atBottom;
   }
 }

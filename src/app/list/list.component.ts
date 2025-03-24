@@ -101,7 +101,7 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   ngOnInit() {
-    console.log("ngOnInit()");
+    console.log("List - ngOnInit()");
     this.collection = this.route.snapshot.paramMap.get('collection')!;
     this.id = this.route.snapshot.paramMap.get('id')!;
     this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
@@ -129,7 +129,7 @@ export class ListComponent implements OnInit {
     // Utilize somente uma verificação com a chave normalizada:
     if (this.subcollection) {
       const normalizedKey = this.subcollection.replace(/_/g, '').toLowerCase();
-      console.log("Subcollection normalized key:", normalizedKey);
+      // console.log("Subcollection normalized key:", normalizedKey);
       if (SUBCOLLECTION_FIELDS[normalizedKey]) {
         this.firstField = SUBCOLLECTION_FIELDS[normalizedKey].firstField;
         this.firstHeader = SUBCOLLECTION_FIELDS[normalizedKey].firstHeader;
@@ -151,9 +151,9 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   loadRegistros() {
-    console.log('loadRegistros()');
+    // console.log('loadRegistros()');
     console.log('Collection:', this.collection);
-    console.log('ID:', this.id);
+    // console.log('ID:', this.id);
     console.log('subcollection:', this.subcollection);
 
     if (this.userId && this.collection) {
@@ -194,7 +194,7 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   verFicha(fichaId: string) {
-    console.log("verFicha(fichaId)");
+    // console.log("verFicha(fichaId)");
     const fichaPath = this.subcollection ?
       `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
       `view/${this.collection}`;
@@ -368,7 +368,7 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   previousPage() {
-    console.log("previousPage()");
+    // console.log("previousPage()");
     if (this.page > 1) {
       this.page--;
       this.atualizarRegistrosPaginados();
@@ -384,7 +384,7 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   nextPage() {
-    console.log("nextPage()");
+    // console.log("nextPage()");
     if (this.page < this.totalPages) {
       this.page++;
       this.atualizarRegistrosPaginados();
@@ -401,14 +401,12 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   verificarOuCriarConfiguracao() {
-    console.log("verificarOuCriarConfiguracao()");
+    // console.log("verificarOuCriarConfiguracao()");
     if (this.userId) {
       const configPath = `users/${this.userId}/configuracoesCampos`;
       this.firestore.collection(configPath).doc(this.collection).get()
         .subscribe((doc) => {
-          if (doc.exists) {
-            console.log(`Configuração já existe para a coleção "${this.collection}".`);
-          } else {
+          if (! doc.exists) {
             const camposPadrao = this.getCamposPadraoPorCollection();
             this.firestore.collection(configPath).doc(this.collection).set({ campos: camposPadrao })
               .then(() => {
@@ -457,7 +455,7 @@ export class ListComponent implements OnInit {
    * Retorna: Array de objetos com os campos padrão.
    */
   getCamposPadraoPorCollection() {
-    console.log("getCamposPadraoPorCollection()");
+    // console.log("getCamposPadraoPorCollection()");
     return [
       { nome: 'nome', tipo: 'text', label: 'Nome' },
       { nome: 'codigo', tipo: 'text', label: 'Código' },
@@ -505,8 +503,8 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   voltar() {
-    console.log("voltar()");
-    console.log("subcollection =", this.subcollection);
+    // console.log("voltar()");
+    // console.log("subcollection =", this.subcollection);
     const listaPath = this.subcollection ?
       `/view/${this.collection}/${this.id}` :
       `home`;
@@ -530,7 +528,7 @@ export class ListComponent implements OnInit {
       this.dataSortOrder = this.dataSortOrder === 'asc' ? 'desc' : 'asc';
       this.sortRegistros(field, this.dataSortOrder);
     } else {
-      console.log(`No sorting defined for field: ${field}`);
+      // console.log(`No sorting defined for field: ${field}`);
     }
   }
 
