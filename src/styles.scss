@@ -813,3 +813,7 @@ $directions: (
     padding-top: var(--py);
     padding-bottom: var(--py);
 }
+
+app-root {
+  zoom: 110%; /* Aplica x% de zoom */
+}
