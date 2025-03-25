@@ -14,7 +14,7 @@ $white: #ffffff;
 
 $gray: #bdbdbd;
 $gray-light: #eee;
-$gray-dark: #333; 
+$gray-dark: #333;
 
 $red: #ff0000;
 $red-light: #ffdfdf;
@@ -33,7 +33,7 @@ $primary-hover: $primary-color-dark;
 $primary-color-medio: #7b9ebf;
 
 $chatbot-blue: #4a67de;
-    
+
 
 $secondary-color: #0d9113;
 $secondary-color-light: #ddffde;
@@ -274,18 +274,22 @@ h4 {
             }
         }
 
-        .detail-value, .detail-value-semborda {
+        .detail-value,
+        .detail-value-semborda {
             color: $text-color-dark;
             font-size: 12px;
             font-weight: bold;
             text-align: left;
         }
+
         .detail-value-semborda {
             color: $red-dark;
         }
 
         @media screen and (max-width: $medium-width) {
-            .detail-value, detail-value-semborda {
+
+            .detail-value,
+            detail-value-semborda {
                 font-size: 11px;
             }
         }
@@ -312,32 +316,23 @@ h4 {
         }
 
         .url {
+            background-color: $primary-color;
+            border: 0;
+            border-radius: 14px;
+            box-sizing: border-box;
             color: white;
+            cursor: pointer;
             font-size: 12px;
             font-weight: bold;
-            width: 100%;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease;
             margin: 0;
-            margin-top: 1em;
             margin-bottom: 1em;
+            margin-top: 1em;
+            max-width: 100%;
+            min-width: 0;
             padding: 0.5em;
-            background-color: $primary-color;
-            border: 1pt solid $primary-color;
-            border-radius: 14px;
-            // box-shadow: 1pt 1pt 4pt 1pt #aaa;
             text-align: center;
-            cursor: pointer;
-
-            &:focus {
-                background-color: $primary-color-light;
-                /* Cor de fundo ao focar */
-                outline: none;
-                /* Remove o outline padrão ao focar */
-                border-color: $primary-color-dark;
-                color: $primary-color-dark;
-                font-weight: bold;
-            }
+            transition: background-color 0.3s ease;
+            width: 100%;
         }
 
         textarea {
@@ -368,6 +363,7 @@ h4 {
     box-sizing: border-box;
     /* Inclui o padding e border dentro da largura */
 }
+
 .detail-value-semborda {
     width: 100%;
     /* Ocupará 100% da largura disponível */
@@ -470,7 +466,7 @@ label {
     border: 2px solid $red;
     border-radius: 10px;
     box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4);
-    
+
     text-align: center;
     font-size: large;
     font-weight: bold;
@@ -519,6 +515,7 @@ label {
 .title {
     font-size: 20px;
 }
+
 .small {
     font-size: 8px;
 }
@@ -708,8 +705,16 @@ h1 {
         }
     }
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .social-label {
     font-size: 8px;
@@ -724,7 +729,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     margin-top: 0px;
     margin-bottom: 0px;
     gap: 10px;
-    justify-content: center; 
+    justify-content: center;
     align-items: flex-start;
 }
 

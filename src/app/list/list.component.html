@@ -19,8 +19,10 @@
 
 
   <!-- Exibir mensagem de carregamento enquanto os dados estão sendo buscados -->
-  <div *ngIf="isLoading" class="aviso">
-    <p>Carregando...</p>
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner-container">
+      <div class="spinner"></div>
+    </div>
   </div>
   <div *ngIf="!isLoading && registros.length === 0" class="aviso">
     <p>Nenhuma ficha encontrada.</p>
