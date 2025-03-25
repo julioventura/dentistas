@@ -20,7 +20,7 @@ import { PerfilComponent } from './perfil/perfil.component'; // Importando o com
 import { ChatbotComponent } from './chatbot/chatbot.component';
 import { FooterComponent } from './footer/footer.component';
 import { MenuComponent } from './menu/menu.component';
-import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { ConfigComponent } from './config/config.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
@@ -29,7 +29,7 @@ import { CamposRegistroComponent } from './camposRegistro/camposRegistro.compone
 import { FichasComponent } from './fichas/fichas.component'; // Importe o componente Fichas
 import { MenuConfigComponent } from './menu/menu-config/menu-config.component';
 import { HomeConfigComponent } from './home/home-config/home-config.component';
-import { ImportarCadastroComponent } from './importar-cadastro/importar-cadastro.component';
+import { ImportarCadastroComponent } from './shared/utils/importar-cadastro/importar-cadastro.component';
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { BackupComponent } from './backup/backup.component'; // Import the standalone component
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';

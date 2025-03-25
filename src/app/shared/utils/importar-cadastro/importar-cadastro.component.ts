@@ -3,7 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import * as Papa from 'papaparse';
 
-import { UtilService } from '../shared/utils/util.service';
+import { UtilService } from '../util.service';
 
 @Component({
   selector: 'app-importar-cadastro',
