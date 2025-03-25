@@ -24,38 +24,47 @@
   </div>
   
   <div class="chatbot-body" *ngIf="!isMinimized">
-    <!-- Indicador de contexto -->
+    <!-- Indicador de contexto - VERSÃO MODIFICADA -->
     <div id="context-indicator" class="context-indicator" *ngIf="showContextIndicator && currentContext">
       <!-- Contexto (tipo de visualização) -->
       <div class="context-pill" *ngIf="currentContext.currentView">
         <span class="context-label">Contexto:</span>
         <span class="context-value">
           {{ currentContext.currentView.type || 'Home' }}
-          <span *ngIf="currentContext.currentView.name"> - {{ currentContext.currentView.name }}</span>
         </span>
       </div>
+
       
-      <!-- Coleção -->
+      <!-- Coleção - sempre visível quando disponível, inclusive em list-fichas -->
       <div class="context-pill" *ngIf="currentContext.activeCollection">
         <span class="context-label">Coleção:</span>
         <span class="context-value">{{ formatCollectionName(currentContext.activeCollection) }}</span>
       </div>
-      
-      <!-- Nome do registro da collection principal -->
-      <div class="context-pill" *ngIf="currentContext.currentRecord?.data?.nome && !isSubcollectionView()">
+
+      <div class="context-pill" *ngIf="currentContext.currentView?.name">
         <span class="context-label">Nome:</span>
-        <!-- Adicionar proteção contra undefined com || '' -->
-        <span class="context-value record-name">{{ formatRecordName(currentContext.currentRecord?.data?.nome || '') }}</span>
+        <span class="context-value">
+          {{ currentContext.currentView?.name || '' }}
+        </span>
       </div>
       
-      <!-- Subcoleções - CORRIGIDO -->
+      <!-- Nome do registro principal - visível quando tem dados, mesmo em list-fichas -->
+      <!-- <div class="context-pill" *ngIf="getMainRecordName() || (aiChatService.getMainRecordData()?.nome)">
+        <span class="context-label">Nome 2:</span>
+        <span class="context-value record-name">
+          {{ getMainRecordName() || formatRecordName(aiChatService.getMainRecordData()?.nome) }}
+        </span>
+      </div> -->
+
+      <!-- Subcoleções -->
       <div class="context-pill" *ngIf="currentContext.activeSubcollections?.length">
-        <!-- Usar o operador ! para informar ao TypeScript que sabemos que isto não é undefined -->
         <span class="context-label">{{ (currentContext.activeSubcollections!.length > 1) ? 'Fichas:' : 'Ficha:' }}</span>
         <span class="context-value">
           <span *ngFor="let subcol of currentContext.activeSubcollections!; let last = last">
             {{ formatSubcollectionName(subcol) }}
-            <span *ngIf="subcol && isSubcollectionView() && isCurrentSubcollection(subcol) && getSubcollectionRecordName()">
+            <!-- Em list-fichas, não mostramos nome de registro específico -->
+            <span *ngIf="subcol && !isListFichasView() && isSubcollectionView() && 
+                        isCurrentSubcollection(subcol) && getSubcollectionRecordName()">
               : {{ getSubcollectionRecordName() }}
             </span>
             {{ !last ? ', ' : '' }}

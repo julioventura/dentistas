@@ -16,6 +16,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 import { ConfigService } from '../shared/config.service';
 import { UtilService } from '../shared/utils/util.service';
+import { AiChatService } from '../homepage/chatbot-widget/ai-chat.service';
 
 @Component({
   selector: 'app-home',
@@ -52,7 +53,8 @@ export class HomeComponent implements OnInit {
     public configuracoes: ConfigService,
     public util: UtilService,
     private firestore: AngularFirestore, 
-    private firestoreService: FirestoreService<any> // Usado para buscar o username
+    private firestoreService: FirestoreService<any>, // Usado para buscar o username
+    private aiChatService: AiChatService
   ) { }
 
   /**
@@ -64,6 +66,9 @@ export class HomeComponent implements OnInit {
    *  - Caso nenhum usuário esteja logado, redireciona para a página de login.
    */
   ngOnInit(): void {
+    // Limpar automaticamente o contexto do chatbot ao entrar na Home
+    this.aiChatService.clearContext();
+
     this.auth.user.subscribe(user => {
       if (user && user.email) {
         // Define o nome do usuário utilizando a função capitalize para deixar a primeira letra de cada palavra em maiúsculo.

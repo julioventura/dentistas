@@ -108,9 +108,6 @@ export class ViewComponent implements OnInit {
         } else {
           if (this.subcollection) {
             console.log('Carregando ficha interna...');
-            console.log('loadFicha()');
-            console.log('Colledction :', this.collection);
-            console.log('Subcolledction :', this.subcollection);
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
               .then(() => {
                 // Após carregar os dados da ficha, salvar no UserService
@@ -119,8 +116,7 @@ export class ViewComponent implements OnInit {
                 }
               });
           } else {
-            console.log('Colledction :', this.collection);
-            console.log('loadRegistro()');
+            console.log('Carregando registro principal...');
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
               .then(() => {
                 // Após carregar os dados do registro, salvar no UserService

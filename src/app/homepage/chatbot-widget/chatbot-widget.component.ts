@@ -64,7 +64,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
 
   constructor(
     private userService: UserService,
-    private aiChatService: AiChatService,
+    public aiChatService: AiChatService, // Change to public
     private cdr: ChangeDetectorRef, // Injetar ChangeDetectorRef
     private router: Router
   ) { }
@@ -370,5 +370,31 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     const data = this.currentContext.currentRecord.data;
     // Tentar vários possíveis nomes de campo
     return data.nome || data.title || data.titulo || null;
+  }
+
+  /**
+   * Obtém o nome do registro principal, independente da visualização atual
+   */
+  getMainRecordName(): string {
+    // Se estivermos em uma subcollection, buscar o nome do mainRecord de uma variável separada
+    if (this.isSubcollectionView()) {
+      // Essa informação deve vir de um campo que armazena o registro principal
+      // Podemos usar o NavigationContext ou nossa hierarquia implementada
+      const mainRecordData = this.aiChatService.getMainRecordData();
+      if (mainRecordData?.nome) {
+        return this.formatRecordName(mainRecordData.nome);
+      }
+    }
+    
+    // Caso contrário, usamos o registro atual normalmente
+    return this.currentContext?.currentRecord?.data?.nome ? 
+      this.formatRecordName(this.currentContext.currentRecord.data.nome) : '';
+  }
+
+  /**
+   * Verifica se estamos na visualização de list-fichas
+   */
+  isListFichasView(): boolean {
+    return this.currentContext?.currentView?.type?.toLowerCase() === 'list-fichas';
   }
 }

@@ -43,8 +43,6 @@ import { FirestoreService } from './shared/firestore.service';
 
 // Guard
 import { AuthGuard } from './shared/guards/auth.guard';  // Atualizado com o novo caminho
-import { UsernameGuard } from './shared/guards/username.guard';  // Atualizado com o novo caminho
-
 
 
 // Angular Material

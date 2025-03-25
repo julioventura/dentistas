@@ -31,6 +31,26 @@ export interface ChatContext {
     id: string;
     data: any; // Dados completos do registro
   };
+  // Nova adição: histórico de navegação
+  navigationHistory?: {
+    lastCollection?: string;
+    lastId?: string;
+    lastSubcollection?: string;
+    lastItemId?: string;
+  };
+  // Nova adição: estrutura hierárquica de dados
+  hierarchy?: {
+    [collection: string]: {
+      [id: string]: {
+        data?: any;  // Dados do registro principal
+        subcollections?: {
+          [subcollection: string]: {
+            [itemId: string]: any;  // Dados do registro da subcollection
+          }
+        }
+      }
+    }
+  };
   pageData?: any; // Mantido por compatibilidade
 }
 
@@ -111,33 +131,56 @@ export class AiChatService {
     });
     
     // Continuar monitorando eventos de navegação para casos especiais
+    // this.router.events.pipe(
+    //   filter(event => event instanceof NavigationEnd),
+    //   tap((event: NavigationEnd) => {
+    //     // Apenas para logging e casos especiais não capturados pelo UserService
+    //     console.log('Navegação detectada pelo AiChatService:', event.url);
+    //   })
+    // ).subscribe();
+
+    // Use the updateContextFromUrl method with router events
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       tap((event: NavigationEnd) => {
-        // Apenas para logging e casos especiais não capturados pelo UserService
         console.log('Navegação detectada pelo AiChatService:', event.url);
+        // Call updateContextFromUrl when navigation happens
+        this.updateContextFromUrl(event.url);
       })
     ).subscribe();
   }
 
   // Novo método para atualizar o contexto a partir do navegation context
   private updateContextFromNavigation(navContext: NavigationContext): void {
-    // Reset de contexto
-    this.currentContext = {};
-    
+    // Não resetar completamente o contexto, apenas atualizá-lo
+    // this.currentContext = {}; <- Remover este reset
+
+    if (!this.currentContext) {
+      this.currentContext = {};
+    }
+
     if (navContext.viewType) {
+      // Preservar collection e registro quando acessa list-fichas
+      const isListFichas = navContext.viewType.toLowerCase() === 'list-fichas';
+      
+      // Atualizar tipo de visualização sempre
       this.currentContext.currentView = {
+        ...this.currentContext.currentView,
         type: navContext.viewType
       };
       
-      // Adicionar collection como activeCollection
-      if (navContext.collection) {
+      // Adicionar collection como activeCollection (se não for list-fichas ou não tivermos uma collection)
+      if (navContext.collection && (!isListFichas || !this.currentContext.activeCollection)) {
         this.currentContext.activeCollection = navContext.collection;
         
-        // Se temos um ID, tentamos carregar os detalhes da entidade
-        if (navContext.id) {
+        // Se temos um ID e não estamos em list-fichas ou não temos dados do registro
+        if (navContext.id && (!isListFichas || !this.mainRecordData)) {
           this.currentContext.currentView.id = navContext.id;
-          this.loadEntityDetails(navContext.collection, navContext.id);
+          
+          // Carregar detalhes apenas se ainda não tivermos
+          if (!this.mainRecordData || this.mainRecordData._id !== navContext.id) {
+            this.loadEntityDetails(navContext.collection, navContext.id);
+          }
         } else {
           // Se não temos ID, chamamos loadContextDataForView para pelo menos configurar informações básicas
           this.loadContextDataForView(navContext.collection, undefined);
@@ -146,6 +189,19 @@ export class AiChatService {
         // Se temos uma subcollection, adicionamos à lista de subcollections
         if (navContext.subcollection) {
           this.currentContext.activeSubcollections = [navContext.subcollection];
+          
+          // Se estamos em list-fichas, mantemos os dados do registro principal
+          if (isListFichas && this.mainRecordData) {
+            console.log('Mantendo dados do registro principal em list-fichas', this.mainRecordData);
+            
+            // Garantir que o registro principal está no contexto atual
+            if (!this.currentContext.currentRecord || this.currentContext.currentRecord.id !== navContext.id) {
+              this.currentContext.currentRecord = {
+                id: navContext.id!,
+                data: this.mainRecordData
+              };
+            }
+          }
           
           // Se temos um item específico da subcollection
           if (navContext.itemId) {
@@ -212,26 +268,31 @@ export class AiChatService {
     }
   }
   
+  /**
+   * Armazena o registro principal para exibição mesmo durante visualização de subcollection
+   */
+  private mainRecordData: any = null;
+  
   // Método para carregar detalhes de uma entidade específica
   private loadEntityDetails(collectionType: string, id: string): void {
     const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
     const collectionPath = `users/${userId}/${collectionType}`;
     
-    // Versão atualizada da API
     this.firestore.doc(`${collectionPath}/${id}`).get().subscribe({
       next: (doc) => {
         if (doc.exists) {
           const entityData = doc.data() as any;
           console.log('Dados carregados:', entityData);
           
+          // Armazenar dados do registro principal para uso posterior
+          this.mainRecordData = entityData;
+          
           // Atualizar nome da entidade no contexto
           if (this.currentContext.currentView) {
             this.currentContext.currentView.name = entityData.nome || 
-                                                  entityData.title || 
-                                                  entityData.titulo || 
-                                                  `${collectionType}: ${id}`;
-            
-            console.log('Nome atualizado para:', this.currentContext.currentView.name);
+                                                 entityData.title || 
+                                                 entityData.titulo || 
+                                                 `${collectionType}: ${id}`;
           }
           
           // Armazenar dados estruturados do registro atual
@@ -239,6 +300,9 @@ export class AiChatService {
             id: id,
             data: entityData
           };
+          
+          // Adicionar à hierarquia
+          this.updateHierarchyMainRecord(collectionType, id, entityData);
           
           // Manter pageData por compatibilidade
           this.currentContext.pageData = entityData;
@@ -260,15 +324,18 @@ export class AiChatService {
     });
   }
   
+  /**
+   * Método público para acessar dados do registro principal
+   */
+  getMainRecordData(): any {
+    return this.mainRecordData;
+  }
+  
   // Método para carregar detalhes de uma ficha específica
   private loadFichaDetails(collectionType: string, entityId: string, subcollection: string, fichaId: string): void {
-    // Determinar o caminho correto da ficha
     const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
     const fichaPath = `users/${userId}/${collectionType}/${entityId}/fichas/${subcollection}/itens/${fichaId}`;
     
-    console.log(`Carregando detalhes da ficha: ${fichaPath}`);
-    
-    // Carregar dados da ficha
     this.firestore.doc(fichaPath).get().subscribe({
       next: (doc) => {
         if (doc.exists) {
@@ -277,13 +344,10 @@ export class AiChatService {
           
           // Atualizar informações no contexto
           if (this.currentContext.currentView) {
-            // Usar diferentes campos possíveis para o nome, com fallback
             this.currentContext.currentView.name = fichaData.nome || 
-                                                  fichaData.title || 
-                                                  fichaData.titulo || 
-                                                  `${subcollection}: ${fichaId}`;
-                                                  
-            console.log('Nome da ficha definido como:', this.currentContext.currentView.name);
+                                                 fichaData.title || 
+                                                 fichaData.titulo || 
+                                                 `${subcollection}: ${fichaId}`;
           }
           
           // Armazenar dados estruturados do registro de ficha atual
@@ -291,6 +355,15 @@ export class AiChatService {
             id: fichaId,
             data: fichaData
           };
+          
+          // Adicionar à hierarquia
+          this.updateHierarchySubcollectionRecord(
+            collectionType, 
+            entityId, 
+            subcollection, 
+            fichaId, 
+            fichaData
+          );
           
           // Manter pageData por compatibilidade
           this.currentContext.pageData = fichaData;
@@ -349,6 +422,78 @@ export class AiChatService {
         }
       });
     });
+  }
+
+  // Método para atualizar registro principal na hierarquia
+  private updateHierarchyMainRecord(collection: string, id: string, data: any): void {
+    if (!this.currentContext.hierarchy) {
+      this.currentContext.hierarchy = {};
+    }
+    
+    if (!this.currentContext.hierarchy[collection]) {
+      this.currentContext.hierarchy[collection] = {};
+    }
+    
+    if (!this.currentContext.hierarchy[collection][id]) {
+      this.currentContext.hierarchy[collection][id] = {};
+    }
+    
+    this.currentContext.hierarchy[collection][id].data = data;
+    
+    // Atualizar o histórico de navegação
+    if (!this.currentContext.navigationHistory) {
+      this.currentContext.navigationHistory = {};
+    }
+    
+    this.currentContext.navigationHistory.lastCollection = collection;
+    this.currentContext.navigationHistory.lastId = id;
+    
+    console.log('Hierarquia atualizada com registro principal:', collection, id);
+  }
+
+  // Método para atualizar registro de subcollection na hierarquia
+  private updateHierarchySubcollectionRecord(
+    collection: string, 
+    id: string, 
+    subcollection: string, 
+    itemId: string, 
+    data: any
+  ): void {
+    // Garantir que a estrutura existe
+    if (!this.currentContext.hierarchy) {
+      this.currentContext.hierarchy = {};
+    }
+    
+    if (!this.currentContext.hierarchy[collection]) {
+      this.currentContext.hierarchy[collection] = {};
+    }
+    
+    if (!this.currentContext.hierarchy[collection][id]) {
+      this.currentContext.hierarchy[collection][id] = {};
+    }
+    
+    if (!this.currentContext.hierarchy[collection][id].subcollections) {
+      this.currentContext.hierarchy[collection][id].subcollections = {};
+    }
+    
+    if (!this.currentContext.hierarchy[collection][id].subcollections![subcollection]) {
+      this.currentContext.hierarchy[collection][id].subcollections![subcollection] = {};
+    }
+    
+    // Atualizar os dados
+    this.currentContext.hierarchy[collection][id].subcollections![subcollection][itemId] = data;
+    
+    // Atualizar o histórico de navegação
+    if (!this.currentContext.navigationHistory) {
+      this.currentContext.navigationHistory = {};
+    }
+    
+    this.currentContext.navigationHistory.lastCollection = collection;
+    this.currentContext.navigationHistory.lastId = id;
+    this.currentContext.navigationHistory.lastSubcollection = subcollection;
+    this.currentContext.navigationHistory.lastItemId = itemId;
+    
+    console.log('Hierarquia atualizada com registro de subcollection:', collection, id, subcollection, itemId);
   }
 
   // Log visual do contexto atual
@@ -516,11 +661,12 @@ export class AiChatService {
     }).pipe(delay(500));
   }
 
-  // Método para criar nova sessão
+  // Add comment to explain why sessionId is returned but not used directly
   createNewSession(dentistId: string): Observable<string> {
-    // Prefixo '_' indica parâmetro intencionalmente não utilizado
+    // Create sessionId that will be used by the component that calls this method
     const sessionId = 'session_' + dentistId + '_' + Math.random().toString(36).substring(2, 15);
-    console.log(`Criando nova sessão para dentista: ${dentistId}`);
+    console.log(`Criando nova sessão para dentista: ${dentistId} com ID: ${sessionId}`);
+    // Return sessionId for external use
     return of(sessionId);
   }
 
@@ -553,5 +699,86 @@ export class AiChatService {
   // Método para obter todos os dados do registro atual
   getCurrentRecordData(): any {
     return this.currentContext.currentRecord?.data || null;
+  }
+
+  // Métodos públicos para acessar dados da hierarquia
+  getCollectionRecord(collection: string, id: string): any {
+    try {
+      return this.currentContext.hierarchy?.[collection]?.[id]?.data || null;
+    } catch (error) {
+      console.error('Erro ao acessar registro da collection:', error);
+      return null;
+    }
+  }
+
+  getSubcollectionRecord(collection: string, id: string, subcollection: string, itemId: string): any {
+    try {
+      return this.currentContext.hierarchy?.[collection]?.[id]?.subcollections?.[subcollection]?.[itemId] || null;
+    } catch (error) {
+      console.error('Erro ao acessar registro de subcollection:', error);
+      return null;
+    }
+  }
+
+  getLastCollectionRecord(): any {
+    const nav = this.currentContext.navigationHistory;
+    if (!nav || !nav.lastCollection || !nav.lastId) return null;
+    
+    return this.getCollectionRecord(nav.lastCollection, nav.lastId);
+  }
+
+  getLastSubcollectionRecord(): any {
+    const nav = this.currentContext.navigationHistory;
+    if (!nav || !nav.lastCollection || !nav.lastId || !nav.lastSubcollection || !nav.lastItemId) return null;
+    
+    return this.getSubcollectionRecord(
+      nav.lastCollection,
+      nav.lastId,
+      nav.lastSubcollection,
+      nav.lastItemId
+    );
+  }
+
+  /**
+   * Detecta navegação para Home e limpa o contexto
+   */
+  private updateContextFromUrl(url: string): void {
+    // Verifica se estamos na Home (página raiz ou rota específica da home)
+    if (url === '/' || url === '/home' || url.startsWith('/?') || url.startsWith('/home?')) {
+      console.log('Navegação para Home detectada. Limpando contexto do chatbot.');
+      this.resetContext();
+      return;
+    }
+
+    // Continuar com a lógica existente para outras rotas
+    const urlPattern = /\/([^\/]+)\/([^\/]+)(?:\/fichas\/([^\/]+)\/itens\/([^\/]+))?/;
+    const matches = url.match(urlPattern);
+    
+    // Resto do seu código para outras rotas...
+  }
+
+  /**
+   * Limpa completamente o contexto do chatbot
+   */
+  public resetContext(): void {
+    this.currentContext = {
+      currentView: {
+        type: 'Home'
+      }
+    };
+    
+    // Limpar dados do registro principal
+    this.mainRecordData = null;
+    
+    // Emitir o contexto limpo
+    this.contextSubject.next({...this.currentContext});
+    console.log('Contexto do chatbot resetado.', this.currentContext);
+  }
+
+  /**
+   * Método público para limpar o contexto a partir de outros componentes
+   */
+  public clearContext(): void {
+    this.resetContext();
   }
 }
