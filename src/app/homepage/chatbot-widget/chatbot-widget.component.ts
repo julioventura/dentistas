@@ -60,7 +60,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   dentistLocation = '';
   patientName = '';
   currentContext: ChatContext | null = null;
-  showContextIndicator = false;
+  showContextIndicator = true;
 
   constructor(
     private userService: UserService,

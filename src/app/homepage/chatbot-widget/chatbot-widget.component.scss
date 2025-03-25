@@ -217,9 +217,8 @@
 
 .bot-message {
   border-radius: 0px 18px 18px 18px;
-  background-color: #c3e3fa;
-  /* Azul claro, substitui o cinza #f0f2f5 */
-  color: #1a1a1a;
+  background-color: $primary-color-light;
+  color: $primary-color-dark;
   align-self: flex-start;
   margin-right: auto;
   border: 1px solid $primary-color-light;
@@ -247,9 +246,12 @@
     padding: 10px 16px;
     border: 1px solid $red;
     background-color: $red-lighter;
-
     border-radius: 24px;
-    font-size: 14px;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: $red-dark;
+
     transition: border-color 0.3s;
     outline: none;
 
@@ -374,16 +376,15 @@
     padding: 2px 8px;
     display: flex;
     align-items: center;
+    color: $primary-color;
 
     .context-label {
       font-weight: 600;
-      color: $primary-color;
       margin-right: 4px;
       white-space: nowrap;
     }
 
     .context-value {
-      color: #555;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
