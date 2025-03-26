@@ -1,13 +1,37 @@
-<h1 mat-dialog-title>Cadastro de Novo Usuário</h1>
-<div mat-dialog-content>
-    <p>O email <strong>{{ data.email }}</strong> não está registrado.</p>
-    <p>Deseja criar uma conta?</p>
-    <mat-form-field appearance="fill">
-        <mat-label>Nome</mat-label>
-        <input matInput [(ngModel)]="name" required>
-    </mat-form-field>
-</div>
-<div mat-dialog-actions>
-    <button mat-button (click)="onCancel()">Cancelar</button>
-    <button mat-button color="primary" [disabled]="!name" (click)="onConfirm()">Confirmar</button>
+<div class="signup-container">
+  <div class="signup-header">
+    <mat-icon class="header-icon">person_add</mat-icon>
+    <h2 mat-dialog-title>Cadastro de Novo Usuário</h2>
+  </div>
+  
+  <div mat-dialog-content class="signup-content">
+    <div class="info-section">
+      <p class="email-notice">O email <strong>{{ data.email }}</strong> não está registrado.</p>
+      <p class="signup-question">Gostaria de criar uma conta agora?</p>
+    </div>
+    
+    <div class="form-section">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome completo</mat-label>
+        <input matInput [(ngModel)]="name" required placeholder="Digite seu nome completo">
+        <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+    </div>
+    
+    <div class="benefits-section">
+      <h3>Benefícios ao criar sua conta:</h3>
+      <ul>
+        <li><mat-icon>check_circle</mat-icon> Acesso a conteúdo exclusivo</li>
+        <li><mat-icon>check_circle</mat-icon> Salvar favoritos e preferências</li>
+        <li><mat-icon>check_circle</mat-icon> Receber atualizações importantes</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div mat-dialog-actions class="signup-actions">
+    <button mat-stroked-button (click)="onCancel()">CANCELAR</button>
+    <button mat-raised-button color="primary" [disabled]="!name" (click)="onConfirm()">
+      CRIAR CONTA
+    </button>
+  </div>
 </div>

@@ -335,8 +335,8 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
    * - Dependendo se o registro é uma subcollection, chama:
    *    - FormService.salvarSubcollection() para subcollections, ou
    *    - salvar_collection_anterior() para coleções principais.
-   * - Após salvar, chama verFicha() para navegar à view.
-   * Retorna: void.
+   * - Marca o formulário como "não sujo" antes de navegar.
+   * - Navega para a visualização do registro sem passar pelo diálogo.
    */
   salvar() {
     console.log('salvar()');
@@ -346,6 +346,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
       console.log('id:', this.id);
       console.log('subcollection:', this.subcollection);
       console.log('fichaId:', this.fichaId);
+      
       if (this.subcollection) {
         console.log("Salvar uma subcollection: ", this.subcollection);
         if (this.fichaId) {
@@ -355,10 +356,20 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
         console.log("Salvar uma collection: ", this.collection);
         this.salvar_collection_anterior();
       }
-      this.verFicha();
+      
+      // Marcar o formulário como "não sujo" (não modificado) antes de navegar
+      if (this.FormService.fichaForm) {
+        this.FormService.fichaForm.markAsPristine();
+      }
+      
+      // Navegar para a ficha sem passar pelo diálogo de confirmação
+      const fichaPath = this.subcollection ?
+        `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
+        `view/${this.collection}/${this.id}`;
+      
+      this.router.navigate([fichaPath]);
     }
   }
-
 
   /**
    * salvar_collection_anterior()

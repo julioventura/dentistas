@@ -25,7 +25,7 @@ export class CamposService {
   public camposPadrao: any[] = [
     { nome: 'nome', tipo: 'text', label: 'Nome' },
     { nome: 'codigo', tipo: 'text', label: 'Código' },
-    { nome: 'sexo', tipo: 'text', label: 'Sexo' },
+    { nome: 'sexo', tipo: 'text', label: 'Sexo (M/F)' },
     { nome: 'nascimento', tipo: 'date', label: 'Nascimento' },
     { nome: 'whatsapp', tipo: 'text', label: 'WhatsApp' },
     { nome: 'telefone', tipo: 'text', label: 'Telefone' },

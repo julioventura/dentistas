@@ -817,3 +817,11 @@ $directions: (
 // app-root {
 //   zoom: 110%; /* Aplica x% de zoom */
 // }
+
+// Para garantir que o diálogo tenha a aparência correta
+.modern-dialog .mat-dialog-container {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}

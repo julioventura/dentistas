@@ -72,8 +72,11 @@ export class LoginComponent {
     console.log("Abrindo diálogo de registro para o email:", this.email);
 
     const dialogRef = this.dialog.open(SignupDialogComponent, {
-      width: '300px',
-      data: { email: this.email }
+      data: { email: this.email },
+      width: '450px',
+      height: '500px',
+      panelClass: 'modern-dialog',
+      disableClose: true // Evita fechamento ao clicar fora ou pressionar ESC
     });
 
     dialogRef.afterClosed().subscribe(result => {
