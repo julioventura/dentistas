@@ -33,6 +33,21 @@ import { CamposService } from '../shared/campos.service'; // Serviço para carre
 import { KeyValue } from '@angular/common';
 import { fadeAnimation } from '../animations/fade.animation';
 import { CanComponentDeactivate } from '../shared/guards/can-deactivate.guard';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { firstValueFrom } from 'rxjs';
+import { take } from 'rxjs/operators';
+
+interface Campo {
+  nome: string;
+  tipo: string;
+  label?: string;
+  grupo?: string;
+  subgrupo?: string;
+  opcoes?: any[];
+  defaultValue?: any;
+  expandido?: boolean;
+}
 
 @Component({
   selector: 'app-edit',
@@ -77,7 +92,8 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
     public util: UtilService,
     public FormService: FormService,
     private camposFichaService: CamposFichaService,  // Injeção para subcollections
-    private camposService: CamposService              // Injeção para collections
+    private camposService: CamposService,              // Injeção para collections
+    private dialog: MatDialog
   ) { }
 
   /**
@@ -212,7 +228,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
         const campos = grupos[grupoNome];
         
         // Verificar se algum campo no grupo tem a propriedade expandido=true
-        const temCampoExpandido = campos.some(campo => campo.expandido === true);
+        const temCampoExpandido = campos?.some(campo => campo.expandido === true) || false;
         
         // Iniciar o grupo como expandido se algum campo tiver a propriedade expandido=true
         this.gruposExpandidos[grupoNome] = temCampoExpandido;
@@ -424,12 +440,10 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
    * - Navega à rota definida.
    * Retorna: void.
    */
-  voltar(): void {
-      if (confirm('Deseja sair sem salvar as alterações?')) {
-        // Opcional: recarregar os dados originais ou resetar o formulário
-        this.FormService.fichaForm.reset(this.FormService.registro);
-        this.router.navigate([this.getViewPath()]);
-      }
+  async voltar(): Promise<void> {
+    if (await this.canDeactivate()) {
+      this.router.navigate([this.getViewPath()]);
+    }
   }
 
   private getViewPath(): string {
@@ -468,12 +482,8 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
           (campos: any[]) => {
             const registroData = this.fichaId ? this.FormService.registro : {};
             campos.forEach(campo => {
-              let defaultValue;
-              if (campo.tipo === 'checkbox' || campo.tipo === 'boolean') {
-                defaultValue = registroData[campo.nome] !== undefined ? registroData[campo.nome] : false;
-              } else {
-                defaultValue = registroData[campo.nome] ? registroData[campo.nome] : '';
-              }
+              // Adicione tipo explícito
+              const defaultValue: string | boolean | number | null = this.getFieldDefaultValue(campo);
               this.FormService.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
             });
             // Preenche somente em edição
@@ -619,9 +629,19 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   }
 
   // Método chamado pelo CanDeactivateGuard
-  canDeactivate(): boolean {
+  async canDeactivate(): Promise<boolean> {
     if (this.hasUnsavedChanges()) {
-      return confirm('Existem alterações não salvas. Deseja realmente sair?');
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: {
+          title: 'Sair da edição',
+          message: 'Existem alterações não salvas. Deseja realmente sair?',
+          confirmText: 'Sim, sair',
+          cancelText: 'Não, continuar editando'
+        }
+      });
+
+      return await firstValueFrom(dialogRef.afterClosed());
     }
     return true;
   }
@@ -639,4 +659,49 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
     // Seu código de destruição existente...
   }
   
+  // Adicione underscore aos parâmetros não utilizados
+  onAddItem(_file: any) {
+    // implementação existente
+  }
+
+  // Adicione underscore aos índices não utilizados
+  handleCheckboxChange(_index: number, itemCampo: any) {
+    if (!itemCampo) return;
+    // implementação existente
+  }
+
+  handleRadioChange(_index: number, itemCampo: any) {
+    if (!itemCampo) return;
+    // implementação existente
+  }
+
+  handleOptionChange(_index: number, itemCampo: any) {
+    if (!itemCampo) return;
+    // implementação existente
+  }
+
+  // Adicionar este método à classe EditComponent
+  private getFieldDefaultValue(campo: any): any {
+    // Verificar se o campo tem um valor padrão definido
+    if (campo.defaultValue !== undefined) {
+      return campo.defaultValue;
+    }
+    
+    // Se não tiver um valor padrão, definir com base no tipo
+    switch(campo.tipo) {
+      case 'checkbox':
+        return false;
+      case 'radio':
+      case 'select':
+        // Para radio/select, retornar a primeira opção, se disponível
+        return campo.opcoes && campo.opcoes.length > 0 ? campo.opcoes[0].value : null;
+      case 'number':
+        return 0;
+      case 'text':
+      case 'textarea':
+      case 'date':
+      default:
+        return '';
+    }
+  }
 }

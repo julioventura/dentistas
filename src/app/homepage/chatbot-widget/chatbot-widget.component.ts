@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValue } from '@angular/common';
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { UserService } from '../../shared/user.service';
@@ -61,6 +61,14 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   patientName = '';
   currentContext: ChatContext | null = null;
   showContextIndicator = true;
+
+  // Adicionar estas propriedades à classe
+  // Controles para o popup de detalhes
+  showDetailsPopup: boolean = false;
+  isDetailsMaximized: boolean = false;
+  detailsType: 'collection' | 'subcollection' = 'collection';
+  detailsData: any = null;
+  detailsTitle: string = 'Detalhes';
 
   constructor(
     private userService: UserService,
@@ -396,5 +404,94 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
    */
   isListFichasView(): boolean {
     return this.currentContext?.currentView?.type?.toLowerCase() === 'list-fichas';
+  }
+
+  // Método para mostrar/esconder o popup de detalhes da collection
+  toggleCollectionDetails(): void {
+    console.log('this.currentContext = ', this.currentContext);
+
+    // Se já estiver mostrando detalhes da subcollection, feche
+    if (this.showDetailsPopup && this.detailsType === 'subcollection') {
+      this.showDetailsPopup = false;
+      setTimeout(() => {
+        this.showDetailsPopup = true;
+        this.detailsType = 'collection';
+        this.detailsData = this.aiChatService.getCurrentRecordData();
+        this.detailsTitle = 'Detalhes: ' + this.currentContext?.currentRecord?.data?.nome;
+      }, 300);
+    } else {
+      // Alternar visibilidade
+      this.showDetailsPopup = !this.showDetailsPopup;
+      
+      if (this.showDetailsPopup) {
+        this.detailsType = 'collection';
+        this.detailsData = this.aiChatService.getCurrentRecordData();
+        this.detailsTitle = 'Detalhes: ' + this.currentContext?.currentRecord?.data?.nome;
+      }
+    }
+  }
+
+  // Método para mostrar/esconder o popup de detalhes da subcollection
+  toggleSubcollectionDetails(subcollection: string): void {
+    // Se já estiver mostrando detalhes da collection, feche
+    if (this.showDetailsPopup && this.detailsType === 'collection') {
+      this.showDetailsPopup = false;
+      setTimeout(() => {
+        this.showDetailsPopup = true;
+        this.detailsType = 'subcollection';
+        this.detailsData = this.aiChatService.getLastSubcollectionRecord();
+        this.detailsTitle = 'Ficha: ' + this.formatSubcollectionName(subcollection);
+      }, 300);
+    } else {
+      // Alternar visibilidade
+      this.showDetailsPopup = !this.showDetailsPopup;
+      
+      if (this.showDetailsPopup) {
+        this.detailsType = 'subcollection';
+        this.detailsData = this.aiChatService.getLastSubcollectionRecord();
+        this.detailsTitle = 'Ficha: ' + this.formatSubcollectionName(subcollection);
+      }
+    }
+  }
+
+  // Método para maximizar/minimizar o popup de detalhes
+  toggleDetailsMaximize(): void {
+    this.isDetailsMaximized = !this.isDetailsMaximized;
+  }
+
+  // Método para formatar os dados de registro para exibição
+  formatRecordDetailsForDisplay(data: any): { key: string, value: any }[] {
+    if (!data) return [];
+    
+    return Object.entries(data)
+      .filter(([key, value]) => {
+        // Filtrar campos que são objetos complexos ou arrays
+        return typeof value !== 'object' || value === null;
+      })
+      .map(([key, value]) => {
+        // Formatar o nome do campo para exibição
+        const formattedKey = key.charAt(0).toUpperCase() + key.slice(1)
+          .replace(/([A-Z])/g, ' $1') // Adiciona espaço antes de letras maiúsculas
+          .replace(/_/g, ' '); // Substitui underscores por espaços
+        
+        // Formatar valor para datas
+        let formattedValue = value;
+        if (value && typeof value === 'object') {
+          // Usar type assertion para indicar ao TypeScript que pode ser um timestamp do Firestore
+          const possibleTimestamp = value as { seconds?: number };
+          if (possibleTimestamp.seconds) {
+            // É um timestamp do Firestore
+            formattedValue = new Date(possibleTimestamp.seconds * 1000).toLocaleDateString('pt-BR');
+          }
+        }
+        
+        return { key: formattedKey, value: formattedValue };
+      })
+      .sort((a, b) => a.key.localeCompare(b.key)); // Ordenar alfabeticamente
+  }
+
+
+  trackByKey(_key: string, item: any): any {
+    return item.id; // ou outra propriedade única
   }
 }

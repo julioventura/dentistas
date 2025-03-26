@@ -290,8 +290,6 @@ export class AiChatService {
           // Atualizar nome da entidade no contexto
           if (this.currentContext.currentView) {
             this.currentContext.currentView.name = entityData.nome || 
-                                                 entityData.title || 
-                                                 entityData.titulo || 
                                                  `${collectionType}: ${id}`;
           }
           
@@ -662,11 +660,11 @@ export class AiChatService {
   }
 
   // Add comment to explain why sessionId is returned but not used directly
+  // Adicione um comentário explicando o uso da variável sessionId
   createNewSession(dentistId: string): Observable<string> {
-    // Create sessionId that will be used by the component that calls this method
+    // sessionId é retornado para ser usado pelo componente chamador
     const sessionId = 'session_' + dentistId + '_' + Math.random().toString(36).substring(2, 15);
     console.log(`Criando nova sessão para dentista: ${dentistId} com ID: ${sessionId}`);
-    // Return sessionId for external use
     return of(sessionId);
   }
 
@@ -752,7 +750,14 @@ export class AiChatService {
 
     // Continuar com a lógica existente para outras rotas
     const urlPattern = /\/([^\/]+)\/([^\/]+)(?:\/fichas\/([^\/]+)\/itens\/([^\/]+))?/;
-    const matches = url.match(urlPattern);
+    // Usar a variável matches ou comentar a linha se não for usada
+    // const matches = url.match(urlPattern);
+    
+    // Ou usar o resultado imediatamente:
+    if (url.match(urlPattern)) {
+      // Processar a URL que não seja da página inicial
+      console.log('URL corresponde ao padrão de navegação específica');
+    }
     
     // Resto do seu código para outras rotas...
   }
@@ -780,5 +785,30 @@ export class AiChatService {
    */
   public clearContext(): void {
     this.resetContext();
+  }
+
+  /**
+   * Limpa completamente a hierarquia de registros no contexto
+   * Mantem apenas informações básicas de navegação
+   */
+  public resetHierarchyData(): void {
+    // Armazena temporariamente informações básicas que queremos preservar
+    const currentView = this.currentContext.currentView;
+    const activeCollection = this.currentContext.activeCollection;
+    
+    // Limpa estrutura de hierarquia e registros
+    this.currentContext.hierarchy = {};
+    this.currentContext.currentRecord = undefined; // Changed from null to undefined to match type
+    this.currentContext.navigationHistory = {};
+    this.currentContext.pageData = null;
+    this.mainRecordData = null;
+    
+    // Restaura informações básicas
+    this.currentContext.currentView = currentView;
+    this.currentContext.activeCollection = activeCollection;
+    
+    // Emite o contexto limpo
+    this.contextSubject.next({...this.currentContext});
+    console.log('Hierarquia de dados do contexto resetada.');
   }
 }

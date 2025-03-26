@@ -85,17 +85,17 @@ export const CAMPOS_FICHAS_DENTES: Campo[] = [
 
 
 export const CAMPOS_FICHAS_DIAGNOSTICOS: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Titulo', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 export const CAMPOS_FICHAS_RISCO: Campo[] = [
-  { grupo: '', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Dente', obrigatorio: true, expandido: true },
-  { grupo: '', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
-  { grupo: '', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
-  { grupo: '', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nome', tipo: 'text', label: 'Dente', obrigatorio: true, expandido: true },
+  { grupo: ' Principal', subgrupo: '', nome: 'data', tipo: 'date', label: 'Criado em' },
+  { grupo: ' Principal', subgrupo: '', nome: 'obs', tipo: 'textarea', label: 'Observações' },
+  { grupo: ' Principal', subgrupo: '', nome: 'nuvem', tipo: 'url', label: 'Arquivos na nuvem' },
 ];
 
 export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
@@ -207,33 +207,33 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
 
   // Diagnóstico Pulpar
   // AAE Consensus Conference Recommended Diagnostic Terminology. Journal of Endodontics. 2009;35:1634. 
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Pulpar', nome: 'diagnosticoPulpar1', tipo: 'boolean', label: 'Polpa Normal' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Pulpar', nome: 'diagnosticoPulpar2', tipo: 'boolean', label: 'Pulpite Reversível' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Pulpar', nome: 'diagnosticoPulpar3', tipo: 'boolean', label: 'Pulpite Irreversível Sintomática' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Pulpar', nome: 'diagnosticoPulpar4', tipo: 'boolean', label: 'Pulpite Irreversível Assintomática' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Pulpar', nome: 'diagnosticoPulpar5', tipo: 'boolean', label: 'Polpa Necrosada' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Pulpar', nome: 'diagnosticoPulpar6', tipo: 'boolean', label: 'Tratamento Endodôntico Prévio' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Pulpar', nome: 'diagnosticoPulpar7', tipo: 'boolean', label: 'Terapia Previamente Iniciada' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'a) Diagnóstico Pulpar', nome: 'diagnosticoPulpar1', tipo: 'boolean', label: 'Polpa Normal' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'a) Diagnóstico Pulpar', nome: 'diagnosticoPulpar2', tipo: 'boolean', label: 'Pulpite Reversível' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'a) Diagnóstico Pulpar', nome: 'diagnosticoPulpar3', tipo: 'boolean', label: 'Pulpite Irreversível Sintomática' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'a) Diagnóstico Pulpar', nome: 'diagnosticoPulpar4', tipo: 'boolean', label: 'Pulpite Irreversível Assintomática' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'a) Diagnóstico Pulpar', nome: 'diagnosticoPulpar5', tipo: 'boolean', label: 'Polpa Necrosada' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'a) Diagnóstico Pulpar', nome: 'diagnosticoPulpar6', tipo: 'boolean', label: 'Tratamento Endodôntico Prévio' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'a) Diagnóstico Pulpar', nome: 'diagnosticoPulpar7', tipo: 'boolean', label: 'Terapia Previamente Iniciada' },
   
   // Diagnóstico Perirradicular
   // AAE Consensus Conference Recommended Diagnostic Terminology. Journal of Endodontics. 2009;35:1634. 
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular1', tipo: 'boolean', label: 'Tecidos apicais normais' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular2', tipo: 'boolean', label: 'Periodontite Apical Sintomática' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular3', tipo: 'boolean', label: 'Periodontite Apical Assintomática' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular4', tipo: 'boolean', label: 'Abscesso Apical Agudo' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular5', tipo: 'boolean', label: 'Abscesso Apical Crônico' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular6', tipo: 'boolean', label: 'Osteíte Condensante' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'b) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular1', tipo: 'boolean', label: 'Tecidos apicais normais' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'b) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular2', tipo: 'boolean', label: 'Periodontite Apical Sintomática' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'b) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular3', tipo: 'boolean', label: 'Periodontite Apical Assintomática' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'b) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular4', tipo: 'boolean', label: 'Abscesso Apical Agudo' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'b) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular5', tipo: 'boolean', label: 'Abscesso Apical Crônico' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'b) Diagnóstico Perirradicular', nome: 'diagnosticoPerirradicular6', tipo: 'boolean', label: 'Osteíte Condensante' },
 
   // Plano de Tratamento
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento1', tipo: 'boolean', label: 'Tratamento conservador' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento2', tipo: 'boolean', label: ' Apenas proservação' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento3', tipo: 'boolean', label: 'Tratamento endodôntico ' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento4', tipo: 'boolean', label: 'Continuação de terapia previamente iniciada por outros' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento5', tipo: 'boolean', label: 'Retratamento endodôntico não cirúrgico' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento6', tipo: 'boolean', label: 'Revascularização pulpar' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento7', tipo: 'boolean', label: 'Apicificação' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento8', tipo: 'boolean', label: 'Cirurgia parendodôntica' },
-  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'Plano de Tratamento', nome: 'planoTratamento9', tipo: 'text', label: 'Encaminhamento para avaliação de outra especialidade' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento1', tipo: 'boolean', label: 'Tratamento conservador' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento2', tipo: 'boolean', label: ' Apenas proservação' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento3', tipo: 'boolean', label: 'Tratamento endodôntico ' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento4', tipo: 'boolean', label: 'Continuação de terapia previamente iniciada por outros' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento5', tipo: 'boolean', label: 'Retratamento endodôntico não cirúrgico' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento6', tipo: 'boolean', label: 'Revascularização pulpar' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento7', tipo: 'boolean', label: 'Apicificação' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento8', tipo: 'boolean', label: 'Cirurgia parendodôntica' },
+  { grupo: '05) Diagnóstico e Plano de Tratamento', subgrupo: 'c) Plano de Tratamento', nome: 'planoTratamento9', tipo: 'text', label: 'Encaminhamento para avaliação de outra especialidade' },
 
   // Canais Radiculares
   // CAD – comprimento aparente do dente 
@@ -246,7 +246,7 @@ export const CAMPOS_FICHAS_DENTES_ENDO: Campo[] = [
   // IM – Instrumento de memória (Último do preparo apical)
   
   // Canal 1
-  { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1Nome', tipo: 'text', label: 'Nome/Sigla' , expandido: true},
+  { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1Nome', tipo: 'text', label: 'Nome/Sigla'},
   { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1Ref', tipo: 'text', label: 'Referência Coronária' },
   { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1CAD', tipo: 'number', label: 'CAD – comprimento aparente do dente' },
   { grupo: '06) Canais Radiculares', subgrupo: 'Canal 1', nome: 'canal1CRI', tipo: 'number', label: 'CRI – comprimento real do instrumento (CAD-2)' },

@@ -1,3 +1,42 @@
+<!-- Adicionar à parte superior do template, fora da div chatbot-container -->
+<!-- Popup de Detalhes -->
+<div class="details-popup" 
+     [ngClass]="{'visible': showDetailsPopup, 'maximized': isDetailsMaximized}" 
+     *ngIf="showDetailsPopup">
+  <div class="details-header">
+    <!-- Botão de maximizar à esquerda -->
+    <div class="details-maximize">
+      <button class="maximize-button" (click)="toggleDetailsMaximize()">
+        <i class="fas" [ngClass]="isDetailsMaximized ? 'fa-compress' : 'fa-expand'"></i>
+      </button>
+    </div>
+    
+    <!-- Título centralizado -->
+    <div class="details-title">
+      <span>{{detailsTitle}}</span>
+    </div>
+    
+    <!-- Botão de fechar à direita -->
+    <div class="details-controls">
+      <button class="close-button" (click)="showDetailsPopup = false">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+  
+  <div class="details-body">
+    <div class="details-content" *ngIf="detailsData">
+      <div class="detail-item" *ngFor="let item of formatRecordDetailsForDisplay(detailsData)">
+        <div class="detail-label">{{item.key}}:</div>
+        <div class="detail-value">{{item.value}}</div>
+      </div>
+    </div>
+    <div class="no-details" *ngIf="!detailsData">
+      <p>Nenhum detalhe disponível para exibição.</p>
+    </div>
+  </div>
+</div>
+
 <div class="chatbot-container" 
      [ngClass]="{'minimized': isMinimized, 'maximized': isMaximized}" 
      (click)="isMinimized ? toggleChat() : null">
@@ -41,9 +80,10 @@
         <span class="context-value">{{ formatCollectionName(currentContext.activeCollection) }}</span>
       </div>
 
-      <div class="context-pill" *ngIf="currentContext.currentView?.name">
+      <!-- Balão Nome (collection) - modificar para adicionar o evento click -->
+      <div class="context-pill" *ngIf="currentContext.currentView?.name" (click)="toggleCollectionDetails()">
         <span class="context-label">Nome:</span>
-        <span class="context-value">
+        <span class="context-value clickable">
           {{ currentContext.currentView?.name || '' }}
         </span>
       </div>
@@ -56,11 +96,12 @@
         </span>
       </div> -->
 
-      <!-- Subcoleções -->
+      <!-- Balão Ficha (subcollection) - modificar para adicionar o evento click -->
       <div class="context-pill" *ngIf="currentContext.activeSubcollections?.length">
         <span class="context-label">{{ (currentContext.activeSubcollections!.length > 1) ? 'Fichas:' : 'Ficha:' }}</span>
         <span class="context-value">
-          <span *ngFor="let subcol of currentContext.activeSubcollections!; let last = last">
+          <span *ngFor="let subcol of currentContext.activeSubcollections!; let last = last" 
+                class="clickable" (click)="toggleSubcollectionDetails(subcol)">
             {{ formatSubcollectionName(subcol) }}
             <!-- Em list-fichas, não mostramos nome de registro específico -->
             <span *ngIf="subcol && !isListFichasView() && isSubcollectionView() && 

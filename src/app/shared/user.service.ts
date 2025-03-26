@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector, Inject } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from '../shared/firestore.service'; // Serviço para manipular o Firestore
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
-import { Observable, of, from, BehaviorSubject } from 'rxjs';
-import { map, catchError, switchMap, tap, filter } from 'rxjs/operators';
+import { Observable, of, from, BehaviorSubject, firstValueFrom } from 'rxjs'; // Adicionar firstValueFrom aqui
+import { map, catchError, switchMap, tap, filter } from 'rxjs/operators'; // Remover firstValueFrom daqui
 import { Router, NavigationEnd } from '@angular/router';
+import { AiChatService } from '../homepage/chatbot-widget/ai-chat.service';
 
 // Interface para o contexto de navegação
 export interface NavigationContext {
@@ -54,11 +55,13 @@ export class UserService {
   private navigationContextSubject = new BehaviorSubject<NavigationContext>({});
   public navigationContext$ = this.navigationContextSubject.asObservable();
 
+  // Corrigir o construtor com injeção adequada
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
     private firestoreService: FirestoreService<any>,
-    private router: Router
+    private router: Router,
+    private injector: Injector  // Remover @Inject, não é necessário para Injector no construtor
   ) {
     console.log('UserService initialized');
     // Carregar dados do usuário autenticado no inicialização do serviço
@@ -285,35 +288,64 @@ export class UserService {
     const segments = url.split('/').filter(Boolean);
     const context: NavigationContext = {};
     
-    if (segments.length > 0) {
-      // Determinar o tipo de view (list, view, edit, etc.)
-      context.viewType = segments[0];
+    // Se estamos navegando para uma nova URL que indica criação de novo registro
+    if (segments.length > 0 && segments[0] === 'new') {
+      console.log('Criando novo registro - limpando o contexto anterior');
+      // Limpar o contexto atual, mantendo apenas o tipo de coleção
+      if (segments.length > 1) {
+        context.collection = segments[1];
+      }
+      context.viewType = 'new';
       
-      // Padrões de URL comuns
-      if (segments[0] === 'list' && segments.length > 1) {
-        context.collection = segments[1];
-      } 
-      else if (['view', 'edit', 'new'].includes(segments[0]) && segments.length > 1) {
-        context.collection = segments[1];
-        if (segments.length > 2) context.id = segments[2];
+      // Limpar registro atual
+      context.currentRecord = undefined;
+      
+      // Notificar o serviço de chat para limpar sua hierarquia
+      if (this.router) {
+        setTimeout(() => {
+          try {
+            // Use injector for safer dependency resolution
+            const aiChatService = this.injector.get(AiChatService);
+            if (aiChatService) {
+              aiChatService.resetHierarchyData();
+            }
+          } catch (e) {
+            console.error('Não foi possível obter o AiChatService:', e);
+          }
+        });
       }
-      else if (segments[0] === 'view-ficha' && segments.length >= 3) {
-        context.collection = segments[1];
-        context.id = segments[2];
+    } else {
+      // Código existente para outras rotas...
+      if (segments.length > 0) {
+        // Determinar o tipo de view (list, view, edit, etc.)
+        context.viewType = segments[0];
         
-        if (segments.length >= 5 && segments[3] === 'fichas') {
-          context.subcollection = segments[4];
-          
-          if (segments.length >= 6) context.itemId = segments[6];
+        // Padrões de URL comuns
+        if (segments[0] === 'list' && segments.length > 1) {
+          context.collection = segments[1];
+        } 
+        else if (['view', 'edit', 'new'].includes(segments[0]) && segments.length > 1) {
+          context.collection = segments[1];
+          if (segments.length > 2) context.id = segments[2];
         }
-      }
-      else if (segments[0] === 'edit-ficha' && segments.length >= 7) {
-        context.collection = segments[1];
-        context.id = segments[2];
-        
-        if (segments[3] === 'fichas') {
-          context.subcollection = segments[4];
-          if (segments[6]) context.itemId = segments[6];
+        else if (segments[0] === 'view-ficha' && segments.length >= 3) {
+          context.collection = segments[1];
+          context.id = segments[2];
+          
+          if (segments.length >= 5 && segments[3] === 'fichas') {
+            context.subcollection = segments[4];
+            
+            if (segments.length >= 6) context.itemId = segments[6];
+          }
+        }
+        else if (segments[0] === 'edit-ficha' && segments.length >= 7) {
+          context.collection = segments[1];
+          context.id = segments[2];
+          
+          if (segments[3] === 'fichas') {
+            context.subcollection = segments[4];
+            if (segments[6]) context.itemId = segments[6];
+          }
         }
       }
     }
@@ -348,16 +380,53 @@ export class UserService {
 
   // Adicionar ao UserService - método para atualizar o registro atual
   public setCurrentRecord(id: string, data: any): void {
+    // Verificar se estamos criando um novo registro
+    const isNewRecord = id && !id.includes('/') && this.router.url.includes('/new/');
+    
+    // Se for novo registro, fazer sanitização para remover campos de subcoleções
+    let sanitizedData = data;
+    if (isNewRecord) {
+      // Determinar quais campos pertencem à coleção principal
+      const collectionType = this.getCurrentCollection();
+      const mainFields = this.getMainFieldsForCollection(collectionType);
+      
+      // Filtrar apenas os campos que pertencem à coleção principal
+      sanitizedData = Object.keys(data)
+        .filter(key => mainFields.includes(key) || 
+                ['id', 'nome', 'email', 'telefone', 'cpf', 'created_at', 'updated_at'].includes(key))
+        .reduce<Record<string, any>>((obj, key) => {
+          obj[key] = data[key];
+          return obj;
+        }, {} as Record<string, any>);
+        
+      console.log('Dados sanitizados para novo registro:', sanitizedData);
+    }
+  
     const currentContext = this.navigationContextSubject.value;
     const updatedContext = { 
       ...currentContext, 
       currentRecord: { 
         id: id, 
-        data: data 
+        data: sanitizedData 
       } 
     };
+    
     console.log('UserService: Atualizando registro atual:', updatedContext);
     this.navigationContextSubject.next(updatedContext);
+  }
+  
+  // Método auxiliar para determinar os campos principais de cada coleção
+  private getMainFieldsForCollection(collectionType?: string): string[] {
+    switch(collectionType) {
+      case 'pacientes':
+        return ['nome', 'email', 'telefone', 'cpf', 'rg', 'nascimento', 'endereco',
+                'bairro', 'cidade', 'estado', 'cep', 'convenio', 'codigo', 'obs'];
+      case 'dentistas':
+        return ['nome', 'email', 'telefone', 'cpf', 'cro', 'especialidade'];
+      // Adicionar outras coleções conforme necessário
+      default:
+        return [];
+    }
   }
 
   // CORRIGIDO: Convertido para async/await
@@ -380,6 +449,21 @@ export class UserService {
     } catch (error) {
       console.error('Erro ao atualizar dados do usuário:', error);
       throw error;
+    }
+  }
+
+  // Converta o método para async
+  public async getCollectionName(collectionId: string): Promise<string> {
+    try {
+      const doc = await firstValueFrom(this.firestore.doc(`collections/${collectionId}`).get());
+      if (doc.exists) {
+        const data = doc.data() as { name: string };
+        return data.name;
+      }
+      return collectionId; // Retorna o ID se o documento não existir
+    } catch (error) {
+      console.error('Erro ao obter nome da coleção:', error);
+      return collectionId; // Retorna o ID em caso de erro
     }
   }
 }

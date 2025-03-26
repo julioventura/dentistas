@@ -27,6 +27,7 @@ export class FooterComponent implements OnInit {
     // Verifica se há um usuário logado e armazena as informações
     this.auth.authState.subscribe((user) => {
       this.user = user;
+      console.log('%c' + ' USUARIO: ', 'background-color: orange; color: black; padding: 2px 5px; border-radius: 2px;');
       console.log(user);
       if(user?.email=='julio@dentistas.com.br'){
         this.configuracoes.is_admin = true;
