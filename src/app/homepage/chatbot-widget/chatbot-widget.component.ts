@@ -8,6 +8,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+import { ConfigService } from '../../shared/config.service';
+
 @Component({
   selector: 'app-chatbot-widget',
   standalone: true,
@@ -39,7 +41,7 @@ import { Router } from '@angular/router';
 })
 export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
-  
+
   // Adicionar subject para unsubscribe ao destruir o componente
   private destroy$ = new Subject<void>();
 
@@ -54,7 +56,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   waitingForName = true;
   shouldScrollToBottom = false;
   isScrolledToBottom = true;
-  
+
   // Propriedades do contexto
   dentistName = '';
   dentistLocation = '';
@@ -74,6 +76,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     private userService: UserService,
     public aiChatService: AiChatService, // Change to public
     private cdr: ChangeDetectorRef, // Injetar ChangeDetectorRef
+    public configuracoes: ConfigService,
     private router: Router
   ) { }
 
@@ -85,10 +88,10 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     this.dentistName = this.userService.context?.dentistName || '';
     this.dentistLocation = this.userService.context?.location || '';
     this.patientName = this.userService.context?.patientName || '';
-    
+
     // Seta o estado para o UserService
     this.userService.setChatbotExpanded(!this.isMinimized);
-    
+
     // Inscrever-se nas atualizações de contexto
     this.aiChatService.context$
       .pipe(takeUntil(this.destroy$))
@@ -97,7 +100,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         this.currentContext = context;
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       });
-    
+
     // Também subscrever diretamente ao contexto de navegação para debugging
     this.userService.navigationContext$
       .pipe(takeUntil(this.destroy$))
@@ -185,7 +188,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
           // Adiciona resposta do bot à conversa
           this.conversation.push(response);
           this.shouldScrollToBottom = true;
-          
+
           // Salva a resposta no histórico
           if (this.sessionId) {
             this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, response)
@@ -210,7 +213,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     };
     this.conversation.push(botMessage);
     this.shouldScrollToBottom = true;
-    
+
     // Salvar no histórico se temos uma sessão
     if (this.sessionId) {
       this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, botMessage)
@@ -224,7 +227,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     // Se estiver maximizado, primeiro desmaximar, depois minimizar
     if (this.isMaximized && !this.isMinimized) {
       this.isMaximized = false;
-      
+
       // Pequeno timeout para garantir que a transição de desmaximizar ocorra primeiro
       setTimeout(() => {
         this.isMinimized = true;
@@ -233,12 +236,12 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     } else {
       this.isMinimized = !this.isMinimized;
       this.userService.setChatbotExpanded(!this.isMinimized);
-      
+
       if (this.isMinimized) {
         this.isMaximized = false; // Se minimizar, garantir que não esteja maximizado
       }
     }
-    
+
     // Rolar para o final das mensagens se expandir
     if (!this.isMinimized) {
       setTimeout(() => {
@@ -272,7 +275,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
 
   onMessagesScroll(): void {
     if (!this.messagesContainer || !this.messagesContainer.nativeElement) return;
-    
+
     const element = this.messagesContainer.nativeElement;
     const atBottom = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 50;
     this.isScrolledToBottom = atBottom;
@@ -284,7 +287,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   formatCollectionName(collection?: string): string {
     if (!collection) return '';
     // Mapeamento de nomes de coleção para versões mais amigáveis
-    const collectionNameMap: {[key: string]: string} = {
+    const collectionNameMap: { [key: string]: string } = {
       'pacientes': 'Pacientes',
       'dentistas': 'Dentistas',
       'fornecedores': 'Fornecedores',
@@ -296,8 +299,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     };
 
     // Retorna o nome formatado ou capitaliza o original se não estiver no mapa
-    return collectionNameMap[collection.toLowerCase()] || 
-           this.capitalizeFirstLetter(collection);
+    return collectionNameMap[collection.toLowerCase()] ||
+      this.capitalizeFirstLetter(collection);
   }
 
   /**
@@ -306,7 +309,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   formatSubcollectionName(subcollection?: string): string {
     if (!subcollection) return '';
     // Mapeamento de nomes de subcoleção para versões mais amigáveis
-    const subcollectionNameMap: {[key: string]: string} = {
+    const subcollectionNameMap: { [key: string]: string } = {
       'anamnese': 'Anamnese',
       'exames': 'Exames',
       'consultas': 'Consultas',
@@ -316,8 +319,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     };
 
     // Retorna o nome formatado ou capitaliza o original se não estiver no mapa
-    return subcollectionNameMap[subcollection.toLowerCase()] || 
-           this.capitalizeFirstLetter(subcollection);
+    return subcollectionNameMap[subcollection.toLowerCase()] ||
+      this.capitalizeFirstLetter(subcollection);
   }
 
   /**
@@ -325,7 +328,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
    */
   formatRecordName(name?: string): string {
     if (!name) return '';
-    
+
     const maxLength = 25;
     return name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
   }
@@ -335,7 +338,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
    */
   formatId(id?: string): string {
     if (!id) return '';
-    
+
     const maxLength = 8;
     return id.length > maxLength ? `${id.substring(0, 6)}...` : id;
   }
@@ -352,8 +355,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
    * Verifica se estamos em uma view de subcollection
    */
   isSubcollectionView(): boolean {
-    return this.currentContext?.currentView?.type === 'view-ficha' || 
-           this.currentContext?.currentView?.type === 'edit-ficha';
+    return this.currentContext?.currentView?.type === 'view-ficha' ||
+      this.currentContext?.currentView?.type === 'edit-ficha';
   }
 
   /**
@@ -361,7 +364,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
    */
   isCurrentSubcollection(subcollection: string): boolean {
     if (!this.currentContext || !this.router.url) return false;
-    
+
     // Verifica se a URL contém o nome desta subcollection
     return this.router.url.includes(`/fichas/${subcollection}/`);
   }
@@ -373,7 +376,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     if (!this.isSubcollectionView() || !this.currentContext?.currentRecord?.data) {
       return null;
     }
-    
+
     const data = this.currentContext.currentRecord.data;
     // Tentar vários possíveis nomes de campo
     return data.nome || data.title || data.titulo || null;
@@ -392,9 +395,9 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         return this.formatRecordName(mainRecordData.nome);
       }
     }
-    
+
     // Caso contrário, usamos o registro atual normalmente
-    return this.currentContext?.currentRecord?.data?.nome ? 
+    return this.currentContext?.currentRecord?.data?.nome ?
       this.formatRecordName(this.currentContext.currentRecord.data.nome) : '';
   }
 
@@ -421,7 +424,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     } else {
       // Alternar visibilidade
       this.showDetailsPopup = !this.showDetailsPopup;
-      
+
       if (this.showDetailsPopup) {
         this.detailsType = 'collection';
         this.detailsData = this.aiChatService.getCurrentRecordData();
@@ -444,7 +447,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     } else {
       // Alternar visibilidade
       this.showDetailsPopup = !this.showDetailsPopup;
-      
+
       if (this.showDetailsPopup) {
         this.detailsType = 'subcollection';
         this.detailsData = this.aiChatService.getLastSubcollectionRecord();
@@ -461,7 +464,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   // Método para formatar os dados de registro para exibição
   formatRecordDetailsForDisplay(data: any): { key: string, value: any }[] {
     if (!data) return [];
-    
+
     return Object.entries(data)
       .filter(([key, value]) => {
         // Filtrar campos que são objetos complexos ou arrays
@@ -472,7 +475,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         const formattedKey = key.charAt(0).toUpperCase() + key.slice(1)
           .replace(/([A-Z])/g, ' $1') // Adiciona espaço antes de letras maiúsculas
           .replace(/_/g, ' '); // Substitui underscores por espaços
-        
+
         // Formatar valor para datas
         let formattedValue = value;
         if (value && typeof value === 'object') {
@@ -483,7 +486,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
             formattedValue = new Date(possibleTimestamp.seconds * 1000).toLocaleDateString('pt-BR');
           }
         }
-        
+
         return { key: formattedKey, value: formattedValue };
       })
       .sort((a, b) => a.key.localeCompare(b.key)); // Ordenar alfabeticamente

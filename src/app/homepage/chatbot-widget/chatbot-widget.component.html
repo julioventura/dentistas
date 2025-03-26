@@ -2,7 +2,7 @@
 <!-- Popup de Detalhes -->
 <div class="details-popup" 
      [ngClass]="{'visible': showDetailsPopup, 'maximized': isDetailsMaximized}" 
-     *ngIf="showDetailsPopup">
+     *ngIf="showDetailsPopup && configuracoes.is_admin">
   <div class="details-header">
     <!-- Botão de maximizar à esquerda -->
     <div class="details-maximize">
@@ -63,8 +63,9 @@
   </div>
   
   <div class="chatbot-body" *ngIf="!isMinimized">
+
     <!-- Indicador de contexto - VERSÃO MODIFICADA -->
-    <div id="context-indicator" class="context-indicator" *ngIf="showContextIndicator && currentContext">
+    <div id="context-indicator" class="context-indicator" *ngIf="showContextIndicator && currentContext && configuracoes.is_admin">
       <!-- Contexto (tipo de visualização) -->
       <div class="context-pill" *ngIf="currentContext.currentView">
         <span class="context-label">Contexto:</span>
@@ -129,6 +130,7 @@
     <div class="input-container">
       <!-- Botão de contexto no lado esquerdo do input -->
       <button class="context-button-bottom" 
+              *ngIf="!isMinimized && configuracoes.is_admin"
               (click)="$event.stopPropagation(); toggleContextIndicator()" 
               title="{{showContextIndicator ? 'Ocultar contexto' : 'Mostrar contexto'}}">
         <i class="fas" [ngClass]="showContextIndicator ? 'fa-eye-slash' : 'fa-info-circle'"></i>

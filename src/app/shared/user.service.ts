@@ -6,6 +6,7 @@ import firebase from 'firebase/compat/app'; // Importa firebase para usar fireba
 import { Observable, of, from, BehaviorSubject, firstValueFrom } from 'rxjs'; // Adicionar firstValueFrom aqui
 import { map, catchError, switchMap, tap, filter } from 'rxjs/operators'; // Remover firstValueFrom daqui
 import { Router, NavigationEnd } from '@angular/router';
+
 import { AiChatService } from '../homepage/chatbot-widget/ai-chat.service';
 
 // Interface para o contexto de navegação
