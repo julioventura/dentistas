@@ -72,6 +72,7 @@ export class FooterComponent implements OnInit {
     this.auth.signOut().then(() => {
       this.router.navigate(['/login']); // Redireciona para a página de login após o logout
     });
+    this.show_footer = false;
   }
 
   // Método para navegação dinâmica

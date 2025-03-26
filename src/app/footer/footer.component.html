@@ -3,10 +3,11 @@
   <!-- Seção de Redes Sociais - ícones alinhados horizontalmente -->
   <section *ngIf="show_footer" class="social-section">
 
-    <div style="text-align: center;">
-      <a href="" (click)="logout()">
-        <img src="https://dentistas.com.br/assets/voltar_red.png" alt="Sair" class="social-section" />
-      </a>
+    <!-- Mostrar botão SAIR apenas se o usuário estiver logado -->
+    <div *ngIf="user" style="text-align: center; margin: 10px 0;">
+      <button mat-raised-button color="warn" class="logout-btn" (click)="logout()">
+        <span>SAIR</span>
+      </button>
     </div>
 
     <!-- <div style="text-align: center;">

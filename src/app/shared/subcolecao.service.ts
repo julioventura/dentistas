@@ -14,7 +14,7 @@ export class SubcolecaoService {
     { nome: 'documentos' },
     { nome: 'planos' },
     { nome: 'atendimentos' },
-    { nome: 'tratamentos' },
+    { nome: 'consultas' },
     { nome: 'pagamentos' },
     { nome: 'dentes' },
     { nome: 'dentesendo' },

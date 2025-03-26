@@ -296,8 +296,8 @@ export class UtilService {
         return 'Planos';
       case 'atendimentos':
         return 'Atendimentos';
-      case 'tratamentos':
-        return 'Tratamentos';
+      case 'consultas':
+        return 'Consultas';
       case 'pagamentos':
         return 'Pagamentos';
       case 'dentes':
@@ -353,8 +353,8 @@ export class UtilService {
         return 'Plano';
       case 'atendimentos':
         return 'Atendimento';
-      case 'tratamentos':
-        return 'Tratamento';        
+      case 'consultas':
+        return 'Consultas';        
       case 'pagamentos':
         return 'Pagamento';
       case 'dentes':

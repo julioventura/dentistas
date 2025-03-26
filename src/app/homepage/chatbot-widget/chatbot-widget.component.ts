@@ -291,7 +291,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       'produtos': 'Produtos',
       'estoque': 'Estoque',
       'financeiro': 'Financeiro',
-      'tratamentos': 'Tratamentos',
+      'consultas': 'Consultas',
       'agendamentos': 'Agendamentos'
     };
 
@@ -309,11 +309,10 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     const subcollectionNameMap: {[key: string]: string} = {
       'anamnese': 'Anamnese',
       'exames': 'Exames',
-      'tratamentos': 'Tratamentos',
+      'consultas': 'Consultas',
       'pagamentos': 'Pagamentos',
       'prontuario': 'Prontuário',
-      'orcamentos': 'Orçamentos',
-      'consultas': 'Consultas'
+      'orcamentos': 'Orçamentos'
     };
 
     // Retorna o nome formatado ou capitaliza o original se não estiver no mapa

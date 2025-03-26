@@ -35,7 +35,7 @@ export class MenuConfigComponent implements OnInit {
     'documentos ',
     'planos',
     'atendimentos',
-    'tratamentos',
+    'consultas',
     'pagamentos',
     'dentes',
     'dentesendo',

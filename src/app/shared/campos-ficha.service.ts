@@ -52,7 +52,7 @@ export class CamposFichaService {
         return of([...CAMPOS_FICHAS_PLANOS]);        
         case 'atendimentos':
           return of([...CAMPOS_FICHAS_ATENDIMENTOS]);
-      case 'tratamentos':
+      case 'consultas':
         return of([...CAMPOS_FICHAS_TRATAMENTOS]);
       case 'pagamentos':
         return of([...CAMPOS_FICHAS_PAGAMENTOS]);

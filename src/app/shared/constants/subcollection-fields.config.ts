@@ -37,9 +37,9 @@ export const SUBCOLLECTION_FIELDS: {
     secondField: 'data',
     secondHeader: 'Data'
   },
-  tratamentos: {
+  consultas: {
     firstField: 'nome',
-    firstHeader: 'Tratamentos',
+    firstHeader: 'Consultas',
     secondField: 'data',
     secondHeader: 'Data'
   },
