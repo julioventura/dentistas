@@ -84,6 +84,9 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   
   private boundBeforeUnloadHandler!: (event: BeforeUnloadEvent) => void;
   
+  // Adicione esta propriedade à classe
+  private dialogAlreadyShown = false;
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -451,10 +454,10 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
    * - Navega à rota definida.
    * Retorna: void.
    */
-  async voltar(): Promise<void> {
-    if (await this.canDeactivate()) {
-      this.router.navigate([this.getViewPath()]);
-    }
+  voltar() {
+    // Não faça nova verificação aqui, apenas navegue
+    // O guard canDeactivate já se encarrega da confirmação
+    this.router.navigate([this.getViewPath()]);
   }
 
   private getViewPath(): string {
@@ -641,7 +644,14 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
 
   // Método chamado pelo CanDeactivateGuard
   async canDeactivate(): Promise<boolean> {
+    // Só mostrar o diálogo se houver mudanças não salvas
     if (this.hasUnsavedChanges()) {
+      // Verificar se o diálogo já foi mostrado nesta navegação
+      if (this.dialogAlreadyShown) {
+        this.dialogAlreadyShown = false;
+        return true;
+      }
+      
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         width: '350px',
         data: {
@@ -652,7 +662,15 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
         }
       });
 
-      return await firstValueFrom(dialogRef.afterClosed());
+      try {
+        // Use firstValueFrom para tratar o Observable como Promise
+        const result = await firstValueFrom(dialogRef.afterClosed());
+        this.dialogAlreadyShown = result === true;
+        return result === true;
+      } catch (error) {
+        console.error('Erro ao processar resultado do diálogo:', error);
+        return false;
+      }
     }
     return true;
   }
