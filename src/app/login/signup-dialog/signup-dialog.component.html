@@ -7,33 +7,25 @@
   <div mat-dialog-content class="signup-content">
     <div class="info-section">
       <p class="email-notice">O email <strong>{{ data.email }}</strong> não está registrado.</p>
-      <p class="signup-question">Preencha as informações abaixo para criar sua conta:</p>
+      <p class="signup-question">Crie uma conta:</p>
     </div>
     
     <div class="form-section">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Nome completo</mat-label>
-        <input matInput [(ngModel)]="name" required placeholder="Digite seu nome completo">
+        <input matInput [(ngModel)]="name" required placeholder="">
         <mat-icon matSuffix>person</mat-icon>
-        <mat-hint>Este nome será usado em seus documentos</mat-hint>
+        <mat-hint>Seu nome completo para nosso cadastro</mat-hint>
       </mat-form-field>
       
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Apelido</mat-label>
-        <input matInput [(ngModel)]="username" required placeholder="Como gostaria de ser chamado">
-        <mat-icon matSuffix>badge</mat-icon>
-        <mat-hint>Este apelido aparecerá nas comunicações</mat-hint>
+        <mat-label>Apelido para sua homepage</mat-label>
+        <input matInput [(ngModel)]="username" required placeholder="">
+        <mat-icon matSuffix>language</mat-icon>
+        <mat-hint>Sua homepage profissional: Dentistas.com.br/[apelido]</mat-hint>
       </mat-form-field>
     </div>
     
-    <div class="benefits-section">
-      <h3>Benefícios da sua conta:</h3>
-      <ul>
-        <li><mat-icon>check_circle</mat-icon> Acesso completo ao sistema</li>
-        <li><mat-icon>check_circle</mat-icon> Gerenciamento personalizado</li>
-        <li><mat-icon>check_circle</mat-icon> Recursos exclusivos</li>
-      </ul>
-    </div>
   </div>
   
   <div mat-dialog-actions class="signup-actions">

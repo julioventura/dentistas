@@ -1,3 +1,5 @@
+@import '../../../styles.scss';
+
 :host {
   display: block;
 }
@@ -11,11 +13,11 @@
 }
 
 .signup-header {
-  display: flex;
+display: flex;
   align-items: center;
-  padding: 24px 24px 0;
-  color: #3f51b5;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding: 0px 24px 0;
+  color: #ffffff;
+  background: $primary-color;
   
   .header-icon {
     font-size: 32px;
@@ -28,6 +30,7 @@
     margin: 0;
     font-size: 24px;
     font-weight: 500;
+    color: $white;
   }
 }
 
