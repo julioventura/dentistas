@@ -3,8 +3,8 @@
 }
 
 .signup-container {
-  min-width: 400px;
-  min-height: 400px;
+  min-width: 450px;
+  min-height: 500px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -15,6 +15,7 @@
   align-items: center;
   padding: 24px 24px 0;
   color: #3f51b5;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
   
   .header-icon {
     font-size: 32px;
@@ -36,27 +37,32 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  overflow: hidden;
 }
 
 .info-section {
   .email-notice {
     font-size: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     
     strong {
       color: #3f51b5;
+      font-weight: 500;
     }
   }
   
   .signup-question {
     font-size: 18px;
     margin: 0;
+    color: #424242;
   }
 }
 
 .form-section {
-  mat-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  .full-width {
     width: 100%;
   }
 }
@@ -65,12 +71,14 @@
   background-color: #f5f5f5;
   border-radius: 8px;
   padding: 16px;
+  margin-top: 8px;
   
   h3 {
     margin-top: 0;
+    margin-bottom: 12px;
     font-size: 16px;
     font-weight: 500;
-    color: #333;
+    color: #424242;
   }
   
   ul {
@@ -83,6 +91,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 8px;
+    font-size: 14px;
     
     mat-icon {
       color: #4caf50;
@@ -100,6 +109,7 @@
   gap: 16px;
   padding: 16px 24px 24px;
   margin-bottom: 0;
+  border-top: 1px solid rgba(0,0,0,0.08);
   
   button {
     min-width: 120px;

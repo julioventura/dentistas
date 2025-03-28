@@ -1,4 +1,4 @@
-import { Component, Inject, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,7 +9,12 @@ import { CommonModule } from '@angular/common';
 
 export interface SignupDialogData {
   email: string;
+}
+
+export interface SignupDialogResult {
   name: string;
+  username: string;
+  email: string;
   confirm: boolean;
 }
 
@@ -30,14 +35,13 @@ export interface SignupDialogData {
 })
 export class SignupDialogComponent {
   name: string = '';
-  data: { email: string };
+  username: string = '';
+  data: SignupDialogData;
 
-  // Usando abordagem alternativa sem @Inject para evitar o erro
   constructor(
     public dialogRef: MatDialogRef<SignupDialogComponent>,
     private injector: Injector
   ) { 
-    // Obter dados do diálogo usando o injector
     try {
       this.data = this.injector.get(MAT_DIALOG_DATA);
       if (!this.data) {
@@ -54,6 +58,12 @@ export class SignupDialogComponent {
   }
 
   onConfirm(): void {
-    this.dialogRef.close({ name: this.name, email: this.data.email });
+    // Retorna explicitamente confirm: true junto com os dados
+    this.dialogRef.close({
+      name: this.name,
+      username: this.username,
+      email: this.data.email,
+      confirm: true
+    });
   }
 }

@@ -79,17 +79,19 @@ export class LoginComponent {
       disableClose: true // Evita fechamento ao clicar fora ou pressionar ESC
     });
 
+    // Atualize o método dialogRef.afterClosed() para receber o username
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.confirm) {
-        console.log("Usuário confirmou a criação de conta com o nome:", result.name);
-        this.createAccount(result.name);
+        console.log("Usuário confirmou a criação de conta:", result);
+        this.createAccount(result.name, result.username);
       } else {
         console.log("Criação de conta cancelada pelo usuário.");
       }
     });
   }
 
-  createAccount(name: string) {
+  // Atualize o método createAccount para receber o username
+  createAccount(name: string, username: string) {
     console.log("Criando conta para o email:", this.email);
 
     this.auth.createUserWithEmailAndPassword(this.email, this.password)
@@ -98,11 +100,30 @@ export class LoginComponent {
 
         if (user) {
           console.log("Conta criada com sucesso para o email:", user.email);
+          
           // Atualiza o perfil do usuário com o nome fornecido
-          user.updateProfile({ displayName: name }).then(() => {
+          user.updateProfile({ 
+            displayName: name
+            // Não podemos adicionar diretamente username aqui porque updateProfile
+            // só aceita displayName e photoURL
+          }).then(() => {
             console.log("Perfil do usuário atualizado com o nome:", name);
-            this.userService.loginSuccess(user); // Atualiza os dados no serviço de usuário
-            this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
+            
+            // Salvar o username no Firestore como dados adicionais do usuário
+            if (user.uid) {
+              this.userService.saveAdditionalUserData(user.uid, {
+                displayName: name, 
+                username: username,
+                email: this.email,
+                createdAt: new Date()
+              }).then(() => {
+                console.log("Dados adicionais do usuário salvos com sucesso");
+                this.userService.loginSuccess(user); // Atualiza os dados no serviço de usuário
+                this.router.navigate(['/']); 
+              }).catch(error => {
+                console.error('Erro ao salvar dados adicionais do usuário:', error);
+              });
+            }
           }).catch(error => {
             console.error('Erro ao atualizar o perfil do usuário:', error);
             alert('Erro ao atualizar o perfil. Por favor, tente novamente.');

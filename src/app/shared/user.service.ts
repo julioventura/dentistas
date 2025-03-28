@@ -467,4 +467,9 @@ export class UserService {
       return collectionId; // Retorna o ID em caso de erro
     }
   }
+
+  // Adicionar este método ao UserService
+  saveAdditionalUserData(userId: string, userData: any): Promise<void> {
+    return this.firestore.collection('users').doc(userId).set(userData, { merge: true });
+  }
 }
