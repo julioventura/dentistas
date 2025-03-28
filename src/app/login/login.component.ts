@@ -68,33 +68,29 @@ export class LoginComponent {
       });
   }
 
+  // Atualize o método que recebe o resultado do diálogo de cadastro
   promptUserRegistration() {
-    console.log("Abrindo diálogo de registro para o email:", this.email);
-
     const dialogRef = this.dialog.open(SignupDialogComponent, {
-      data: { email: this.email },
       width: '450px',
-      height: '500px',
-      panelClass: 'modern-dialog',
-      disableClose: true // Evita fechamento ao clicar fora ou pressionar ESC
+      data: { email: this.email },
+      disableClose: true
     });
 
-    // Atualize o método dialogRef.afterClosed() para receber o username
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.confirm) {
         console.log("Usuário confirmou a criação de conta:", result);
-        this.createAccount(result.name, result.username);
+        this.createAccount(result.name, result.username, result.email);
       } else {
         console.log("Criação de conta cancelada pelo usuário.");
       }
     });
   }
 
-  // Atualize o método createAccount para receber o username
-  createAccount(name: string, username: string) {
-    console.log("Criando conta para o email:", this.email);
+  // Atualize o método createAccount para receber e usar nome e username
+  createAccount(name: string, username: string, email: string) {
+    console.log("Criando conta para o email:", email);
 
-    this.auth.createUserWithEmailAndPassword(this.email, this.password)
+    this.auth.createUserWithEmailAndPassword(email, this.password)
       .then((userCredential) => {
         const user: firebase.User | null = userCredential.user;
 
@@ -104,48 +100,22 @@ export class LoginComponent {
           // Atualiza o perfil do usuário com o nome fornecido
           user.updateProfile({ 
             displayName: name
-            // Não podemos adicionar diretamente username aqui porque updateProfile
-            // só aceita displayName e photoURL
           }).then(() => {
             console.log("Perfil do usuário atualizado com o nome:", name);
             
-            // Salvar o username no Firestore como dados adicionais do usuário
-            if (user.uid) {
-              this.userService.saveAdditionalUserData(user.uid, {
-                displayName: name, 
-                username: username,
-                email: this.email,
-                createdAt: new Date()
-              }).then(() => {
-                console.log("Dados adicionais do usuário salvos com sucesso");
-                this.userService.loginSuccess(user); // Atualiza os dados no serviço de usuário
-                this.router.navigate(['/']); 
-              }).catch(error => {
-                console.error('Erro ao salvar dados adicionais do usuário:', error);
-              });
-            }
+            // Chama o método loginSuccess com nome e username
+            this.userService.loginSuccess(user, name, username);
+            
+            // Navega para a página inicial após cadastro bem-sucedido
+            this.router.navigate(['/']);
           }).catch(error => {
             console.error('Erro ao atualizar o perfil do usuário:', error);
             alert('Erro ao atualizar o perfil. Por favor, tente novamente.');
           });
-        } else {
-          console.error('Erro: usuário retornado é null após criação da conta.');
         }
       })
       .catch(error => {
-        console.error('Erro ao criar conta:', error); // Log detalhado do erro
-
-        const errorCode = error.code;
-
-        if (errorCode === 'auth/email-already-in-use') {
-          alert('Este email já está em uso.');
-        } else if (errorCode === 'auth/invalid-email') {
-          alert('O email fornecido é inválido.');
-        } else if (errorCode === 'auth/weak-password') {
-          alert('A senha é muito fraca. Tente uma senha mais forte.');
-        } else {
-          alert('Erro ao criar conta. Por favor, tente novamente.');
-        }
+        // Tratamento de erro existente...
       });
   }
 

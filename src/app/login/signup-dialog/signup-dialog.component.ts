@@ -57,8 +57,12 @@ export class SignupDialogComponent {
     this.dialogRef.close();
   }
 
+  // Certifique-se que o método onConfirm retorna todos os dados necessários
   onConfirm(): void {
-    // Retorna explicitamente confirm: true junto com os dados
+    if (!this.name || !this.username) {
+      return; // Não permita confirmar se os campos obrigatórios não estiverem preenchidos
+    }
+    
     this.dialogRef.close({
       name: this.name,
       username: this.username,

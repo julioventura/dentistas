@@ -201,7 +201,7 @@ export class UserService {
   }
 
   // Método para criar um documento de usuário na coleção 'usuarios/dentistascombr'
-  createUserInFirestore(user: firebase.User): void {
+  createUserInFirestore(user: firebase.User, name?: string, username?: string): void {
     // Usa o email do usuário como chave do documento
     const userEmail = user.email;
     if (!userEmail) {
@@ -217,7 +217,9 @@ export class UserService {
         userRef.set({
           uid: user.uid,
           email: user.email,
-          provider: user.providerData[0]?.providerId || 'emailAndPassword', // Registra o provedor
+          nome: name || '',               // Adicionar nome
+          username: username || '',       // Adicionar apelido
+          provider: user.providerData[0]?.providerId || 'emailAndPassword',
           createdAt: new Date(),
         }).then(() => {
           console.log('Usuário criado na coleção usuarios/dentistascombr com email como chave.');
@@ -226,13 +228,25 @@ export class UserService {
         });
       } else {
         console.log('Usuário já existe na coleção usuarios/dentistascombr');
+        // Se o usuário existir, mas queremos atualizar nome e username
+        if (name || username) {
+          const updateData: any = {};
+          if (name) updateData.nome = name;
+          if (username) updateData.username = username;
+          
+          userRef.update(updateData).then(() => {
+            console.log('Nome e username atualizados para o usuário existente');
+          }).catch(error => {
+            console.error('Erro ao atualizar nome e username:', error);
+          });
+        }
       }
     });
   }
 
   // Método para chamar após o login bem-sucedido
-  loginSuccess(user: firebase.User) {
-    this.createUserInFirestore(user); // Cria um documento na coleção 'usuarios/dentistascombr' para o usuário
+  loginSuccess(user: firebase.User, name?: string, username?: string) {
+    this.createUserInFirestore(user, name, username); // Passa os parâmetros adicionais
   }
 
   // NOVO MÉTODO: Validação de username
