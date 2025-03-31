@@ -67,7 +67,7 @@ export class HomeComponent implements OnInit {
    */
   ngOnInit(): void {
     // Limpar automaticamente o contexto do chatbot ao entrar na Home
-    this.aiChatService.clearContext();
+    this.aiChatService.resetContext();
 
     this.auth.user.subscribe(user => {
       if (user && user.email) {

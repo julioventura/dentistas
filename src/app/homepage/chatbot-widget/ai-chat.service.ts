@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { catchError, map, delay, switchMap, tap } from 'rxjs/operators';
+import { Observable, of, BehaviorSubject, firstValueFrom, Subject } from 'rxjs';
+import { catchError, map, delay, switchMap, tap, take, filter } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
 import { SubcolecaoService } from '../../shared/subcolecao.service';
+import { FirestoreService } from '../../shared/firestore.service';
 
 // Interface para Navegação
 export interface NavigationContext {
@@ -19,6 +19,26 @@ export interface NavigationContext {
 }
 
 // Interface de Contexto
+export interface PatientRecord {
+  id: string;
+  nome?: string;
+  email?: string;
+  telefone?: string;
+  nascimento?: string;
+  genero?: string;  // Adicionar propriedade explícita
+  [key: string]: any;  // Campos adicionais
+}
+
+export interface ClinicalRecord {
+  id: string;
+  tipo: string;  // Ex: 'tratamentos', 'diagnosticos'
+  data?: string;
+  procedimento?: string;
+  dente?: string;
+  observacoes?: string;
+  [key: string]: any;  // Campos adicionais
+}
+
 export interface ChatContext {
   currentView?: {
     type: string;
@@ -27,18 +47,25 @@ export interface ChatContext {
   };
   activeCollection?: string;
   activeSubcollections?: string[];
+  
+  // Registro atual (compatibilidade)
   currentRecord?: {
     id: string;
-    data: any; // Dados completos do registro
+    data: any;
   };
-  // Nova adição: histórico de navegação
+  
+  // Registro da coleção principal (paciente)
+  patientRecord?: PatientRecord;
+  
+  // Registro da subcoleção (ficha clínica)
+  clinicalRecord?: ClinicalRecord;
+  
   navigationHistory?: {
     lastCollection?: string;
     lastId?: string;
     lastSubcollection?: string;
     lastItemId?: string;
   };
-  // Nova adição: estrutura hierárquica de dados
   hierarchy?: {
     [collection: string]: {
       [id: string]: {
@@ -78,9 +105,11 @@ export class AiChatService {
   private openaiModel = environment.openaiModel;
   private currentContext: ChatContext = {};
   
+  // Propriedade para armazenar o ID do usuário atual
+  private userId: string | null = null;
+  
   // BehaviorSubject para emitir atualizações de contexto
   private contextSubject = new BehaviorSubject<ChatContext>({});
-  public context$ = this.contextSubject.asObservable();
   
   // Fallback responses para quando a API falha
   private fallbackResponses = [
@@ -91,13 +120,49 @@ export class AiChatService {
     "Estou com dificuldades técnicas. Seria possível tentar novamente?"
   ];
   
+  // Subject para emitir o contexto clínico processado
+  private clinicalContextSubject = new BehaviorSubject<any>(null);
+  
+  // Adicionar após as outras propriedades privadas no início da classe
+  private clearConversationSubject = new Subject<void>();
+
+  // Getters para acesso simplificado
+  get patientRecord(): PatientRecord | undefined {
+    return this.currentContext.patientRecord;
+  }
+  
+  get clinicalRecord(): ClinicalRecord | undefined {
+    return this.currentContext.clinicalRecord;
+  }
+  
+  // Observable público para o contexto clínico processado
+  public clinicalContext$ = this.clinicalContextSubject.asObservable();
+  
+  // Observable público para o contexto geral (única definição)
+  public context$ = this.contextSubject.asObservable();
+  
+  // Adicionar aos observables públicos
+  public clearConversation$ = this.clearConversationSubject.asObservable();
+
   constructor(
     private http: HttpClient,
     private firestore: AngularFirestore,
+    private firestoreService: FirestoreService<any>, // Adicionar FirestoreService
     private userService: UserService,
     private router: Router,
     private subcolecaoService: SubcolecaoService
   ) {
+    // Obter o ID do usuário do UserService
+    this.userService.getUser().subscribe(user => {
+      if (user) {
+        this.userId = user.uid;  // Usar SOMENTE o UID
+        console.log('🔑 UID do usuário definido:', this.userId);
+      } else {
+        this.userId = null;
+        console.warn('⚠️ Usuário não autenticado');
+      }
+    });
+    
     // Monitorar o contexto de navegação do UserService
     this.userService.navigationContext$.subscribe(navContext => {
       this.updateContextFromNavigation(navContext);
@@ -275,51 +340,73 @@ export class AiChatService {
   
   // Método para carregar detalhes de uma entidade específica
   private loadEntityDetails(collectionType: string, id: string): void {
-    const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
-    const collectionPath = `users/${userId}/${collectionType}`;
-    
-    this.firestore.doc(`${collectionPath}/${id}`).get().subscribe({
-      next: (doc) => {
-        if (doc.exists) {
-          const entityData = doc.data() as any;
-          console.log('Dados carregados:', entityData);
-          
-          // Armazenar dados do registro principal para uso posterior
-          this.mainRecordData = entityData;
-          
-          // Atualizar nome da entidade no contexto
-          if (this.currentContext.currentView) {
-            this.currentContext.currentView.name = entityData.nome || 
-                                                 `${collectionType}: ${id}`;
+    if (!this.userId) {
+      console.error('Erro: ID de usuário não disponível. Verifique se o usuário está autenticado.');
+      return;
+    }
+
+    let registroPath = `users/${this.userId}/${collectionType}`;
+
+    // CORREÇÃO: Verificar se o caminho está usando email em vez de UID
+    registroPath = this.verificarECorrigirCaminho(registroPath);
+
+    console.log(`🔍 Buscando documento em: ${registroPath}/${id}`);
+
+    this.firestoreService.getRegistroById(registroPath, id)
+      .pipe(take(1))
+      .subscribe({
+        next: (entityData) => {
+          if (entityData) {
+            console.log(`✅ Dados carregados para ${collectionType}/${id}:`, entityData);
+
+            // Armazenar para uso em outros componentes e visualizações
+            this.mainRecordData = entityData;
+
+            // Atualizar contexto atual
+            if (this.currentContext.currentView) {
+              this.currentContext.currentView.name = this.extractDisplayName(entityData);
+            }
+
+            // Compatibilidade com código existente
+            this.currentContext.currentRecord = {
+              id: id,
+              data: entityData
+            };
+
+            // Novo: Preencher patientRecord com dados limpos
+            this.currentContext.patientRecord = this.sanitizePatientData({
+              id: id,
+              ...entityData
+            });
+
+            // Limpar o registro clínico quando carregamos um novo paciente
+            this.currentContext.clinicalRecord = undefined;
+
+            // Atualizar a hierarquia
+            this.updateHierarchyMainRecord(collectionType, id, entityData);
+
+            // Processar dados do paciente para o chatbot
+            this.processPatientContext(id, entityData);
+
+            // Emitir contexto atualizado
+            this.emitUpdatedContext();
+          } else {
+            console.warn(`⚠️ Documento não encontrado: ${registroPath}/${id}`);
+
+            // Criar um registro vazio para evitar erros de UI
+            this.currentContext.patientRecord = {
+              id: id,
+              nome: '[Erro ao carregar]'
+            };
+
+            // Emitir mesmo com erro
+            this.contextSubject.next({ ...this.currentContext });
           }
-          
-          // Armazenar dados estruturados do registro atual
-          this.currentContext.currentRecord = {
-            id: id,
-            data: entityData
-          };
-          
-          // Adicionar à hierarquia
-          this.updateHierarchyMainRecord(collectionType, id, entityData);
-          
-          // Manter pageData por compatibilidade
-          this.currentContext.pageData = entityData;
-          
-          // Verificar subcoleções disponíveis para esta entidade
-          this.checkAvailableSubcollections(collectionType, id);
-          
-          // Importante: emitir o contexto atualizado após todas as modificações
-          this.contextSubject.next({...this.currentContext});
-          
-          console.log('Contexto atualizado após carregar dados:', this.currentContext);
-        } else {
-          console.log(`Documento não encontrado: ${collectionPath}/${id}`);
+        },
+        error: (err) => {
+          console.error(`❌ Erro ao carregar ${collectionType}/${id}:`, err);
         }
-      },
-      error: (error) => {
-        console.error('Erro ao carregar detalhes:', error);
-      }
-    });
+      });
   }
   
   /**
@@ -329,76 +416,97 @@ export class AiChatService {
     return this.mainRecordData;
   }
   
-  // Método para carregar detalhes de uma ficha específica
+  // Método para processar dados do paciente// Método para carregar detalhes de uma ficha específica
   private loadFichaDetails(collectionType: string, entityId: string, subcollection: string, fichaId: string): void {
-    const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
-    const fichaPath = `users/${userId}/${collectionType}/${entityId}/fichas/${subcollection}/itens/${fichaId}`;
-    
-    this.firestore.doc(fichaPath).get().subscribe({
-      next: (doc) => {
-        if (doc.exists) {
-          const fichaData = doc.data() as any;
-          console.log('Dados da ficha carregados:', fichaData);
-          
-          // Atualizar informações no contexto
-          if (this.currentContext.currentView) {
-            this.currentContext.currentView.name = fichaData.nome || 
-                                                 fichaData.title || 
-                                                 fichaData.titulo || 
-                                                 `${subcollection}: ${fichaId}`;
+    if (!this.userId) {
+      console.error('Erro: ID de usuário não disponível. Verifique se o usuário está autenticado.');
+      return;
+    }
+
+    let fichaPath = `users/${this.userId}/${collectionType}/${entityId}/fichas/${subcollection}/itens`;
+
+    // CORREÇÃO: Verificar se o caminho está usando email em vez de UID
+    fichaPath = this.verificarECorrigirCaminho(fichaPath);
+
+    console.log(`🔍 Buscando ficha em: ${fichaPath}/${fichaId}`);
+
+    this.firestoreService.getRegistroById(fichaPath, fichaId)
+      .pipe(take(1))
+      .subscribe({
+        next: (fichaData) => {
+          if (fichaData) {
+            console.log(`✅ Dados carregados para ficha ${subcollection}/${fichaId}:`, fichaData);
+
+            // Atualizar o nome na visualização atual
+            if (this.currentContext.currentView && this.currentContext.currentView.type !== 'list-fichas') {
+              this.currentContext.currentView.name = this.extractDisplayName(fichaData, subcollection);
+            }
+
+            // Manter compatibilidade
+            this.currentContext.currentRecord = {
+              id: fichaId,
+              data: fichaData
+            };
+
+            // Novo: Preencher clinicalRecord
+            this.currentContext.clinicalRecord = {
+              id: fichaId,
+              tipo: subcollection,
+              ...fichaData
+            };
+
+            // Atualizar hierarquia
+            this.updateHierarchySubcollectionRecord(
+              collectionType, entityId, subcollection, fichaId, fichaData
+            );
+
+            // Processar o contexto clínico
+            this.processClinicalContext(entityId, fichaData, subcollection);
+
+            // Emitir contexto atualizado
+            this.emitUpdatedContext();
+          } else {
+            console.warn(`⚠️ Ficha não encontrada: ${fichaPath}/${fichaId}`);
+
+            // Criar um registro vazio para evitar erros de UI
+            this.currentContext.clinicalRecord = {
+              id: fichaId,
+              tipo: subcollection
+            };
+
+            // Emitir mesmo com erro
+            this.contextSubject.next({ ...this.currentContext });
           }
-          
-          // Armazenar dados estruturados do registro de ficha atual
-          this.currentContext.currentRecord = {
-            id: fichaId,
-            data: fichaData
-          };
-          
-          // Adicionar à hierarquia
-          this.updateHierarchySubcollectionRecord(
-            collectionType, 
-            entityId, 
-            subcollection, 
-            fichaId, 
-            fichaData
-          );
-          
-          // Manter pageData por compatibilidade
-          this.currentContext.pageData = fichaData;
-          
-          // Emitir o contexto atualizado
-          this.contextSubject.next({...this.currentContext});
-          
-          console.log('Contexto atualizado após carregar ficha:', this.currentContext);
-        } else {
-          console.log(`Ficha não encontrada: ${fichaPath}`);
+        },
+        error: (err) => {
+          console.error(`❌ Erro ao carregar ficha ${subcollection}/${fichaId}:`, err);
         }
-      },
-      error: (error) => {
-        console.error('Erro ao carregar detalhes da ficha:', error);
-      }
-    });
+      });
   }
   
   // Método para verificar subcoleções disponíveis para uma entidade
   private checkAvailableSubcollections(collectionType: string, id: string): void {
     // Resetar subcoleções existentes
     this.currentContext.activeSubcollections = [];
-    
+
     // Obter todas as subcoleções possíveis do SubcolecaoService
     const possibleSubcollections = this.subcolecaoService.getSubcolecoesDisponiveis().map(sc => sc.nome);
-    
-    // Obter userId do UserService
-    const userId = this.userService.userProfile?.uid || this.userService.userEmail || 'default';
-    
+
+    // CORREÇÃO: Usar this.userId em vez de misturar fontes
+    if (!this.userId) {
+      console.error('Erro: ID de usuário não disponível em checkAvailableSubcollections');
+      return;
+    }
+
     // Contador para controlar quando todas as verificações foram concluídas
     let pendingChecks = possibleSubcollections.length;
-    
+
     // Verificar cada subcoleção possível
     possibleSubcollections.forEach(subcollection => {
-      // Caminho para verificar a subcoleção
-      const subcollectionPath = `users/${userId}/${collectionType}/${id}/fichas/${subcollection}/itens`;
-      
+      // CORREÇÃO: Usar this.userId diretamente
+      const subcollectionPath = `users/${this.userId}/${collectionType}/${id}/fichas/${subcollection}/itens`;
+      console.log(`Verificando subcoleção em: ${subcollectionPath}`);
+
       this.firestore.collection(subcollectionPath).get().subscribe(snapshot => {
         if (!snapshot.empty) {
           // Se a subcoleção não estiver vazia, adicioná-la à lista
@@ -409,14 +517,14 @@ export class AiChatService {
             this.currentContext.activeSubcollections.push(subcollection);
           }
         }
-        
+
         // Decrementar o contador de verificações pendentes
         pendingChecks--;
-        
+
         // Se todas as verificações foram concluídas, emitir atualização
         if (pendingChecks === 0) {
           // Emitir a atualização do contexto
-          this.contextSubject.next({...this.currentContext});
+          this.contextSubject.next({ ...this.currentContext });
         }
       });
     });
@@ -494,6 +602,7 @@ export class AiChatService {
     console.log('Hierarquia atualizada com registro de subcollection:', collection, id, subcollection, itemId);
   }
 
+
   // Log visual do contexto atual
   private logContextUpdate(): void {
     console.log('%c Contexto Atual do Chatbot ', 'background: #4b0082; color: white; padding: 2px;');
@@ -509,10 +618,114 @@ export class AiChatService {
       console.log('📄 Dados da página:', this.currentContext.pageData);
     }
   }
+  // Adicionar após o logContextUpdate()
+
+  /**
+   * Log completo e detalhado do contexto atual
+   */
+  private logDetailedContext(): void {
+    console.group('%c CONTEXTO DETALHADO DO CHATBOT ', 'background: #4b0082; color: white; padding: 4px; font-weight: bold;');
+    
+    console.group('📊 Visão Geral:');
+    console.log('Tipo de visualização:', this.currentContext.currentView?.type || 'N/A');
+    console.log('Nome da visualização:', this.currentContext.currentView?.name || 'N/A');
+    console.log('Coleção ativa:', this.currentContext.activeCollection || 'N/A');
+    console.log('Subcoleções disponíveis:', this.currentContext.activeSubcollections || 'N/A');
+    console.groupEnd();
+    
+    console.group('🧑 Registro Principal (Collection):');
+    if (this.currentContext.patientRecord) {
+      console.log('ID:', this.currentContext.patientRecord.id);
+      console.log('Nome:', this.currentContext.patientRecord.nome || 'N/A');
+      console.log('Dados completos:', this.currentContext.patientRecord);
+    } else {
+      console.log('Nenhum registro principal carregado');
+    }
+    console.groupEnd();
+    
+    console.group('📋 Registro de Ficha (Subcollection):');
+    if (this.currentContext.clinicalRecord) {
+      console.log('ID:', this.currentContext.clinicalRecord.id);
+      console.log('Tipo:', this.currentContext.clinicalRecord.tipo);
+      console.log('Dados completos:', this.currentContext.clinicalRecord);
+    } else {
+      console.log('Nenhuma ficha clínica carregada');
+    }
+    console.groupEnd();
+    
+    console.group('🧠 Estado Completo do Contexto:');
+    console.log(JSON.stringify(this.currentContext, null, 2));
+    console.groupEnd();
+    
+    console.groupEnd();
+  }
+
+  /**
+   * Log detalhado dos dados dos registros da collection e subcollection
+   */
+  private logRecordsData(): void {
+    console.group('%c DADOS DOS REGISTROS ATUAL ', 'background: #008080; color: white; padding: 4px; font-weight: bold;');
+    
+    // Collection (Paciente)
+    console.group('🧑 DADOS DA COLLECTION:');
+    if (this.currentContext.patientRecord) {
+      console.log('ID:', this.currentContext.patientRecord.id);
+      console.log('Nome:', this.currentContext.patientRecord.nome || 'N/A');
+      console.log('Email:', this.currentContext.patientRecord.email || 'N/A');
+      console.log('Telefone:', this.currentContext.patientRecord.telefone || 'N/A');
+      console.log('Data de nascimento:', this.currentContext.patientRecord.nascimento || 'N/A');
+      console.log('Gênero:', this.currentContext.patientRecord['genero'] || 'N/A');
+      console.log('Dados completos:', this.currentContext.patientRecord);
+    } else {
+      console.log('Nenhum registro principal carregado');
+    }
+    console.groupEnd();
+    
+    // Subcollection (Ficha)
+    console.group('📋 DADOS DA SUBCOLLECTION:');
+    if (this.currentContext.clinicalRecord) {
+      console.log('ID:', this.currentContext.clinicalRecord.id);
+      console.log('Tipo:', this.currentContext.clinicalRecord.tipo);
+      console.log('Data:', this.currentContext.clinicalRecord.data || 'N/A');
+      console.log('Procedimento:', this.currentContext.clinicalRecord.procedimento || 'N/A');
+      console.log('Dente:', this.currentContext.clinicalRecord.dente || 'N/A');
+      console.log('Observações:', this.currentContext.clinicalRecord.observacoes || 'N/A');
+      console.log('Dados completos:', this.currentContext.clinicalRecord);
+    } else {
+      console.log('Nenhuma ficha clínica carregada');
+    }
+    console.groupEnd();
+    
+    console.groupEnd();
+  }
+
+
+  /**
+   * Verifica e corrige caminhos do Firestore que possam estar usando email em vez de UID
+   */
+  private verificarECorrigirCaminho(caminho: string): string {
+    // Se o caminho contém um email em vez de UID
+    if (caminho.includes('@')) {
+      console.warn(`⚠️ Caminho com email detectado: ${caminho}`);
+
+      // Se temos um userId válido, substituir
+      if (this.userId) {
+        const caminhoCorrigido = caminho.replace(/users\/[^\/]+\//, `users/${this.userId}/`);
+        console.log(`🔧 Caminho corrigido: ${caminhoCorrigido}`);
+        return caminhoCorrigido;
+      } else {
+        console.error('❌ Não foi possível corrigir o caminho: userId não disponível');
+      }
+    }
+
+    return caminho;
+  }
+
 
   // Método para enviar mensagem para a API
   sendMessage(message: string, sessionId: string, dentistId: string, context?: any): Observable<Message> {
     console.log('Enviando mensagem para OpenAI:', message);
+    console.log('Session ID:', sessionId); // Usar a variável ou removê-la dos parâmetros
     
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -696,7 +909,12 @@ export class AiChatService {
 
   // Método para obter todos os dados do registro atual
   getCurrentRecordData(): any {
-    return this.currentContext.currentRecord?.data || null;
+    // Se estamos visualizando uma subcoleção, retornar seus dados
+    if (this.currentContext.clinicalRecord) {
+      return this.currentContext.clinicalRecord;
+    } 
+    // Caso contrário, retornar dados da coleção principal
+    return this.currentContext.patientRecord;
   }
 
   // Métodos públicos para acessar dados da hierarquia
@@ -714,16 +932,9 @@ export class AiChatService {
       return this.currentContext.hierarchy?.[collection]?.[id]?.subcollections?.[subcollection]?.[itemId] || null;
     } catch (error) {
       console.error('Erro ao acessar registro de subcollection:', error);
-      return null;
+      return null; // Adicionar retorno explícito
     }
-  }
-
-  getLastCollectionRecord(): any {
-    const nav = this.currentContext.navigationHistory;
-    if (!nav || !nav.lastCollection || !nav.lastId) return null;
-    
-    return this.getCollectionRecord(nav.lastCollection, nav.lastId);
-  }
+  } // Adicionar chave de fechamento que estava faltando
 
   getLastSubcollectionRecord(): any {
     const nav = this.currentContext.navigationHistory;
@@ -763,28 +974,43 @@ export class AiChatService {
   }
 
   /**
-   * Limpa completamente o contexto do chatbot
+   * Limpa completamente o contexto e a conversa do chatbot
    */
   public resetContext(): void {
+    console.log('Limpando contexto e conversa do chatbot');
+    
+    // Limpar contexto
     this.currentContext = {
       currentView: {
         type: 'Home'
       }
     };
     
-    // Limpar dados do registro principal
-    this.mainRecordData = null;
+    // Limpar histórico de conversa - emitir apenas um evento
+    this.clearConversationSubject.next();
     
-    // Emitir o contexto limpo
+    // Limpar dados armazenados
+    this.mainRecordData = null;
     this.contextSubject.next({...this.currentContext});
-    console.log('Contexto do chatbot resetado.', this.currentContext);
+    
+    console.log('Contexto e conversa do chatbot limpos com sucesso');
   }
 
   /**
-   * Método público para limpar o contexto a partir de outros componentes
-   */
+ * Alias para resetContext() - Para compatibilidade com chamadas existentes
+ */
   public clearContext(): void {
+    // Simplesmente chama o método resetContext
     this.resetContext();
+  }
+
+  /**
+   * Limpa apenas a conversa atual
+   */
+  public clearConversation(): void {
+    // Emite evento de limpeza para todos os componentes inscritos
+    this.clearConversationSubject.next();
+    console.log('Evento de limpeza de conversa do chatbot emitido');
   }
 
   /**
@@ -811,4 +1037,362 @@ export class AiChatService {
     this.contextSubject.next({...this.currentContext});
     console.log('Hierarquia de dados do contexto resetada.');
   }
+
+  /**
+   * Remove dados sensíveis e formata os dados do paciente
+   */
+  private sanitizePatientData(patientData: any): PatientRecord {
+    const sanitized: PatientRecord = {
+      id: patientData.id,
+      nome: patientData.nome || patientData.name || 'Nome não disponível'
+    };
+    
+    // Copiar campos relevantes e seguros
+    const safeFields = ['telefone', 'email', 'nascimento', 'genero', 'cidade', 'estado'];
+    safeFields.forEach(field => {
+      if (patientData[field]) sanitized[field] = patientData[field];
+    });
+    
+    return sanitized;
+  }
+
+  /**
+   * Processa dados clínicos para uso no chatbot
+   */
+  private processClinicalContext(patientId: string, clinicalData: any, clinicalType: string): void {
+    console.log(`Processando contexto clínico: ${clinicalType} para paciente ${patientId}`);
+    console.log('Dados clínicos:', clinicalData);
+    
+    if (!this.currentContext.patientRecord) {
+      // Usar patientId para carregar dados do paciente
+      this.loadPatientData(patientId).then(patient => {
+        if (patient) {
+          console.log(`Dados do paciente ${patientId} carregados com sucesso`);
+          this.currentContext.patientRecord = patient;
+          this.buildClinicalContext();
+        }
+      });
+    } else {
+      this.buildClinicalContext();
+    }
+  }
+
+  /**
+   * Constrói e emite o contexto clínico completo
+   */
+  private buildClinicalContext(): void {
+    // Só prosseguir se tivermos tanto dados do paciente quanto da ficha
+    if (!this.currentContext.patientRecord || !this.currentContext.clinicalRecord) {
+      return;
+    }
+    
+    // Estrutura que será enviada ao chatbot
+    const clinicalContext = {
+      patient: {
+        ...this.currentContext.patientRecord,
+        // Remover ID e outros dados técnicos
+        id: undefined,
+        firestoreId: undefined
+      },
+      clinicalRecord: {
+        ...this.currentContext.clinicalRecord,
+        // Remover ID e outros dados técnicos
+        id: undefined
+      },
+      metadata: {
+        view: this.currentContext.currentView?.type || '',
+        collection: this.currentContext.activeCollection || '',
+        subcollection: this.currentContext.clinicalRecord?.tipo || ''
+      }
+    };
+    
+    // Adicionar interpretações dos dados clínicos
+    this.augmentWithClinicalInsights(clinicalContext);
+    
+    // Emitir contexto processado
+    this.clinicalContextSubject.next(clinicalContext);
+  }
+
+  /**
+   * Aumenta o contexto com informações clínicas processadas
+   */
+  private augmentWithClinicalInsights(context: any): void {
+    const clinicalType = context.clinicalRecord.tipo;
+    
+    // Adicionar insights específicos baseados no tipo de ficha
+    switch (clinicalType) {
+      case 'tratamentos':
+        // Ex: Adicionar informação sobre o último tratamento para o mesmo dente
+        this.addPreviousTreatmentsInsight(context);
+        break;
+      case 'diagnosticos':
+        // Ex: Classificar severidade do diagnóstico
+        this.addDiagnosticSeverityInsight(context);
+        break;
+      // Outros tipos de fichas
+    }
+  }
+
+  /**
+   * Obter contexto formatado para o chatbot
+   */
+  public getChatbotContextData(): any {
+    // Verifica se temos dados disponíveis
+    if (!this.currentContext.patientRecord) {
+      return { 
+        status: 'no-patient-data',
+        view: this.currentContext.currentView?.type || 'unknown',
+        collection: this.currentContext.activeCollection || 'unknown'
+      };
+    }
+    
+    // Contexto básico
+    const context: any = {
+      navigation: {
+        view: this.currentContext.currentView?.type || '',
+        collection: this.currentContext.activeCollection || '',
+        subcollection: this.currentContext.clinicalRecord?.tipo || null
+      },
+      patient: {
+        nome: this.currentContext.patientRecord.nome,
+        idade: this.calculateAge(this.currentContext.patientRecord.nascimento),
+        genero: this.currentContext.patientRecord['genero']  // Usar notação de colchetes
+      }
+    };
+    
+    // Adicionar dados da ficha clínica se disponível
+    if (this.currentContext.clinicalRecord) {
+      context.clinicalRecord = {
+        tipo: this.currentContext.clinicalRecord.tipo,
+        data: this.currentContext.clinicalRecord.data,
+        procedimento: this.currentContext.clinicalRecord.procedimento,
+        dente: this.currentContext.clinicalRecord.dente,
+        // Resumir observações longas
+        observacoes: this.summarizeText(this.currentContext.clinicalRecord.observacoes)
+      };
+    }
+    
+    // Adicionar histórico e outros dados contextuais
+    context.history = {
+      lastViewed: this.currentContext.navigationHistory || {}
+    };
+    
+    // Antes de retornar o contexto:
+    console.log('🤖 Contexto enviado ao chatbot:', context);
+    
+    return context;
+  }
+
+  /**
+   * Extrai o nome para exibição de um objeto de dados
+   */
+  private extractDisplayName(data: any, type?: string): string {
+    if (!data) return '';
+    
+    // Tentar encontrar um campo de nome adequado
+    for (const field of ['nome', 'name', 'title', 'titulo', 'descricao', 'procedimento']) {
+      if (data[field]) {
+        return String(data[field]).trim();
+      }
+    }
+    
+    // Se for um tipo conhecido, usar um formato específico
+    if (type) {
+      switch (type.toLowerCase()) {
+        case 'tratamentos':
+          return `Tratamento: ${data.procedimento || data.dente || 'Sem descrição'}`;
+        case 'diagnosticos':
+          return `Diagnóstico: ${data.diagnostico || data.dente || 'Sem descrição'}`;
+        case 'orcamentos':
+          return `Orçamento: ${data.valor ? `R$ ${data.valor}` : 'Sem valor'}`;
+        default:
+          return `${type}: ${data.id || 'Sem identificação'}`;
+      }
+    }
+    
+    return 'Sem nome';
+  }
+
+  /**
+   * Emite o contexto atualizado para os componentes inscritos
+   */
+  private emitUpdatedContext(): void {
+    this.contextSubject.next({...this.currentContext});
+    
+    // Log detalhado ao emitir atualizações
+    this.logDetailedContext();
+    this.logRecordsData();
+  }
+
+  /**
+   * Processa dados do paciente para enriquecer o contexto
+   */
+  private processPatientContext(patientId: string, patientData: any): void {
+    console.log(`Processando contexto do paciente: ${patientId}`);
+    
+    // Usar o ID do paciente em alguma operação
+    this.contextData = {
+      ...this.contextData,
+      patientId: patientId,  // Adicionando o ID ao contexto
+      patient: {
+        nome: patientData.nome || 'Paciente',
+        idade: this.calculateAge(patientData.nascimento),
+        genero: patientData['genero'] || 'N/A',
+        // outros dados relevantes
+      }
+    };
+    
+    // Emitir o contexto atualizado para o chatbot
+    this.clinicalContextSubject.next(this.contextData);
+  }
+
+  /**
+   * Carrega dados completos do paciente
+   */
+  private async loadPatientData(patientId: string): Promise<PatientRecord | null> {
+    if (!this.userId) return null;
+    
+    try {
+      const registroPath = `users/${this.userId}/pacientes`;
+      
+      // Usar firstValueFrom em vez de toPromise (depreciado)
+      const patientData = await firstValueFrom(
+        this.firestoreService.getRegistroById(registroPath, patientId).pipe(take(1))
+      );
+      
+      if (patientData) {
+        return this.sanitizePatientData({
+          id: patientId,
+          ...patientData
+        });
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao carregar dados do paciente:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Adiciona insights sobre tratamentos anteriores
+   */
+  private addPreviousTreatmentsInsight(context: any): void {
+    // Implementação para analisar tratamentos anteriores
+    // Por exemplo, verificar se o mesmo dente já foi tratado antes
+    context.insights = context.insights || {};
+    context.insights.previousTreatments = {
+      hasPrevious: false,
+      count: 0
+    };
+  }
+
+  /**
+   * Adiciona insights sobre a severidade do diagnóstico
+   */
+  private addDiagnosticSeverityInsight(context: any): void {
+    // Implementação para analisar a severidade do diagnóstico
+    context.insights = context.insights || {};
+    context.insights.diagnosticSeverity = {
+      level: 'normal',
+      requiresAttention: false
+    };
+  }
+
+  /**
+   * Calcula a idade com base na data de nascimento
+   * Agora público para uso em componentes externos
+   */
+  public calculateAge(birthDateStr?: string): number | null {
+    if (!birthDateStr) return null;
+    
+    try {
+      // Converter string para data
+      let birthDate: Date;
+      if (birthDateStr.includes('/')) {
+        // Formato DD/MM/YYYY
+        const [day, month, year] = birthDateStr.split('/').map(Number);
+        birthDate = new Date(year, month - 1, day);
+      } else {
+        // Formato ISO ou timestamp
+        birthDate = new Date(birthDateStr);
+      }
+      
+      // Verificar se a data é válida
+      if (isNaN(birthDate.getTime())) return null;
+      
+      // Calcular a diferença de anos
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      // Ajustar se ainda não fez aniversário este ano
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      return age;
+    } catch (error) {
+      console.error('Erro ao calcular idade:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Resume um texto longo para uso no contexto
+   */
+  private summarizeText(text?: string, maxLength: number = 100): string {
+    if (!text) return '';
+    
+    if (text.length <= maxLength) return text;
+    
+    return text.substring(0, maxLength) + '...';
+  }
+
+  /**
+   * Obter todos os dados do registro da coleção principal atual
+   */
+  public getCurrentCollectionRecord(): PatientRecord | undefined {
+    return this.currentContext.patientRecord;
+  }
+
+  /**
+   * Obter o ID do registro da coleção principal atual
+   */
+  public getCurrentCollectionRecordId(): string | null {
+    return this.currentContext.patientRecord?.id || null;
+  }
+
+  /**
+   * Obter todos os dados do registro da subcoleção atual
+   */
+  public getCurrentSubcollectionRecord(): ClinicalRecord | undefined {
+    return this.currentContext.clinicalRecord;
+  }
+
+  /**
+   * Obter o ID do registro da subcoleção atual
+   */
+  public getCurrentSubcollectionRecordId(): string | null {
+    return this.currentContext.clinicalRecord?.id || null;
+  }
+
+  /**
+   * Verificar se estamos visualizando uma subcoleção
+   */
+  public isViewingSubcollection(): boolean {
+    return !!this.currentContext.clinicalRecord;
+  }
+
+  /**
+   * Obter ambos registros para contexto completo
+   */
+  public getFullContext(): {collection: PatientRecord | undefined, subcollection: ClinicalRecord | undefined} {
+    return {
+      collection: this.getCurrentCollectionRecord(),
+      subcollection: this.getCurrentSubcollectionRecord()
+    };
+  }
+
+  // Adicionar esta propriedade no início da classe, logo após as outras propriedades privadas
+  private contextData: any = {};
 }

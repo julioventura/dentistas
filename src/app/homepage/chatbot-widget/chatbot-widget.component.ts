@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, KeyValue } from '@angular/common';
+import { CommonModule } from '@angular/common'; // Remover KeyValue
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { UserService } from '../../shared/user.service';
@@ -45,6 +45,10 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   // Adicionar subject para unsubscribe ao destruir o componente
   private destroy$ = new Subject<void>();
 
+  // Adicionar variável para controlar se o componente foi inicializado
+  // Isso pode ser útil para evitar chamadas desnecessárias ao serviço
+  private isInitialized = false;
+
   // Propriedades básicas do chatbot
   isMinimized = true;
   isMaximized = false;
@@ -62,7 +66,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   dentistLocation = '';
   patientName = '';
   currentContext: ChatContext | null = null;
-  showContextIndicator = true;
+  showContextIndicator = false;  // ALTERADO PARA FALSE
 
   // Adicionar estas propriedades à classe
   // Controles para o popup de detalhes
@@ -108,16 +112,54 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         console.log('Navegação atual:', navContext);
       });
 
-    // Inicializa a sessão do chat
-    this.aiChatService.createNewSession(this.dentistId).subscribe(
-      sessionId => {
-        this.sessionId = sessionId;
-        // Mensagem de boas-vindas
-        this.addBotMessage("Olá! Como devo te chamar?");
-      }
-    );
+    // Verificar se já existe uma conversa ou se é a primeira inicialização
+    if (!this.isInitialized) {
+      // Inicializa a sessão do chat apenas na primeira vez
+      this.aiChatService.createNewSession(this.dentistId).subscribe(
+        sessionId => {
+          this.sessionId = sessionId;
+          // ALTERADO: Mensagem simplificada sem pedir nome - apenas na primeira inicialização
+          this.addFirstMessage();
+          this.waitingForName = false; // Desativar o flag que espera nome
+          this.isInitialized = true; // Marcar como inicializado
+        }
+      );
+    }
+
+
+    // Inscrever-se no evento de limpeza de conversa
+    this.aiChatService.clearConversation$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        console.log('Limpando conversa do chatbot após evento de logout');
+        this.conversation = [];
+        this.userInput = '';
+
+        // Redefinir a inicialização após limpar a conversa
+        this.isInitialized = false;
+
+        // ALTERADO: Inicializar novamente a conversa - o timeout evita condições de corrida
+        setTimeout(() => {
+          if (this.conversation.length === 0) { // Verificar se a conversa ainda está vazia
+            this.addFirstMessage();
+          }
+        }, 100);
+
+        // Não ativar waitingForName
+        this.waitingForName = false;
+      });
   }
 
+
+  // Método dedicado para adicionar a primeira mensagem
+  private addFirstMessage(): void {
+    // Verificar se já existe alguma mensagem para evitar duplicação
+    if (this.conversation.length === 0) {
+      this.addBotMessage("Olá! Como posso ajudar?");
+      console.log('Primeira mensagem adicionada ao chatbot');
+    }
+  }
+  
   ngAfterViewInit(): void {
     if (this.messagesContainer && this.messagesContainer.nativeElement) {
       this.scrollToBottom();
@@ -159,13 +201,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
 
     const messageText = this.userInput;
     this.userInput = ''; // Limpa o input
-
-    // Se estamos esperando o nome do usuário
-    if (this.waitingForName) {
-      this.waitingForName = false;
-      this.addBotMessage(`Prazer, ${messageText}! Como posso ajudar?`);
-      return;
-    }
 
     // Mostra indicador de carregamento
     this.isLoading = true;
@@ -463,28 +498,25 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
 
   // Método para formatar os dados de registro para exibição
   formatRecordDetailsForDisplay(data: any): { key: string, value: any }[] {
-    if (!data) return [];
-
     return Object.entries(data)
       .filter(([key, value]) => {
-        // Filtrar campos que são objetos complexos ou arrays
+        // Usar a variável key para filtrar campos que não devem ser exibidos
+        if (['id', '_id', 'userId', 'password'].includes(key)) {
+          return false;
+        }
+        // Verificar se o valor não é objeto ou array complexo
         return typeof value !== 'object' || value === null;
       })
       .map(([key, value]) => {
         // Formatar o nome do campo para exibição
-        const formattedKey = key.charAt(0).toUpperCase() + key.slice(1)
-          .replace(/([A-Z])/g, ' $1') // Adiciona espaço antes de letras maiúsculas
-          .replace(/_/g, ' '); // Substitui underscores por espaços
+        let formattedKey = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
 
-        // Formatar valor para datas
+        // Formatar o valor para exibição
         let formattedValue = value;
-        if (value && typeof value === 'object') {
-          // Usar type assertion para indicar ao TypeScript que pode ser um timestamp do Firestore
-          const possibleTimestamp = value as { seconds?: number };
-          if (possibleTimestamp.seconds) {
-            // É um timestamp do Firestore
-            formattedValue = new Date(possibleTimestamp.seconds * 1000).toLocaleDateString('pt-BR');
-          }
+        if (typeof value === 'boolean') {
+          formattedValue = value ? 'Sim' : 'Não';
+        } else if (value instanceof Date || (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}/))) {
+          formattedValue = new Date(value).toLocaleDateString();
         }
 
         return { key: formattedKey, value: formattedValue };
@@ -492,8 +524,46 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       .sort((a, b) => a.key.localeCompare(b.key)); // Ordenar alfabeticamente
   }
 
+  // Adicionar métodos para exibir detalhes
+  showPatientDetails(): void {
+    const patient = this.aiChatService.getCurrentCollectionRecord();
+    if (patient) {
+      console.log('🧑 DETALHES DO PACIENTE/REGISTRO PRINCIPAL:');
+      console.table(patient);
 
-  trackByKey(_key: string, item: any): any {
+      // Agora que calculateAge é público, isso funcionará
+      let infoStr = `DETALHES DO PACIENTE:\n\n`;
+      infoStr += `Nome: ${patient.nome || 'N/A'}\n`;
+      infoStr += `Email: ${patient.email || 'N/A'}\n`;
+      infoStr += `Telefone: ${patient.telefone || 'N/A'}\n`;
+      infoStr += `Idade: ${this.aiChatService.calculateAge(patient.nascimento) || 'N/A'} anos\n`;
+      infoStr += `Gênero: ${patient.genero || 'N/A'}\n\n`;  // Usar a propriedade genero diretamente
+
+      alert(infoStr + 'Consulte o console para informações completas.');
+    }
+  }
+
+  showClinicalDetails(): void {
+    const clinical = this.aiChatService.getCurrentSubcollectionRecord();
+    if (clinical) {
+      console.log('📋 DETALHES DA FICHA CLÍNICA/SUBCOLEÇÃO:');
+      console.table(clinical);
+
+      // Construir uma string mais informativa para o alerta
+      let infoStr = `DETALHES DA FICHA CLÍNICA:\n\n`;
+      infoStr += `Tipo: ${clinical.tipo || 'N/A'}\n`;
+      infoStr += `Data: ${clinical.data || 'N/A'}\n`;
+      infoStr += `Procedimento: ${clinical.procedimento || 'N/A'}\n`;
+      infoStr += `Dente: ${clinical.dente || 'N/A'}\n`;
+      if (clinical.observacoes) {
+        infoStr += `\nObservações: ${clinical.observacoes.substring(0, 100)}${clinical.observacoes.length > 100 ? '...' : ''}\n`;
+      }
+
+      alert(infoStr + '\nConsulte o console para informações completas.');
+    }
+  }
+
+  trackByKey(_index: number, item: any): any {
     return item.id; // ou outra propriedade única
   }
 }

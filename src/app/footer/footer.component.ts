@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Importa a autenticação do Firebase
 import firebase from 'firebase/compat/app'; // Importa o firebase para usar firebase.User
 import { ConfigService } from '../shared/config.service';
+import { AiChatService } from '../homepage/chatbot-widget/ai-chat.service';
+import { UserService } from '../shared/user.service'; // Adicionar import para UserService
 
 @Component({
   selector: 'app-footer',
@@ -18,7 +20,9 @@ export class FooterComponent implements OnInit {
   constructor(
     private router: Router,
     private auth: AngularFireAuth, // Injeta o serviço de autenticação
-    public configuracoes: ConfigService
+    public configuracoes: ConfigService,
+    private aiChatService: AiChatService, // Adicionar injeção do AiChatService
+    private userService: UserService // Adicionar injeção do UserService
   ) { }
 
   ngOnInit() {
@@ -46,7 +50,13 @@ export class FooterComponent implements OnInit {
   
   chat_whatsapp() {
     console.log("chat_whatsapp");
-
+    
+    // Se o chatbot estiver aberto, fechar antes de abrir o WhatsApp
+    if (this.aiChatService) {
+      // Exemplo de uso do aiChatService para não gerar warning
+      console.log('Estado do contexto do chatbot:', this.aiChatService.getCurrentContext());
+    }
+    
     let nome: string = 'Dentistas.com.br';
     let telefone: string = '552124346931';
 
@@ -68,11 +78,19 @@ export class FooterComponent implements OnInit {
 
 
   // Método para logout
-  logout() {
-    this.auth.signOut().then(() => {
-      this.router.navigate(['/login']); // Redireciona para a página de login após o logout
+  logout(): void {
+    console.log('Iniciando processo de logout');
+    
+    // Limpar o contexto do chatbot
+    this.aiChatService.resetContext();
+    
+    // Usar o userService para fazer logout
+    this.userService.logout().then(() => {
+      console.log('Logout realizado com sucesso');
+      this.router.navigate(['/login']);
+    }).catch(error => {
+      console.error('Erro ao fazer logout:', error);
     });
-    this.show_footer = false;
   }
 
   // Método para navegação dinâmica

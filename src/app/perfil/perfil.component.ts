@@ -294,7 +294,7 @@ export class PerfilComponent implements OnInit, OnDestroy, CanComponentDeactivat
       return;
     }
 
-    this.userService.isValidUsername(username).subscribe(exists => {
+    this.userService.isValidUsername(username).subscribe((exists: boolean) => {
       this.usernameError = exists ? 'Este username já está em uso.' : '';
     });
   }

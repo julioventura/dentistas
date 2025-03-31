@@ -1,4 +1,4 @@
-import { Injectable, Injector, Inject } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from '../shared/firestore.service'; // Serviço para manipular o Firestore
@@ -193,7 +193,7 @@ export class UserService {
         }
         return of(null);
       }),
-      catchError(error => {
+      catchError((error: Error) => {  // Adicionar tipo para o parâmetro error
         console.error('Error getting user profile data:', error);
         return of(null);
       })
@@ -250,29 +250,19 @@ export class UserService {
   }
 
   // NOVO MÉTODO: Validação de username
-  isValidUsername(username: string | null): Observable<boolean> {
-    if (!username) {
-      return new Observable(observer => {
-        observer.next(false);
-        observer.complete();
-      });
-    }
-
-    // Verifica no Firestore se o username existe
-    return this.firestore.collection('usuarios')
-      .doc('dentistascombr')
-      .collection('users', ref => ref.where('username', '==', username))
-      .get()
-      .pipe(
-        map(snapshot => {
-          // Verifica se o snapshot tem documentos, ou seja, se o username existe
-          return !snapshot.empty;
-        })
-      );
+  public isValidUsername(username: string): Observable<boolean> {
+    return this.firestore.doc(`usuarios/dentistascombr/usernames/${username}`).get().pipe(
+      map(doc => doc.exists),
+      catchError(error => {
+        console.error('Erro ao verificar username:', error);
+        return of(false);
+      })
+    );
   }
   
   // NOVO MÉTODO: Salvar username se estiver disponível
   saveUsernameIfAvailable(userId: string, username: string): Observable<boolean> {
+    // Agora isValidUsername já retorna um Observable, então não precisamos do from()
     return this.isValidUsername(username).pipe(
       map(exists => !exists), // Inverte o resultado: true se não existir (disponível)
       switchMap(isAvailable => {
@@ -485,5 +475,38 @@ export class UserService {
   // Adicionar este método ao UserService
   saveAdditionalUserData(userId: string, userData: any): Promise<void> {
     return this.firestore.collection('users').doc(userId).set(userData, { merge: true });
+  }
+
+  // Método para limpar os dados do usuário no logout
+  async logout(): Promise<void> {  // Convertido para async conforme sugerido
+    try {
+      // Limpar dados de autenticação
+      await this.afAuth.signOut();
+      
+      // Redefinir todos os dados do usuário
+      this.userProfileSubject.next(null);
+      this.userEmail = null;
+      this.context = {};
+      
+      // Redefinir estado do chatbot
+      this._chatbotExpanded.next(false);
+      
+      // Limpar o contexto do chatbot usando o injector
+      try {
+        const aiChatService = this.injector.get(AiChatService);
+        if (aiChatService) {
+          aiChatService.resetContext();
+          console.log('Contexto do chatbot limpo durante logout');
+        }
+      } catch (error) {
+        console.error('Erro ao acessar AiChatService:', error);
+      }
+      
+      console.log('Dados do usuário limpos no logout');
+    } catch (error: unknown) {  // Tipo mais seguro
+      const e = error as Error;  // Type assertion com tipo mais específico
+      console.error('Erro ao fazer logout:', e.message);
+      throw error;  // Re-throw para que o chamador possa lidar com o erro
+    }
   }
 }
