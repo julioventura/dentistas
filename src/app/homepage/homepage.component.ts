@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../shared/user.service';
 import { CommonModule } from '@angular/common';
-import { ChatbotWidgetComponent } from './chatbot-widget/chatbot-widget.component';
+import { ChatbotWidgetComponent } from '../chatbot-widget/chatbot-widget.component';
 import { EnderecoComponent } from "./endereco/endereco.component";
 import { ContatoComponent } from "./contato/contato.component";
 import { TitulacoesComponent } from "./titulacoes/titulacoes.component";

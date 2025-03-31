@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 // Componentes da aplicação
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import { ChatbotComponent } from './chatbot/chatbot.component';
 import { MenuComponent } from './menu/menu.component';
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { ConfigComponent } from './config/config.component';
@@ -30,7 +29,6 @@ const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'chatbot', component: ChatbotComponent },
   { path: 'menu', component: MenuComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'config', component: ConfigComponent },

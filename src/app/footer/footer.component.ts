@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Importa a autenticação do Firebase
 import firebase from 'firebase/compat/app'; // Importa o firebase para usar firebase.User
 import { ConfigService } from '../shared/config.service';
-import { AiChatService } from '../homepage/chatbot-widget/ai-chat.service';
+import { AiChatService } from '../chatbot-widget/ai-chat.service';
 import { UserService } from '../shared/user.service'; // Adicionar import para UserService
 
 @Component({

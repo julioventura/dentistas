@@ -3,11 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, BehaviorSubject, firstValueFrom, Subject } from 'rxjs';
 import { catchError, map, delay, switchMap, tap, take, filter } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { environment } from '../../../environments/environment';
-import { UserService } from '../../shared/user.service';
+import { environment } from '../../environments/environment';
+import { UserService } from '../shared/user.service';
 import { Router, NavigationEnd } from '@angular/router';
-import { SubcolecaoService } from '../../shared/subcolecao.service';
-import { FirestoreService } from '../../shared/firestore.service';
+import { SubcolecaoService } from '../shared/subcolecao.service';
+import { FirestoreService } from '../shared/firestore.service';
 
 // Interface para Navegação
 export interface NavigationContext {

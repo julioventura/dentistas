@@ -17,7 +17,6 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { PerfilComponent } from './perfil/perfil.component'; // Importando o componente Perfil
-import { ChatbotComponent } from './chatbot/chatbot.component';
 import { FooterComponent } from './footer/footer.component';
 import { MenuComponent } from './menu/menu.component';
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
@@ -35,7 +34,7 @@ import { BackupComponent } from './backup/backup.component'; // Import the stand
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 import { WhatsappButtonComponent } from './homepage/whatsapp-button/whatsapp-button.component';
 import { TabelaReferenciaDialogComponent } from './erupcoes/tabela-referencia-dialog.component';
-import { ChatbotWidgetComponent } from "./homepage/chatbot-widget/chatbot-widget.component";
+import { ChatbotWidgetComponent } from "./chatbot-widget/chatbot-widget.component";
 import { DatePipe } from '@angular/common';
 
 // Serviços
@@ -63,7 +62,6 @@ import { AppRoutingModule } from './app-routing.module';
     AppComponent,
     HomeComponent,
     LoginComponent,
-    ChatbotComponent,
     FooterComponent,
     MenuComponent, 
     ResetPasswordComponent,

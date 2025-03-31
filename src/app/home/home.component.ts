@@ -16,7 +16,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 import { ConfigService } from '../shared/config.service';
 import { UtilService } from '../shared/utils/util.service';
-import { AiChatService } from '../homepage/chatbot-widget/ai-chat.service';
+import { AiChatService } from '../chatbot-widget/ai-chat.service';
 
 @Component({
   selector: 'app-home',

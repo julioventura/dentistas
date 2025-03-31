@@ -7,7 +7,7 @@ import { Observable, of, from, BehaviorSubject, firstValueFrom } from 'rxjs'; //
 import { map, catchError, switchMap, tap, filter } from 'rxjs/operators'; // Remover firstValueFrom daqui
 import { Router, NavigationEnd } from '@angular/router';
 
-import { AiChatService } from '../homepage/chatbot-widget/ai-chat.service';
+import { AiChatService } from '../chatbot-widget/ai-chat.service';
 
 // Interface para o contexto de navegação
 export interface NavigationContext {
