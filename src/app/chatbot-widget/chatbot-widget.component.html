@@ -89,13 +89,6 @@
         </span>
       </div>
       
-      <!-- Nome do registro principal - visível quando tem dados, mesmo em list-fichas -->
-      <!-- <div class="context-pill" *ngIf="getMainRecordName() || (aiChatService.getMainRecordData()?.nome)">
-        <span class="context-label">Nome 2:</span>
-        <span class="context-value record-name">
-          {{ getMainRecordName() || formatRecordName(aiChatService.getMainRecordData()?.nome) }}
-        </span>
-      </div> -->
 
       <!-- Balão Ficha (subcollection) - modificar para adicionar o evento click -->
       <div class="context-pill" *ngIf="currentContext.activeSubcollections?.length">

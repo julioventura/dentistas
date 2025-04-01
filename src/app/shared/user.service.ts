@@ -484,7 +484,7 @@ export class UserService {
   }
 
   // Método para limpar os dados do usuário no logout
-  async logout(): Promise<void> {  // Convertido para async conforme sugerido
+  async logout(): Promise<void> {
     try {
       // Limpar dados de autenticação
       await this.afAuth.signOut();
@@ -497,22 +497,26 @@ export class UserService {
       // Redefinir estado do chatbot
       this._chatbotExpanded.next(false);
       
-      // Limpar o contexto do chatbot usando o injector
+      // Limpar o contexto do chatbot se possível
       try {
+        const { AiChatService } = await import('../chatbot-widget/ai-chat.service');
         const aiChatService = this.injector.get(AiChatService);
-        if (aiChatService) {
-          aiChatService.resetContext();
-          console.log('Contexto do chatbot limpo durante logout');
-        }
+        aiChatService.resetContext();
+        console.log('Contexto do chatbot limpo durante logout');
       } catch (error) {
         console.error('Erro ao acessar AiChatService:', error);
       }
       
+      // Navegar para a página inicial se não estiver lá
+      if (this.router.url !== '/home' && this.router.url !== '/login') {
+        this.router.navigate(['/home']);
+      }
+      
       console.log('Dados do usuário limpos no logout');
-    } catch (error: unknown) {  // Tipo mais seguro
-      const e = error as Error;  // Type assertion com tipo mais específico
-      console.error('Erro ao fazer logout:', e.message);
-      throw error;  // Re-throw para que o chamador possa lidar com o erro
+      return;
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      throw error;
     }
   }
 

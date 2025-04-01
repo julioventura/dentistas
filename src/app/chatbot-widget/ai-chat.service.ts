@@ -97,6 +97,11 @@ interface OpenAIResponse {
   }];
 }
 
+// Adicionar após as importações existentes
+
+/**
+ * Atualiza o serviço para suportar histórico de mensagens
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -111,6 +116,16 @@ export class AiChatService {
   // BehaviorSubject para emitir atualizações de contexto
   private contextSubject = new BehaviorSubject<ChatContext>({});
   
+  // Subject para emitir eventos de limpeza da conversa
+  private clearConversationSubject = new Subject<void>();
+  
+  // NOVA PROPRIEDADE: Armazenar o histórico de mensagens
+  private messageHistorySubject = new BehaviorSubject<Message[]>([]);
+  private messageHistory: Message[] = [];
+  
+  // NOVA CONSTANTE: Limite de mensagens no histórico
+  private readonly MAX_HISTORY_SIZE = 100;
+  
   // Fallback responses para quando a API falha
   private fallbackResponses = [
     "Desculpe, estou tendo dificuldades para processar sua solicitação no momento.",
@@ -120,30 +135,259 @@ export class AiChatService {
     "Estou com dificuldades técnicas. Seria possível tentar novamente?"
   ];
   
-  // Subject para emitir o contexto clínico processado
-  private clinicalContextSubject = new BehaviorSubject<any>(null);
-  
-  // Adicionar após as outras propriedades privadas no início da classe
-  private clearConversationSubject = new Subject<void>();
-
-  // Getters para acesso simplificado
-  get patientRecord(): PatientRecord | undefined {
-    return this.currentContext.patientRecord;
-  }
-  
-  get clinicalRecord(): ClinicalRecord | undefined {
-    return this.currentContext.clinicalRecord;
-  }
-  
-  // Observable público para o contexto clínico processado
-  public clinicalContext$ = this.clinicalContextSubject.asObservable();
-  
-  // Observable público para o contexto geral (única definição)
+  // Expor observables para os componentes se inscreverem
   public context$ = this.contextSubject.asObservable();
-  
-  // Adicionar aos observables públicos
   public clearConversation$ = this.clearConversationSubject.asObservable();
+  // NOVO OBSERVABLE: Expor as mensagens do histórico
+  public messageHistory$ = this.messageHistorySubject.asObservable();
+  
+  // Propriedade para armazenar dados de registros
+  private mainRecordData: any = null;
+  
+  // Propriedade para armazenar dados contextuais
+  private contextData: any = {};
+  
+  // BehaviorSubject para emitir dados clínicos processados
+  private clinicalContextSubject = new BehaviorSubject<any>({});
+  public clinicalContext$ = this.clinicalContextSubject.asObservable();
 
+  // MÉTODOS NOVOS PARA GERENCIAR HISTÓRICO DE MENSAGENS
+  
+  /**
+   * Adiciona uma mensagem ao histórico
+   */
+  public addMessageToHistory(message: Message): void {
+    // Adicionar ao array para manter ordem cronológica
+    this.messageHistory.push(message);
+    
+    // Se exceder o tamanho máximo, remover as mensagens mais antigas
+    if (this.messageHistory.length > this.MAX_HISTORY_SIZE) {
+      this.messageHistory = this.messageHistory.slice(-this.MAX_HISTORY_SIZE);
+    }
+    
+    // Salvar o histórico no localStorage se possível
+    this.saveHistoryToLocalStorage();
+    
+    // Emitir o histórico atualizado APENAS UMA VEZ
+    this.messageHistorySubject.next([...this.messageHistory]);
+  }
+  
+  /**
+   * Obtém o histórico de mensagens atual
+   */
+  public getMessageHistory(): Message[] {
+    return [...this.messageHistory];
+  }
+  
+  /**
+   * Limpa o histórico de mensagens
+   */
+  private clearMessageHistory(): void {
+    this.messageHistory = [];
+    this.messageHistorySubject.next([]);
+    this.clearHistoryFromLocalStorage();
+  }
+  
+  /**
+   * Salva o histórico no localStorage
+   */
+  private saveHistoryToLocalStorage(): void {
+    try {
+      // Usar o UID ou dentistId como parte da chave
+      const storageKey = `chat_history_${this.userId || 'anonymous'}`;
+      localStorage.setItem(storageKey, JSON.stringify(this.messageHistory));
+    } catch (error) {
+      console.error('Erro ao salvar histórico no localStorage:', error);
+    }
+  }
+  
+  /**
+   * Carrega o histórico do localStorage
+   */
+  public loadHistoryFromLocalStorage(): void {
+    try {
+      // Usar o UID ou dentistId como parte da chave
+      const storageKey = `chat_history_${this.userId || 'anonymous'}`;
+      const storedHistory = localStorage.getItem(storageKey);
+      
+      if (storedHistory) {
+        const parsedHistory = JSON.parse(storedHistory) as Message[];
+        
+        // Converter timestamps de string para Date
+        const history = parsedHistory.map(msg => ({
+          ...msg,
+          timestamp: typeof msg.timestamp === 'string' ? new Date(msg.timestamp) : msg.timestamp
+        }));
+        
+        this.messageHistory = history;
+        this.messageHistorySubject.next([...this.messageHistory]);
+        console.log(`Carregadas ${this.messageHistory.length} mensagens do histórico`);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar histórico do localStorage:', error);
+    }
+  }
+  
+  /**
+   * Remove o histórico do localStorage
+   */
+  private clearHistoryFromLocalStorage(): void {
+    try {
+      const storageKey = `chat_history_${this.userId || 'anonymous'}`;
+      localStorage.removeItem(storageKey);
+    } catch (error) {
+      console.error('Erro ao limpar histórico do localStorage:', error);
+    }
+  }
+
+  // ATUALIZAR MÉTODOS EXISTENTES
+  
+  /**
+   * Limpa completamente o contexto e a conversa do chatbot
+   */
+  public resetContext(): void {
+    console.log('Limpando contexto e conversa do chatbot');
+    
+    // Limpar contexto
+    this.currentContext = {
+      currentView: {
+        type: 'Home'
+      }
+    };
+    
+    // Limpar histórico de conversa
+    this.clearConversationSubject.next();
+    this.clearMessageHistory(); // ADICIONADO: limpar histórico
+    
+    // Limpar dados armazenados
+    this.mainRecordData = null;
+    this.contextSubject.next({...this.currentContext});
+    
+    console.log('Contexto e conversa do chatbot limpos com sucesso');
+  }
+
+
+
+
+  // Este é o método sendMessage correto a ser mantido
+  sendMessage(message: string, sessionId: string, dentistId: string, context?: any): Observable<Message> {
+    console.log('Enviando mensagem para OpenAI:', message);
+    console.log('Session ID:', sessionId);
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${environment.openaiApiKey}`
+    });
+
+    // Obter configuração do chatbot
+    return this.getDentistChatbotConfig(dentistId).pipe(
+      switchMap((config: any) => {
+        // Adicionar o histórico recente ao contexto
+        const recentHistory = this.messageHistory.slice(-5).map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        }));
+
+        // Mesclando contexto existente com novo contexto da página atual
+        const enhancedContext = {
+          ...context,
+          dentistName: this.userService.context?.dentistName,
+          location: this.userService.context?.location,
+          patientName: this.userService.context?.patientName,
+          userRole: this.userService.userProfile?.role || 'dentista',
+          currentView: this.currentContext.currentView?.type,
+          viewName: this.currentContext.currentView?.name,
+          collection: this.currentContext.activeCollection,
+          subcollections: this.currentContext.activeSubcollections,
+          pageData: this.currentContext.pageData,
+          conversationHistory: recentHistory // Adicionar histórico recente
+        };
+
+        // Constrói um prompt de sistema contextualizado
+        const systemPrompt = config.systemPrompt || this.buildContextualSystemPrompt(enhancedContext);
+
+        // Preparar mensagens incluindo histórico recente
+        const messages = [
+          { role: 'system', content: systemPrompt }
+        ];
+
+        // Adicionar histórico recente (limitado a 5 mensagens)
+        if (recentHistory.length > 0) {
+          messages.push(...recentHistory);
+        }
+
+        // Adicionar a mensagem atual do usuário
+        messages.push({ role: 'user', content: message });
+
+        const payload = {
+          model: this.openaiModel,
+          messages: messages,
+          temperature: 0.7,
+          max_tokens: 1000
+        };
+
+        console.log('%c Payload para OpenAI: ', 'background: #4b0082; color: white; padding: 2px;');
+        console.log(payload);
+
+        return this.http.post<OpenAIResponse>(this.openaiApiUrl, payload, { headers }).pipe(
+          map(response => {
+            console.log('Resposta da OpenAI:', response);
+    
+            // Verificar se a resposta tem a estrutura esperada
+            if (!response.choices || !response.choices[0] || !response.choices[0].message) {
+              console.error('Estrutura de resposta inválida da OpenAI:', response);
+              throw new Error('Formato de resposta inválido');
+            }
+            
+            const botMessage: Message = {
+              content: response.choices[0].message.content.trim(),
+              sender: 'bot',
+              timestamp: new Date()
+            };
+            
+            // Adicionar a resposta ao histórico
+            this.addMessageToHistory(botMessage);
+            
+            return botMessage;
+          }),
+          catchError(error => {
+            console.error('Erro ao chamar API:', error);
+            return this.createFallbackResponse();
+          })
+        );
+      }),
+      catchError(error => {
+        console.error('Erro ao preparar requisição OpenAI:', error);
+        return this.createFallbackResponse();
+      })
+    );
+  }
+
+
+  /**
+   * Método para salvar mensagem no histórico
+   */
+  saveMessageToHistory(_sessionId: string, _dentistId: string, message: Message): Observable<boolean> {
+    // CORRIGIR: O método foi comentado erroneamente
+    // Precisamos adicionar a mensagem ao histórico se ainda não foi adicionada
+    
+    // Como este método é chamado tanto diretamente quanto via sendMessage,
+    // vamos verificar se esta mensagem já existe no histórico antes de adicionar novamente
+    const messageExists = this.messageHistory.some(msg => 
+      msg.content === message.content && 
+      msg.sender === message.sender && 
+      Math.abs(msg.timestamp.getTime() - message.timestamp.getTime()) < 1000
+    );
+    
+    if (!messageExists) {
+      this.addMessageToHistory(message);
+    }
+    
+    // Retornar sucesso
+    return of(true);
+  }
+
+  // Atualizar o construtor para carregar histórico ao inicializar
   constructor(
     private http: HttpClient,
     private firestore: AngularFirestore,
@@ -157,6 +401,9 @@ export class AiChatService {
       if (user) {
         this.userId = user.uid;  // Usar SOMENTE o UID
         console.log('🔑 UID do usuário definido:', this.userId);
+        
+        // Carregar histórico depois de definir o userId
+        this.loadHistoryFromLocalStorage();
       } else {
         this.userId = null;
         console.warn('⚠️ Usuário não autenticado');
@@ -336,7 +583,6 @@ export class AiChatService {
   /**
    * Armazena o registro principal para exibição mesmo durante visualização de subcollection
    */
-  private mainRecordData: any = null;
   
   // Método para carregar detalhes de uma entidade específica
   private loadEntityDetails(collectionType: string, id: string): void {
@@ -722,71 +968,6 @@ export class AiChatService {
   }
 
 
-  // Método para enviar mensagem para a API
-  sendMessage(message: string, sessionId: string, dentistId: string, context?: any): Observable<Message> {
-    console.log('Enviando mensagem para OpenAI:', message);
-    console.log('Session ID:', sessionId); // Usar a variável ou removê-la dos parâmetros
-    
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${environment.openaiApiKey}`
-    });
-    
-    // Obter configuração do chatbot
-    return this.getDentistChatbotConfig(dentistId).pipe(
-      switchMap((config: any) => {
-        // Mesclando contexto existente com novo contexto da página atual
-        const enhancedContext = {
-          ...context,
-          dentistName: this.userService.context?.dentistName,
-          location: this.userService.context?.location,
-          patientName: this.userService.context?.patientName,
-          userRole: this.userService.userProfile?.role || 'dentista',
-          currentView: this.currentContext.currentView?.type,
-          viewName: this.currentContext.currentView?.name,
-          collection: this.currentContext.activeCollection,
-          subcollections: this.currentContext.activeSubcollections,
-          pageData: this.currentContext.pageData
-        };
-        
-        // Constrói um prompt de sistema contextualizado
-        const systemPrompt = config.systemPrompt || this.buildContextualSystemPrompt(enhancedContext);
-        
-        const payload = {
-          model: this.openaiModel,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: message }
-          ],
-          temperature: 0.7,
-          max_tokens: 1000
-        };
-        
-        console.log('%c Payload para OpenAI: ', 'background: #4b0082; color: white; padding: 2px;');
-        console.log(payload);
-        
-        return this.http.post<OpenAIResponse>(this.openaiApiUrl, payload, { headers }).pipe(
-          map(response => {
-            const botMessage: Message = {
-              content: response.choices[0].message.content.trim(),
-              sender: 'bot',
-              timestamp: new Date()
-            };
-            return botMessage;
-          }),
-          catchError(error => {
-            console.error('Erro ao chamar API:', error);
-            return this.createFallbackResponse();
-          })
-        );
-      }),
-      catchError(error => {
-        console.error('Erro ao preparar requisição OpenAI:', error);
-        return this.createFallbackResponse();
-      })
-    );
-  }
-
   // Método para construir um prompt de sistema contextualizado
   private buildContextualSystemPrompt(context: any): string {
     let prompt = `Você é um assistente virtual odontológico para o consultório do Dr(a). ${context.dentistName || 'Fulano'}.\n`;
@@ -881,10 +1062,7 @@ export class AiChatService {
     return of(sessionId);
   }
 
-  // Método para salvar mensagem no histórico
-  saveMessageToHistory(_sessionId: string, _dentistId: string, _message: Message): Observable<boolean> {
-    return of(true); // Simplificado; implemente a lógica real de armazenamento
-  }
+
 
   // Método para obter o contexto atual
   getCurrentContext(): ChatContext {
@@ -973,28 +1151,7 @@ export class AiChatService {
     // Resto do seu código para outras rotas...
   }
 
-  /**
-   * Limpa completamente o contexto e a conversa do chatbot
-   */
-  public resetContext(): void {
-    console.log('Limpando contexto e conversa do chatbot');
-    
-    // Limpar contexto
-    this.currentContext = {
-      currentView: {
-        type: 'Home'
-      }
-    };
-    
-    // Limpar histórico de conversa - emitir apenas um evento
-    this.clearConversationSubject.next();
-    
-    // Limpar dados armazenados
-    this.mainRecordData = null;
-    this.contextSubject.next({...this.currentContext});
-    
-    console.log('Contexto e conversa do chatbot limpos com sucesso');
-  }
+
 
   /**
  * Alias para resetContext() - Para compatibilidade com chamadas existentes
@@ -1394,5 +1551,41 @@ export class AiChatService {
   }
 
   // Adicionar esta propriedade no início da classe, logo após as outras propriedades privadas
-  private contextData: any = {};
+
+  // Adicionar os seguintes métodos
+
+  /**
+   * Inicia uma nova sessão de chat
+   */
+  public startNewChat(): void {
+    // Limpar o histórico atual
+    this.clearMessageHistory();
+    
+    // Adicionar mensagem de boas-vindas ao histórico
+    const welcomeMessage: Message = {
+      content: "Olá! Como posso ajudar?",
+      sender: 'bot',
+      timestamp: new Date()
+    };
+    
+    this.addMessageToHistory(welcomeMessage);
+    
+    // Log para debug
+    console.log('Nova sessão de chat iniciada com mensagem de boas-vindas');
+  }
+
+  /**
+   * Restaura uma sessão de chat existente ou inicia uma nova
+   */
+  public restoreOrStartChat(): void {
+    // Tentar carregar histórico do localStorage
+    this.loadHistoryFromLocalStorage();
+    
+    // Se não tiver histórico, iniciar uma nova sessão
+    if (this.messageHistory.length === 0) {
+      this.startNewChat();
+    } else {
+      console.log('Sessão de chat restaurada com histórico existente');
+    }
+  }
 }

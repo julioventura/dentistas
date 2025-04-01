@@ -7,9 +7,11 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../shared/user.service';
 import { CommonModule } from '@angular/common';
+import { take } from 'rxjs/operators';
+
+// Outras importações de componentes
 import { ChatbotHomepageComponent } from "./chatbot-homepage/chatbot-homepage.component";
 import { EnderecoComponent } from "./endereco/endereco.component";
 import { ContatoComponent } from "./contato/contato.component";
@@ -19,10 +21,7 @@ import { ConveniosComponent } from "./convenios/convenios.component";
 import { RedesComponent } from "./redes/redes.component";
 import { CartaoComponent } from "./cartao/cartao.component";
 import { CapaComponent } from "./capa/capa.component";
-import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.component";
 import { RodapeHomepageComponent } from "./rodape-homepage/rodape-homepage.component";
-import { FirestoreService } from '../shared/firestore.service';  // Adicionar import correto
-import { take } from 'rxjs/operators';  // Adicionar import para take
 
 @Component({
   selector: 'app-homepage',
@@ -40,9 +39,8 @@ import { take } from 'rxjs/operators';  // Adicionar import para take
     RedesComponent,
     CartaoComponent,
     CapaComponent,
-    WhatsappButtonComponent,
     RodapeHomepageComponent
-]
+  ]
 })
 export class HomepageComponent implements OnInit {
   username: string = '';
@@ -54,8 +52,7 @@ export class HomepageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService,
-    private firestoreService: FirestoreService<any>  // Adicionar tipo genérico
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -85,7 +82,7 @@ export class HomepageComponent implements OnInit {
     this.userService.loadUserProfileByUsername(username)
       .pipe(take(1))
       .subscribe({
-        next: (userProfiles: any[]) => {  // Adicionar tipo explícito
+        next: (userProfiles: any[]) => {
           console.log('HomepageComponent: Perfis retornados:', userProfiles);
           
           if (userProfiles && userProfiles.length > 0) {
@@ -100,7 +97,7 @@ export class HomepageComponent implements OnInit {
           }
           this.isLoading = false;
         },
-        error: (error: Error) => {  // Adicionar tipo explícito
+        error: (error: Error) => {
           console.error('HomepageComponent: Erro ao carregar perfil:', error);
           this.errorMessage = 'Erro ao carregar o perfil.';
           this.isLoading = false;

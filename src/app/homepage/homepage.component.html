@@ -1,20 +1,7 @@
 <div class="homepage">
-  <!-- Chatbot Widget (movido para o topo) -->
-  <app-chatbot-homepage 
-    [username]="username || ''" 
-    [profileData]="userProfile"
-    (expansionChange)="onChatbotExpansionChange($event)">
-  </app-chatbot-homepage>
-
-  <!-- WhatsApp Button - colocando com visibilidade garantida para depuração -->
-  <!-- <app-whatsapp-button [phoneNumber]="formatWhatsApp(userProfile.whatsapp) || ''"
-    [message]="'Olá, gostaria de falar com ' + (userProfile?.nome || 'vocês') + '.'"
-    [isChatbotExpanded]="isChatbotExpanded" *ngIf="userProfile">
-  </app-whatsapp-button> -->
-
-  <!-- Capa (Hero) com imagem de fundo e overlay -->
+  <!-- Capa da homepage -->
   <app-capa></app-capa>
-
+  
   <!-- Mensagem de erro -->
   <div class="error-message" *ngIf="errorMessage">
     <div class="error-container">
@@ -24,11 +11,19 @@
     </div>
   </div>
 
+  <!-- Chatbot da Homepage -->
+  <app-chatbot-homepage 
+    [username]="username" 
+    [profileData]="userProfile" 
+    (expansionChange)="onChatbotExpansionChange($event)">
+  </app-chatbot-homepage>
+
+
+
   <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
   <div id="bottom_block" class="container">
+    <!-- Conteúdo existente -->
     <div class="content-grid two-columns">
-      <app-cartao></app-cartao>
-      <app-contato></app-contato>
       <app-enderecos></app-enderecos>
       <app-horarios></app-horarios>
     </div>
@@ -45,5 +40,4 @@
   </div>
 
   <app-rodape-homepage></app-rodape-homepage>
-
 </div>

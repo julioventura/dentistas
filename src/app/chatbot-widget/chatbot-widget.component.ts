@@ -39,6 +39,9 @@ import { ConfigService } from '../shared/config.service';
     ])
   ]
 })
+/**
+ * Atualizar o componente para evitar duplicação de mensagens
+ */
 export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
 
@@ -52,6 +55,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   // Propriedades básicas do chatbot
   isMinimized = true;
   isMaximized = false;
+  // Manter propriedades existentes, mas mudar a lógica de conversation
+  // Agora o conversation será exclusivamente alimentado pelo messageHistory$ do service
   conversation: Message[] = [];
   userInput = '';
   isLoading = false;
@@ -84,7 +89,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     private router: Router
   ) { }
 
-  // Atualizar o método ngOnInit para se inscrever nas atualizações de contexto
+  // Atualizar o método ngOnInit para usar o histórico de mensagens
 
   ngOnInit(): void {
     // Configuração inicial
@@ -112,44 +117,49 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         console.log('Navegação atual:', navContext);
       });
 
+    // IMPORTANTE: Inscrever-se APENAS no histórico de mensagens
+    this.aiChatService.messageHistory$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(messages => {
+        // Log de diagnóstico integrado na única inscrição
+        console.log(`Atualizando conversation com ${messages.length} mensagens do histórico`);
+        if (messages.length > 0) {
+          console.log('Primeiro item:', messages[0]?.content, 'Último item:', messages[messages.length-1]?.content);
+        }
+        
+        // Substituir completamente o array local pelo histórico do serviço
+        this.conversation = [...messages];
+        this.shouldScrollToBottom = true;
+        this.cdr.detectChanges();
+      });
+
     // Verificar se já existe uma conversa ou se é a primeira inicialização
     if (!this.isInitialized) {
       // Inicializa a sessão do chat apenas na primeira vez
       this.aiChatService.createNewSession(this.dentistId).subscribe(
         sessionId => {
           this.sessionId = sessionId;
-          // ALTERADO: Mensagem simplificada sem pedir nome - apenas na primeira inicialização
-          this.addFirstMessage();
-          this.waitingForName = false; // Desativar o flag que espera nome
-          this.isInitialized = true; // Marcar como inicializado
+          
+          // Restaurar ou iniciar chat
+          this.aiChatService.restoreOrStartChat();
+          
+          this.waitingForName = false;
+          this.isInitialized = true;
         }
       );
     }
-
 
     // Inscrever-se no evento de limpeza de conversa
     this.aiChatService.clearConversation$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         console.log('Limpando conversa do chatbot após evento de logout');
-        this.conversation = [];
+        // Não precisamos limpar manualmente - o service já vai fazer isso
+        // e emitir via messageHistory$
         this.userInput = '';
-
-        // Redefinir a inicialização após limpar a conversa
         this.isInitialized = false;
-
-        // ALTERADO: Inicializar novamente a conversa - o timeout evita condições de corrida
-        setTimeout(() => {
-          if (this.conversation.length === 0) { // Verificar se a conversa ainda está vazia
-            this.addFirstMessage();
-          }
-        }, 100);
-
-        // Não ativar waitingForName
-        this.waitingForName = false;
       });
   }
-
 
   // Método dedicado para adicionar a primeira mensagem
   private addFirstMessage(): void {
@@ -179,7 +189,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     this.destroy$.complete();
   }
 
-  // Método para enviar mensagem do usuário
+  // Atualizar sendMessage para não adicionar mensagens diretamente ao array conversation
   sendMessage(): void {
     if (!this.userInput.trim()) return;
 
@@ -189,11 +199,11 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       timestamp: new Date()
     };
 
-    // Adiciona mensagem do usuário à conversa
-    this.conversation.push(userMessage);
-    this.shouldScrollToBottom = true;
+    // Adicionar a mensagem do usuário ao histórico
+    this.aiChatService.addMessageToHistory(userMessage);
 
-    // Salva a mensagem do usuário no histórico
+    // Não precisamos chamar saveMessageToHistory separadamente, pois já adicionamos ao histórico
+    // Manter para compatibilidade com código existente, mas assegurar que não adicione duplicados
     if (this.sessionId) {
       this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, userMessage)
         .subscribe();
@@ -211,7 +221,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     // Chama o serviço de IA com contexto ampliado
     const context = {
       dentistName: this.dentistName,
-      conversation: this.conversation,
       location: this.dentistLocation,
       patientName: this.patientName,
       currentContext: this.currentContext
@@ -220,21 +229,20 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     this.aiChatService.sendMessage(messageText, this.sessionId, this.dentistId, context)
       .subscribe({
         next: (response) => {
-          // Adiciona resposta do bot à conversa
-          this.conversation.push(response);
-          this.shouldScrollToBottom = true;
-
-          // Salva a resposta no histórico
-          if (this.sessionId) {
-            this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, response)
-              .subscribe();
-          }
+          console.log('Resposta recebida do serviço AI:', response);
+          // Já não precisamos adicionar a resposta ao array local
+          // O observable messageHistory$ cuidará disso
           this.isLoading = false;
         },
         error: (err) => {
           console.error('Erro ao obter resposta da IA', err);
-          this.addBotMessage('Tive um problema com a mensagem. Tente novamente.');
           this.isLoading = false;
+          // Adicionar uma mensagem de erro amigável ao usuário
+          this.aiChatService.addMessageToHistory({
+            content: 'Desculpe, tive um problema ao processar sua mensagem. Tente novamente mais tarde.',
+            sender: 'bot',
+            timestamp: new Date()
+          });
         }
       });
   }
@@ -246,14 +254,8 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       sender: 'bot',
       timestamp: new Date()
     };
-    this.conversation.push(botMessage);
-    this.shouldScrollToBottom = true;
-
-    // Salvar no histórico se temos uma sessão
-    if (this.sessionId) {
-      this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, botMessage)
-        .subscribe();
-    }
+    // Apenas adicionar ao histórico via serviço
+    this.aiChatService.addMessageToHistory(botMessage);
   }
 
   // Métodos para controlar a exibição do chatbot
@@ -277,7 +279,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       }
     }
 
-    // Rolar para o final das mensagens se expandir
+    // Rolar para o final des mensagens se expandir
     if (!this.isMinimized) {
       setTimeout(() => {
         this.scrollToBottom();
