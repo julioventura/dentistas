@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../shared/user.service';
 import { CommonModule } from '@angular/common';
-import { ChatbotWidgetComponent } from '../chatbot-widget/chatbot-widget.component';
+import { ChatbotHomepageComponent } from "./chatbot-homepage/chatbot-homepage.component";
 import { EnderecoComponent } from "./endereco/endereco.component";
 import { ContatoComponent } from "./contato/contato.component";
 import { TitulacoesComponent } from "./titulacoes/titulacoes.component";
@@ -21,6 +21,8 @@ import { CartaoComponent } from "./cartao/cartao.component";
 import { CapaComponent } from "./capa/capa.component";
 import { WhatsappButtonComponent } from "./whatsapp-button/whatsapp-button.component";
 import { RodapeHomepageComponent } from "./rodape-homepage/rodape-homepage.component";
+import { FirestoreService } from '../shared/firestore.service';  // Adicionar import correto
+import { take } from 'rxjs/operators';  // Adicionar import para take
 
 @Component({
   selector: 'app-homepage',
@@ -29,7 +31,7 @@ import { RodapeHomepageComponent } from "./rodape-homepage/rodape-homepage.compo
   standalone: true,
   imports: [
     CommonModule,
-    ChatbotWidgetComponent,
+    ChatbotHomepageComponent,
     EnderecoComponent,
     ContatoComponent,
     TitulacoesComponent,
@@ -43,106 +45,80 @@ import { RodapeHomepageComponent } from "./rodape-homepage/rodape-homepage.compo
 ]
 })
 export class HomepageComponent implements OnInit {
-  isLoading = false;
-  errorMessage = '';
-  isChatbotExpanded = false;
-  username: string | null = null;  // Added missing property
-  isCurrentUserProfile = false;    // Added missing property
-  
-  // Manteremos userProfile como uma referência local para compatibilidade,
-  // mas não o passaremos mais como @Input para os componentes filhos
-  get userProfile(): any {
-    return this.userService.userProfile;
-  }
+  username: string = '';
+  userProfile: any = null;
+  errorMessage: string = '';
+  isLoading: boolean = true;
+  isChatbotExpanded: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private afAuth: AngularFireAuth,
-    public userService: UserService, // Agora é public para acesso nos templates
+    private userService: UserService,
+    private firestoreService: FirestoreService<any>  // Adicionar tipo genérico
   ) { }
 
   ngOnInit() {
-    // Código existente para obter username da URL...
+    console.log('HomepageComponent: Inicializando');
+    
+    // Capturar parâmetros da URL
     this.route.params.subscribe(params => {
-      const username = params['username'];
-      if (username) {
-        this.loadUserProfile(username);
+      const usernameParam = params['username'];
+      console.log('HomepageComponent: Parâmetro username da URL:', usernameParam);
+      
+      if (usernameParam) {
+        this.username = usernameParam;
+        this.loadUserProfile(usernameParam);
       } else {
-        // Lidar com caso sem username...
+        console.warn('HomepageComponent: Nenhum username detectado na URL');
+        this.errorMessage = 'Perfil não encontrado';
+        this.isLoading = false;
       }
     });
   }
 
   loadUserProfile(username: string): void {
+    console.log(`HomepageComponent: Carregando perfil para username: ${username}`);
     this.isLoading = true;
-    this.username = username; // Set the username property
+    this.errorMessage = '';
     
-    // Agora usando o método do UserService
     this.userService.loadUserProfileByUsername(username)
-      .subscribe(
-        (userProfiles) => {
+      .pipe(take(1))
+      .subscribe({
+        next: (userProfiles: any[]) => {  // Adicionar tipo explícito
+          console.log('HomepageComponent: Perfis retornados:', userProfiles);
+          
           if (userProfiles && userProfiles.length > 0) {
-            // O userService já define userProfile internamente
-            this.errorMessage = '';
+            this.userProfile = userProfiles[0];
+            console.log('HomepageComponent: Perfil carregado com sucesso:', this.userProfile);
             
-            // Check if this is the current user's profile
-            this.afAuth.authState.subscribe(user => {
-              if (user) {
-                this.isCurrentUserProfile = (user.email === userProfiles[0].email);
-                console.log('Is current user profile:', this.isCurrentUserProfile);
-              } else {
-                this.isCurrentUserProfile = false;
-              }
-            });
+            // Configurar dados para exibição nos componentes filhos
+            this.userService.setHomepageProfile(this.userProfile);
           } else {
+            console.error(`HomepageComponent: Nenhum perfil encontrado para username: ${username}`);
             this.errorMessage = `Não foi encontrado um perfil com o username: ${username}`;
           }
           this.isLoading = false;
         },
-        (error) => {
-          console.error('Erro ao carregar perfil:', error);
+        error: (error: Error) => {  // Adicionar tipo explícito
+          console.error('HomepageComponent: Erro ao carregar perfil:', error);
           this.errorMessage = 'Erro ao carregar o perfil.';
           this.isLoading = false;
         }
-      );
+      });
+  }
+  
+  onChatbotExpansionChange(expanded: boolean): void {
+    this.isChatbotExpanded = expanded;
   }
 
-  openHomepage(): void {
-    console.log("Opening homepage for username:", this.username);
-    
-    if (this.username) {
-      if (this.isCurrentUserProfile) {
-        // Se for o usuário atual, navega dentro do app
-        console.log("Navigating to current user's homepage within app");
-        this.router.navigate([`/${this.username}`]);
-      } else {
-        // Para outros usuários, abre em uma nova aba
-        console.log("Opening user homepage in new tab");
-        const homepageUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/${this.username}`;
-        if (typeof window !== 'undefined') {
-          window.open(homepageUrl, '_blank', 'noopener,noreferrer');
-        }
-      }
-    } else {
-      console.error('Username not defined');
-      this.errorMessage = 'Nome de usuário não definido.';
-    }
+  formatWhatsApp(phone: string): string {
+    if (!phone) return '';
+    // Remove tudo que não for número
+    return phone.replace(/\D/g, '');
   }
 
-  editProfile(): void {
-    if (this.isCurrentUserProfile) {
-      this.router.navigate(['/perfil']);
-    }
-  }
-
-  onChatbotExpansionChange(isExpanded: boolean): void {
-    this.isChatbotExpanded = isExpanded;
-  }
-
-  formatWhatsApp(phoneNumber: string | undefined): string {
-    if (!phoneNumber) return '5521981707207'; // Número padrão se não houver número
-    // Remove non-numeric characters
-    return phoneNumber.replace(/\D/g, '');
+  voltar(): void {
+    this.router.navigate(['/home']);
   }
 }

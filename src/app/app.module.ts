@@ -55,6 +55,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 // Importar o HomepageComponent como componente standalone
 import { HomepageComponent } from './homepage/homepage.component';
 import { AppRoutingModule } from './app-routing.module';
+import { AiHomepageService } from './homepage/chatbot-homepage/ai-homepage.service';
 
 
 @NgModule({
@@ -103,6 +104,7 @@ import { AppRoutingModule } from './app-routing.module';
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     FirestoreService,
+    AiHomepageService,
     AuthGuard, DatePipe, provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]

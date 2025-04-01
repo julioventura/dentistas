@@ -6,5 +6,5 @@
   <app-footer></app-footer>
 </ng-container>
 
-<!-- Chatbot Widget Global Flutuante -->
-<app-chatbot-widget></app-chatbot-widget>
+<!-- Chatbot Widget Global Flutuante - Apenas quando não estamos em uma rota de homepage -->
+<app-chatbot-widget *ngIf="!isHomepageRoute"></app-chatbot-widget>

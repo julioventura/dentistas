@@ -56,6 +56,10 @@ export class UserService {
   private navigationContextSubject = new BehaviorSubject<NavigationContext>({});
   public navigationContext$ = this.navigationContextSubject.asObservable();
 
+  // Adicionar este property e método ao UserService
+  private homepageProfileSubject = new BehaviorSubject<any>(null);
+  public homepageProfile$ = this.homepageProfileSubject.asObservable();
+
   // Corrigir o construtor com injeção adequada
   constructor(
     private afAuth: AngularFireAuth,
@@ -101,21 +105,23 @@ export class UserService {
   }
 
   // Método para recuperar perfil do usuário pelo username
-  loadUserProfileByUsername(username: string): Observable<any> {
-    console.log('UserService: Loading profile for username:', username);
-    return this.firestoreService.getRegistroByUsername('usuarios/dentistascombr/users', username)
+  loadUserProfileByUsername(username: string): Observable<any[]> {
+    console.log('UserService: Carregando perfil de usuário por username:', username);
+    
+    return this.firestoreService.getRegistroByUsername<any>('usuarios/dentistascombr/users', username)
       .pipe(
         tap(userProfiles => {
           if (userProfiles && userProfiles.length > 0) {
+            console.log('UserService: Perfil encontrado:', userProfiles[0]);
+            // Armazenar no userProfile para acesso dos componentes filhos
             this.setUserProfile(userProfiles[0]);
-            console.log('UserService: Profile loaded successfully');
           } else {
-            console.log('UserService: No profile found for username:', username);
+            console.warn('UserService: Nenhum perfil encontrado para username:', username);
           }
         }),
         catchError(error => {
-          console.error('UserService: Error loading profile:', error);
-          return of(null);
+          console.error('UserService: Erro ao carregar perfil por username:', error);
+          return of([]);
         })
       );
   }
@@ -507,6 +513,29 @@ export class UserService {
       const e = error as Error;  // Type assertion com tipo mais específico
       console.error('Erro ao fazer logout:', e.message);
       throw error;  // Re-throw para que o chamador possa lidar com o erro
+    }
+  }
+
+  // Método para buscar registro por username
+  getRegistroByUsername(collection: string, username: string): Observable<any[]> {
+    console.log(`Buscando em ${collection} por username: ${username}`);
+    
+    return this.firestore.collection(collection, ref => 
+      ref.where('username', '==', username)
+    ).valueChanges({ idField: 'id' }).pipe(
+      tap(results => console.log(`Encontrados ${results.length} resultados para username ${username}`)),
+      catchError(error => {
+        console.error('Erro ao buscar por username:', error);
+        return of([]);
+      })
+    );
+  }
+
+  // Método para definir o perfil da homepage
+  setHomepageProfile(profile: any): void {
+    if (profile) {
+      console.log('UserService: Definindo perfil da homepage:', profile);
+      this.homepageProfileSubject.next(profile);
     }
   }
 }

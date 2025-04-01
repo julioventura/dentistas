@@ -38,25 +38,29 @@ const routes: Routes = [
   { path: 'home-config', component: HomeConfigComponent },
   { path: 'importar-cadastro', component: ImportarCadastroComponent },
   { path: 'erupcoes', component: ErupcoesComponent },
-
+  { path: 'backup', component: BackupComponent },
   { path: 'camposRegistro', component: CamposRegistroComponent },
+  { path: 'fichas', component: FichasComponent },
+
   { path: 'list/:collection', component: ListComponent, data: { animation: '4' } },
   { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '5' } },
   { path: 'edit/:collection/:id', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '6' } },
   
-  { path: 'fichas', component: FichasComponent },
   { path: 'list-fichas/:collection/:id/fichas/:subcollection', component: ListComponent, data: { animation: '7' } },
   { path: 'view-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: ViewComponent, data: { animation: '8' } },
   { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '9' } },
   { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '10' } },
   
-  { path: 'backup', component: BackupComponent },
+
+  // IMPORTANTE: Esta rota username deve vir depois de todas as rotas específicas
   { path: ':username', component: HomepageComponent, canActivate: [UsernameGuard] },
+  // e ANTES de qualquer wildcard ou lazy loading
+
   { path: '**', component: HomeComponent, data: { animation: '11' } }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

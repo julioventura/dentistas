@@ -1,6 +1,10 @@
 <div class="homepage">
   <!-- Chatbot Widget (movido para o topo) -->
-<app-chatbot-widget></app-chatbot-widget>
+  <app-chatbot-homepage 
+    [username]="username || ''" 
+    [profileData]="userProfile"
+    (expansionChange)="onChatbotExpansionChange($event)">
+  </app-chatbot-homepage>
 
   <!-- WhatsApp Button - colocando com visibilidade garantida para depuração -->
   <app-whatsapp-button [phoneNumber]="formatWhatsApp(userProfile.whatsapp) || ''"
@@ -10,6 +14,15 @@
 
   <!-- Capa (Hero) com imagem de fundo e overlay -->
   <app-capa></app-capa>
+
+  <!-- Mensagem de erro -->
+  <div class="error-message" *ngIf="errorMessage">
+    <div class="error-container">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>{{ errorMessage }}</p>
+      <button (click)="voltar()">Voltar</button>
+    </div>
+  </div>
 
   <!-- Área de Conteúdo em grid com duas colunas para os componentes internos -->
   <div id="bottom_block" class="container">

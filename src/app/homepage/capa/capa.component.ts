@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../shared/user.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-capa',
@@ -9,72 +11,90 @@ import { UserService } from '../../shared/user.service';
   templateUrl: './capa.component.html', 
   styleUrls: ['./capa.component.scss']
 })
-export class CapaComponent {
-  
-  constructor(public userService: UserService) { } 
+export class CapaComponent implements OnInit, OnDestroy {
+  userProfile: any;
+  private unsubscribe$ = new Subject<void>();
+
+  // 1. Mudar o userService para público para permitir acesso no template
+  constructor(public userService: UserService) { }
+
+  ngOnInit() {
+    // Receber o perfil da homepage
+    this.userService.homepageProfile$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(profile => {
+        if (profile) {
+          console.log('CapaComponent: Recebendo dados do perfil', profile);
+          this.userProfile = profile;
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
   public qrCodeUrl: string = 'https://dentistas.com.br/assets/qrcode_dentistascombr.png';
 
-  
-  
+  // 2. Adicionar métodos de acesso que usem o userProfile local
   getEnderecoCompleto(): string {
-    if (this.userService.userProfile) {
-        console.log("userProfile:", this.userService.userProfile);
-
-      return `${this.userService.userProfile.endereco}, ${this.userService.userProfile.cidade} - ${this.userService.userProfile.estado}`;
+    if (this.userProfile) {
+      return `${this.userProfile.endereco}, ${this.userProfile.cidade} - ${this.userProfile.estado}`;
     }
-    return `${this.userService.userProfile.endereco.rua}, ${this.userService.userProfile.cidade} - ${this.userService.userProfile.bairro}`;
+    return '';
   }
   
   getCidadeEstadoCep(): string {
-    if (this.userService.userProfile) {
-      return `${this.userService.userProfile.cidade} - ${this.userService.userProfile.estado}, CEP ${this.userService.userProfile.cep}`;
+    if (this.userProfile) {
+      return `${this.userProfile.cidade} - ${this.userProfile.estado}, CEP ${this.userProfile.cep}`;
     }
-    else {
-      return '';
-    }
+    return '';
   }
 
   getBackgroundImage(): string {
     // Se o usuário tiver uma foto de capa, use-a. Caso contrário, use uma imagem padrão
-    const backgroundImage = this.userService.userProfile?.fotoCapa || 'assets/images/dental-office-background.jpg';
+    const backgroundImage = this.userProfile?.fotoCapa || 'assets/images/dental-office-background.jpg';
     return `url('${backgroundImage}')`;
   }
 
   // Método para formatar especialidades
   formatEspecialidades(): string {
-    if (!this.userService.userProfile?.especialidades || this.userService.userProfile.especialidades.length === 0) {
+    if (!this.userProfile?.especialidades || this.userProfile.especialidades.length === 0) {
       return '';
     }
     
-    return this.userService.userProfile.especialidades.join(' • ');
+    return this.userProfile.especialidades.join(' • ');
   }
 
-
   getWhatsapp(): string {
-    if (!this.userService.userProfile?.whatsapp) return '5511999999999'; // Número padrão
+    if (!this.userProfile?.whatsapp) return '5511999999999'; // Número padrão
     
     // Remove caracteres não numéricos
-    return this.userService.userProfile.whatsapp.replace(/\D/g, '');
+    return this.userProfile.whatsapp.replace(/\D/g, '');
   }
 
   getWhatsappFormatado(): string {
-    if (!this.userService.userProfile?.whatsapp) return '5511999999999';
-    return this.userService.userProfile.whatsapp.replace(/\D/g, '');
+    if (!this.userProfile?.whatsapp) return '5511999999999';
+    return this.userProfile.whatsapp.replace(/\D/g, '');
   }
 
   // Dados principais e foto
   getNome() {
-    return this.userService.userProfile?.nome || 'Dentista';
+    return this.userProfile?.nome || 'Dentista';
   }
 
   getEspecialidades() {
-    const especialidades = this.userService.userProfile?.especialidades || '';
-    return typeof especialidades === 'string' ? especialidades.split(',').map(e => e.trim()) : [];
+    const especialidades = this.userProfile?.especialidades || '';
+    return typeof especialidades === 'string' ? especialidades.split(',').map((e: string) => e.trim()) : [];
   }
 
   getProfileImage() {
-    return this.userService.userProfile?.foto || 'https://dentistas.com.br/assets/default-profile.png';
+    return this.userProfile?.foto || 'https://dentistas.com.br/assets/default-profile.png';
+  }
+
+  getTituloProfissional() {
+    return this.userProfile?.titulo_profissional || 'Cirurgião-Dentista';
   }
 
 }

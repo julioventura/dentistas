@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage'; // Importa o serviço de Storage
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { UtilService } from '../shared/utils/util.service';
 
 @Injectable({
@@ -41,9 +41,26 @@ export class FirestoreService<T extends { id?: string }> {
     return this.firestore.collection<any>(collectionPath).doc(id).valueChanges();
   }
 
-  // READ: Buscar registro por username na subcoleção do usuário (para o perfil público)
-  getRegistroByUsername(collectionPath: string, username: string): Observable<any | undefined> {
-    return this.firestore.collection<any>(collectionPath, ref => ref.where('username', '==', username)).valueChanges();
+  // Adicionar o tipo genérico ao método getRegistroByUsername
+
+  // Método para buscar registro por username
+  getRegistroByUsername<T = any>(collection: string, username: string): Observable<T[]> {
+    console.log(`FirestoreService: Buscando em ${collection} por username: ${username}`);
+    
+    return this.firestore.collection<T>(collection, ref => 
+      ref.where('username', '==', username)
+    ).valueChanges({ idField: 'id' }).pipe(
+      tap(results => {
+        console.log(`FirestoreService: Encontrados ${results.length} resultados para username ${username}`);
+        if (results.length > 0) {
+          console.log('FirestoreService: Primeiro resultado:', results[0]);
+        }
+      }),
+      catchError(error => {
+        console.error('FirestoreService: Erro ao buscar por username:', error);
+        return of([] as T[]);
+      })
+    );
   }
 
 
