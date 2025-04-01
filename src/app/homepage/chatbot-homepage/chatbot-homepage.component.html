@@ -2,7 +2,7 @@
      [ngClass]="{'minimized': isMinimized, 'maximized': isMaximized}" 
      (click)="isMinimized ? toggleChat() : null">
   <div class="chatbot-header">
-    <!-- Botão de maximizar (no lado esquerdo) -->
+    <!-- Botão de maximizar (no lado esquerdo) - visível apenas quando não minimizado -->
     <div class="chatbot-maximize" *ngIf="!isMinimized">
       <button class="maximize-button" (click)="$event.stopPropagation(); toggleMaximize()">
         <i class="fas" [ngClass]="isMaximized ? 'fa-compress' : 'fa-expand'"></i>
@@ -15,10 +15,10 @@
       <span>Assistente Virtual</span>
     </div>
     
-    <!-- Controles (lado direito) -->
-    <div class="chatbot-controls">
+    <!-- Controles (lado direito) - visível apenas quando não minimizado -->
+    <div class="chatbot-controls" *ngIf="!isMinimized">
       <button class="minimize-button" (click)="$event.stopPropagation(); toggleChat()">
-        <i class="fas" [ngClass]="isMinimized ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        <i class="fas fa-chevron-down"></i>
       </button>
     </div>
   </div>

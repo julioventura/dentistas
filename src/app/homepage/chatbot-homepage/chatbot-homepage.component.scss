@@ -20,15 +20,68 @@ $border-color: #dadce0;
   transition: all 0.3s ease;
   
   &.minimized {
-    height: 50px;
-    width: 250px;
-    max-width: 80vw;
+    height: 60px; // Aumentado para 60px para corresponder ao chatbot-widget
+    width: 60px; // Largura fixa de 60px
+    max-width: 60px; // Garantir largura máxima também
+    border-radius: 50%; // Forma circular
+    padding: 0 !important;
+    overflow: hidden;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.3); // Sombra mais pronunciada
+    
+    .chatbot-header {
+      padding: 0 !important;
+      border-radius: 50% !important;
+      height: 60px; // Mesmo tamanho do container para garantir que ocupe toda a área
+      width: 60px; // Mesmo tamanho do container
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .chatbot-title {
+        margin: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        text-align: center;
+
+        i {
+          margin-right: 0 !important;
+          padding-left: 1px;
+          padding-bottom: 1px;
+          font-size: 24px !important;
+          color: #fff !important;
+          animation: pulse 2s infinite !important;
+        }
+        
+        span {
+          display: none !important; // Esconder o texto quando minimizado
+        }
+      }
+
+      .chatbot-controls,
+      .chatbot-maximize {
+        display: none !important; // Esconder outros controles
+      }
+    }
   }
   
   &.maximized {
     height: 80vh !important;
     width: 400px;
     max-width: 95vw;
+  }
+}
+
+/* Animação de pulsação para o ícone */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -231,6 +284,49 @@ $border-color: #dadce0;
     &:disabled {
       background-color: #cccccc;
       cursor: not-allowed;
+    }
+  }
+}
+
+/* Ajustes responsivos */
+@media (max-width: 480px) {
+  .chatbot-container {
+    bottom: 20px;
+    right: 20px;
+    
+    &.minimized {
+      // Mantenha o tamanho em dispositivos móveis
+      height: 60px;
+      width: 60px;
+    }
+    
+    &:not(.minimized) {
+      width: 90vw;
+      max-width: 350px;
+      
+      .chatbot-body {
+        height: 50vh;
+      }
+    }
+    
+    &.maximized {
+      width: 100%;
+      height: 100%;
+      bottom: 0;
+      right: 0;
+      transform: none;
+      max-width: none;
+      max-height: none;
+      border-radius: 0;
+      
+      .chatbot-header {
+        border-radius: 0;
+      }
+      
+      .chatbot-body {
+        height: calc(100% - 50px);
+        max-height: none;
+      }
     }
   }
 }
