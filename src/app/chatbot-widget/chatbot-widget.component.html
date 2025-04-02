@@ -38,9 +38,15 @@
 </div>
 
 <div class="chatbot-container" 
-     [ngClass]="{'minimized': isMinimized, 'maximized': isMaximized}" 
+     [ngClass]="{'minimized': isMinimized, 'maximized': isMaximized, 'dragging': isDragging}" 
+     [ngStyle]="!isMinimized && !isMaximized ? {'right.px': chatPosition.right, 'bottom.px': chatPosition.bottom} : {}"
      (click)="isMinimized ? toggleChat() : null">
-  <div class="chatbot-header">
+  
+  <!-- Adicionar evento mousedown no cabeçalho -->
+  <div class="chatbot-header" 
+       (mousedown)="!isMinimized && !isMaximized ? startDrag($event) : null"
+       [ngClass]="{'draggable': !isMinimized && !isMaximized}">
+    
     <!-- Botão de maximizar (no lado esquerdo) -->
     <div class="chatbot-maximize" *ngIf="!isMinimized">
       <button class="maximize-button" (click)="$event.stopPropagation(); toggleMaximize()">

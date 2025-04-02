@@ -825,3 +825,9 @@ $directions: (
   border-radius: 8px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
+
+/* Estilo global para o cursor durante o arrasto do chatbot */
+body.dragging-chatbot {
+  cursor: grabbing !important;
+  user-select: none;
+}

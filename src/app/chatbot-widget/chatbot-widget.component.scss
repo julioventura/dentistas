@@ -185,6 +185,76 @@
   }
 }
 
+/* Estilos melhorados para o cabeçalho arrastável */
+.chatbot-header.draggable {
+  cursor: grab;
+  position: relative;
+  
+  &:active {
+    cursor: grabbing;
+  }
+  
+  /* Indicador visual de arrasto - mais destacado */
+  &::before {
+    content: '⋯'; /* Símbolo de pontos para indicar arrasto */
+    position: absolute;
+    left: 50%;
+    top: 3px; /* 2px mais para cima do que antes */
+    transform: translateX(-50%);
+    font-size: 14px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.9); /* Cor branca mais visível */
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Sombra suave para melhor contraste */
+    pointer-events: none;
+    opacity: 0; /* Começa invisível */
+    transition: opacity 0.2s ease;
+  }
+  
+  /* Mostrar o indicador apenas no hover */
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Estilo para o container durante o arrasto - cursor mais destacado */
+.chatbot-container.dragging {
+  opacity: 0.8;
+  transition: none !important;
+  
+  .chatbot-header {
+    cursor: grabbing;
+    
+    /* Símbolo mais visível durante o arrasto */
+    &::before {
+      opacity: 1;
+      color: #ffffff; /* Branco total durante o arrasto */
+      font-size: 16px; /* Ligeiramente maior durante o arrasto */
+    }
+  }
+}
+
+/* Estilo para o body durante o arrasto - cursor mais destacado */
+body.dragging-chatbot {
+  cursor: grabbing !important;
+  user-select: none;
+  
+  * {
+    user-select: none;
+  }
+}
+
+/* Dica visual para arrastar - pode ser mostrada apenas no hover */
+.chatbot-header.draggable:hover::before {
+  content: '↔';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 3px;
+  font-size: 12px;
+  color: rgb(255, 255, 255);
+  pointer-events: none;
+}
+
 /* Corpo do chat */
 .chatbot-body {
   display: flex;

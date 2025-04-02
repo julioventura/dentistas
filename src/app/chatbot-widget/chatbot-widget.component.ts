@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked, AfterViewInit, OnDestroy, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Remover KeyValue
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -80,6 +80,14 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   detailsType: 'collection' | 'subcollection' = 'collection';
   detailsData: any = null;
   detailsTitle: string = 'Detalhes';
+
+  // Adicionar estas propriedades à classe
+  public isDragging: boolean = false;
+  private dragStartX: number = 0;  // Posição inicial do mouse
+  private dragStartY: number = 0;  // Posição inicial do mouse
+  private initialRight: number = 0; // Posição inicial do chatbot
+  private initialBottom: number = 0; // Posição inicial do chatbot
+  public chatPosition = { right: 20, bottom: 20 }; // Posição padrão
 
   constructor(
     private userService: UserService,
@@ -167,6 +175,9 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
           }
         }, 100);
       });
+
+    // Carregar posição salva
+    this.loadChatPosition();
   }
 
   /**
@@ -290,17 +301,28 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         this.userService.setChatbotExpanded(false);
       }, 50);
     } else {
+      const wasMinimized = this.isMinimized; // Guardar estado anterior
       this.isMinimized = !this.isMinimized;
       this.userService.setChatbotExpanded(!this.isMinimized);
 
       if (this.isMinimized) {
         this.isMaximized = false; // Se minimizar, garantir que não esteja maximizado
+      } else if (wasMinimized) {
+        // Se estava minimizado e agora está expandindo, voltar para posição padrão
+        this.chatPosition = { right: 20, bottom: 20 };
       }
     }
 
     // Rolar para o final des mensagens se expandir
     if (!this.isMinimized) {
       setTimeout(() => {
+        if (!this.isMaximized) {
+          const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+          if (chatElement) {
+            chatElement.style.right = `${this.chatPosition.right}px`;
+            chatElement.style.bottom = `${this.chatPosition.bottom}px`;
+          }
+        }
         this.scrollToBottom();
       }, 100);
     }
@@ -308,9 +330,21 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
 
   toggleMaximize(): void {
     this.isMaximized = !this.isMaximized;
-    setTimeout(() => {
-      this.scrollToBottom();
-    }, 100);
+    if (!this.isMaximized) {
+      // Quando voltar do modo maximizado, restaurar posição personalizada
+      setTimeout(() => {
+        const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+        if (chatElement) {
+          chatElement.style.right = `${this.chatPosition.right}px`;
+          chatElement.style.bottom = `${this.chatPosition.bottom}px`;
+        }
+        this.scrollToBottom();
+      }, 100);
+    } else {
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 100);
+    }
   }
 
   // Toggle para mostrar/ocultar indicador de contexto
@@ -586,5 +620,119 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
 
   trackByKey(_index: number, item: any): any {
     return item.id; // ou outra propriedade única
+  }
+
+  // Método melhorado para iniciar o arrasto
+  startDrag(event: MouseEvent): void {
+    // Só permitir arrasto no modo expandido
+    if (this.isMinimized || this.isMaximized) return;
+    
+    // Evitar processamento de outros eventos
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Marcar que estamos arrastando
+    this.isDragging = true;
+    
+    // Armazenar a posição inicial do mouse
+    this.dragStartX = event.clientX;
+    this.dragStartY = event.clientY;
+    
+    // Armazenar a posição inicial do chatbot
+    this.initialRight = this.chatPosition.right;
+    this.initialBottom = this.chatPosition.bottom;
+    
+    // Adicionar classe para feedback visual
+    document.body.classList.add('dragging-chatbot');
+  }
+
+  // Método melhorado para processar o arrasto
+  @HostListener('window:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent): void {
+    if (!this.isDragging) return;
+    
+    // Calcular o quanto o mouse se moveu desde o início do arrasto
+    const deltaX = this.dragStartX - event.clientX; // Movimento para direita é positivo
+    const deltaY = this.dragStartY - event.clientY; // Movimento para cima é positivo
+    
+    // Calcular a nova posição baseada na posição inicial + delta do movimento
+    // Para right/bottom: valor aumenta quando move para esquerda/cima
+    const newRight = this.initialRight + deltaX;
+    const newBottom = this.initialBottom + deltaY;
+    
+    // Garantir que o chatbot não saia da tela (limites de segurança)
+    const minVisible = 50; // Pelo menos 50px visíveis
+    const maxRight = window.innerWidth - minVisible;
+    const maxBottom = window.innerHeight - minVisible;
+    
+    // Aplicar limites
+    this.chatPosition.right = Math.min(Math.max(0, newRight), maxRight);
+    this.chatPosition.bottom = Math.min(Math.max(0, newBottom), maxBottom);
+    
+    // Aplicar a nova posição ao elemento
+    const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+    if (chatElement) {
+      chatElement.style.right = `${this.chatPosition.right}px`;
+      chatElement.style.bottom = `${this.chatPosition.bottom}px`;
+    }
+  }
+
+  // O método onMouseUp permanece praticamente o mesmo
+  @HostListener('window:mouseup', ['$event'])
+  onMouseUp(): void {
+    if (this.isDragging) {
+      this.isDragging = false;
+      document.body.classList.remove('dragging-chatbot');
+      
+      // Salvar a posição no localStorage para persistência
+      this.saveChatPosition();
+    }
+  }
+
+  // Método para auxiliar o desenvolvimento - remover na produção
+  private logChatPosition(message: string): void {
+    const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+    if (!chatElement) return;
+    
+    const rect = chatElement.getBoundingClientRect();
+    console.log(`${message} - Position: right=${this.chatPosition.right}, bottom=${this.chatPosition.bottom}, rect:`, rect);
+  }
+
+  // Método para salvar a posição
+  private saveChatPosition(): void {
+    try {
+      localStorage.setItem('chatbot_right', this.chatPosition.right.toString());
+      localStorage.setItem('chatbot_bottom', this.chatPosition.bottom.toString());
+    } catch (error) {
+      console.error('Erro ao salvar posição do chatbot:', error);
+    }
+  }
+
+  // Método para carregar a posição salva
+  private loadChatPosition(): void {
+    try {
+      // Se o chatbot estiver minimizado inicialmente, não precisamos carregar a posição
+      if (this.isMinimized) return;
+
+      const savedRight = localStorage.getItem('chatbot_right');
+      const savedBottom = localStorage.getItem('chatbot_bottom');
+      
+      // Apenas carregar posição se existirem valores salvos
+      if (savedRight) this.chatPosition.right = parseFloat(savedRight);
+      if (savedBottom) this.chatPosition.bottom = parseFloat(savedBottom);
+      
+      // Aplicar posição carregada
+      setTimeout(() => {
+        if (!this.isMinimized && !this.isMaximized) {
+          const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+          if (chatElement) {
+            chatElement.style.right = `${this.chatPosition.right}px`;
+            chatElement.style.bottom = `${this.chatPosition.bottom}px`;
+          }
+        }
+      }, 0);
+    } catch (error) {
+      console.error('Erro ao carregar posição do chatbot:', error);
+    }
   }
 }
