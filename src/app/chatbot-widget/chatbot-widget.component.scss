@@ -15,15 +15,23 @@
   width: 340px;
   background-color: #fff;
 
+  // Estado padrão (não-minimizado, não-maximizado)
+  &:not(.minimized):not(.maximized) {
+    right: 20px;
+    bottom: 20px;
+  }
+
   &.minimized {
     box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.4);
-    width: 50px !important; // Adicionado !important
-    height: 50px !important; // Adicionado !important
-    border-radius: 50% !important; // Adicionado !important para garantir
-    background-color: $primary-color !important; // Garantir a cor mesmo no modo maximizado
-    transform: translateX(0) !important; // Remover qualquer transformação do modo maximizado
-    bottom: 20px !important; // Restaurar posição padrão
-    right: 20px !important; // Restaurar posição padrão
+    width: 50px !important; 
+    height: 50px !important; 
+    border-radius: 50% !important; 
+    background-color: $primary-color !important; 
+    transform: none !important; // Remover qualquer transformação
+    bottom: 20px !important; // Posição fixa
+    right: 20px !important; // Posição fixa
+    left: auto !important; // Garantir que left não interfira
+    top: auto !important; // Garantir que top não interfira
     max-width: none !important; // Limpar restrições de maximizado
     max-height: none !important; // Limpar restrições de maximizado
 
@@ -65,46 +73,45 @@
   }
 
   &.maximized {
-    width: 85vw; // 85% da largura da tela
-    height: 85vh; // 85% da altura da tela
-    max-width: 1200px; // Para não ficar excessivamente grande em telas muito grandes
-    max-height: 800px; // Limitador de altura para telas muito grandes
-    bottom: 50px; // Um pouco acima do fundo da tela
-    right: 50%; // Centraliza horizontalmente
-    transform: translateX(50%); // Complementa a centralização
-    border-radius: 20px; // Bordas um pouco mais arredondadas
-    // box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); // Sombra mais pronunciada
-    box-shadow: 0px 0px 25px rgba(0, 0, 0, 1);
-
+    width: 85vw; 
+    height: 85vh;
+    max-width: 1200px;
+    max-height: 800px;
+    
+    // Centralizar vertical e horizontalmente
+    position: fixed;
+    left: 50% !important;
+    top: 50% !important; // Centralizar verticalmente
+    bottom: auto !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important; // Centralizar em ambos os eixos
+    
+    // Remover classes relacionadas a arrasto quando maximizado
+    &.manually-positioned, &.dragging {
+      left: 50% !important; 
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+    }
+    
+    // Altura ajustada para o corpo
     .chatbot-body {
-      height: calc(85vh - 50px); // Altura total menos a altura do cabeçalho
-      max-height: 750px; // Limitador para telas muito grandes
+      height: calc(85vh - 50px); 
+      max-height: 750px;
     }
+  }
 
-    .messages-container {
-      padding: 20px; // Espaçamento um pouco maior
+  &.manually-positioned {
+    transform: none !important; // Remover o transform
+    right: auto; // Permitir posicionamento manual
+    bottom: auto; // Permitir posicionamento manual
+  }
 
-      .message-bubble {
-        max-width: 70%; // Um pouco mais estreito para melhor legibilidade
-      }
-    }
+  &.dragging {
+    transition: none !important;
+    opacity: 0.8;
 
-    .input-container {
-      padding: 20px;
-
-      .message-input {
-        padding: 12px 20px;
-        font-size: 16px; // Fonte um pouco maior
-      }
-
-      .send-button {
-        width: 50px;
-        height: 50px;
-
-        i {
-          font-size: 18px;
-        }
-      }
+    .chatbot-header {
+      cursor: grabbing;
     }
   }
 }
@@ -216,10 +223,59 @@
   }
 }
 
+/* Estilo para o cabeçalho arrastável apenas no modo expandido */
+.chatbot-header.draggable {
+  cursor: grab;
+  position: relative;
+  
+  &:active {
+    cursor: grabbing;
+  }
+  
+  /* Remover indicador visual de arrasto no modo maximizado */
+  .chatbot-container:not(.maximized) &::before {
+    content: '⋯';
+    position: absolute;
+    left: 50%;
+    top: 3px;
+    transform: translateX(-50%);
+    font-size: 14px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  /* Mostrar o indicador apenas no hover e no modo não maximizado */
+  .chatbot-container:not(.maximized) &:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Remover cursor grab no modo maximizado */
+.chatbot-container.maximized .chatbot-header {
+  cursor: default;
+}
+
 /* Estilo para o container durante o arrasto - cursor mais destacado */
 .chatbot-container.dragging {
   opacity: 0.8;
   transition: none !important;
+  transform: none !important; // Garantir que não haja transform durante arrasto
+  
+  &.maximized {
+    left: auto !important;
+    right: auto !important; // Permitir a definição via JS
+    bottom: auto !important; // Permitir a definição via JS
+    transform: none !important;
+    
+    // Evitar conflito com outros estilos
+    &.manually-positioned {
+      transition: none !important;
+    }
+  }
   
   .chatbot-header {
     cursor: grabbing;

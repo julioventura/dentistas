@@ -89,6 +89,9 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   private initialBottom: number = 0; // Posição inicial do chatbot
   public chatPosition = { right: 20, bottom: 20 }; // Posição padrão
 
+  // Adicionar uma propriedade para evitar múltiplos cliques consecutivos
+  private isTransitioning = false;
+
   constructor(
     private userService: UserService,
     public aiChatService: AiChatService, // Change to public
@@ -204,8 +207,19 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       this.scrollToBottom();
     }
     
-    // Fallback para garantir que a mensagem de boas-vindas seja exibida
+    // Garantir posicionamento correto do chatbot maximizado
     setTimeout(() => {
+      if (this.isMaximized) {
+        const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+        if (chatElement) {
+          // Forçar centralização se estiver no modo maximizado
+          chatElement.style.removeProperty('right');
+          chatElement.style.left = '50%';
+          chatElement.style.transform = 'translateX(-50%)';
+        }
+      }
+      
+      // Código existente para mensagem de boas-vindas...
       if (this.conversation.length === 0 && this.isInitialized) {
         console.log('Fallback: Adicionando mensagem de boas-vindas');
         this.addFirstMessage();
@@ -289,27 +303,66 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   }
 
   // Métodos para controlar a exibição do chatbot
-  // Método para alternar entre minimizado e expandido
+  // Corrigir o método toggleChat para garantir posição correta ao minimizar do modo maximizado
   toggleChat(): void {
-    // Se estiver maximizado, primeiro desmaximar, depois minimizar
+    // Se estiver em transição, ignorar clique
+    if (this.isTransitioning) return;
+    this.isTransitioning = true;
+    
+    // Se estiver maximizado e vamos minimizar, tratar como caso especial
     if (this.isMaximized && !this.isMinimized) {
+      // Obter referência para o elemento
+      const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+      
+      // IMPORTANTE: Primeiro remover o estado maximizado
       this.isMaximized = false;
-
-      // Pequeno timeout para garantir que a transição de desmaximizar ocorra primeiro
+      
+      // Remover todos os estilos de posicionamento central ANTES de minimizar
+      chatElement.classList.remove('maximized');
+      chatElement.classList.remove('manually-positioned');
+      chatElement.style.removeProperty('left');
+      chatElement.style.removeProperty('top');
+      chatElement.style.removeProperty('transform');
+      
+      // Definir os valores padrão de posição para quando não está maximizado
+      this.chatPosition.right = 20;
+      this.chatPosition.bottom = 20;
+      
+      // Aplicar a posição padrão imediatamente
+      chatElement.style.right = '20px';
+      chatElement.style.bottom = '20px';
+      
+      // Minimizar após desmaximizar com um pequeno delay para permitir que os estilos sejam aplicados
       setTimeout(() => {
         this.isMinimized = true;
         this.userService.setChatbotExpanded(false);
-      }, 50);
+        this.isTransitioning = false;
+      }, 100);
     } else {
-      const wasMinimized = this.isMinimized; // Guardar estado anterior
+      // Comportamento normal para alternar entre minimizado e expandido
+      const wasMinimized = this.isMinimized;
       this.isMinimized = !this.isMinimized;
       this.userService.setChatbotExpanded(!this.isMinimized);
-
+      
       if (this.isMinimized) {
-        this.isMaximized = false; // Se minimizar, garantir que não esteja maximizado
+        // Ao minimizar, redefinir posição padrão
+        const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+        if (chatElement) {
+          chatElement.style.right = '20px';
+          chatElement.style.bottom = '20px';
+        }
+        this.isTransitioning = false;
       } else if (wasMinimized) {
-        // Se estava minimizado e agora está expandindo, voltar para posição padrão
-        this.chatPosition = { right: 20, bottom: 20 };
+        // Se estava minimizado e agora está expandindo
+        setTimeout(() => {
+          const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+          if (chatElement) {
+            chatElement.style.right = `${this.chatPosition.right}px`;
+            chatElement.style.bottom = `${this.chatPosition.bottom}px`;
+          }
+          this.scrollToBottom();
+          this.isTransitioning = false;
+        }, 100);
       }
     }
 
@@ -328,22 +381,57 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     }
   }
 
+  // Corrigir o método toggleMaximize para garantir centralização no modo maximizado
   toggleMaximize(): void {
+    // Se estiver em transição, ignorar clique
+    if (this.isTransitioning) return;
+    this.isTransitioning = true;
+    
     this.isMaximized = !this.isMaximized;
-    if (!this.isMaximized) {
-      // Quando voltar do modo maximizado, restaurar posição personalizada
+    
+    // Obter elemento do chatbot
+    const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+    if (!chatElement) {
+      this.isTransitioning = false;
+      return;
+    }
+    
+    // Se estiver maximizando (indo para o estado maximizado)
+    if (this.isMaximized) {
+      // Remover qualquer posicionamento manual anterior
+      chatElement.classList.remove('manually-positioned');
+      
+      // Limpar estilos inline que podem interferir na centralização
+      chatElement.style.removeProperty('right');
+      chatElement.style.removeProperty('top');
+      
+      // Aplicar centralização
+      chatElement.style.left = '50%';
+      chatElement.style.top = '50%';
+      chatElement.style.transform = 'translate(-50%, -50%)';
+      
+      // Aguardar renderização e garantir rolagem para o final
       setTimeout(() => {
-        const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
-        if (chatElement) {
-          chatElement.style.right = `${this.chatPosition.right}px`;
-          chatElement.style.bottom = `${this.chatPosition.bottom}px`;
-        }
         this.scrollToBottom();
-      }, 100);
-    } else {
+        this.isTransitioning = false;
+      }, 300);
+    } 
+    // Se estiver voltando do maximizado para expandido
+    else {
+      // Restaurar posicionamento anterior
       setTimeout(() => {
+        // Limpar estilos de centralização
+        chatElement.style.removeProperty('left');
+        chatElement.style.removeProperty('top');
+        chatElement.style.transform = 'none';
+        
+        // Aplicar posição salva
+        chatElement.style.right = `${this.chatPosition.right}px`;
+        chatElement.style.bottom = `${this.chatPosition.bottom}px`;
+        
         this.scrollToBottom();
-      }, 100);
+        this.isTransitioning = false;
+      }, 300);
     }
   }
 
@@ -623,18 +711,25 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   }
 
   // Método melhorado para iniciar o arrasto
+  // Atualizar o método startDrag para impedir arrasto no modo maximizado
   startDrag(event: MouseEvent): void {
-    // Só permitir arrasto no modo expandido
+    // Verificar se o clique foi em um botão
+    const target = event.target as HTMLElement;
+    if (target.closest('.maximize-button') || target.closest('.minimize-button')) {
+      return;
+    }
+    
+    // Não permitir arrasto quando minimizado OU maximizado
     if (this.isMinimized || this.isMaximized) return;
     
-    // Evitar processamento de outros eventos
+    // Evitar eventos padrão
     event.preventDefault();
     event.stopPropagation();
     
-    // Marcar que estamos arrastando
+    // Marcar como em arrasto
     this.isDragging = true;
     
-    // Armazenar a posição inicial do mouse
+    // Registrar posição inicial do mouse
     this.dragStartX = event.clientX;
     this.dragStartY = event.clientY;
     
@@ -642,49 +737,83 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     this.initialRight = this.chatPosition.right;
     this.initialBottom = this.chatPosition.bottom;
     
-    // Adicionar classe para feedback visual
+    // Adicionar classes visuais
     document.body.classList.add('dragging-chatbot');
   }
 
   // Método melhorado para processar o arrasto
+  // Atualizar o método onMouseMove para permitir apenas movimento horizontal
   @HostListener('window:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     if (!this.isDragging) return;
     
-    // Calcular o quanto o mouse se moveu desde o início do arrasto
-    const deltaX = this.dragStartX - event.clientX; // Movimento para direita é positivo
-    const deltaY = this.dragStartY - event.clientY; // Movimento para cima é positivo
-    
-    // Calcular a nova posição baseada na posição inicial + delta do movimento
-    // Para right/bottom: valor aumenta quando move para esquerda/cima
-    const newRight = this.initialRight + deltaX;
-    const newBottom = this.initialBottom + deltaY;
-    
-    // Garantir que o chatbot não saia da tela (limites de segurança)
-    const minVisible = 50; // Pelo menos 50px visíveis
-    const maxRight = window.innerWidth - minVisible;
-    const maxBottom = window.innerHeight - minVisible;
-    
-    // Aplicar limites
-    this.chatPosition.right = Math.min(Math.max(0, newRight), maxRight);
-    this.chatPosition.bottom = Math.min(Math.max(0, newBottom), maxBottom);
-    
-    // Aplicar a nova posição ao elemento
+    // Obter elemento do chatbot
     const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
-    if (chatElement) {
-      chatElement.style.right = `${this.chatPosition.right}px`;
-      chatElement.style.bottom = `${this.chatPosition.bottom}px`;
-    }
+    if (!chatElement) return;
+    
+    // Calcular o movimento com base na posição do mouse - APENAS HORIZONTAL
+    const deltaX = this.dragStartX - event.clientX;
+    // Ignorar movimento vertical
+    
+    // Calcular a nova posição baseada na posição inicial - APENAS HORIZONTAL
+    let newRight = this.initialRight + deltaX;
+    // Manter a posição vertical fixa
+    let newBottom = this.initialBottom;
+    
+    // Obter as dimensões corretas do viewport
+    const viewportWidth = document.documentElement.clientWidth;
+    
+    // Obter dimensões do chatbot
+    const rect = chatElement.getBoundingClientRect();
+    const chatWidth = rect.width;
+    
+    // Limites horizontais rigorosos - NUNCA ultrapassar as bordas da tela
+    // Lado direito - não ultrapassar a borda direita da tela
+    const minRight = 0;
+    
+    // Lado esquerdo - garantir que o chatbot não ultrapasse a borda esquerda
+    const maxRight = viewportWidth - chatWidth;
+    
+    // Aplicar limites rigorosos
+    newRight = Math.min(Math.max(minRight, newRight), maxRight);
+    
+    // Atualizar posição no objeto
+    this.chatPosition.right = newRight;
+    
+    // Aplicar apenas a posição horizontal
+    chatElement.style.right = `${newRight}px`;
   }
 
   // O método onMouseUp permanece praticamente o mesmo
+  // Modificar o método onMouseUp para lidar com a finalização do arrasto no modo maximizado
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(): void {
-    if (this.isDragging) {
-      this.isDragging = false;
-      document.body.classList.remove('dragging-chatbot');
+    if (!this.isDragging) return;
+    
+    this.isDragging = false;
+    document.body.classList.remove('dragging-chatbot');
+    
+    // Obter elemento do chatbot
+    const chatElement = document.querySelector('.chatbot-container') as HTMLElement;
+    if (chatElement) {
+      chatElement.classList.remove('dragging');
       
-      // Salvar a posição no localStorage para persistência
+      // Validar posição final para garantir que o chatbot não tenha ultrapassado os limites
+      const rect = chatElement.getBoundingClientRect();
+      const viewportHeight = document.documentElement.clientHeight;
+      
+      // Se o chatbot ultrapassou o topo, reposicioná-lo
+      if (rect.top < 0) {
+        this.chatPosition.bottom = 0;
+        chatElement.style.bottom = '0px';
+      }
+      
+      // Se estiver no modo maximizado, manter o posicionamento manual
+      if (this.isMaximized) {
+        chatElement.classList.add('manually-positioned');
+      }
+      
+      // Salvar a posição
       this.saveChatPosition();
     }
   }
