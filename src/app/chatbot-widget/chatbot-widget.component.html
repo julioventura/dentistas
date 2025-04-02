@@ -108,15 +108,29 @@
       </div>
     </div>
     
+    <!-- Verificar a estrutura dos balões de conversa -->
     <div class="messages-container" #messagesContainer (scroll)="onMessagesScroll()">
-      <div *ngFor="let message of conversation" 
-           [ngClass]="message.sender === 'user' ? 'message-bubble user-message' : 'message-bubble bot-message'">
-        {{ message.content }}
+      <!-- Mensagem de boas-vindas quando não há histórico -->
+      <div *ngIf="conversation.length === 0" class="welcome-message">
+        <div class="message bot-message">
+          <p>Olá! Como posso ajudar?</p>
+        </div>
       </div>
       
-      <!-- Indicador de carregamento -->
-      <div *ngIf="isLoading" class="message-bubble bot-message typing-indicator">
-        <span>Digitando</span>
+      <!-- Mensagens da conversa -->
+      <div *ngFor="let message of conversation" class="message-group">
+        <div class="message" [ngClass]="{'user-message': message.sender === 'user', 'bot-message': message.sender === 'bot'}">
+          <p>{{ message.content }}</p>
+        </div>
+      </div>
+      
+      <!-- Indicador de digitação -->
+      <div *ngIf="isLoading" class="message-group">
+        <div class="message bot-message typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
     </div>
     

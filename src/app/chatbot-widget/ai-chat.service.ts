@@ -202,29 +202,39 @@ export class AiChatService {
   }
   
   /**
-   * Carrega o histórico do localStorage
-   */
+ * Carrega o histórico do localStorage
+ */
   public loadHistoryFromLocalStorage(): void {
     try {
       // Usar o UID ou dentistId como parte da chave
       const storageKey = `chat_history_${this.userId || 'anonymous'}`;
       const storedHistory = localStorage.getItem(storageKey);
-      
+
       if (storedHistory) {
         const parsedHistory = JSON.parse(storedHistory) as Message[];
-        
+
         // Converter timestamps de string para Date
         const history = parsedHistory.map(msg => ({
           ...msg,
           timestamp: typeof msg.timestamp === 'string' ? new Date(msg.timestamp) : msg.timestamp
         }));
-        
-        this.messageHistory = history;
-        this.messageHistorySubject.next([...this.messageHistory]);
-        console.log(`Carregadas ${this.messageHistory.length} mensagens do histórico`);
+
+        // Se o histórico está vazio, não substituir o atual
+        if (history.length > 0) {
+          this.messageHistory = history;
+          this.messageHistorySubject.next([...this.messageHistory]);
+          console.log(`Carregadas ${this.messageHistory.length} mensagens do histórico`);
+        } else {
+          // Se carregamos um histórico vazio, não fazer nada - startNewChat será chamado depois
+          console.log('Histórico vazio no localStorage');
+        }
+      } else {
+        console.log('Nenhum histórico encontrado no localStorage');
+        // Não iniciar nova conversa aqui - isso será feito pelo restoreOrStartChat
       }
     } catch (error) {
       console.error('Erro ao carregar histórico do localStorage:', error);
+      // Não iniciar nova conversa aqui - isso será feito pelo restoreOrStartChat
     }
   }
   
@@ -368,24 +378,22 @@ export class AiChatService {
    * Método para salvar mensagem no histórico
    */
   saveMessageToHistory(_sessionId: string, _dentistId: string, message: Message): Observable<boolean> {
-    // CORRIGIR: O método foi comentado erroneamente
-    // Precisamos adicionar a mensagem ao histórico se ainda não foi adicionada
-    
     // Como este método é chamado tanto diretamente quanto via sendMessage,
     // vamos verificar se esta mensagem já existe no histórico antes de adicionar novamente
-    const messageExists = this.messageHistory.some(msg => 
-      msg.content === message.content && 
-      msg.sender === message.sender && 
-      Math.abs(msg.timestamp.getTime() - message.timestamp.getTime()) < 1000
+    const messageExists = this.messageHistory.some(msg =>
+      msg.content === message.content &&
+      msg.sender === message.sender &&
+      Math.abs((msg.timestamp as Date).getTime() - (message.timestamp as Date).getTime()) < 1000
     );
-    
+
     if (!messageExists) {
       this.addMessageToHistory(message);
     }
-    
+
     // Retornar sucesso
     return of(true);
   }
+
 
   // Atualizar o construtor para carregar histórico ao inicializar
   constructor(

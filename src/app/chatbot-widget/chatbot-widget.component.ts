@@ -110,13 +110,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       });
 
-    // Também subscrever diretamente ao contexto de navegação para debugging
-    this.userService.navigationContext$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(navContext => {
-        console.log('Navegação atual:', navContext);
-      });
-
     // IMPORTANTE: Inscrever-se APENAS no histórico de mensagens
     this.aiChatService.messageHistory$
       .pipe(takeUntil(this.destroy$))
@@ -143,6 +136,14 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
           // Restaurar ou iniciar chat
           this.aiChatService.restoreOrStartChat();
           
+          // Verificar se a restauração adicionou mensagens (em um timeout para garantir que a operação assíncrona terminou)
+          setTimeout(() => {
+            if (this.conversation.length === 0) {
+              console.log('Nenhuma mensagem após restauração, adicionando primeira mensagem');
+              this.addFirstMessage();
+            }
+          }, 100);
+          
           this.waitingForName = false;
           this.isInitialized = true;
         }
@@ -158,22 +159,47 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
         // e emitir via messageHistory$
         this.userInput = '';
         this.isInitialized = false;
+
+        // Após limpar, verificar se precisa adicionar a mensagem inicial novamente
+        setTimeout(() => {
+          if (this.conversation.length === 0) {
+            this.addFirstMessage();
+          }
+        }, 100);
       });
   }
 
-  // Método dedicado para adicionar a primeira mensagem
+  /**
+   * Método dedicado para adicionar a primeira mensagem
+   */
   private addFirstMessage(): void {
     // Verificar se já existe alguma mensagem para evitar duplicação
     if (this.conversation.length === 0) {
-      this.addBotMessage("Olá! Como posso ajudar?");
+      const welcomeMessage: Message = {
+        content: "Olá! Como posso ajudar?",
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      
+      // Adicionar via serviço para garantir consistência
+      this.aiChatService.addMessageToHistory(welcomeMessage);
       console.log('Primeira mensagem adicionada ao chatbot');
     }
   }
   
   ngAfterViewInit(): void {
+    // Rolagem inicial
     if (this.messagesContainer && this.messagesContainer.nativeElement) {
       this.scrollToBottom();
     }
+    
+    // Fallback para garantir que a mensagem de boas-vindas seja exibida
+    setTimeout(() => {
+      if (this.conversation.length === 0 && this.isInitialized) {
+        console.log('Fallback: Adicionando mensagem de boas-vindas');
+        this.addFirstMessage();
+      }
+    }, 500);
   }
 
   ngAfterViewChecked(): void {
@@ -202,13 +228,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     // Adicionar a mensagem do usuário ao histórico
     this.aiChatService.addMessageToHistory(userMessage);
 
-    // Não precisamos chamar saveMessageToHistory separadamente, pois já adicionamos ao histórico
-    // Manter para compatibilidade com código existente, mas assegurar que não adicione duplicados
-    if (this.sessionId) {
-      this.aiChatService.saveMessageToHistory(this.sessionId, this.dentistId, userMessage)
-        .subscribe();
-    }
-
     const messageText = this.userInput;
     this.userInput = ''; // Limpa o input
 
@@ -230,16 +249,16 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       .subscribe({
         next: (response) => {
           console.log('Resposta recebida do serviço AI:', response);
-          // Já não precisamos adicionar a resposta ao array local
-          // O observable messageHistory$ cuidará disso
+          // O serviço já adiciona a resposta ao histórico via addMessageToHistory
           this.isLoading = false;
         },
         error: (err) => {
           console.error('Erro ao obter resposta da IA', err);
           this.isLoading = false;
-          // Adicionar uma mensagem de erro amigável ao usuário
+          
+          // Adicionar mensagem de erro amigável
           this.aiChatService.addMessageToHistory({
-            content: 'Desculpe, tive um problema ao processar sua mensagem. Tente novamente mais tarde.',
+            content: 'Desculpe, tive um problema ao processar sua mensagem. Tente novamente.',
             sender: 'bot',
             timestamp: new Date()
           });

@@ -197,7 +197,8 @@
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 16px 16px 20px;
+  padding: 10px 0; // Adicionar padding vertical
+  height: calc(100% - 44px); // Ajustar altura considerando o input
   display: flex;
   flex-direction: column;
   scroll-behavior: smooth; // Para rolagem suave
@@ -231,6 +232,104 @@
   color: white;
   align-self: flex-end;
   margin-left: auto;
+}
+
+/* Restaurar estilos dos balões de conversa */
+.message-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  width: 100%;
+
+  .message {
+    max-width: 80%;
+    padding: 10px 14px; // Restaurar padding
+    border-radius: 16px;
+    margin: 4px 0; // Restaurar margem vertical
+    word-wrap: break-word;
+    line-height: 1.4;
+    position: relative;
+
+    p {
+      margin: 0;
+      white-space: pre-line; // Preservar quebras de linha
+    }
+
+    &.user-message {
+      align-self: flex-end;
+      background-color: #0084ff;
+      color: white;
+      border-bottom-right-radius: 4px;
+      margin-left: auto; // Alinha à direita
+      margin-right: 10px; // Margem direita
+    }
+
+    &.bot-message {
+      align-self: flex-start;
+      background-color: #E5F1FF; // Cor azul clara para mensagens do bot (restaurada)
+      color: #333;
+      border-bottom-left-radius: 4px;
+      margin-right: auto; // Alinha à esquerda
+      margin-left: 10px; // Margem esquerda
+    }
+  }
+}
+
+// Também corrigir o estilo da mensagem de boas-vindas
+.welcome-message {
+  display: flex;
+  .message {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    margin: 4px 0;
+    background-color: #E5F1FF; // Azul claro para a mensagem de boas-vindas
+    color: #333;
+    border-bottom-left-radius: 4px;
+    margin-right: auto;
+    margin-left: 10px;
+    word-wrap: break-word;
+    line-height: 1.4;
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+// Adicionar estilos para o indicador de digitação
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  background-color: #E5F1FF !important; // Forçar a mesma cor azul clara
+
+  span {
+    height: 8px;
+    width: 8px;
+    background-color: #5A9BE6; // Cor de azul mais escuro para os pontos
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+
+    &:nth-child(1) {
+      animation: bounce 1.2s infinite 0.2s;
+    }
+    &:nth-child(2) {
+      animation: bounce 1.2s infinite 0.4s;
+    }
+    &:nth-child(3) {
+      animation: bounce 1.2s infinite 0.6s;
+    }
+  }
+}
+
+@keyframes bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
 }
 
 /* Container de input */
