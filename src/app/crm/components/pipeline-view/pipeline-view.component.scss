@@ -1,0 +1,184 @@
+/* filepath: c:\contexto\dentistas\src\app\crm\components\pipeline-view\pipeline-view.component.scss */
+.pipeline-container {
+  padding: 24px;
+  
+  .pipeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    
+    .pipeline-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      mat-form-field {
+        width: 200px;
+      }
+    }
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+  
+  .pipeline-board {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    min-height: calc(100vh - 200px);
+    
+    .pipeline-stage {
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      min-width: 280px;
+      max-width: 280px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      
+      .stage-header {
+        padding: 12px 16px;
+        background-color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e0e0e0;
+        
+        h2 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 500;
+        }
+        
+        .counter {
+          background-color: rgba(0, 0, 0, 0.1);
+          color: rgba(0, 0, 0, 0.7);
+          padding: 2px 8px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 500;
+        }
+      }
+      
+      .stage-items {
+        padding: 8px;
+        overflow-y: auto;
+        flex-grow: 1;
+        min-height: 100px;
+        
+        .empty-stage {
+          padding: 16px;
+          text-align: center;
+          color: rgba(0, 0, 0, 0.5);
+          font-style: italic;
+          background-color: rgba(0, 0, 0, 0.05);
+          border-radius: 4px;
+          margin: 8px 0;
+        }
+        
+        .item-card {
+          background-color: white;
+          border-radius: 4px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+          margin-bottom: 8px;
+          cursor: pointer;
+          transition: box-shadow 0.2s, transform 0.2s;
+          
+          &:hover {
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            transform: translateY(-2px);
+          }
+          
+          .item-content {
+            padding: 12px;
+            
+            .item-header {
+              margin-bottom: 8px;
+              
+              .item-name {
+                font-weight: 500;
+                font-size: 14px;
+              }
+            }
+            
+            .item-contact {
+              display: flex;
+              align-items: center;
+              font-size: 12px;
+              color: rgba(0, 0, 0, 0.6);
+              margin-bottom: 4px;
+              
+              mat-icon {
+                font-size: 16px;
+                height: 16px;
+                width: 16px;
+                margin-right: 4px;
+              }
+            }
+            
+            .item-value {
+              margin-top: 8px;
+              font-weight: 500;
+              color: #2e7d32;
+            }
+            
+            .item-last-contact {
+              margin-top: 8px;
+              font-size: 11px;
+              color: rgba(0, 0, 0, 0.5);
+              
+              span {
+                font-style: italic;
+              }
+            }
+          }
+          
+          &.cdk-drag-placeholder {
+            opacity: 0;
+          }
+        }
+        
+        .item-card-preview {
+          background-color: white;
+          border-radius: 4px;
+          box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+          padding: 12px;
+          
+          .preview-content {
+            font-weight: 500;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.cdk-drag-preview {
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.stage-items.cdk-drop-list-dragging .item-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

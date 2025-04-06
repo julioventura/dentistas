@@ -1,0 +1,84 @@
+<div class="pipeline-container">
+  <div class="pipeline-header">
+    <h1>Pipeline de Vendas</h1>
+    <div class="pipeline-controls">
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de Contato</mat-label>
+        <mat-select [(ngModel)]="selectedCollection" (selectionChange)="onCollectionChange()">
+          <mat-option *ngFor="let col of collections" [value]="col.id">
+            {{ col.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <button mat-icon-button (click)="loadPipeline()" matTooltip="Atualizar">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+  
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Carregando pipeline...</p>
+  </div>
+  
+  <div *ngIf="!isLoading" class="pipeline-board">
+    <div *ngFor="let stageId of stageIds" class="pipeline-stage" [ngStyle]="getBackgroundStyle(stageId)">
+      <div class="stage-header">
+        <h2>{{ stageLabels[stageId] }}</h2>
+        <span class="counter">{{ pipeline[stageId].length || 0 }}</span>
+      </div>
+      
+      <div
+        cdkDropList
+        [id]="stageId"
+        [cdkDropListData]="pipeline[stageId]"
+        [cdkDropListConnectedTo]="stageIds"
+        (cdkDropListDropped)="drop($event)"
+        class="stage-items">
+        
+        <div class="empty-stage" *ngIf="pipeline[stageId]?.length === 0">
+          Nenhum registro neste estágio
+        </div>
+        
+        <div 
+          *ngFor="let item of pipeline[stageId]" 
+          cdkDrag 
+          class="item-card"
+          (click)="viewRegistro(selectedCollection, item.id)">
+          <div class="item-content">
+            <div class="item-header">
+              <span class="item-name">{{ item.nome }}</span>
+            </div>
+            
+            <div *ngIf="item.email" class="item-contact">
+              <mat-icon>email</mat-icon>
+              <span>{{ item.email }}</span>
+            </div>
+            
+            <div *ngIf="item.telefone" class="item-contact">
+              <mat-icon>phone</mat-icon>
+              <span>{{ item.telefone }}</span>
+            </div>
+            
+            <div *ngIf="item.crmData?.valorPotencial" class="item-value">
+              {{ item.crmData.valorPotencial | currency:'BRL' }}
+            </div>
+            
+            <div *ngIf="item.crmData?.dataUltimoContato" class="item-last-contact">
+              <span>Último contato:</span>
+              {{ item.crmData.dataUltimoContato?.toDate() | date:'dd/MM/yy' }}
+            </div>
+          </div>
+          
+          <!-- Preview drag -->
+          <div *cdkDragPreview class="item-card-preview">
+            <div class="preview-content">
+              {{ item.nome }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

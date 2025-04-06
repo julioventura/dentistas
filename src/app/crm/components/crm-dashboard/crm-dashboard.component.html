@@ -1,0 +1,115 @@
+<div class="crm-dashboard-container">
+  <div class="dashboard-header">
+    <h1>CRM - Gestão de Relacionamentos</h1>
+    <div class="dashboard-actions">
+      <button mat-raised-button color="primary" (click)="abrirPipeline()">
+        <mat-icon>view_kanban</mat-icon>
+        Pipeline de Vendas
+      </button>
+    </div>
+  </div>
+
+  <!-- Carregamento -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Carregando métricas...</p>
+  </div>
+
+  <!-- Métricas -->
+  <div *ngIf="!isLoading" class="metrics-cards">
+    <mat-card class="metric-card">
+      <mat-card-content>
+        <div class="metric-value">{{ metricas.total || 0 }}</div>
+        <div class="metric-label">Total de Leads</div>
+      </mat-card-content>
+    </mat-card>
+    
+    <mat-card class="metric-card" *ngFor="let status of ['novo', 'qualificado', 'em_atendimento', 'follow_up']">
+      <mat-card-content (click)="abrirLeadsPorStatus(status)" class="clickable">
+        <div class="metric-value">{{ (metricas.byStatus && metricas.byStatus[status]) || 0 }}</div>
+        <div class="metric-label">
+          {{ status === 'novo' ? 'Novos Leads' : 
+             status === 'qualificado' ? 'Qualificados' : 
+             status === 'em_atendimento' ? 'Em Atendimento' :
+             status === 'follow_up' ? 'Follow-up' : status }}
+        </div>
+      </mat-card-content>
+    </mat-card>
+    
+    <mat-card class="metric-card valor">
+      <mat-card-content>
+        <div class="metric-value">{{ metricas.valorPotencialTotal | currency:'BRL' }}</div>
+        <div class="metric-label">Valor Potencial</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Coleções disponíveis -->
+  <div class="collections-section">
+    <h2>Acessar Contatos</h2>
+    <div class="collections-grid">
+      <div *ngFor="let colecao of colecoes" class="collection-card" (click)="irParaColecao(colecao.id)">
+        <mat-icon>{{ colecao.icone }}</mat-icon>
+        <div>{{ colecao.titulo }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lembretes -->
+  <div class="reminders-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="reminder-header-icon">notifications</mat-icon>
+          Lembretes Pendentes
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list>
+          <ng-container *ngIf="(lembretesPendentes$ | async) as pendentes">
+            <div class="empty-list" *ngIf="pendentes.length === 0">Nenhum lembrete pendente</div>
+            
+            <mat-list-item *ngFor="let lembrete of pendentes">
+              <div class="reminder-item">
+                <div class="reminder-content">
+                  <div class="reminder-title">{{ lembrete.titulo }}</div>
+                  <div class="reminder-date">{{ lembrete.data?.toDate() | date:'dd/MM/yyyy' }}</div>
+                  <div class="reminder-description" *ngIf="lembrete.descricao">{{ lembrete.descricao }}</div>
+                </div>
+                <div class="reminder-actions">
+                  <button mat-icon-button color="primary" (click)="marcarLembreteComoConcluido(lembrete)">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </mat-list-item>
+          </ng-container>
+        </mat-list>
+        
+        <ng-container *ngIf="lembretesAtrasados$ | async as atrasados">
+          <mat-divider *ngIf="atrasados.length > 0"></mat-divider>
+          
+          <div *ngIf="atrasados.length > 0" class="overdue-reminders">
+            <h3>Lembretes Atrasados</h3>
+            <mat-list>
+              <mat-list-item *ngFor="let lembrete of atrasados" class="overdue-item">
+                <div class="reminder-item">
+                  <div class="reminder-content">
+                    <div class="reminder-title">{{ lembrete.titulo }}</div>
+                    <div class="reminder-date overdue">{{ lembrete.data?.toDate() | date:'dd/MM/yyyy' }}</div>
+                    <div class="reminder-description" *ngIf="lembrete.descricao">{{ lembrete.descricao }}</div>
+                  </div>
+                  <div class="reminder-actions">
+                    <button mat-icon-button color="warn" (click)="marcarLembreteComoConcluido(lembrete)">
+                      <mat-icon>check_circle</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </ng-container>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -43,6 +43,7 @@ export class HomeComponent implements OnInit {
     fornecedores: false,
     perfil: true,
     homepage: true,
+    crm: true
   };
 
   private userId: string | null = null;

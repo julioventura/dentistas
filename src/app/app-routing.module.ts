@@ -24,6 +24,7 @@ import { HomepageComponent } from './homepage/homepage.component';
 // Guards
 import { CanDeactivateGuard } from './shared/guards/can-deactivate.guard';
 import { UsernameGuard } from './shared/guards/username.guard';
+import { AuthGuard } from './shared/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -51,6 +52,7 @@ const routes: Routes = [
   { path: 'edit-ficha/:collection/:id/fichas/:subcollection/itens/:fichaId', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '9' } },
   { path: 'add-ficha/:collection/:id/fichas/:subcollection', component: EditComponent, canDeactivate: [CanDeactivateGuard], data: { animation: '10' } },
   
+  { path: 'crm', loadChildren: () => import('./crm/crm.module').then(m => m.CrmModule), canActivate: [AuthGuard] },
 
   // IMPORTANTE: Esta rota username deve vir depois de todas as rotas específicas
   { path: ':username', component: HomepageComponent, canActivate: [UsernameGuard] },
