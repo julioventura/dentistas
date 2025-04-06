@@ -78,6 +78,13 @@
             </div>
           </div>
         </div>
+
+        <!-- Add this inside your lead card template -->
+        <div class="lead-card" 
+             *ngFor="let lead of pipeline[stageId]" 
+             (click)="viewRegistro(selectedCollection, lead.id)">
+          <!-- Lead content here -->
+        </div>
       </div>
     </div>
   </div>

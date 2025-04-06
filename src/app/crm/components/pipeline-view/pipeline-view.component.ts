@@ -152,7 +152,8 @@ export class PipelineViewComponent implements OnInit {
   }
 
   viewRegistro(collection: string, id: string): void {
-    this.router.navigate(['/view', collection, id]);
+    // Update path to use the CRM module route
+    this.router.navigate(['/crm/lead', collection, id]);
   }
 
   getBackgroundStyle(stageId: string): any {
