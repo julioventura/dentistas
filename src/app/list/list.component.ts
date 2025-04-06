@@ -435,6 +435,7 @@ export class ListComponent implements OnInit {
   getMenusPadraoPorCollection(colecao: string): any {
     const subcolecoes = this.subcolecaoService.getSubcolecoesDisponiveis();
     const menusPadrao: { [key: string]: any[] } = {
+      associados: [CAMPOS_FICHAS_PAGAMENTOS],
       pacientes: [CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_TRATAMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
       clientes: [CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_PAGAMENTOS],
       alunos: [CAMPOS_FICHAS_DOCUMENTOS, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS],

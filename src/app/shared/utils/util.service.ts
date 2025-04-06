@@ -270,6 +270,8 @@ export class UtilService {
     switch (titulo) {
       case 'usuarios':
         return 'Usuários';
+      case 'associados':
+        return 'Associados';
       case 'professores':
         return 'Professores';
       case 'alunos':
@@ -324,6 +326,8 @@ export class UtilService {
     switch (titulo) {
       case 'usuarios':
         return 'Usuário';
+      case 'associados':
+        return 'Associado';
       case 'professores':
         return 'Professor';
       case 'alunos':

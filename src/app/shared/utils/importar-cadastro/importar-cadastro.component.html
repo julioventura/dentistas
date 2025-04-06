@@ -16,21 +16,22 @@
 
 			<div class="espacador_vertical_duplo"></div>
 
-					  <!-- Seletor de Coleção -->
-					  <label for="collection">Escolha o cadastro para onde importar:</label>
-					  <select id="collection" [(ngModel)]="selectedCollection">
-						<option value="pacientes">Pacientes</option>
-						<option value="alunos">Alunos</option>
-						<option value="professores">Professores</option>
-						<option value="dentistas">Dentistas</option>
-						<option value="equipe">Equipe</option>
-						<option value="proteticos">Protéticos</option>
-					  </select>
+			<!-- Seletor de Coleção -->
+			<label for="collection">Escolha o cadastro para onde importar:</label>
+			<select id="collection" [(ngModel)]="selectedCollection">
+				<option value="associados">Associados</option>
+				<option value="pacientes">Pacientes</option>
+				<option value="alunos">Alunos</option>
+				<option value="professores">Professores</option>
+				<option value="dentistas">Dentistas</option>
+				<option value="equipe">Equipe</option>
+				<option value="proteticos">Protéticos</option>
+			</select>
 
-					  <div class="espacador_vertical_duplo"></div>
+			<div class="espacador_vertical_duplo"></div>
 
 			<input type="file" (change)="onFileSelect($event)" accept=".csv" />
-			&nbsp; 
+			&nbsp;
 			<button (click)="importarDados()" [disabled]="!csvData.length">Importar Dados</button>
 
 			<div class="espacador_vertical_duplo"></div>

@@ -18,6 +18,7 @@ interface Subcolecao {
 })
 export class MenuConfigComponent implements OnInit {
   colecoesDisponiveis = [
+    'associados',
     'pacientes',
     'alunos',
     'professores',

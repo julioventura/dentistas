@@ -12,11 +12,12 @@ import { UtilService } from '../../shared/utils/util.service';
   standalone: false
 })
 export class HomeConfigComponent implements OnInit {
-  colecoesAtivas = ['Pacientes', 'Alunos', 'Professores', 'Dentistas', 'Equipe', 'Protéticos']; // Exemplo de coleções ativas
+  colecoesAtivas = ['Associados', 'Pacientes', 'Alunos', 'Professores', 'Dentistas', 'Equipe', 'Protéticos']; // Exemplo de coleções ativas
   colecaoSelecionada: string | null = null;
 
   // Ícones disponíveis e sua visibilidade
   icons = [
+    { key: 'associados', label: 'Associados' },
     { key: 'pacientes', label: 'Pacientes' },
     { key: 'alunos', label: 'Alunos' },
     { key: 'professores', label: 'Professores' },

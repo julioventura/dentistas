@@ -50,6 +50,7 @@ export class BackupComponent implements OnInit {
 			const collections = [
 				"pacientes",
 				"alunos",
+				"associados",
 				"professores",
 				"dentistas",
 				"equipe",

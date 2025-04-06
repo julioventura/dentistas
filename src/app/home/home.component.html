@@ -18,6 +18,12 @@
       <section class="services-section icon-grid largo">
 
         <!-- Ícones Condicionais -->
+
+        <div class="icon-item" *ngIf="visibleIcons['associados']" (click)="go('list/associados')">
+          <img src="https://dentistas.com.br/assets/associados.png" alt="Associados">
+          <p>ASSOCIADOS</p>
+        </div>
+
         <div class="icon-item" *ngIf="visibleIcons['pacientes']" (click)="go('list/pacientes')">
           <img src="https://dentistas.com.br/assets/pacientes.png" alt="Pacientes">
           <p>PACIENTES</p>
@@ -148,7 +154,7 @@
               <span>Assistentes de I.A. para professores</span>
             </a>
             <a class="pill" href="https://dentistas.com.br/tutfop" target="_blank" rel="noopener">
-              <span>Assistentes de I.A. para alunos</span>
+              <span>Assistente de I.A. para auxílio clínico</span>
             </a>
           </div>
         </section>

@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
 
   // Lista de ícones visíveis
   visibleIcons: { [key: string]: boolean } = {
+    associados: true,
     pacientes: true,
     alunos: true,
     professores: true,
