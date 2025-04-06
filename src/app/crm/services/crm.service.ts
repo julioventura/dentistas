@@ -368,7 +368,7 @@ export class CrmService {
             valorPotencial: 0,
             dataCadastro: firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)),
             dataUltimoContato: firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)),
-            observacoes: 'Busca laboratório para confecção de aparelhos'
+            observacoes: 'Busca protético para confecção de aparelhos'
           }
         }
       ];
