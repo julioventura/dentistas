@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule } from '@angular/cdk/drag-drop';
 import { CrmService } from '../../services/crm.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { forkJoin, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../shared/material.module';
+import { MatChipsModule } from '@angular/material/chips';
 import { PipelineConfig, PipelineStage } from '../../models/crm.model';
 
 @Component({
@@ -16,9 +15,19 @@ import { PipelineConfig, PipelineStage } from '../../models/crm.model';
   templateUrl: './pipeline-view.component.html',
   styleUrls: ['./pipeline-view.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, DragDropModule, MaterialModule]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [
+    CommonModule, 
+    RouterModule, 
+    FormsModule, 
+    DragDropModule, 
+    MaterialModule,
+    MatChipsModule
+  ]
 })
 export class PipelineViewComponent implements OnInit {
+  @ViewChild('leadDetailsDialog') leadDetailsDialog!: TemplateRef<any>;
+  
   stageIds: string[] = [];
   stageLabels: {[key: string]: string} = {};
   pipeline: {[key: string]: any[]} = {};
@@ -192,5 +201,14 @@ export class PipelineViewComponent implements OnInit {
     return {
       'background-color': colors[stageId] || '#f5f5f5'
     };
+  }
+
+  // Novo método para abrir o popup de detalhes
+  viewLeadDetails(lead: any): void {
+    this.dialog.open(this.leadDetailsDialog, {
+      data: lead,
+      width: '500px',
+      panelClass: 'lead-details-dialog'
+    });
   }
 }

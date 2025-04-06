@@ -39,7 +39,7 @@
         </div>
 
         <div class="icon-item" *ngIf="visibleIcons['equipe']" (click)="go('list/equipe')">
-          <img src="https://dentistas.com.br/assets/usuarios.png" alt="Equipe">
+          <img src="https://dentistas.com.br/assets/equipe.png" alt="Equipe">
           <p>EQUIPE</p>
         </div>
 
@@ -88,9 +88,14 @@
           <p>BACKUP </p>
         </div>
 
-        <div class="icon-item" (click)="go('crm')">
+        <div class="icon-item" *ngIf="configuracoes.is_admin" (click)="go('crm')">
             <img src="https://dentistas.com.br/assets/crm.png" alt="CRM" class="home-icon">
             <p>CRM </p>
+        </div>
+
+        <div class="icon-item" *ngIf="configuracoes.is_admin" (click)="go('list/equipe')">
+          <img src="https://dentistas.com.br/assets/usuarios.png" alt="Equipe">
+          <p>USUÁRIOS</p>
         </div>
 
       </section>
