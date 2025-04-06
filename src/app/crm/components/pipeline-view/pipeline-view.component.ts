@@ -47,74 +47,97 @@ export class PipelineViewComponent implements OnInit {
   }
 
   loadPipelineData(): void {
-    this.isLoading = true;
+    console.log('Loading pipeline data with test data...');
     
-    // Use map operator to transform the response before subscribing
-    this.crmService.getPipelineConfig().pipe(
-      map(config => {
-        // Transform the config to ensure we have consistent format
-        if (config && config.stages) {
-          // Convert array to record if it's an array
-          let stagesRecord: Record<string, any>;
-          
-          if (Array.isArray(config.stages)) {
-            // Convert array to a record with IDs as keys
-            stagesRecord = {};
-            config.stages.forEach((stage: any, index: number) => {
-              // Use the label as key if available, otherwise use index
-              const key = stage.label?.toLowerCase?.().replace(/\s+/g, '_') || `stage_${index}`;
-              stagesRecord[key] = stage;
-            });
-          } else {
-            // Already a record/object, just use as is
-            stagesRecord = config.stages as any;
-          }
-          
-          return {
-            stages: stagesRecord,
-            isActive: config.isActive
-          };
+    // Usar dados de teste direto, sem depender do Firestore
+    const testStages: Record<string, {label: string, order: number, color: string}> = {
+      'novo': { label: 'Novo', order: 0, color: '#e3f2fd' },
+      'qualificado': { label: 'Qualificado', order: 1, color: '#e8f5e9' },
+      'em_atendimento': { label: 'Em Atendimento', order: 2, color: '#fff8e1' },
+      'fechado_ganho': { label: 'Fechado (Ganho)', order: 3, color: '#e8eaf6' },
+      'fechado_perdido': { label: 'Fechado (Perdido)', order: 4, color: '#ffebee' }
+    };
+    
+    // Configurar estágios
+    this.stageIds = Object.keys(testStages);
+    this.stageLabels = {};
+    this.pipeline = {};
+    
+    // Inicializar pipeline
+    this.stageIds.forEach(stageId => {
+      this.pipeline[stageId] = [];
+      this.stageLabels[stageId] = testStages[stageId].label;
+    });
+    
+    // Gerar dados de teste para o pipeline
+    const testLeads = [
+      {
+        id: 'test1',
+        nome: 'Maria Silva',
+        email: 'maria.silva@example.com',
+        telefone: '(11) 98765-4321',
+        crmData: {
+          leadStatus: 'novo',
+          leadSource: 'Website',
+          valorPotencial: 2500
         }
-        return null;
-      })
-    ).subscribe(config => {
-      // Now work with the transformed config
-      if (config && config.stages) {
-        this.stageIds = Object.keys(config.stages);
-        this.stageLabels = {};
-        
-        // Initialize pipeline object
-        this.stageIds.forEach(stageId => {
-          this.pipeline[stageId] = [];
-          // Access stage properties safely with any type
-          const stage = config.stages[stageId];
-          this.stageLabels[stageId] = stage?.label || stageId;
-        });
-        
-        // Rest of the method remains unchanged
-        const observables: Observable<any[]>[] = [];
-        this.stageIds.forEach(stageId => {
-          observables.push(this.crmService.getRegistrosByStatus(this.selectedCollection, stageId));
-        });
-        
-        if (observables.length > 0) {
-          forkJoin(observables).subscribe(results => {
-            results.forEach((leads, index) => {
-              this.pipeline[this.stageIds[index]] = leads;
-            });
-            this.isLoading = false;
-          });
-        } else {
-          this.isLoading = false;
+      },
+      {
+        id: 'test2',
+        nome: 'João Oliveira',
+        email: 'joao.oliveira@example.com',
+        telefone: '(11) 91234-5678',
+        crmData: {
+          leadStatus: 'qualificado',
+          leadSource: 'Indicação',
+          valorPotencial: 5000
         }
-      } else {
-        // Handle case where config is null or has no stages
-        this.isLoading = false;
-        this.snackBar.open('Configuração de pipeline não encontrada', 'OK', {
-          duration: 3000
-        });
+      },
+      {
+        id: 'test3',
+        nome: 'Ana Souza',
+        email: 'ana.souza@example.com',
+        telefone: '(11) 99876-5432',
+        crmData: {
+          leadStatus: 'em_atendimento',
+          leadSource: 'Google',
+          valorPotencial: 3200
+        }
+      },
+      {
+        id: 'test4',
+        nome: 'Carlos Mendes',
+        email: 'carlos.mendes@example.com',
+        telefone: '(11) 97654-3210',
+        crmData: {
+          leadStatus: 'fechado_ganho',
+          leadSource: 'Facebook',
+          valorPotencial: 4800
+        }
+      },
+      {
+        id: 'test5',
+        nome: 'Patrícia Lima',
+        email: 'patricia.lima@example.com',
+        telefone: '(11) 98877-6655',
+        crmData: {
+          leadStatus: 'fechado_perdido',
+          leadSource: 'Instagram',
+          valorPotencial: 1800
+        }
+      }
+    ];
+    
+    // Distribuir leads pelos estágios
+    testLeads.forEach(lead => {
+      const status = lead.crmData.leadStatus;
+      if (this.pipeline[status]) {
+        this.pipeline[status].push(lead);
       }
     });
+    
+    console.log('Loaded test pipeline data:', this.pipeline);
+    this.isLoading = false;
   }
 
   drop(event: CdkDragDrop<any[]>): void {
@@ -152,12 +175,12 @@ export class PipelineViewComponent implements OnInit {
   }
 
   viewRegistro(collection: string, id: string): void {
-    // Update path to use the CRM module route
+    console.log(`Navigating to lead details: ${collection}/${id}`);
     this.router.navigate(['/crm/lead', collection, id]);
   }
 
   getBackgroundStyle(stageId: string): any {
-    // Define colors with index signature
+    // Define colors com as mesmas chaves que testStages
     const colors: {[key: string]: string} = {
       'novo': '#e3f2fd',
       'qualificado': '#e8f5e9',

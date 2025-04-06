@@ -34,20 +34,17 @@
 
           <div class="info-item">
             <div class="info-label">Valor Potencial</div>
-            <!-- Fix: Use ternary operator instead of logical OR with pipe -->
             <div class="info-value">{{ crmData.valorPotencial ? (crmData.valorPotencial | currency:'BRL') : 'Não especificado' }}</div>
           </div>
 
           <div class="info-item">
             <div class="info-label">Data de Cadastro</div>
-            <!-- Fix: Use ternary operator instead of logical OR with pipe -->
-            <div class="info-value">{{ crmData.dataCadastro ? (crmData.dataCadastro.toDate() | date:'dd/MM/yyyy') : 'Não especificado' }}</div>
+            <div class="info-value">{{ crmData.dataCadastro ? (crmData.dataCadastro | date:'dd/MM/yyyy') : 'Não especificado' }}</div>
           </div>
 
           <div class="info-item">
             <div class="info-label">Último Contato</div>
-            <!-- Fix: Use ternary operator instead of logical OR with pipe -->
-            <div class="info-value">{{ crmData.dataUltimoContato ? (crmData.dataUltimoContato.toDate() | date:'dd/MM/yyyy') : 'Sem contatos' }}</div>
+            <div class="info-value">{{ crmData.dataUltimoContato ? (crmData.dataUltimoContato | date:'dd/MM/yyyy') : 'Sem contatos' }}</div>
           </div>
 
           <div class="info-item full-width" *ngIf="crmData.observacoes">
@@ -74,8 +71,32 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Aqui poderia vir uma seção para lembretes -->
-    <!-- Aqui poderia vir uma seção para histórico de interações -->
+    <!-- Adicionar na página de detalhes do lead -->
+    <mat-card class="timeline-card">
+      <mat-card-header>
+        <mat-card-title>Histórico de Interações</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="timeline">
+          <div *ngFor="let interaction of interactions" class="timeline-item">
+            <div class="timeline-icon" [ngClass]="interaction.type">
+              <mat-icon *ngIf="interaction.type === 'email'">email</mat-icon>
+              <mat-icon *ngIf="interaction.type === 'call'">call</mat-icon>
+              <mat-icon *ngIf="interaction.type === 'meeting'">event</mat-icon>
+            </div>
+            <div class="timeline-content">
+              <h3>{{ interaction.summary }}</h3>
+              <p class="timeline-date">{{ interaction.date | date:'dd/MM/yyyy' }}</p>
+              <p>{{ interaction.description }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <button mat-raised-button color="primary" (click)="addInteraction()">
+          <mat-icon>add</mat-icon> Nova Interação
+        </button>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
 

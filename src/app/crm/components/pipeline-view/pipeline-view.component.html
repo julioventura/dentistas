@@ -1,91 +1,67 @@
 <div class="pipeline-container">
   <div class="pipeline-header">
-    <h1>Pipeline de Vendas</h1>
-    <div class="pipeline-controls">
-      <mat-form-field appearance="outline">
-        <mat-label>Tipo de Contato</mat-label>
+    <h1>Pipeline de Leads</h1>
+    
+    <div class="collection-selector">
+      <mat-form-field appearance="fill">
+        <mat-label>Tipo de Registro</mat-label>
         <mat-select [(ngModel)]="selectedCollection" (selectionChange)="onCollectionChange()">
-          <mat-option *ngFor="let col of collections" [value]="col.id">
-            {{ col.label }}
+          <mat-option *ngFor="let collection of collections" [value]="collection.id">
+            {{ collection.label }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      
-      <button mat-icon-button (click)="loadPipeline()" matTooltip="Atualizar">
-        <mat-icon>refresh</mat-icon>
-      </button>
     </div>
   </div>
   
-  <div *ngIf="isLoading" class="loading-container">
+  <div class="pipeline-content" *ngIf="!isLoading">
+    <div class="stage-container" *ngFor="let stageId of stageIds" 
+         [attr.id]="stageId"
+         [cdkDropListConnectedTo]="stageIds" 
+         cdkDropList 
+         [cdkDropListData]="pipeline[stageId]"
+         (cdkDropListDropped)="drop($event)"
+         [ngStyle]="getBackgroundStyle(stageId)">
+      <div class="stage-header">
+        <h3>{{ stageLabels[stageId] }}</h3>
+        <span class="stage-count">{{ pipeline[stageId]?.length || 0 }}</span>
+      </div>
+      
+      <div class="lead-cards-container">
+        <div class="lead-card"
+             *ngFor="let lead of pipeline[stageId]"
+             cdkDrag
+             (click)="viewRegistro(selectedCollection, lead.id)">
+          <div class="lead-card-content">
+            <div class="lead-name">{{ lead.nome }}</div>
+            <div class="lead-details">
+              <div class="lead-contact">
+                <mat-icon class="icon-small">email</mat-icon> {{ lead.email }}
+              </div>
+              <div class="lead-contact">
+                <mat-icon class="icon-small">phone</mat-icon> {{ lead.telefone }}
+              </div>
+              <div class="lead-source" *ngIf="lead.crmData?.leadSource">
+                <mat-icon class="icon-small">source</mat-icon> {{ lead.crmData.leadSource }}
+              </div>
+              <div class="lead-value" *ngIf="lead.crmData?.valorPotencial">
+                <mat-icon class="icon-small">attach_money</mat-icon> {{ lead.crmData.valorPotencial | currency:'BRL' }}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Empty stage message -->
+        <div class="empty-stage" *ngIf="!pipeline[stageId]?.length">
+          <mat-icon>inbox</mat-icon>
+          <p>Sem leads neste estágio</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="loading-container" *ngIf="isLoading">
     <mat-spinner diameter="40"></mat-spinner>
     <p>Carregando pipeline...</p>
-  </div>
-  
-  <div *ngIf="!isLoading" class="pipeline-board">
-    <div *ngFor="let stageId of stageIds" class="pipeline-stage" [ngStyle]="getBackgroundStyle(stageId)">
-      <div class="stage-header">
-        <h2>{{ stageLabels[stageId] }}</h2>
-        <span class="counter">{{ pipeline[stageId].length || 0 }}</span>
-      </div>
-      
-      <div
-        cdkDropList
-        [id]="stageId"
-        [cdkDropListData]="pipeline[stageId]"
-        [cdkDropListConnectedTo]="stageIds"
-        (cdkDropListDropped)="drop($event)"
-        class="stage-items">
-        
-        <div class="empty-stage" *ngIf="pipeline[stageId]?.length === 0">
-          Nenhum registro neste estágio
-        </div>
-        
-        <div 
-          *ngFor="let item of pipeline[stageId]" 
-          cdkDrag 
-          class="item-card"
-          (click)="viewRegistro(selectedCollection, item.id)">
-          <div class="item-content">
-            <div class="item-header">
-              <span class="item-name">{{ item.nome }}</span>
-            </div>
-            
-            <div *ngIf="item.email" class="item-contact">
-              <mat-icon>email</mat-icon>
-              <span>{{ item.email }}</span>
-            </div>
-            
-            <div *ngIf="item.telefone" class="item-contact">
-              <mat-icon>phone</mat-icon>
-              <span>{{ item.telefone }}</span>
-            </div>
-            
-            <div *ngIf="item.crmData?.valorPotencial" class="item-value">
-              {{ item.crmData.valorPotencial | currency:'BRL' }}
-            </div>
-            
-            <div *ngIf="item.crmData?.dataUltimoContato" class="item-last-contact">
-              <span>Último contato:</span>
-              {{ item.crmData.dataUltimoContato?.toDate() | date:'dd/MM/yy' }}
-            </div>
-          </div>
-          
-          <!-- Preview drag -->
-          <div *cdkDragPreview class="item-card-preview">
-            <div class="preview-content">
-              {{ item.nome }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Add this inside your lead card template -->
-        <div class="lead-card" 
-             *ngFor="let lead of pipeline[stageId]" 
-             (click)="viewRegistro(selectedCollection, lead.id)">
-          <!-- Lead content here -->
-        </div>
-      </div>
-    </div>
   </div>
 </div>
