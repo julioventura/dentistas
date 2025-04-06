@@ -21,7 +21,7 @@
 
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavegacaoService } from '../navegacao.service';
+import { NavegacaoService } from '../services/navegacao.service';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { AngularFireStorage } from '@angular/fire/compat/storage'; 

@@ -3,7 +3,7 @@ import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage'; // Importa o serviço de Storage
 import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { UtilService } from '../shared/utils/util.service';
+import { UtilService } from '../../shared/utils/util.service';
 
 @Injectable({
   providedIn: 'root'

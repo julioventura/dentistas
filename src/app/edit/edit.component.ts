@@ -23,13 +23,13 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FirestoreService } from '../shared/firestore.service';
+import { FirestoreService } from '../shared/services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
-import { FormService } from '../shared/form.service';
-import { CamposFichaService } from '../shared/campos-ficha.service';  // Serviço para carregar campos de subcollections
+import { FormService } from '../shared/services/form.service';
+import { CamposFichaService } from '../shared/services/campos-ficha.service';  // Serviço para carregar campos de subcollections
 import { FormControl, FormGroup } from '@angular/forms';
-import { CamposService } from '../shared/campos.service'; // Serviço para carregar campos de coleções
+import { CamposService } from '../shared/services/campos.service'; // Serviço para carregar campos de coleções
 import { KeyValue } from '@angular/common';
 import { fadeAnimation } from '../animations/fade.animation';
 import { CanComponentDeactivate } from '../shared/guards/can-deactivate.guard';

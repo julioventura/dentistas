@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/services/user.service';
 import { UtilService } from '../shared/utils/util.service';
-import { FirestoreService } from '../shared/firestore.service';
+import { FirestoreService } from '../shared/services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { getProfileFormConfig, getGroupedProfileFields, ProfileField } from './profile-fields.constants';

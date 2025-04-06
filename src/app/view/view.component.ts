@@ -16,12 +16,12 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { KeyValue } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FirestoreService } from '../shared/firestore.service';
+import { FirestoreService } from '../shared/services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
-import { FormService } from '../shared/form.service';
+import { FormService } from '../shared/services/form.service';
 import { fadeAnimation } from '../animations/fade.animation';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/services/user.service';
 
 @Component({
   selector: 'app-view',

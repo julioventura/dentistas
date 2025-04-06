@@ -1,13 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { FirestoreService } from '../shared/firestore.service'; // Serviço para manipular o Firestore
+import { FirestoreService } from './firestore.service'; // Serviço para manipular o Firestore
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
 import { Observable, of, from, BehaviorSubject, firstValueFrom } from 'rxjs'; // Adicionar firstValueFrom aqui
 import { map, catchError, switchMap, tap, filter } from 'rxjs/operators'; // Remover firstValueFrom daqui
 import { Router, NavigationEnd } from '@angular/router';
 
-import { AiChatService } from '../chatbot-widget/ai-chat.service';
+import { AiChatService } from '../../chatbot-widget/ai-chat.service';
 
 // Interface para o contexto de navegação
 export interface NavigationContext {
@@ -499,7 +499,7 @@ export class UserService {
       
       // Limpar o contexto do chatbot se possível
       try {
-        const { AiChatService } = await import('../chatbot-widget/ai-chat.service');
+        const { AiChatService } = await import('../../chatbot-widget/ai-chat.service');
         const aiChatService = this.injector.get(AiChatService);
         aiChatService.resetContext();
         console.log('Contexto do chatbot limpo durante logout');

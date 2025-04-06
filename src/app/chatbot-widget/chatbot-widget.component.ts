@@ -2,13 +2,13 @@ import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked, AfterViewIn
 import { CommonModule } from '@angular/common'; // Remover KeyValue
 import { FormsModule } from '@angular/forms';  // necessário para ngModel
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/services/user.service';
 import { AiChatService, Message, ChatContext } from './ai-chat.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-import { ConfigService } from '../shared/config.service';
+import { ConfigService } from '../shared/services/config.service';
 
 @Component({
   selector: 'app-chatbot-widget',

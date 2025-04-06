@@ -7,7 +7,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../shared/services/user.service';
 import { CommonModule } from '@angular/common';
 import { take } from 'rxjs/operators';
 

@@ -13,9 +13,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavegacaoService } from '../../shared/navegacao.service';
-import { UserService } from '../../shared/user.service';
-import { FirestoreService } from '../../shared/firestore.service';
+import { NavegacaoService } from '../../shared/services/navegacao.service';
+import { UserService } from '../../shared/services/user.service';
+import { FirestoreService } from '../../shared/services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({

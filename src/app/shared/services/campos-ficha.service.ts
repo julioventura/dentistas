@@ -14,7 +14,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, of } from 'rxjs';
-import { Campo } from './models/campo.model';
+import { Campo } from '../models/campo.model';
 import {
   DEFAULT_CAMPOS_PADRAO,
   DEFAULT_CAMPOS_PADRAO_FICHAS,
@@ -30,7 +30,7 @@ import {
   CAMPOS_FICHAS_ANAMNESE,
   CAMPOS_FICHAS_DIAGNOSTICOS,
   CAMPOS_FICHAS_RISCO
-} from './constants/campos-ficha.constants';
+} from '../constants/campos-ficha.constants';
 
 @Injectable({
   providedIn: 'root'

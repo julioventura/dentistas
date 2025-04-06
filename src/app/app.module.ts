@@ -38,7 +38,7 @@ import { ChatbotWidgetComponent } from "./chatbot-widget/chatbot-widget.componen
 import { DatePipe } from '@angular/common';
 
 // Serviços
-import { FirestoreService } from './shared/firestore.service';
+import { FirestoreService } from './shared/services/firestore.service';
 
 // Guard
 import { AuthGuard } from './shared/guards/auth.guard';  // Atualizado com o novo caminho

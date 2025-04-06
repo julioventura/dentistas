@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { UserService } from './shared/user.service';
+import { UserService } from './shared/services/user.service';
 import { filter } from 'rxjs/operators';
 
 @Component({

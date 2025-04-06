@@ -3,7 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 import { UtilService } from '../../shared/utils/util.service';
-import { NavegacaoService } from '../../shared/navegacao.service';
+import { NavegacaoService } from '../../shared/services/navegacao.service';
 
 interface Subcolecao {
   nome: string;

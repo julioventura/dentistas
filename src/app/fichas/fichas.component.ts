@@ -8,9 +8,9 @@
 */
 
 import { Component, HostListener, OnInit } from '@angular/core';
-import { NavegacaoService } from '../shared/navegacao.service';
-import { CamposFichaService } from '../shared/campos-ficha.service';
-import { UserService } from '../shared/user.service';
+import { NavegacaoService } from '../shared/services/navegacao.service';
+import { CamposFichaService } from '../shared/services/campos-ficha.service';
+import { UserService } from '../shared/services/user.service';
 import { UtilService } from '../shared/utils/util.service';
 
 @Component({

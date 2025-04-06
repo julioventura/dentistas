@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
-import { NavegacaoService } from '../shared/navegacao.service';
-import { ConfigService } from '../shared/config.service';  
+import { NavegacaoService } from '../shared/services/navegacao.service';
+import { ConfigService } from '../shared/services/config.service';  
 import { UtilService } from '../shared/utils/util.service';
-import { SubcolecaoService, Subcolecao } from '../shared/subcolecao.service';
+import { SubcolecaoService, Subcolecao } from '../shared/services/subcolecao.service';
 
 @Component({
   selector: 'app-config',

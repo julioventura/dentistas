@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavegacaoService } from '../../shared/navegacao.service';
+import { NavegacaoService } from '../../shared/services/navegacao.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
  

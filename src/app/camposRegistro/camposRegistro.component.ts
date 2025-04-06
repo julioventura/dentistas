@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { NavegacaoService } from '../shared/navegacao.service';
-import { CamposService } from '../shared/campos.service';
-import { UserService } from '../shared/user.service'; // 
+import { NavegacaoService } from '../shared/services/navegacao.service';
+import { CamposService } from '../shared/services/campos.service';
+import { UserService } from '../shared/services/user.service'; // 
 import { UtilService } from '../shared/utils/util.service';
 
 @Component({

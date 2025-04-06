@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Autenticação
-import { UserService } from '../shared/user.service';  // Serviço de usuário
+import { UserService } from '../shared/services/user.service';  // Serviço de usuário
 import firebase from 'firebase/compat/app'; // Firebase
 import { MatDialog } from '@angular/material/dialog'; // MatDialog
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component'; // Componente de diálogo

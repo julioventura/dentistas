@@ -11,10 +11,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';  // Usando AngularFireAuth
 import { Router } from '@angular/router';
-import { FirestoreService } from '../shared/firestore.service'; // Import FirestoreService
+import { FirestoreService } from '../shared/services/firestore.service'; // Import FirestoreService
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
-import { ConfigService } from '../shared/config.service';
+import { ConfigService } from '../shared/services/config.service';
 import { UtilService } from '../shared/utils/util.service';
 import { AiChatService } from '../chatbot-widget/ai-chat.service';
 

@@ -21,15 +21,15 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FirestoreService } from '../shared/firestore.service';
+import { FirestoreService } from '../shared/services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UtilService } from '../shared/utils/util.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { FormService } from '../shared/form.service';
-import { ExportService } from '../shared/export.service';
-import { PdfExportService } from '../shared/pdf-export.service';
-import { SubcolecaoService } from '../shared/subcolecao.service';
+import { FormService } from '../shared/services/form.service';
+import { ExportService } from '../shared/services/export.service';
+import { PdfExportService } from '../shared/services/pdf-export.service';
+import { SubcolecaoService } from '../shared/services/subcolecao.service';
 import { CAMPOS_FICHAS_EXAMES, CAMPOS_FICHAS_DOCUMENTOS, CAMPOS_FICHAS_PLANOS, CAMPOS_FICHAS_ATENDIMENTOS, CAMPOS_FICHAS_TRATAMENTOS, CAMPOS_FICHAS_PAGAMENTOS } from '../shared/constants/campos-ficha.constants';
 import { SUBCOLLECTION_FIELDS } from '../shared/constants/subcollection-fields.config';
 import { Registro } from '../shared/constants/registro.model';
@@ -234,8 +234,8 @@ export class ListComponent implements OnInit {
       // Converte para Promise se for Observable, ou mantém se já for Promise
       const carregarCamposPromise = carregarCampos instanceof Promise ? 
         carregarCampos : 
-        new Promise<any[]>(resolve => carregarCampos.subscribe(campos => resolve(campos)));
-      
+        new Promise<any[]>(resolve => carregarCampos.subscribe((campos: any[]) => resolve(campos)));      
+        
       carregarCamposPromise.then(() => {
         // Após campos carregados, geramos o código e criamos o registro
         return this.firestoreService.gerarProximoCodigo(collectionPath);

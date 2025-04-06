@@ -16,9 +16,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FirestoreService } from './firestore.service';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { CamposService } from './campos.service';
-import { CamposFichaService } from './campos-ficha.service';
-import { UtilService } from '../shared/utils/util.service';
+import { CamposService } from '../services/campos.service';
+import { CamposFichaService } from '../services/campos-ficha.service';
+import { UtilService } from '../utils/util.service';
 import { switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
