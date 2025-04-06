@@ -9,6 +9,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../shared/material.module';
+import { PipelineConfig, PipelineStage } from '../../models/crm.model';
 
 @Component({
   selector: 'app-pipeline-view',
@@ -18,25 +19,11 @@ import { MaterialModule } from '../../../shared/material.module';
   imports: [CommonModule, RouterModule, FormsModule, DragDropModule, MaterialModule]
 })
 export class PipelineViewComponent implements OnInit {
-  stageIds = ['novo', 'qualificado', 'em_atendimento', 'follow_up', 'concluido'];
-  stageLabels: {[key: string]: string} = {
-    'novo': 'Novos Leads',
-    'qualificado': 'Qualificados',
-    'em_atendimento': 'Em Atendimento',
-    'follow_up': 'Follow-up',
-    'concluido': 'Concluídos'
-  };
-  stageColors: {[key: string]: string} = {
-    'novo': '#42a5f5',
-    'qualificado': '#7e57c2',
-    'em_atendimento': '#26a69a',
-    'follow_up': '#ff7043',
-    'concluido': '#66bb6a'
-  };
-  
+  stageIds: string[] = [];
+  stageLabels: {[key: string]: string} = {};
   pipeline: {[key: string]: any[]} = {};
-  selectedCollection = 'pacientes';
   isLoading = true;
+  selectedCollection = 'pacientes';
   collections = [
     { id: 'pacientes', label: 'Pacientes' },
     { id: 'dentistas', label: 'Dentistas' },
@@ -52,37 +39,82 @@ export class PipelineViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadPipeline();
+    this.loadPipelineData();
   }
 
   loadPipeline(): void {
+    this.loadPipelineData();
+  }
+
+  loadPipelineData(): void {
     this.isLoading = true;
     
-    // Inicializar o pipeline
-    this.stageIds.forEach(stageId => {
-      this.pipeline[stageId] = [];
-    });
-    
-    // Carregar dados para cada estágio
-    const observables = this.stageIds.map(stageId => 
-      this.crmService.getRegistrosByStatus(this.selectedCollection, stageId)
-    );
-    
-    forkJoin(observables)
-      .subscribe({
-        next: (results) => {
-          results.forEach((registros, index) => {
-            const stageId = this.stageIds[index];
-            this.pipeline[stageId] = registros;
+    // Use map operator to transform the response before subscribing
+    this.crmService.getPipelineConfig().pipe(
+      map(config => {
+        // Transform the config to ensure we have consistent format
+        if (config && config.stages) {
+          // Convert array to record if it's an array
+          let stagesRecord: Record<string, any>;
+          
+          if (Array.isArray(config.stages)) {
+            // Convert array to a record with IDs as keys
+            stagesRecord = {};
+            config.stages.forEach((stage: any, index: number) => {
+              // Use the label as key if available, otherwise use index
+              const key = stage.label?.toLowerCase?.().replace(/\s+/g, '_') || `stage_${index}`;
+              stagesRecord[key] = stage;
+            });
+          } else {
+            // Already a record/object, just use as is
+            stagesRecord = config.stages as any;
+          }
+          
+          return {
+            stages: stagesRecord,
+            isActive: config.isActive
+          };
+        }
+        return null;
+      })
+    ).subscribe(config => {
+      // Now work with the transformed config
+      if (config && config.stages) {
+        this.stageIds = Object.keys(config.stages);
+        this.stageLabels = {};
+        
+        // Initialize pipeline object
+        this.stageIds.forEach(stageId => {
+          this.pipeline[stageId] = [];
+          // Access stage properties safely with any type
+          const stage = config.stages[stageId];
+          this.stageLabels[stageId] = stage?.label || stageId;
+        });
+        
+        // Rest of the method remains unchanged
+        const observables: Observable<any[]>[] = [];
+        this.stageIds.forEach(stageId => {
+          observables.push(this.crmService.getRegistrosByStatus(this.selectedCollection, stageId));
+        });
+        
+        if (observables.length > 0) {
+          forkJoin(observables).subscribe(results => {
+            results.forEach((leads, index) => {
+              this.pipeline[this.stageIds[index]] = leads;
+            });
+            this.isLoading = false;
           });
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Erro ao carregar pipeline:', error);
-          this.snackBar.open('Erro ao carregar dados', 'OK', { duration: 3000 });
+        } else {
           this.isLoading = false;
         }
-      });
+      } else {
+        // Handle case where config is null or has no stages
+        this.isLoading = false;
+        this.snackBar.open('Configuração de pipeline não encontrada', 'OK', {
+          duration: 3000
+        });
+      }
+    });
   }
 
   drop(event: CdkDragDrop<any[]>): void {
@@ -96,48 +128,45 @@ export class PipelineViewComponent implements OnInit {
         event.currentIndex,
       );
       
-      // Atualizar o status no Firestore
-      const item = event.container.data[event.currentIndex];
-      const newStage = event.container.id;
+      // Update lead status
+      const lead = event.container.data[event.currentIndex];
+      const newStatus = event.container.id;
       
-      if (item && item.crmData) {
-        const updatedCrmData = {
-          ...item.crmData,
-          leadStatus: newStage,
-          updatedAt: new Date()
-        };
-        
-        this.crmService.updateCrmData(this.selectedCollection, item.id, updatedCrmData)
-          .then(() => {
-            this.snackBar.open('Status atualizado com sucesso', 'OK', { duration: 2000 });
-          })
-          .catch(error => {
-            console.error('Erro ao atualizar status:', error);
-            this.snackBar.open('Erro ao atualizar status', 'OK', { duration: 3000 });
-            
-            // Reverter a operação em caso de erro
-            transferArrayItem(
-              event.container.data,
-              event.previousContainer.data,
-              event.currentIndex,
-              event.previousIndex,
-            );
-          });
-      }
+      this.crmService.updateCrmData(this.selectedCollection, lead.id, {
+        ...lead.crmData,
+        leadStatus: newStatus
+      }).then(() => {
+        this.snackBar.open('Status atualizado com sucesso', 'OK', {
+          duration: 3000
+        });
+      }).catch(err => {
+        this.snackBar.open('Erro ao atualizar status', 'OK', {
+          duration: 3000
+        });
+      });
     }
   }
 
   onCollectionChange(): void {
-    this.loadPipeline();
+    this.loadPipelineData();
   }
 
   viewRegistro(collection: string, id: string): void {
     this.router.navigate(['/view', collection, id]);
   }
 
-  getBackgroundStyle(stageId: string): object {
+  getBackgroundStyle(stageId: string): any {
+    // Define colors with index signature
+    const colors: {[key: string]: string} = {
+      'novo': '#e3f2fd',
+      'qualificado': '#e8f5e9',
+      'em_atendimento': '#fff8e1', 
+      'fechado_ganho': '#e8eaf6',
+      'fechado_perdido': '#ffebee'
+    };
+    
     return {
-      'border-top': `4px solid ${this.stageColors[stageId] || '#999'}`
+      'background-color': colors[stageId] || '#f5f5f5'
     };
   }
 }
