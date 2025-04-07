@@ -1,0 +1,16 @@
+<div class="group-sharing-container" *ngIf="!isLoading">
+  <div class="group-section-title">Compartilhamento</div>
+  <div class="detail-container">
+    <label class="detail-label">Compartilhar com Grupo</label>
+    <mat-form-field appearance="outline" class="group-select">
+      <mat-label>Selecionar grupo</mat-label>
+      <mat-select [(ngModel)]="selectedGroupId" (ngModelChange)="onGroupChange($event)">
+        <mat-option [value]="null">Não compartilhado</mat-option>
+        <mat-option *ngFor="let group of groups" [value]="group.id">
+          {{ group.name }} {{ group.clinica ? '(' + group.clinica + ')' : '' }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Compartilhe este registro com um grupo</mat-hint>
+    </mat-form-field>
+  </div>
+</div>

@@ -37,6 +37,9 @@ import { RequestJoinDialog } from './shared/dialogs/request-join-dialog/request-
 // Serviços
 import { FirestoreService } from './shared/services/firestore.service';
 import { GroupService } from './shared/services/group.service';
+import { GroupSharingService } from './shared/services/group-sharing.service';
+import { LoggingService } from './shared/services/logging.service';
+import { GroupSharingComponent } from './shared/components/group-sharing/group-sharing.component';
 
 // Guard
 import { AuthGuard } from './shared/guards/auth.guard';
@@ -48,6 +51,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 // Standalone components
@@ -102,12 +106,14 @@ import { DatePipe } from '@angular/common';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatSnackBarModule,
     // Standalone components
     BackupComponent,
     ChatbotWidgetComponent,
     HomepageComponent,
     TabelaReferenciaDialogComponent,
     WhatsappButtonComponent,
+    GroupSharingComponent, // Adicionar o novo componente standalone
     // Feature modules
     EditModule,
     MaterialModule
@@ -117,6 +123,8 @@ import { DatePipe } from '@angular/common';
     FirestoreService,
     AiHomepageService,
     GroupService,
+    GroupSharingService,
+    LoggingService,
     AuthGuard, 
     DatePipe, 
     provideAnimationsAsync()

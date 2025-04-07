@@ -13,7 +13,7 @@
  * 9. openUrl: Abre uma URL em uma nova janela, caso o campo corresponda a um link.
  */
 
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { KeyValue } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/services/firestore.service';
@@ -23,6 +23,10 @@ import { FormService } from '../shared/services/form.service';
 import { fadeAnimation } from '../animations/fade.animation';
 import { UserService } from '../shared/services/user.service';
 import { GroupService } from '../shared/services/group.service';
+import { GroupSharingService } from '../shared/services/group-sharing.service';
+import { LoggingService } from '../shared/services/logging.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-view',
@@ -32,7 +36,7 @@ import { GroupService } from '../shared/services/group.service';
   encapsulation: ViewEncapsulation.Emulated, // Default
   animations: [fadeAnimation]
 })
-export class ViewComponent implements OnInit {
+export class ViewComponent implements OnInit, OnDestroy {
   userId: string | null = null;           // ID do usuário autenticado
   collection!: string;                    // Nome da coleção
   subcollection!: string;                 // Nome da subcollection, se houver
@@ -48,6 +52,8 @@ export class ViewComponent implements OnInit {
   show_menu: boolean = false;             // Controla exibição de menus adicionais
   menu_exame: boolean = false;            // Flag específica para exame (caso necessário)
   sharingHistory: any[] = [];             // Histórico de compartilhamento
+  groupDetails: { [key: string]: any } = {}; // Detalhes dos grupos
+  private destroy$ = new Subject<void>(); // Subject para gerenciamento de destruição de observables
   
   // Propriedade utilizada no binding CSS para definir a largura dos labels
   customLabelWidthValue: number = 100;
@@ -61,7 +67,9 @@ export class ViewComponent implements OnInit {
     public util: UtilService,
     public FormService: FormService,
     private userService: UserService, // Adicionar este serviço
-    private groupService: GroupService
+    private groupService: GroupService,
+    private groupSharingService: GroupSharingService,
+    private logger: LoggingService
   ) { }
 
   /**
@@ -162,6 +170,58 @@ export class ViewComponent implements OnInit {
       }
     });
     console.log('ViewComponent inicializado.');
+    this.loadSharingHistory();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadSharingHistory(): void {
+    if (!this.registro || !this.registro.id) {
+      return;
+    }
+    
+    this.logger.log('ViewComponent', 'Carregando histórico de compartilhamento', {
+      collection: this.collection,
+      id: this.id
+    });
+    
+    this.groupSharingService.loadSharingHistory(this.collection, this.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(history => {
+        this.sharingHistory = history;
+        
+        // Extrair IDs de grupos únicos do histórico
+        const groupIds = Array.from(new Set(history.map(item => item.groupId)));
+        
+        // Carregar detalhes dos grupos
+        if (groupIds.length > 0) {
+          this.loadGroupDetails(groupIds);
+        }
+      });
+  }
+  
+  loadGroupDetails(groupIds: string[]): void {
+    this.groupSharingService.loadGroupDetails(groupIds)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(details => {
+        this.groupDetails = details;
+      });
+  }
+  
+  // Método auxiliar para formatação de datas em histórico
+  formatDate(timestamp: any): string {
+    if (!timestamp) return 'Data desconhecida';
+    
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR');
+  }
+  
+  // Método para obter nome do grupo a partir do ID
+  getGroupName(groupId: string): string {
+    return this.groupDetails[groupId]?.name || 'Grupo desconhecido';
   }
 
   /**
@@ -369,8 +429,15 @@ export class ViewComponent implements OnInit {
   }
 
   getGroupName(groupId: string): string {
-    // Implemente a lógica para buscar o nome do grupo pelo ID
-    return groupId || 'Desconhecido';
+    if (!groupId) {
+      return 'Nenhum';
+    }
+    
+    if (this.groupDetails && this.groupDetails[groupId]) {
+      return this.groupDetails[groupId].name;
+    }
+    
+    return `Grupo ${groupId}`;
   }
 
   getUserName(userId: string): string {

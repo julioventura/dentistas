@@ -162,8 +162,7 @@
                 <!-- Agrupar por subgrupos dentro de cada grupo -->
                 <!-- <div class="record-details-top">&nbsp;</div> -->
 
-                <ng-container
-                  *ngFor="let subgrupoObj of groupBySubgrupo(grupo.value) | keyvalue: sortByKeys; trackBy: trackByKey">
+                <ng-container *ngFor="let subgrupoObj of groupBySubgrupo(grupo.value) | keyvalue: sortByKeys; trackBy: trackByKey">
                   <!-- Mostrar título do subgrupo apenas se não for vazio e contiver campos não vazios -->
                   <div *ngIf="subgrupoObj.key && subgrupoObj.key !== '' && hasNonEmptyField(subgrupoObj.value)"
                     class="subgrupo-titulo">
@@ -270,6 +269,37 @@
         </mat-list>
       </div>
     </div>
+  </div>
+
+  <div class="sharing-history-section" *ngIf="sharingHistory && sharingHistory.length > 0">
+    <h3>Histórico de Compartilhamento</h3>
+    <mat-list>
+      <mat-list-item *ngFor="let entry of sharingHistory">
+        <mat-icon mat-list-icon [ngClass]="{
+          'share-icon': !entry.previousGroupId && entry.groupId,
+          'unshare-icon': entry.previousGroupId && !entry.groupId,
+          'change-icon': entry.previousGroupId && entry.groupId
+        }">
+          {{ !entry.previousGroupId && entry.groupId ? 'share' : 
+             (entry.previousGroupId && !entry.groupId ? 'link_off' : 'swap_horiz') }}
+        </mat-icon>
+        <div mat-line>
+          <ng-container *ngIf="!entry.previousGroupId && entry.groupId">
+            Compartilhado com <strong>{{ getGroupName(entry.groupId) }}</strong>
+          </ng-container>
+          <ng-container *ngIf="entry.previousGroupId && !entry.groupId">
+            Removido compartilhamento com <strong>{{ getGroupName(entry.previousGroupId) }}</strong>
+          </ng-container>
+          <ng-container *ngIf="entry.previousGroupId && entry.groupId">
+            Alterado compartilhamento de <strong>{{ getGroupName(entry.previousGroupId) }}</strong>
+            para <strong>{{ getGroupName(entry.groupId) }}</strong>
+          </ng-container>
+        </div>
+        <div mat-line class="history-metadata">
+          {{ formatDate(entry.timestamp) }} por {{ entry.userName || entry.userId || 'Usuário desconhecido' }}
+        </div>
+      </mat-list-item>
+    </mat-list>
   </div>
 
 </div>

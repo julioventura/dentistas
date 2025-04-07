@@ -175,3 +175,43 @@ textarea {
   font-size: 14px;
 
 }
+
+.sharing-history-section {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  
+  h3 {
+    margin-bottom: 16px;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .history-metadata {
+    color: rgba(0,0,0,0.6);
+    font-size: 12px;
+  }
+  
+  mat-list-item {
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    margin-bottom: 8px;
+  }
+  
+  mat-icon {
+    color: #2196F3;
+    
+    &.share-icon {
+      color: #4CAF50;
+    }
+    
+    &.unshare-icon {
+      color: #F44336;
+    }
+    
+    &.change-icon {
+      color: #FF9800;
+    }
+  }
+}
