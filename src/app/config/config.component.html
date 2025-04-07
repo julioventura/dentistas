@@ -50,12 +50,15 @@
 
 
         <div class="espacador_vertical"></div>
+
+
+        <!-- APENAS PARA ADMIN -->
         <div id="Services" *ngIf="this.configuracoes.is_admin" class="container container-red-border margin0">
 
 
             <section class="services-section icon-grid largo">
 
- 
+
                 <!-- <div class="icon-item" (click)="go('fichas')">
                     <img src="https://dentistas.com.br/assets/ficha_campos.png" alt="Configurar">
                     <p>CAMPOS DAS FICHAS</p>
@@ -70,6 +73,12 @@
                     <img src="https://dentistas.com.br/assets/usuarios.png" alt="Configurar">
                     <p>USUÁRIOS</p>
                 </div>
+
+                <!-- Adicionar ao menu ou à dashboard -->
+                <button mat-raised-button color="primary" routerLink="/groups">
+                    <mat-icon>group</mat-icon>
+                    Gerenciar Grupos
+                </button>
 
             </section>
         </div>

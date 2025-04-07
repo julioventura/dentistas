@@ -20,6 +20,7 @@ import { EditComponent } from './edit/edit.component';
 import { FichasComponent } from './fichas/fichas.component';
 import { BackupComponent } from './backup/backup.component';
 import { HomepageComponent } from './homepage/homepage.component';
+import { GroupManagerComponent } from './shared/components/group-manager/group-manager.component';
 
 // Guards
 import { CanDeactivateGuard } from './shared/guards/can-deactivate.guard';
@@ -42,6 +43,7 @@ const routes: Routes = [
   { path: 'backup', component: BackupComponent },
   { path: 'camposRegistro', component: CamposRegistroComponent },
   { path: 'fichas', component: FichasComponent },
+  { path: 'groups', component: GroupManagerComponent, canActivate: [AuthGuard] },
 
   { path: 'list/:collection', component: ListComponent, data: { animation: '4' } },
   { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '5' } },

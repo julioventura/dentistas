@@ -544,3 +544,37 @@ input {
   margin-top: 16px;
   padding: 16px;
 }
+
+/* Add these styles at the end of your existing CSS file */
+
+.group-sharing-section {
+  margin-top: 20px;
+  padding: 15px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.group-section-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.group-select {
+  width: 100%;
+  max-width: calc(100% - var(--label-width));
+}
+
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+::ng-deep .mat-form-field-flex {
+  padding-top: 0 !important;
+}
+
+/* Make sure the field appears properly with your existing styles */
+.detail-container .mat-form-field {
+  width: calc(100% - var(--label-width));
+  display: inline-block;
+}

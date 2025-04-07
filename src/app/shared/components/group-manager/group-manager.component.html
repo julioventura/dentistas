@@ -1,0 +1,145 @@
+<div class="container">
+  <div class="header">
+    <h1>Gerenciamento de Grupos</h1>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Carregando grupos...</p>
+  </div>
+
+  <div class="group-content" *ngIf="!isLoading">
+    <div class="two-columns-grid">
+      <!-- Coluna da esquerda: Lista de grupos -->
+      <div class="column-half">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="header-icon">group</mat-icon>
+              Grupos Disponíveis
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-nav-list>
+              <a mat-list-item *ngFor="let group of groups" (click)="selectGroup(group)"
+                 [class.selected]="selectedGroup?.id === group.id">
+                <mat-icon mat-list-icon>group</mat-icon>
+                <div mat-line>{{ group.name }}</div>
+                <div mat-line *ngIf="group.clinica">{{ group.clinica }}</div>
+              </a>
+            </mat-nav-list>
+
+            <div class="empty-list" *ngIf="groups.length === 0">
+              Nenhum grupo disponível
+            </div>
+
+            <button mat-raised-button color="primary" (click)="resetForm()" class="add-button" *ngIf="isAdmin">
+              <mat-icon>add</mat-icon> Novo Grupo
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Coluna da direita: Detalhes/formulário -->
+      <div class="column-half">
+        <!-- Formulário de criação/edição de grupos (somente para admins) -->
+        <mat-card *ngIf="isAdmin">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="header-icon">{{ selectedGroup ? 'edit' : 'add_circle' }}</mat-icon>
+              {{ selectedGroup ? 'Editar Grupo' : 'Novo Grupo' }}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form [formGroup]="groupForm" (ngSubmit)="createOrUpdateGroup()">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nome do Grupo</mat-label>
+                <input matInput formControlName="name" placeholder="Ex: Turma Ortodontia 2025">
+                <mat-error *ngIf="groupForm.get('name')?.hasError('required')">
+                  Nome é obrigatório
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Clínica</mat-label>
+                <input matInput formControlName="clinica" placeholder="Ex: Clínica de Ortodontia">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Descrição</mat-label>
+                <textarea matInput formControlName="description" rows="3"
+                         placeholder="Descrição ou observações sobre o grupo"></textarea>
+              </mat-form-field>
+
+              <div class="group-members-section">
+                <h3>Administradores (Professores)</h3>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Selecione os Administradores</mat-label>
+                  <mat-select formControlName="adminIds" multiple>
+                    <mat-option *ngFor="let user of users" [value]="user.id">
+                      {{ user.nome || user.email }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <h3>Membros (Alunos)</h3>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Selecione os Membros</mat-label>
+                  <mat-select formControlName="memberIds" multiple>
+                    <mat-option *ngFor="let user of users" [value]="user.id">
+                      {{ user.nome || user.email }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="form-actions">
+                <button mat-button type="button" (click)="resetForm()">
+                  Cancelar
+                </button>
+                <button mat-raised-button color="primary" type="submit"
+                        [disabled]="groupForm.invalid">
+                  {{ selectedGroup ? 'Atualizar' : 'Criar' }} Grupo
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Visualização dos detalhes do grupo (para não-admins) -->
+        <mat-card *ngIf="!isAdmin && selectedGroup">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="header-icon">group</mat-icon>
+              {{ selectedGroup.name }}
+            </mat-card-title>
+            <mat-card-subtitle *ngIf="selectedGroup.clinica">
+              {{ selectedGroup.clinica }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="group-details">
+              <p *ngIf="selectedGroup.description">{{ selectedGroup.description }}</p>
+
+              <div class="members-section">
+                <h3>Administradores</h3>
+                <mat-chip-list>
+                  <mat-chip *ngFor="let adminId of selectedGroup?.adminIds || []">
+                    {{ getUserName(adminId) }}
+                  </mat-chip>
+                </mat-chip-list>
+
+                <h3>Membros</h3>
+                <mat-chip-list>
+                  <mat-chip *ngFor="let memberId of selectedGroup?.memberIds || []">
+                    {{ getUserName(memberId) }}
+                  </mat-chip>
+                </mat-chip-list>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+/* filepath: c:\contexto\dentistas\src\app\shared\components\group-manager\group-manager.component.scss */
+@import '../../../../styles.scss';
+
+.container {
+  padding: 24px;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  border: $gray solid 1px;
+  border-radius: 8px;
+  border-color: $primary-color;
+  margin-bottom: 24px;
+  padding: 16px;
+  
+  h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  
+  p {
+    margin-top: 16px;
+  }
+}
+
+.two-columns-grid {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 32px;
+  
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+}
+
+.column-half {
+  flex: 1;
+  min-width: 0;
+  
+  mat-card {
+    height: 100%;
+  }
+}
+
+.selected {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.add-button {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.empty-list {
+  padding: 16px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.group-members-section {
+  margin-top: 16px;
+  
+  h3 {
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 400;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.header-icon {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.members-section {
+  margin-top: 16px;
+  
+  h3 {
+    margin: 16px 0 8px 0;
+    font-size: 16px;
+  }
+  
+  mat-chip-list {
+    margin-bottom: 8px;
+  }
+}
+
+.group-details {
+  p {
+    margin-bottom: 16px;
+    white-space: pre-line;
+  }
+}

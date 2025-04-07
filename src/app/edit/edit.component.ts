@@ -37,6 +37,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 import { firstValueFrom } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { GroupService } from '../shared/services/group.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 interface Campo {
   nome: string;
@@ -53,9 +56,9 @@ interface Campo {
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
-  standalone: false,
   encapsulation: ViewEncapsulation.Emulated, // Sobre encapsulamento, para permitir uso global de variáveis CSS (None)
-  animations: [fadeAnimation]
+  animations: [fadeAnimation],
+  standalone: false
 })
 export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanComponentDeactivate {
   @ViewChild('nomeInput') nomeInput?: ElementRef;
@@ -87,6 +90,9 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   // Adicione esta propriedade à classe
   private dialogAlreadyShown = false;
   
+  // Propriedade para armazenar grupos
+  groups: any[] = [];
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -96,7 +102,8 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
     public FormService: FormService,
     private camposFichaService: CamposFichaService,  // Injeção para subcollections
     private camposService: CamposService,              // Injeção para collections
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private groupService: GroupService  // This is now correctly injected
   ) { }
 
   /**
@@ -172,6 +179,11 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
     // Armazena a referência para remover depois
     this.boundBeforeUnloadHandler = this.beforeUnloadHandler.bind(this);
     window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
+    
+    // Carregar grupos disponíveis para compartilhamento
+    this.groupService.getAllUserGroups().subscribe(groups => {
+      this.groups = groups;
+    });
   }
   
   // Método para inicializar todos os grupos como fechados
