@@ -17,3 +17,25 @@ export interface GroupAccess {
   groupId: string;              // ID do grupo ao qual o registro pertence
   // Não precisamos adicionar createdBy pois já existe nos modelos como visto no crm.model.ts
 }
+
+// Adicione esta interface ao arquivo group.model.ts
+export interface SharingMetadata {
+  groupId: string;              // ID do grupo com o qual foi compartilhado
+  sharedBy: string;             // ID do usuário que compartilhou
+  sharedAt: firebase.firestore.Timestamp; // Data/hora do compartilhamento
+  lastModifiedBy?: string;      // Quem alterou o compartilhamento por último
+  lastModifiedAt?: firebase.firestore.Timestamp; // Quando foi alterado por último
+}
+
+// Adicione isso ao arquivo group.model.ts existente
+export interface GroupJoinRequest {
+  id?: string;
+  userId: string;
+  groupId: string;
+  requestedAt: firebase.firestore.Timestamp;
+  status: 'pending' | 'approved' | 'rejected';
+  message?: string;
+  responseMessage?: string;
+  respondedBy?: string;
+  respondedAt?: firebase.firestore.Timestamp;
+}

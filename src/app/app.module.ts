@@ -32,6 +32,7 @@ import { ImportarCadastroComponent } from './shared/utils/importar-cadastro/impo
 import { ErupcoesComponent } from './erupcoes/erupcoes.component';
 import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
 import { GroupManagerComponent } from './shared/components/group-manager/group-manager.component';
+import { RequestJoinDialog } from './shared/dialogs/request-join-dialog/request-join-dialog.component';
 
 // Serviços
 import { FirestoreService } from './shared/services/firestore.service';
@@ -74,7 +75,7 @@ import { DatePipe } from '@angular/common';
     ListComponent,
     CamposRegistroComponent,
     ViewComponent,
-    EditComponent, // Declare EditComponent here only
+    EditComponent,
     PerfilComponent,
     FichasComponent,
     MenuConfigComponent,

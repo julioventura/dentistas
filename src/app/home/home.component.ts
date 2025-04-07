@@ -68,31 +68,42 @@ export class HomeComponent implements OnInit {
    *  - Caso nenhum usuário esteja logado, redireciona para a página de login.
    */
   ngOnInit(): void {
-    // Limpar automaticamente o contexto do chatbot ao entrar na Home
-    this.aiChatService.resetContext();
+    console.log('HomeComponent ngOnInit started');
+    try {
+      // Clear chat context
+      this.aiChatService.resetContext();
 
-    this.auth.user.subscribe(user => {
-      if (user && user.email) {
-        // Define o nome do usuário utilizando a função capitalize para deixar a primeira letra de cada palavra em maiúsculo.
-        this.nome = this.util.capitalizar(user.displayName || user.email || 'Usuário');
-        this.userId = user.uid;
-        // Carrega dados adicionais do usuário
-        this.loadUserData(user.email);
+      // Auth subscription
+      this.auth.user.subscribe({
+        next: (user) => {
+          console.log('Auth user received:', user ? 'logged in' : 'not logged in');
+          if (user && user.email) {
+            // Define o nome do usuário utilizando a função capitalize para deixar a primeira letra de cada palavra em maiúsculo.
+            this.nome = this.util.capitalizar(user.displayName || user.email || 'Usuário');
+            this.userId = user.uid;
+            // Carrega dados adicionais do usuário
+            this.loadUserData(user.email);
 
-        // Define o usuário como administrador, se o email corresponder
-        if (user.email == 'julio@dentistas.com.br') {
-          this.configuracoes.is_admin = true;
+            // Define o usuário como administrador, se o email corresponder
+            if (user.email == 'julio@dentistas.com.br') {
+              this.configuracoes.is_admin = true;
+            }
+
+            // Carrega as configurações de ícones a partir do Firestore
+            this.loadIconConfig();
+
+          } else {
+            console.log('No user logged in, navigating to login');
+            this.router.navigate(['/login']);
+          }
+        },
+        error: (error) => {
+          console.error('Error in auth subscription:', error);
         }
-
-        // Carrega as configurações de ícones a partir do Firestore
-        this.loadIconConfig();
-
-      } else {
-        console.log('Nenhum usuário logado.');
-        // Redireciona para a página de login se o usuário não estiver logado
-        this.router.navigate(['/login']);
-      }
-    });
+      });
+    } catch (error) {
+      console.error('Error in HomeComponent ngOnInit:', error);
+    }
   }
 
 

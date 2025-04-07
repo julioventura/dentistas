@@ -95,10 +95,6 @@
       </div>
     </form>
 
-
-
-
-
     <!-- Para subcollections -->
     <div id="02" *ngIf="!FormService.isLoading && subcollection">
 
@@ -250,6 +246,30 @@
 
     </div>
 
+    <div class="container">
+            <!-- Adicione onde quiser mostrar o histórico de compartilhamento -->
+      <div class="sharing-history-section" *ngIf="sharingHistory && sharingHistory.length > 0">
+        <h3>Histórico de Compartilhamento</h3>
+        <mat-list>
+          <mat-list-item *ngFor="let entry of sharingHistory">
+            <mat-icon mat-list-icon>
+              {{ entry.action === 'share' ? 'share' : 
+                 entry.action === 'unshare' ? 'link_off' : 'swap_horiz' }}
+            </mat-icon>
+            <div mat-line>
+              {{ entry.action === 'share' ? 'Compartilhado com' : 
+                 entry.action === 'unshare' ? 'Removido compartilhamento' : 
+                 'Alterado compartilhamento para' }} 
+              {{ getGroupName(entry.groupId) }}
+            </div>
+            <div mat-line class="history-metadata">
+              Por {{ getUserName(entry.performedBy) }} em 
+              {{ entry.timestamp?.toDate() | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
   </div>
 
 </div>

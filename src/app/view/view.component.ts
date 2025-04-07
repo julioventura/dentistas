@@ -22,6 +22,7 @@ import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/services/form.service';
 import { fadeAnimation } from '../animations/fade.animation';
 import { UserService } from '../shared/services/user.service';
+import { GroupService } from '../shared/services/group.service';
 
 @Component({
   selector: 'app-view',
@@ -46,6 +47,7 @@ export class ViewComponent implements OnInit {
   routePath: string = '';                 // Caminho de rota para redirecionamentos pós operações
   show_menu: boolean = false;             // Controla exibição de menus adicionais
   menu_exame: boolean = false;            // Flag específica para exame (caso necessário)
+  sharingHistory: any[] = [];             // Histórico de compartilhamento
   
   // Propriedade utilizada no binding CSS para definir a largura dos labels
   customLabelWidthValue: number = 100;
@@ -58,7 +60,8 @@ export class ViewComponent implements OnInit {
     private afAuth: AngularFireAuth,
     public util: UtilService,
     public FormService: FormService,
-    private userService: UserService // Adicionar este serviço
+    private userService: UserService, // Adicionar este serviço
+    private groupService: GroupService
   ) { }
 
   /**
@@ -147,6 +150,11 @@ export class ViewComponent implements OnInit {
           this.customLabelWidthValue = 100; // Ajuste este valor para corresponder ao EditComponent
         }
         this.updateCustomLabelWidth();
+
+        this.groupService.getSharingHistory(this.collection, this.id)
+          .subscribe(history => {
+            this.sharingHistory = history;
+          });
 
       } else {
         console.error('Usuário não autenticado.');
@@ -358,5 +366,15 @@ export class ViewComponent implements OnInit {
              valor !== 0 &&
              valor !== '0';
     });
+  }
+
+  getGroupName(groupId: string): string {
+    // Implemente a lógica para buscar o nome do grupo pelo ID
+    return groupId || 'Desconhecido';
+  }
+
+  getUserName(userId: string): string {
+    // Implemente a lógica para buscar o nome do usuário pelo ID
+    return userId || 'Usuário desconhecido';
   }
 }

@@ -34,19 +34,7 @@
             </section>
         </div>
 
-        <div class="espacador_vertical"></div>
-        <div id="Services" class="container margin0">
-            <section class="services-section icon-grid largo">
 
-                <div class="icon-item" (click)="go('camposRegistro')">
-                    <img src="https://dentistas.com.br/assets/ficha_campos.png" alt="Configurar">
-                    <p>PERSONALIZAR CAMPOS DOS CADASTROS</p>
-                </div>
-
-
-
-            </section>
-        </div>
 
 
         <div class="espacador_vertical"></div>
@@ -54,6 +42,21 @@
 
         <!-- APENAS PARA ADMIN -->
         <div id="Services" *ngIf="this.configuracoes.is_admin" class="container container-red-border margin0">
+
+        <div id="Services" class="container margin0">
+            <section class="services-section icon-grid largo">
+        
+                <div class="icon-item" (click)="go('camposRegistro')">
+                    <img src="https://dentistas.com.br/assets/ficha_campos.png" alt="Configurar">
+                    <p>PERSONALIZAR CAMPOS DOS CADASTROS</p>
+                </div>
+        
+        
+        
+            </section>
+        </div>
+                <div class="espacador_vertical"></div>
+
 
 
             <section class="services-section icon-grid largo">
@@ -74,14 +77,19 @@
                     <p>USUÁRIOS</p>
                 </div>
 
-                <!-- Adicionar ao menu ou à dashboard -->
-                <button mat-raised-button color="primary" routerLink="/groups">
-                    <mat-icon>group</mat-icon>
-                    Gerenciar Grupos
-                </button>
+            <!-- Adicionar ao menu ou à dashboard -->
+            <div class="espacador_vertical"></div>
+            <button mat-raised-button color="primary" routerLink="/groups">
+                <mat-icon>group</mat-icon>
+                Gerenciar Grupos
+            </button>
+            <div class="espacador_vertical"></div>
 
             </section>
         </div>
+
+        
+
 
     </div>
 
