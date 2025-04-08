@@ -1,6 +1,6 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from '../../material.module';
 import { GroupService } from '../../services/group.service';
@@ -16,6 +16,10 @@ import { Group } from '../../models/group.model';
 import { ConfigService } from '../../../shared/services/config.service';
 import { MatDialog } from '@angular/material/dialog';
 import { RequestJoinDialog } from '../../dialogs/request-join-dialog/request-join-dialog.component';
+import { Observable, of } from 'rxjs';
+import { map, startWith, catchError } from 'rxjs/operators';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { GroupJoinRequest } from '../../models/group.model';
 
 @Component({
   selector: 'app-group-manager',
@@ -35,6 +39,15 @@ export class GroupManagerComponent implements OnInit {
   isLoading = true;
   users: any[] = [];
   joinRequests: any[] = [];
+
+  // Manter apenas:
+  manualEmail: string = '';
+  showManualEmailInput: boolean = false;
+
+  // Add these properties to the GroupManagerComponent class
+  filteredUsers: Observable<any[]> = of([]);
+  filteredAdmins: Observable<any[]> = of([]);
+  selectedUserToAdd: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -143,7 +156,6 @@ export class GroupManagerComponent implements OnInit {
 
   resetForm() {
     this.groupForm.reset({
-      adminIds: [],
       memberIds: []
     });
     this.selectedGroup = null;
@@ -177,15 +189,16 @@ export class GroupManagerComponent implements OnInit {
 
   // Adicione este método para carregar os pedidos pendentes
   loadPendingJoinRequests(): void {
-    this.groupService.getPendingJoinRequests().subscribe(
-      requests => {
-        this.joinRequests = requests;
-      },
-      error => {
+    this.groupService.getPendingJoinRequests().pipe(
+      catchError(error => {
         console.error('Erro ao carregar pedidos de entrada:', error);
         this.snackBar.open('Erro ao carregar pedidos de entrada', 'OK', { duration: 3000 });
-      }
-    );
+        return of([]);
+      })
+    ).subscribe(requests => {
+      this.joinRequests = requests;
+      console.log(`${requests.length} pedidos de entrada pendentes carregados`);
+    });
   }
 
   // Adicione os métodos para aprovar e rejeitar pedidos
@@ -240,5 +253,88 @@ export class GroupManagerComponent implements OnInit {
           });
       }
     });
+  }
+
+  // Substitua o método existente por esta versão atualizada
+  addMemberByEmail(email: string): void {
+    if (!email || !email.includes('@')) {
+      this.snackBar.open('Por favor, insira um email válido', 'OK', { duration: 3000 });
+      return;
+    }
+    
+    // Obter membros atuais
+    const currentMembers = this.groupForm.get('memberIds')?.value || [];
+    
+    // Verificar se já está na lista
+    if (currentMembers.includes(email)) {
+      this.snackBar.open('Este email já está na lista de membros', 'OK', { duration: 3000 });
+      return;
+    }
+    
+    // Adicionar o email ao formulário
+    this.groupForm.get('memberIds')?.setValue([...currentMembers, email]);
+    
+    // Salvar o grupo (criar ou atualizar)
+    if (this.selectedGroup) {
+      // Atualizar grupo existente
+      this.groupService.updateGroup(this.selectedGroup.id, this.groupForm.value)
+        .then(() => {
+          this.snackBar.open(`${email} adicionado e grupo atualizado com sucesso`, 'OK', { duration: 3000 });
+          this.loadGroups(); // Recarregar grupos para atualizar a lista
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar grupo:', error);
+          this.snackBar.open('Erro ao adicionar membro', 'OK', { duration: 3000 });
+        });
+    } else {
+      // Criar novo grupo
+      if (this.groupForm.invalid) {
+        this.snackBar.open('Por favor preencha o nome do grupo', 'OK', { duration: 3000 });
+        return;
+      }
+      
+      this.groupService.createGroup(this.groupForm.value)
+        .then(() => {
+          this.snackBar.open(`Grupo criado com ${email} como membro`, 'OK', { duration: 3000 });
+          this.loadGroups(); // Recarregar grupos
+          this.resetForm();  // Resetar formulário após criação bem-sucedida
+        })
+        .catch(error => {
+          console.error('Erro ao criar grupo:', error);
+          this.snackBar.open('Erro ao criar grupo', 'OK', { duration: 3000 });
+        });
+    }
+    
+    // Limpar o campo de entrada
+    this.manualEmail = '';
+  }
+
+  // Atualize o método removeMember para salvar após remover
+  removeMember(userIdOrEmail: string): void {
+    const currentMembers = this.groupForm.get('memberIds')?.value || [];
+    this.groupForm.get('memberIds')?.setValue(currentMembers.filter((id: string) => id !== userIdOrEmail));
+    
+    // Salvar as mudanças automaticamente
+    if (this.selectedGroup) {
+      this.groupService.updateGroup(this.selectedGroup.id, this.groupForm.value)
+        .then(() => {
+          this.snackBar.open('Membro removido do grupo', 'OK', { duration: 3000 });
+          this.loadGroups(); // Recarregar a lista
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar grupo:', error);
+          this.snackBar.open('Erro ao remover membro', 'OK', { duration: 3000 });
+        });
+    } else {
+      this.snackBar.open('Membro removido', 'OK', { duration: 3000 });
+    }
+  }
+
+  /**
+   * Display user name in autocomplete
+   */
+  displayUserFn(user: any): string {
+    if (!user) return '';
+    return user.email || user.nome || user.name || user.displayName || '';
   }
 }

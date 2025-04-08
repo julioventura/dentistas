@@ -65,36 +65,46 @@
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Clínica</mat-label>
-                <input matInput formControlName="clinica" placeholder="Ex: Clínica de Ortodontia">
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Descrição</mat-label>
                 <textarea matInput formControlName="description" rows="3"
                          placeholder="Descrição ou observações sobre o grupo"></textarea>
               </mat-form-field>
 
+              <!-- Substituir toda a seção de membros e administradores com o seguinte código: -->
               <div class="group-members-section">
-                <h3>Administradores (Professores)</h3>
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Selecione os Administradores</mat-label>
-                  <mat-select formControlName="adminIds" multiple>
-                    <mat-option *ngFor="let user of users" [value]="user.id">
-                      {{ user.nome || user.email }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-
-                <h3>Membros (Alunos)</h3>
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Selecione os Membros</mat-label>
-                  <mat-select formControlName="memberIds" multiple>
-                    <mat-option *ngFor="let user of users" [value]="user.id">
-                      {{ user.nome || user.email }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+                <h3>Membros do Grupo</h3>
+                
+                <!-- Mostrar membros atuais com opção de remoção -->
+                <div class="member-chips">
+                  <mat-chip-list aria-label="Membros">
+                    <mat-chip 
+                      *ngFor="let memberId of groupForm.get('memberIds')?.value || []" 
+                      removable="true" 
+                      (removed)="removeMember(memberId)">
+                      {{ getUserName(memberId) }}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+                </div>
+                
+                <!-- Adicionar membro por email -->
+                <div class="manual-entry-form">
+                  <mat-form-field appearance="outline" class="user-email-input">
+                    <mat-label>Email do usuário</mat-label>
+                    <input type="email" matInput [(ngModel)]="manualEmail" [ngModelOptions]="{standalone: true}" placeholder="usuario@exemplo.com">
+                  </mat-form-field>
+                  
+                  <div class="manual-entry-actions">
+                    <button mat-raised-button color="primary" (click)="addMemberByEmail(manualEmail)" [disabled]="!manualEmail">
+                      <mat-icon>person_add</mat-icon> Adicionar como membro
+                    </button>
+                  </div>
+                </div>
+                
+                <p class="membership-note">
+                  <mat-icon>info</mat-icon>
+                  Usuários serão adicionados pelo email mesmo que ainda não estejam cadastrados no sistema.
+                </p>
               </div>
 
               <div class="form-actions">
@@ -190,3 +200,21 @@
     </div>
   </div>
 </div>
+
+<!-- For the admin autocomplete -->
+<mat-autocomplete #adminAuto="matAutocomplete" 
+  [displayWith]="displayUserFn"
+  (optionSelected)="selectedUserToAdd = $event.option.value">
+  <mat-option *ngFor="let user of filteredAdmins | async" [value]="user">
+    {{ user.nome || user.email }}
+  </mat-option>
+</mat-autocomplete>
+
+<!-- For the user autocomplete -->
+<mat-autocomplete #userAuto="matAutocomplete"
+  [displayWith]="displayUserFn" 
+  (optionSelected)="selectedUserToAdd = $event.option.value">
+  <mat-option *ngFor="let user of filteredUsers | async" [value]="user">
+    {{ user.nome || user.email }}
+  </mat-option>
+</mat-autocomplete>

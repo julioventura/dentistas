@@ -40,13 +40,7 @@ import { take } from 'rxjs/operators';
 import { GroupService } from '../shared/services/group.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { map } from 'rxjs/operators';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { GroupSharingService } from '../shared/services/group-sharing.service';
-import { LoggingService } from '../shared/services/logging.service';
-import { Subject, of, from } from 'rxjs';
-import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Campo {
   nome: string;
@@ -64,7 +58,18 @@ interface Campo {
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
   encapsulation: ViewEncapsulation.Emulated, // Sobre encapsulamento, para permitir uso global de variáveis CSS (None)
-  animations: [fadeAnimation],
+  animations: [
+    trigger('fadeAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        // Reduzindo o tempo para 1/3
+        animate('0.2s ease-in-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('0.2s ease-in-out', style({ opacity: 0 }))
+      ])
+    ])
+  ],
   standalone: false
 })
 export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanComponentDeactivate {
@@ -100,12 +105,6 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   // Propriedade para armazenar grupos
   groups: any[] = [];
   
-  // Adicione esta propriedade à classe
-  originalGroupId: string | null = null;
-  
-  // Adicionar estas propriedades
-  private destroy$ = new Subject<void>();
-  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -116,11 +115,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
     private camposFichaService: CamposFichaService,  // Injeção para subcollections
     private camposService: CamposService,              // Injeção para collections
     private dialog: MatDialog,
-    private groupService: GroupService,  // This is now correctly injected
-    private groupSharingService: GroupSharingService, // Novo serviço
-    private snackBar: MatSnackBar,
-    private firestore: AngularFirestore,
-    private logger: LoggingService // Novo serviço de logging
+    private groupService: GroupService  // This is now correctly injected
   ) { }
 
   /**
@@ -163,8 +158,19 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
           console.error('Registro não identificado.');
           this.voltar();
         } else {
-          // Carregamento de dados convertido para Promise
-          this.loadDataWithPromise();
+          if (this.subcollection) {
+            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
+              .then(() => {
+                // Inicializar todos os grupos como fechados após carregar os dados
+                this.inicializarGruposESubgrupos();
+              });
+          } else {
+            this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
+              .then(() => {
+                // Inicializar todos os grupos como fechados após carregar os dados
+                this.inicializarGruposESubgrupos();
+              });
+          }
         }
         
         this.subtitulo_da_pagina = this.FormService.nome_in_collection;
@@ -185,7 +191,11 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
     // Armazena a referência para remover depois
     this.boundBeforeUnloadHandler = this.beforeUnloadHandler.bind(this);
     window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
-    this.loadAvailableGroups();
+    
+    // Carregar grupos disponíveis para compartilhamento
+    this.groupService.getAllUserGroups().subscribe(groups => {
+      this.groups = groups;
+    });
   }
   
   // Método para inicializar todos os grupos como fechados
@@ -401,48 +411,45 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
    * - Navega para a view do registro após salvar.
    * Retorna: void.
    */
-  salvar_collection_anterior(): void {
-    // Validar formulário
-    if (this.FormService.fichaForm.invalid) {
-      this.snackBar.open('Por favor preencha todos os campos obrigatórios', 'OK', { duration: 3000 });
-      return;
-    }
-    
-    // Atualizar objeto do registro com valores do formulário
-    const formValues = this.FormService.fichaForm.value;
-    Object.assign(this.FormService.registro, formValues);
-    
-    this.logger.log('EditComponent', 'Salvando registro principal', {
-      collection: this.collection,
-      id: this.id
-    });
-    
-    // Processar uploads e depois atualizar registro
-    from(this.processarUploads()).pipe(
-      switchMap(() => this.firestoreService.updateRegistro(
-        this.collection, 
-        this.id, 
-        this.FormService.registro
-      )),
-      switchMap(() => this.groupSharingService.handleRecordSharing(
-        this.collection,
-        this.id,
-        this.FormService.registro.groupId,
-        this.originalGroupId
-      )),
-      catchError(error => {
-        this.logger.error('EditComponent', 'Erro ao salvar registro', error);
-        this.snackBar.open(`Erro ao salvar: ${error.message}`, 'OK', { duration: 5000 });
-        return of(null);
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe(result => {
-      if (result !== null) {
-        this.snackBar.open('Registro salvo com sucesso!', 'OK', { duration: 3000 });
-        this.FormService.fichaForm.markAsPristine();
-        this.verFicha();
+  salvar_collection_anterior() {
+    if (this.FormService.fichaForm.valid && this.userId) {
+      const formValues = { ...this.FormService.fichaForm.value };
+      if (formValues.email) {
+        formValues.email = formValues.email.toLowerCase();
       }
-    });
+      const registroAtualizado = { ...this.FormService.registro, ...formValues };
+      if (!this.FormService.registro.id) {
+        console.error('Erro: ID do registro está indefinido. Não é possível atualizar o registro.');
+        alert('Erro ao atualizar o registro. O ID está indefinido.');
+        return;
+      }
+      const registroPath = `users/${this.userId}/${this.collection}`;
+      console.log('registroPath =', registroPath);
+      console.log('Tentando salvar o registro:');
+      console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
+      console.log('Dados do registro a serem atualizados:', registroAtualizado);
+      const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
+        const file = this.arquivos[campoNome];
+        const url = prompt('Insira a URL do arquivo ou imagem:');
+        return new Promise<void>((resolve) => {
+          registroAtualizado[campoNome] = url;
+          resolve();
+        });
+      });
+      Promise.all(uploadPromises).then(() => {
+        this.firestoreService.updateRegistro(registroPath, this.FormService.registro.id, registroAtualizado)
+          .then(() => {
+            this.router.navigate([`/view/${this.collection}`, this.FormService.registro.id]);
+          })
+          .catch(error => {
+            console.error('Erro ao salvar o registro:', error);
+            alert('Erro ao salvar o registro. Por favor, tente novamente.');
+          });
+      });
+    } else {
+      console.error('Registro inválido ou sem ID:', this.FormService.registro);
+      alert('Registro inválido ou sem ID. Não é possível salvar.');
+    }
   }
 
   /**
@@ -703,14 +710,6 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   ngOnDestroy() {
     window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
     // Seu código de destruição existente...
-    // Remover listener de evento beforeunload
-    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
-    
-    // Completar subject para cancelar subscriptions
-    this.destroy$.next();
-    this.destroy$.complete();
-    
-    this.logger.log('EditComponent', 'Componente destruído');
   }
   
   // Adicione underscore aos parâmetros não utilizados
@@ -756,224 +755,6 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
       case 'date':
       default:
         return '';
-    }
-  }
-
-  // Método para salvar configurações de grupo ao salvar o registro
-  private saveGroupSharingSettings(): Promise<void> {
-    console.log('EditComponent: Verificando configurações de compartilhamento de grupo');
-    
-    try {
-      // Verificar se o record tinha um groupId anterior
-      const currentGroupId = this.FormService.registro.groupId;
-      const previousGroupId = this.originalGroupId; // Defina esta propriedade no ngOnInit
-      
-      // Se não houve mudança, não fazer nada
-      if (currentGroupId === previousGroupId) {
-        console.log('EditComponent: Sem mudanças no compartilhamento de grupo');
-        return Promise.resolve();
-      }
-      
-      // Se o compartilhamento foi removido
-      if (!currentGroupId && previousGroupId) {
-        console.log(`EditComponent: Removendo compartilhamento do registro (grupo anterior: ${previousGroupId})`);
-        return this.groupService.removeRecordSharing(this.collection, this.id);
-      }
-      
-      // Se o compartilhamento foi adicionado ou alterado
-      if (currentGroupId) {
-        console.log(`EditComponent: ${previousGroupId ? 'Atualizando' : 'Adicionando'} compartilhamento para o grupo ${currentGroupId}`);
-        return this.groupService.shareRecordWithGroup(this.collection, this.id, currentGroupId);
-      }
-      
-      return Promise.resolve();
-    } catch (error) {
-      console.error('EditComponent: Erro ao processar configurações de compartilhamento:', error);
-      return Promise.reject(error);
-    }
-  }
-  
-  // Método para carregar grupos disponíveis
-  loadAvailableGroups() {
-    console.log('EditComponent: Carregando grupos disponíveis para compartilhamento');
-    
-    this.groupService.getAllUserGroups().subscribe({
-      next: (groups) => {
-        this.groups = groups;
-        console.log(`EditComponent: Carregados ${groups.length} grupos disponíveis`);
-      },
-      error: (error) => {
-        console.error(`EditComponent: Erro ao carregar grupos: ${error.message || error}`);
-        this.snackBar.open('Erro ao carregar grupos disponíveis', 'OK', { duration: 3000 });
-      }
-    });
-  }
-  
-  processarUploads(): Promise<void> {
-    // If no files to upload, return resolved promise
-    if (Object.keys(this.arquivos).length === 0) {
-      return Promise.resolve();
-    }
-  
-    // Process all uploads and return a promise that resolves when all are done
-    const uploadPromises = Object.keys(this.arquivos).map(fieldName => {
-      return this.util.uploadFile(`${this.collection}/${this.id}`, this.arquivos[fieldName])
-        .toPromise()
-        .then(url => {
-          // Update the URL in the form data
-          this.FormService.registro[fieldName] = url;
-          console.log(`Upload completed for ${fieldName}, URL: ${url}`);
-        });
-    });
-  
-    return Promise.all(uploadPromises).then(() => {});
-  }
-  
-  // Novo método que usa Promises em vez de Observables
-  private loadDataWithPromise(): void {
-    console.log('Loading data with Promise approach');
-    
-    if (this.subcollection) {
-      // Load subcollection record
-      this.loadSubcollectionRecord();
-    } else {
-      // Load main collection record
-      this.loadMainRecord();
-    }
-  }
-  
-  // Fix for loadMainRecord() method
-  private loadMainRecord(): void {
-    this.firestoreService.getRegistroById(this.collection, this.id)
-      .pipe(take(1))
-      .subscribe({
-        next: (registro) => {
-          // Store the data in FormService
-          this.FormService.registro = registro;
-          
-          // Fix error 1: Add non-null assertion or provide default value
-          // Error: Argument of type 'string | null' is not assignable to parameter of type 'string'
-          const userId = this.userId || 'default'; // Use a default value
-          
-          // Get campos for the collection
-          this.camposService.getCamposRegistro(userId, this.collection)
-            .pipe(take(1))
-            .subscribe(campos => {
-              // Set campos in FormService
-              this.FormService.campos = campos;
-              
-              // Fix error 2: Check if createForm accepts arguments
-              // Error: Expected 0 arguments, but got 1
-              // Option 1: If FormService.createForm doesn't take params, call it without args
-              this.FormService.createForm(); // Remove the registro parameter
-              
-              // Or Option 2: If you need to pass the data, modify FormService to accept it
-              // this.FormService.initializeFormWithData(registro); // If you have such a method
-              
-              // Store groupId for comparison when saving
-              this.originalGroupId = registro.groupId || null;
-              
-              // Initialize groups expansion state
-              this.inicializarGruposESubgrupos();
-              
-              // Load available groups
-              this.loadAvailableGroups();
-            },
-            error => {
-              console.error(`Error loading campos: ${error}`);
-              this.snackBar.open('Error loading form fields', 'OK', { duration: 3000 });
-            });
-        },
-        error: (error) => {
-          console.error(`Error loading record: ${error}`);
-          this.snackBar.open('Error loading record', 'OK', { duration: 3000 });
-        }
-      });
-  }
-  
-  // Fix for loadSubcollectionRecord() method
-  private loadSubcollectionRecord(): void {
-    this.firestore.doc(`${this.collection}/${this.id}/${this.subcollection}/${this.fichaId}`)
-      .valueChanges()
-      .pipe(take(1))
-      .subscribe({
-        next: (registro: any) => {
-          if (!registro) {
-            this.snackBar.open('Record not found', 'OK', { duration: 3000 });
-            return;
-          }
-          
-          // Store the data in FormService
-          this.FormService.registro = registro;
-          
-          // Fix error 3: Add non-null assertion or provide default value
-          // Error: Argument of type 'string | null' is not assignable to parameter of type 'string'
-          const userId = this.userId || 'default'; // Use a default value
-          
-          // Get campos for the subcollection
-          this.camposFichaService.getCamposFichaRegistro(userId, this.subcollection)
-            .pipe(take(1))
-            .subscribe(campos => {
-              // Set campos in FormService
-              this.FormService.campos = campos;
-              
-              // Fix error 4: Check if createForm accepts arguments
-              // Error: Expected 0 arguments, but got 1
-              // Option 1: If FormService.createForm doesn't take params, call it without args
-              this.FormService.createForm(); // Remove the registro parameter
-              
-              // Store groupId for comparison when saving
-              this.originalGroupId = registro.groupId || null;
-              
-              // Initialize groups expansion state
-              this.inicializarGruposESubgrupos();
-              
-              // Load available groups
-              this.loadAvailableGroups();
-            },
-            error => {
-              console.error(`Error loading campos: ${error}`);
-              this.snackBar.open('Error loading form fields', 'OK', { duration: 3000 });
-            });
-        },
-        error => {
-          console.error(`Error loading subcollection record: ${error}`);
-          this.snackBar.open('Error loading record', 'OK', { duration: 3000 });
-        }
-      });
-  }
-  
-  // Método para carregar grupos disponíveis
-  loadAvailableGroups(): void {
-    this.logger.log('EditComponent', 'Carregando grupos disponíveis');
-    
-    this.groupService.getAllUserGroups()
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError(error => {
-          this.logger.error('EditComponent', 'Erro ao carregar grupos', error);
-          return of([]);
-        })
-      )
-      .subscribe(groups => {
-        this.groups = groups;
-        this.logger.log('EditComponent', `${groups.length} grupos carregados`);
-      });
-  }
-  
-  /**
-   * Method to handle group ID changes from the group-sharing component
-   * @param newGroupId - The new group ID selected in the group sharing component
-   */
-  public onGroupIdChanged(newGroupId: string | null): void {
-    this.logger.log('EditComponent', 'ID do grupo alterado', {
-      previous: this.FormService.registro?.groupId,
-      new: newGroupId
-    });
-    
-    if (this.FormService.registro) {
-      this.FormService.registro.groupId = newGroupId;
-      this.FormService.fichaForm.markAsDirty();
     }
   }
 }

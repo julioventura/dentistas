@@ -223,12 +223,4 @@
 
   </div>
 
-  <!-- Usando o novo componente para compartilhamento de grupo -->
-  <app-group-sharing 
-    *ngIf="!FormService.isLoading && groups && groups.length > 0"
-    [recordGroupId]="FormService.registro?.groupId"
-    [collection]="collection"
-    [recordId]="id"
-    (groupIdChange)="onGroupIdChanged($event)">
-  </app-group-sharing>
 </div>

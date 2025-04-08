@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of, combineLatest } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take, filter } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import { Group, SharingMetadata, GroupJoinRequest } from '../models/group.model';
 
@@ -202,7 +202,8 @@ export class GroupService {
       return Promise.reject('Usuário não autenticado');
     }
 
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    // IMPORTANTE: Use client-side timestamp instead of server timestamp for array operations
+    const now = new Date(); // Client-side timestamp
 
     return new Promise<void>((resolve, reject) => {
       // Verificar se o grupo existe
@@ -211,57 +212,70 @@ export class GroupService {
       ).subscribe({
         next: (groupDoc) => {
           if (!groupDoc.exists) {
-            console.error(`GroupService: Grupo ${groupId} não encontrado`);
-            reject(new Error(`Grupo não encontrado`));
+            reject(new Error(`Grupo ${groupId} não encontrado`));
             return;
           }
 
-          // Obter o registro atual
+          // Verificar o registro atual para determinar se já tem um groupId
           this.firestore.doc(`${collection}/${recordId}`).get().pipe(
-            take(1),
-            switchMap(doc => {
-              console.log(`GroupService: Registro ${recordId} encontrado, atualizando metadados de compartilhamento`);
-              
-              // Trate possíveis erros de tipo usando typecast seguro
-              const currentData = doc.data() as Record<string, any> || {};
-              const previousGroupId = currentData['groupId'] || null;
-              const existingHistory = currentData['sharingHistory'] || [];
+            take(1)
+          ).subscribe({
+            next: (recordDoc) => {
+              if (!recordDoc.exists) {
+                reject(new Error(`Registro ${recordId} não encontrado`));
+                return;
+              }
 
-              const sharingData = {
+              const record = recordDoc.data() as { groupId?: string };
+              const previousGroupId = record?.groupId || null;
+
+              // Batch de operações para garantir atomicidade
+              const batch = this.firestore.firestore.batch();
+
+              // Atualizar o registro com o novo groupId
+              const recordRef = this.firestore.doc(`${collection}/${recordId}`).ref;
+              
+              // Preparar o registro de histórico
+              const sharingHistoryEntry = {
+                timestamp: now, // Use client-side timestamp for array operations
+                userId: this.userId,
                 groupId: groupId,
-                sharingMetadata: {
-                  groupId: groupId,
-                  sharedBy: this.userId,
-                  sharedAt: timestamp,
-                  previousGroupId: previousGroupId
-                },
-                sharingHistory: firebase.firestore.FieldValue.arrayUnion({
-                  action: previousGroupId ? 'change' : 'share',
-                  timestamp: timestamp,
-                  performedBy: this.userId,
-                  groupId: groupId,
-                  previousGroupId: previousGroupId
-                }),
-                updatedAt: timestamp,
-                updatedBy: this.userId
+                previousGroupId: previousGroupId,
+                action: previousGroupId ? 'change' : 'share'
               };
 
-              return this.firestore.doc(`${collection}/${recordId}`).update(sharingData);
-            })
-          ).subscribe({
-            next: () => {
-              console.log(`GroupService: Registro ${recordId} compartilhado com sucesso`);
-              resolve();
+              // Em vez de usar diretamente serverTimestamp, usamos operações batch separadas
+              batch.update(recordRef, { 
+                groupId: groupId,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // OK aqui pois não é dentro de arrayUnion
+                updatedBy: this.userId
+              });
+
+              // Adicionar entrada ao histórico de compartilhamento
+              batch.update(recordRef, {
+                sharingHistory: firebase.firestore.FieldValue.arrayUnion(sharingHistoryEntry)
+              });
+
+              // Executar batch
+              batch.commit()
+                .then(() => {
+                  console.log(`GroupService: Registro ${recordId} compartilhado com grupo ${groupId}`);
+                  resolve();
+                })
+                .catch(error => {
+                  console.error(`GroupService: Erro ao compartilhar registro ${recordId}:`, error);
+                  reject(new Error(`Erro ao compartilhar registro: ${error.message}`));
+                });
             },
             error: (error) => {
-              console.error(`GroupService: Erro ao compartilhar registro: ${error.message || error}`);
-              reject(error);
+              console.error(`GroupService: Erro ao buscar registro ${recordId}:`, error);
+              reject(new Error(`Erro ao buscar registro: ${error.message}`));
             }
           });
         },
         error: (error) => {
-          console.error(`GroupService: Erro ao verificar grupo: ${error.message || error}`);
-          reject(error);
+          console.error(`GroupService: Erro ao verificar grupo ${groupId}:`, error);
+          reject(new Error(`Erro ao verificar grupo: ${error.message}`));
         }
       });
     });
@@ -419,30 +433,32 @@ export class GroupService {
    * Obtém solicitações pendentes para grupos onde o usuário é admin
    */
   getPendingJoinRequests(): Observable<GroupJoinRequest[]> {
-    console.log('GroupService: Buscando solicitações pendentes');
-    
-    if (!this.userId) {
-      console.warn('GroupService: Tentativa de buscar solicitações sem usuário autenticado');
-      return of([]);
-    }
-    
-    return this.getAdminGroups().pipe(
-      switchMap(groups => {
-        if (!groups.length) {
-          console.info('GroupService: Usuário não é admin de nenhum grupo');
-          return of([]);
+    return this.auth.user.pipe(
+      filter(user => !!user),  // Ensure we have a user
+      switchMap(user => {
+        if (!user || !user.uid) {
+          return of([]); // Return empty array if no user
         }
+
+        const userId = user.uid;
         
-        const groupIds = groups.map(group => group.id);
-        console.log(`GroupService: Verificando solicitações para ${groupIds.length} grupos`);
-        
-        return this.firestore.collection<GroupJoinRequest>('groupJoinRequests', ref => 
-          ref.where('groupId', 'in', groupIds)
-             .where('status', '==', 'pending')
-        ).valueChanges({ idField: 'id' }).pipe(
-          map(requests => {
-            console.log(`GroupService: Encontradas ${requests.length} solicitações pendentes`);
-            return requests;
+        // First get groups where user is an admin
+        return this.getAdminGroups().pipe(
+          switchMap(groups => {
+            // If user is not admin of any group, return empty array
+            if (!groups || groups.length === 0) {
+              return of([]);
+            }
+            
+            // Get the group IDs where the user is an admin
+            const groupIds = groups.map(group => group.id);
+            
+            // Query join requests for those groups
+            return this.firestore.collection<GroupJoinRequest>('groupJoinRequests', ref => 
+              ref
+                .where('status', '==', 'pending')
+                .where('groupId', 'in', groupIds.length > 0 ? groupIds : ['no-groups'])
+            ).valueChanges({ idField: 'id' });
           })
         );
       })
@@ -467,7 +483,7 @@ export class GroupService {
         switchMap(doc => {
           const request = doc.data() as Record<string, any>;
           
-          if (!request || request.status !== 'pending') {
+          if (!request || request['status'] !== 'pending') {
             console.error(`GroupService: Solicitação ${requestId} não encontrada ou não está pendente`);
             throw new Error('Solicitação não encontrada ou já foi processada');
           }
@@ -524,7 +540,7 @@ export class GroupService {
         
         const request = doc.data() as Record<string, any>;
         
-        if (!request || request.status !== 'pending') {
+        if (!request || request['status'] !== 'pending') {
           throw new Error('Solicitação não encontrada ou já foi processada');
         }
         

@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked, AfterViewInit, OnDestroy, ChangeDetectorRef, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Remover KeyValue
-import { FormsModule } from '@angular/forms';  // necessário para ngModel
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { trigger, state, style, transition, animate, sequence } from '@angular/animations';
 import { UserService } from '../shared/services/user.service';
 import { AiChatService, Message, ChatContext } from './ai-chat.service';
 import { Subject } from 'rxjs';
@@ -20,21 +20,23 @@ import { ConfigService } from '../shared/services/config.service';
     trigger('expandAnimation', [
       state('minimized', style({
         height: '50px',
-        transform: 'translateY(0)',
-        opacity: 1
+        opacity: 0.8
       })),
       state('expanded', style({
         height: '*',
-        transform: 'translateY(0)',
         opacity: 1
       })),
       transition('minimized => expanded', [
-        style({ height: '50px', transform: 'translateY(-20px)', opacity: 0 }),
-        animate('300ms ease-out', style({ height: '*', transform: 'translateY(0)', opacity: 1 }))
+        sequence([
+          animate('200ms ease-out', style({ height: '*' })),
+          animate('150ms ease-out', style({ opacity: 1 }))
+        ])
       ]),
       transition('expanded => minimized', [
-        animate('300ms ease-in', style({ height: '50px', transform: 'translateY(-20px)', opacity: 0 })),
-        style({ height: '50px', transform: 'translateY(0)', opacity: 1 })
+        sequence([
+          animate('150ms ease-in', style({ opacity: 0.8 })),
+          animate('200ms ease-in', style({ height: '50px' }))
+        ])
       ])
     ])
   ]

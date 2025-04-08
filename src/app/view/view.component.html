@@ -245,29 +245,26 @@
 
     </div>
 
-    <div class="container">
-            <!-- Adicione onde quiser mostrar o histórico de compartilhamento -->
-      <div class="sharing-history-section" *ngIf="sharingHistory && sharingHistory.length > 0">
-        <h3>Histórico de Compartilhamento</h3>
-        <mat-list>
-          <mat-list-item *ngFor="let entry of sharingHistory">
-            <mat-icon mat-list-icon>
-              {{ entry.action === 'share' ? 'share' : 
-                 entry.action === 'unshare' ? 'link_off' : 'swap_horiz' }}
-            </mat-icon>
-            <div mat-line>
-              {{ entry.action === 'share' ? 'Compartilhado com' : 
-                 entry.action === 'unshare' ? 'Removido compartilhamento' : 
-                 'Alterado compartilhamento para' }} 
-              {{ getGroupName(entry.groupId) }}
-            </div>
-            <div mat-line class="history-metadata">
-              Por {{ getUserName(entry.performedBy) }} em 
-              {{ entry.timestamp?.toDate() | date:'dd/MM/yyyy HH:mm' }}
-            </div>
-          </mat-list-item>
-        </mat-list>
-      </div>
+  </div>
+
+    <!-- <div class="group-sharing-container" *ngIf="!isLoading && registro && groups && groups.length > 0"> -->
+  <div class="group-sharing-container" *ngIf="registro">
+    <h3 class="section-title">Compartilhamento</h3>
+    <app-group-sharing 
+      [recordGroupId]="registro?.groupId"
+      [collection]="collection"
+      [recordId]="id"
+      (groupIdChange)="onGroupIdChanged($event)">
+    </app-group-sharing>
+    
+    <!-- Botão para salvar alterações de compartilhamento -->
+    <div class="group-save-actions" *ngIf="groupChanged">
+      <button mat-raised-button color="primary" (click)="saveGroupSharing()">
+        <mat-icon>save</mat-icon> Salvar Compartilhamento
+      </button>
+      <button mat-button (click)="cancelGroupChange()">
+        Cancelar
+      </button>
     </div>
   </div>
 

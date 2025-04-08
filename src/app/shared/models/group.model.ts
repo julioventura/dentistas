@@ -21,10 +21,16 @@ export interface GroupAccess {
 // Adicione esta interface ao arquivo group.model.ts
 export interface SharingMetadata {
   groupId: string;              // ID do grupo com o qual foi compartilhado
+  previousGroupId?: string;     // ID do grupo anterior (quando é uma alteração)
   sharedBy: string;             // ID do usuário que compartilhou
   sharedAt: firebase.firestore.Timestamp; // Data/hora do compartilhamento
   lastModifiedBy?: string;      // Quem alterou o compartilhamento por último
   lastModifiedAt?: firebase.firestore.Timestamp; // Quando foi alterado por último
+  action?: 'share' | 'unshare' | 'change'; // Tipo de ação realizada
+  userId?: string;              // ID do usuário que realizou a ação
+  userName?: string;            // Nome do usuário que realizou a ação
+  timestamp?: firebase.firestore.Timestamp; // Timestamp da ação
+  performedBy?: string;         // Quem realizou a ação
 }
 
 // Adicione isso ao arquivo group.model.ts existente

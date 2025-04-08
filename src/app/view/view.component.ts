@@ -27,14 +27,33 @@ import { GroupSharingService } from '../shared/services/group-sharing.service';
 import { LoggingService } from '../shared/services/logging.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { catchError, of, throwError } from 'rxjs';
+// Adicionar importação do MatSnackBar
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { switchMap, take } from 'rxjs/operators';
+// Add this import at the top of the file
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
   standalone: false,
-  encapsulation: ViewEncapsulation.Emulated, // Default
-  animations: [fadeAnimation]
+  encapsulation: ViewEncapsulation.Emulated,
+  animations: [
+    trigger('fadeAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        // Reduzindo o tempo para 1/3
+        animate('0.2s ease-in-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('0.2s ease-in-out', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class ViewComponent implements OnInit, OnDestroy {
   userId: string | null = null;           // ID do usuário autenticado
@@ -59,6 +78,11 @@ export class ViewComponent implements OnInit, OnDestroy {
   customLabelWidthValue: number = 100;
   customLabelWidth: string = `${this.customLabelWidthValue} px`;
 
+  // Adicionar estas propriedades à classe
+  groups: any[] = [];
+  newGroupId: string | null = null;
+  groupChanged: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -69,7 +93,8 @@ export class ViewComponent implements OnInit, OnDestroy {
     private userService: UserService, // Adicionar este serviço
     private groupService: GroupService,
     private groupSharingService: GroupSharingService,
-    private logger: LoggingService
+    private logger: LoggingService,
+    private snackBar: MatSnackBar // Adicionar esta injeção
   ) { }
 
   /**
@@ -125,6 +150,8 @@ export class ViewComponent implements OnInit, OnDestroy {
                 if (this.FormService.registro) {
                   this.userService.setCurrentRecord(this.fichaId, this.FormService.registro);
                 }
+                this.registro = this.FormService.registro;
+                this.loadSharingHistory(); // Add this line to load history after record is loaded
               });
           } else {
             console.log('Carregando registro principal...');
@@ -134,6 +161,9 @@ export class ViewComponent implements OnInit, OnDestroy {
                 if (this.FormService.registro) {
                   this.userService.setCurrentRecord(this.id, this.FormService.registro);
                 }
+                this.registro = this.FormService.registro;
+                this.loadSharingHistory(); // Add this line to load history after record is loaded
+                this.loadAvailableGroups(); // Make sure this is called after registro is set
               });
           }
 
@@ -171,6 +201,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     });
     console.log('ViewComponent inicializado.');
     this.loadSharingHistory();
+    this.loadAvailableGroups();
   }
 
   ngOnDestroy(): void {
@@ -179,38 +210,66 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   loadSharingHistory(): void {
-    if (!this.registro || !this.registro.id) {
+    if (!this.collection || !this.id || !this.userId) {
+      this.logger.warn('ViewComponent', 'Tentativa de carregar histórico sem collection/id/userId válidos');
+      this.sharingHistory = [];
       return;
     }
     
+    // Use the correct collection path with userId
+    const collectionPath = `users/${this.userId}/${this.collection}`;
+    
     this.logger.log('ViewComponent', 'Carregando histórico de compartilhamento', {
-      collection: this.collection,
+      path: collectionPath,
       id: this.id
     });
     
-    this.groupSharingService.loadSharingHistory(this.collection, this.id)
-      .pipe(takeUntil(this.destroy$))
+    // Pass the correct path to the groupSharingService
+    this.groupSharingService.loadSharingHistory(collectionPath, this.id)
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(err => {
+          this.logger.error('ViewComponent', 'Erro ao carregar histórico', err);
+          return of([]);
+        })
+      )
       .subscribe(history => {
         this.sharingHistory = history;
+        console.log('Sharing history loaded:', history);
         
-        // Extrair IDs de grupos únicos do histórico
-        const groupIds = Array.from(new Set(history.map(item => item.groupId)));
-        
-        // Carregar detalhes dos grupos
-        if (groupIds.length > 0) {
-          this.loadGroupDetails(groupIds);
+        if (history && history.length > 0) {
+          // Extract group IDs from history for loading details
+          const groupIds = history
+            .map(item => [item.groupId, item.previousGroupId])
+            .flat()
+            .filter((id): id is string => !!id);
+            
+          if (groupIds.length > 0) {
+            this.loadGroupDetails([...new Set(groupIds)]);
+          }
         }
       });
   }
   
+  // First, improve the loadGroupDetails method
   loadGroupDetails(groupIds: string[]): void {
+    // Add logging to trace the issue
+    console.log('Loading details for groups:', groupIds);
+    
     this.groupSharingService.loadGroupDetails(groupIds)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(details => {
-        this.groupDetails = details;
+      .subscribe({
+        next: (details) => {
+          this.groupDetails = details;
+          console.log('Group details loaded:', this.groupDetails);
+        },
+        error: (err) => {
+          this.logger.error('ViewComponent', 'Error loading group details', err);
+          console.error('Error loading group details:', err);
+        }
       });
   }
-  
+
   // Método auxiliar para formatação de datas em histórico
   formatDate(timestamp: any): string {
     if (!timestamp) return 'Data desconhecida';
@@ -219,9 +278,24 @@ export class ViewComponent implements OnInit, OnDestroy {
     return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR');
   }
   
-  // Método para obter nome do grupo a partir do ID
+  // Update getGroupName with better trace and error handling
   getGroupName(groupId: string): string {
-    return this.groupDetails[groupId]?.name || 'Grupo desconhecido';
+    if (!groupId) {
+      return 'Grupo não especificado';
+    }
+    
+    if (!this.groupDetails || Object.keys(this.groupDetails).length === 0) {
+      return `Grupo ${groupId.substring(0, 5)}...`;  // Show partial ID if details not loaded yet
+    }
+    
+    const group = this.groupDetails[groupId];
+    
+    if (!group) {
+      console.log(`Group details not found for ID ${groupId}`);
+      return `Grupo ${groupId.substring(0, 5)}...`;
+    }
+    
+    return group.name || 'Grupo sem nome';
   }
 
   /**
@@ -428,20 +502,120 @@ export class ViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  getGroupName(groupId: string): string {
-    if (!groupId) {
-      return 'Nenhum';
-    }
-    
-    if (this.groupDetails && this.groupDetails[groupId]) {
-      return this.groupDetails[groupId].name;
-    }
-    
-    return `Grupo ${groupId}`;
-  }
-
   getUserName(userId: string): string {
     // Implemente a lógica para buscar o nome do usuário pelo ID
     return userId || 'Usuário desconhecido';
+  }
+
+  // Adicionar ao ngOnInit ou como um método separado chamado por ngOnInit
+  loadAvailableGroups(): void {
+    this.logger.log('ViewComponent', 'Carregando grupos disponíveis');
+    
+    this.groupService.getAllUserGroups()
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(err => {
+          this.logger.error('ViewComponent', 'Erro ao carregar grupos', err);
+          return of([]);
+        })
+      )
+      .subscribe(groups => {
+        this.groups = groups;
+        console.log('All available groups loaded:', groups);
+        
+        // Add groups to groupDetails for reliable name lookup
+        groups.forEach(group => {
+          if (group.id && group.name) {
+            if (!this.groupDetails) this.groupDetails = {};
+            this.groupDetails[group.id] = group;
+          }
+        });
+      });
+  }
+
+  // Método para lidar com mudanças no grupo selecionado
+  onGroupIdChanged(newGroupId: string | null): void {
+    this.logger.log('ViewComponent', 'ID do grupo alterado', {
+      previous: this.registro?.groupId,
+      new: newGroupId
+    });
+    
+    // Armazenar o novo ID do grupo, mas não aplicar até que o usuário salve
+    this.newGroupId = newGroupId;
+    this.groupChanged = true;
+  }
+
+  // Método para salvar as alterações de compartilhamento
+  saveGroupSharing(): void {
+    if (!this.registro || !this.collection || !this.id || !this.userId) {
+      this.snackBar.open('Dados insuficientes para salvar o compartilhamento', 'OK', { duration: 3000 });
+      return;
+    }
+    
+    const previousGroupId = this.registro.groupId || null;
+    
+    // Build the correct document path including the userId
+    const collectionPath = `users/${this.userId}/${this.collection}`;
+    
+    // Log the path to confirm it's correct
+    console.log('Updating document at path:', collectionPath);
+    
+    // First update the record with the new groupId
+    this.firestoreService.updateRegistro(collectionPath, this.id, { 
+      groupId: this.newGroupId,
+      updatedAt: new Date(),
+      updatedBy: this.userId
+    })
+      .then(() => {
+        this.logger.log('ViewComponent', 'Registro atualizado com novo groupId');
+        
+        // Create sharing history entry
+        const sharingEntry = {
+          groupId: this.newGroupId,
+          previousGroupId: previousGroupId,
+          performedBy: this.userId,
+          timestamp: new Date(),
+          action: previousGroupId ? 'change' : 'share'
+        };
+        
+        // Update the sharing history using Firebase FieldValue
+        return this.firestoreService.updateRegistro(
+          collectionPath,
+          this.id, 
+          { 
+            sharingHistory: firebase.firestore.FieldValue.arrayUnion(sharingEntry)
+          }
+        );
+      })
+      .then(() => {
+        // Update local state
+        this.registro.groupId = this.newGroupId;
+        this.groupChanged = false;
+        
+        // Reload history
+        this.loadSharingHistory();
+        
+        this.snackBar.open('Compartilhamento salvo com sucesso', 'OK', { duration: 3000 });
+      })
+      .catch(err => {
+        this.logger.error('ViewComponent', 'Erro ao atualizar compartilhamento', err);
+        this.snackBar.open(`Erro ao compartilhar: ${err.message}`, 'OK', { duration: 5000 });
+      });
+  }
+
+  // Método para cancelar alterações no compartilhamento
+  cancelGroupChange(): void {
+    this.newGroupId = this.registro?.groupId || null;
+    this.groupChanged = false;
+  }
+
+  // Add this debug method to ViewComponent
+  private logDebugInfo(): void {
+    console.log('Debug info for record sharing:');
+    console.log('Collection:', this.collection);
+    console.log('Record ID:', this.id);
+    console.log('New Group ID:', this.newGroupId);
+    console.log('Previous Group ID:', this.registro?.groupId);
+    console.log('Full registro object:', this.registro);
   }
 }
