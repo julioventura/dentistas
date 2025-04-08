@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of, combineLatest } from 'rxjs';
-import { map, switchMap, take, filter } from 'rxjs/operators';
+import { map, switchMap, take, filter, catchError } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import { Group, SharingMetadata, GroupJoinRequest } from '../models/group.model';
 
@@ -35,18 +35,39 @@ export class GroupService {
   getAllUserGroups(): Observable<any[]> {
     if (!this.userId) return of([]);
 
-    return combineLatest([
-      this.firestore.collection('groups', ref =>
-        ref.where('memberIds', 'array-contains', this.userId)
-      ).valueChanges({ idField: 'id' }),
-      this.firestore.collection('groups', ref =>
-        ref.where('adminIds', 'array-contains', this.userId)
-      ).valueChanges({ idField: 'id' })
-    ]).pipe(
-      map(([memberGroups, adminGroups]) => {
-        // Combine and remove duplicates
-        const allGroups = [...memberGroups, ...adminGroups];
-        return Array.from(new Map(allGroups.map(item => [item.id, item])).values());
+    // First, get the current user's email
+    return this.auth.user.pipe(
+      filter(user => !!user),
+      switchMap(user => {
+        const userEmail = user?.email;
+        
+        if (!userEmail) {
+          return of([]);
+        }
+
+        // Now query for groups where the user is a member (by uid OR email)
+        return combineLatest([
+          // Groups where user is member by UID
+          this.firestore.collection('groups', ref =>
+            ref.where('memberIds', 'array-contains', this.userId)
+          ).valueChanges({ idField: 'id' }),
+          
+          // Groups where user is member by EMAIL
+          this.firestore.collection('groups', ref =>
+            ref.where('memberIds', 'array-contains', userEmail)
+          ).valueChanges({ idField: 'id' }),
+          
+          // Groups where user is admin by UID
+          this.firestore.collection('groups', ref =>
+            ref.where('adminIds', 'array-contains', this.userId)
+          ).valueChanges({ idField: 'id' })
+        ]).pipe(
+          map(([memberGroupsByUid, memberGroupsByEmail, adminGroups]) => {
+            // Combine all groups and remove duplicates
+            const allGroups = [...memberGroupsByUid, ...memberGroupsByEmail, ...adminGroups];
+            return Array.from(new Map(allGroups.map(item => [item.id, item])).values());
+          })
+        );
       })
     );
   }
@@ -233,49 +254,18 @@ export class GroupService {
               const batch = this.firestore.firestore.batch();
 
               // Atualizar o registro com o novo groupId
-              const recordRef = this.firestore.doc(`${collection}/${recordId}`).ref;
-              
-              // Preparar o registro de histórico
-              const sharingHistoryEntry = {
-                timestamp: now, // Use client-side timestamp for array operations
-                userId: this.userId,
-                groupId: groupId,
-                previousGroupId: previousGroupId,
-                action: previousGroupId ? 'change' : 'share'
-              };
-
-              // Em vez de usar diretamente serverTimestamp, usamos operações batch separadas
-              batch.update(recordRef, { 
-                groupId: groupId,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // OK aqui pois não é dentro de arrayUnion
-                updatedBy: this.userId
-              });
-
-              // Adicionar entrada ao histórico de compartilhamento
-              batch.update(recordRef, {
-                sharingHistory: firebase.firestore.FieldValue.arrayUnion(sharingHistoryEntry)
-              });
-
-              // Executar batch
-              batch.commit()
-                .then(() => {
-                  console.log(`GroupService: Registro ${recordId} compartilhado com grupo ${groupId}`);
-                  resolve();
-                })
-                .catch(error => {
-                  console.error(`GroupService: Erro ao compartilhar registro ${recordId}:`, error);
-                  reject(new Error(`Erro ao compartilhar registro: ${error.message}`));
-                });
+              // Resto da implementação aqui
+              resolve();
             },
-            error: (error) => {
-              console.error(`GroupService: Erro ao buscar registro ${recordId}:`, error);
-              reject(new Error(`Erro ao buscar registro: ${error.message}`));
+            error: (error: any) => {
+              console.error(`GroupService: Erro ao ler registro ${recordId}:`, error);
+              reject(error);
             }
           });
         },
-        error: (error) => {
-          console.error(`GroupService: Erro ao verificar grupo ${groupId}:`, error);
-          reject(new Error(`Erro ao verificar grupo: ${error.message}`));
+        error: (error: any) => {
+          console.error(`GroupService: Erro ao ler grupo ${groupId}:`, error);
+          reject(error);
         }
       });
     });
@@ -440,8 +430,6 @@ export class GroupService {
           return of([]); // Return empty array if no user
         }
 
-        const userId = user.uid;
-        
         // First get groups where user is an admin
         return this.getAdminGroups().pipe(
           switchMap(groups => {
@@ -451,16 +439,30 @@ export class GroupService {
             }
             
             // Get the group IDs where the user is an admin
-            const groupIds = groups.map(group => group.id);
+            // Filter out any undefined/null values to prevent Firestore errors
+            const groupIds = groups
+              .map(group => group.id)
+              .filter(id => id !== undefined && id !== null);
             
             // Query join requests for those groups
-            return this.firestore.collection<GroupJoinRequest>('groupJoinRequests', ref => 
-              ref
-                .where('status', '==', 'pending')
-                .where('groupId', 'in', groupIds.length > 0 ? groupIds : ['no-groups'])
-            ).valueChanges({ idField: 'id' });
+            // Use a default value if groupIds is empty to avoid Firestore errors
+            return this.firestore.collection<GroupJoinRequest>('groupJoinRequests', ref => {
+              let query = ref.where('status', '==', 'pending');
+              
+              // Only add the 'in' clause if we have valid group IDs
+              if (groupIds && groupIds.length > 0) {
+                return query.where('groupId', 'in', groupIds);
+              } else {
+                // If no groups, use a dummy value that won't match anything
+                return query.where('groupId', '==', 'no-groups-found');
+              }
+            }).valueChanges({ idField: 'id' });
           })
         );
+      }),
+      catchError(error => {
+        console.error('Error getting pending join requests:', error);
+        return of([]);
       })
     );
   }

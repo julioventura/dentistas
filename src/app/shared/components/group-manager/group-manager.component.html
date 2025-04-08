@@ -118,6 +118,11 @@
               </div>
             </form>
           </mat-card-content>
+          <mat-card-actions *ngIf="selectedGroup && (isGroupAdmin || isAdmin)">
+            <button mat-raised-button color="warn" (click)="deleteGroup()">
+              <mat-icon>delete_forever</mat-icon> Excluir Grupo
+            </button>
+          </mat-card-actions>
         </mat-card>
 
         <!-- Visualização dos detalhes do grupo (para membros comuns) -->
@@ -156,6 +161,17 @@
           <mat-card-actions *ngIf="selectedGroup && !isGroupAdmin && !isAdmin">
             <button mat-raised-button color="primary" (click)="requestToJoinGroup(selectedGroup.id)">
               <mat-icon>person_add</mat-icon> Solicitar entrada no grupo
+            </button>
+          </mat-card-actions>
+          <mat-card-actions align="end">
+            <!-- Botão existente para solicitar entrada -->
+            <button mat-raised-button color="primary" (click)="requestToJoinGroup(selectedGroup.id)">
+              <mat-icon>person_add</mat-icon> Solicitar entrada no grupo
+            </button>
+            
+            <!-- Novo botão para sair do grupo (quando o usuário já é membro) -->
+            <button mat-raised-button color="warn" *ngIf="isMember(selectedGroup)" (click)="leaveGroup(selectedGroup)">
+              <mat-icon>exit_to_app</mat-icon> Sair do Grupo
             </button>
           </mat-card-actions>
         </mat-card>

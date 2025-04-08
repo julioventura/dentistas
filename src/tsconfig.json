@@ -8,6 +8,9 @@
         "strictFunctionTypes": true,
         "sourceMap": true
     },
+    "angularCompilerOptions": {
+        "strictTemplates": true
+    },
     "exclude": [
         "node_modules",
         "**/node_modules/*"

@@ -1,5 +1,4 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from '../../material.module';
@@ -10,16 +9,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { FirestoreService } from '../../services/firestore.service';
-import { Group } from '../../models/group.model';
-import { ConfigService } from '../../../shared/services/config.service';
-import { MatDialog } from '@angular/material/dialog';
-import { RequestJoinDialog } from '../../dialogs/request-join-dialog/request-join-dialog.component';
 import { Observable, of } from 'rxjs';
-import { map, startWith, catchError } from 'rxjs/operators';
+import { catchError, filter, take } from 'rxjs/operators';
+
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { FirestoreService } from '../../services/firestore.service';
+import { ConfigService } from '../../services/config.service';
+import { Group, GroupJoinRequest } from '../../models/group.model';
+import { RequestJoinDialog } from '../../dialogs/request-join-dialog/request-join-dialog.component';
+
+import { MatDialog } from '@angular/material/dialog';
+import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { GroupJoinRequest } from '../../models/group.model';
+import { AngularFireAuth } from '@angular/fire/compat/auth'; // Corrected import
 
 @Component({
   selector: 'app-group-manager',
@@ -31,7 +34,8 @@ export class GroupManagerComponent implements OnInit {
   groups: Group[] = [];
   selectedGroup: Group | null = null;
   groupForm: FormGroup;
-  
+  userId: string | null = null;
+
   // Substituindo isAdmin por duas propriedades distintas
   isAdmin = false;           // Admin do site (permanece para compatibilidade)
   isGroupAdmin = false;      // Admin de um grupo específico
@@ -40,14 +44,13 @@ export class GroupManagerComponent implements OnInit {
   users: any[] = [];
   joinRequests: any[] = [];
 
-  // Manter apenas:
   manualEmail: string = '';
   showManualEmailInput: boolean = false;
 
-  // Add these properties to the GroupManagerComponent class
   filteredUsers: Observable<any[]> = of([]);
   filteredAdmins: Observable<any[]> = of([]);
   selectedUserToAdd: any = null;
+  userEmail: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -55,8 +58,15 @@ export class GroupManagerComponent implements OnInit {
     private firestoreService: FirestoreService<any>,
     private snackBar: MatSnackBar,
     private configService: ConfigService,
-    private dialog: MatDialog  // Make sure this is added
+    private dialog: MatDialog, 
+    private afAuth: AngularFireAuth 
   ) {
+    // Obter o email do usuário atual
+    this.afAuth.user.subscribe(user => {
+      this.userId = user?.uid || null;
+      this.userEmail = user?.email || null;
+    });
+    
     this.groupForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
@@ -336,5 +346,73 @@ export class GroupManagerComponent implements OnInit {
   displayUserFn(user: any): string {
     if (!user) return '';
     return user.email || user.nome || user.name || user.displayName || '';
+  }
+
+  // Adicione os métodos para verificar se é membro, sair do grupo e excluir grupo
+  isMember(group: Group): boolean {
+    if (!this.userId || !group.memberIds) return false;
+    // Verificar se o usuário está na lista de membros por ID ou email
+    return group.memberIds.includes(this.userId) || 
+           (!!this.userEmail && group.memberIds.includes(this.userEmail));
+  }
+
+  leaveGroup(group: Group): void {
+    // Confirmar antes de sair
+    if (!confirm(`Tem certeza que deseja sair do grupo "${group.name}"?`)) {
+      return;
+    }
+
+    // Se temos o userId
+    if (this.userId) {
+      this.groupService.removeGroupMember(group.id, this.userId)
+        .then(() => {
+          this.snackBar.open('Você saiu do grupo com sucesso', 'OK', { duration: 3000 });
+          this.selectedGroup = null;
+          this.loadGroups(); // Recarregar a lista de grupos
+        })
+        .catch(error => {
+          console.error('Erro ao sair do grupo:', error);
+          this.snackBar.open('Erro ao sair do grupo', 'OK', { duration: 3000 });
+        });
+    }
+    
+    // Se estamos usando email
+    if (this.userEmail && group.memberIds.includes(this.userEmail)) {
+      // Crie uma cópia do grupo sem o email na lista
+      const updatedGroup = {...group};
+      updatedGroup.memberIds = updatedGroup.memberIds.filter(id => id !== this.userEmail);
+      
+      this.groupService.updateGroup(group.id, updatedGroup)
+        .then(() => {
+          this.snackBar.open('Você saiu do grupo com sucesso', 'OK', { duration: 3000 });
+          this.selectedGroup = null;
+          this.loadGroups(); // Recarregar a lista de grupos
+        })
+        .catch(error => {
+          console.error('Erro ao sair do grupo:', error);
+          this.snackBar.open('Erro ao sair do grupo', 'OK', { duration: 3000 });
+        });
+    }
+  }
+
+  deleteGroup(): void {
+    if (!this.selectedGroup) return;
+    
+    // Confirmar antes de excluir
+    if (!confirm(`ATENÇÃO: Esta ação é irreversível!\n\nTem certeza que deseja excluir permanentemente o grupo "${this.selectedGroup.name}"?`)) {
+      return;
+    }
+    
+    this.groupService.deleteGroup(this.selectedGroup.id)
+      .then(() => {
+        this.snackBar.open('Grupo excluído com sucesso', 'OK', { duration: 3000 });
+        this.selectedGroup = null;
+        this.resetForm();
+        this.loadGroups(); // Recarregar a lista de grupos
+      })
+      .catch(error => {
+        console.error('Erro ao excluir grupo:', error);
+        this.snackBar.open('Erro ao excluir grupo', 'OK', { duration: 3000 });
+      });
   }
 }
