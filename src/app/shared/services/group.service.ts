@@ -424,44 +424,46 @@ export class GroupService {
    */
   getPendingJoinRequests(): Observable<GroupJoinRequest[]> {
     return this.auth.user.pipe(
-      filter(user => !!user),  // Ensure we have a user
+      filter(user => !!user),
       switchMap(user => {
         if (!user || !user.uid) {
-          return of([]); // Return empty array if no user
+          console.log('Group Service: No user ID available');
+          return of([]);
         }
 
+        console.log(`Group Service: Getting admin groups for user ${user.uid}`);
         // First get groups where user is an admin
         return this.getAdminGroups().pipe(
           switchMap(groups => {
+            console.log(`Group Service: Found ${groups.length} admin groups`);
             // If user is not admin of any group, return empty array
             if (!groups || groups.length === 0) {
               return of([]);
             }
             
             // Get the group IDs where the user is an admin
-            // Filter out any undefined/null values to prevent Firestore errors
             const groupIds = groups
               .map(group => group.id)
               .filter(id => id !== undefined && id !== null);
+              
+            console.log(`Group Service: Querying join requests for groups: ${groupIds}`);
             
             // Query join requests for those groups
-            // Use a default value if groupIds is empty to avoid Firestore errors
-            return this.firestore.collection<GroupJoinRequest>('groupJoinRequests', ref => {
-              let query = ref.where('status', '==', 'pending');
-              
-              // Only add the 'in' clause if we have valid group IDs
-              if (groupIds && groupIds.length > 0) {
-                return query.where('groupId', 'in', groupIds);
-              } else {
-                // If no groups, use a dummy value that won't match anything
-                return query.where('groupId', '==', 'no-groups-found');
-              }
-            }).valueChanges({ idField: 'id' });
+            if (groupIds && groupIds.length > 0) {
+              return this.firestore.collection<GroupJoinRequest>('groupJoinRequests', ref => 
+                ref.where('status', '==', 'pending')
+                  .where('groupId', 'in', groupIds)
+              ).valueChanges({ idField: 'id' });
+            } else {
+              // If no valid group IDs, return empty array
+              console.log('Group Service: No valid group IDs found');
+              return of([]);
+            }
           })
         );
       }),
       catchError(error => {
-        console.error('Error getting pending join requests:', error);
+        console.error('Group Service: Error getting pending join requests:', error);
         return of([]);
       })
     );
