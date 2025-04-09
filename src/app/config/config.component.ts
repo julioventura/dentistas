@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 import { NavegacaoService } from '../shared/services/navegacao.service';
 import { ConfigService } from '../shared/services/config.service';  
@@ -11,9 +15,15 @@ import { SubcolecaoService, Subcolecao } from '../shared/services/subcolecao.ser
   selector: 'app-config',
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss'],
-  standalone: false
+  standalone: true,
+  imports: [
+    CommonModule, 
+    FormsModule,
+    RouterModule,
+    MatIconModule,
+    MatButtonModule
+  ]
 })
-
 export class ConfigComponent implements OnInit {
   ambiente: string = '';
   new_window: boolean = false;
@@ -32,10 +42,10 @@ export class ConfigComponent implements OnInit {
 
 
   constructor(
-    public configuracoes: ConfigService,
     private router: Router,
-    private navegacaoService: NavegacaoService,
     public util: UtilService,
+    public configuracoes: ConfigService,
+    private navegacaoService: NavegacaoService,
     private firestore: AngularFirestore,
     private subcolecaoService: SubcolecaoService
   ) { }
@@ -67,14 +77,8 @@ export class ConfigComponent implements OnInit {
 
 
   // Método para navegação dinâmica
-  go(component: string, new_window: boolean = false) {
-    this.new_window = new_window;
-    if (new_window) {
-      const introUrl = `/${component}/intro`;
-      this.router.navigate([introUrl]); // Navega para a introdução no próprio app
-    } else {
-      this.router.navigate(['/' + component]);
-    }
+  go(route: string) {
+    this.router.navigate(['/' + route]);
   }
 
   

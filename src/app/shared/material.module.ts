@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   exports: [
@@ -33,7 +34,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatToolbarModule,
     MatTabsModule,
     MatMenuModule,
-    MatDividerModule
+    MatDividerModule,
+    MatAutocompleteModule
   ]
 })
-export class MaterialModule { }
+export class MaterialModule {}

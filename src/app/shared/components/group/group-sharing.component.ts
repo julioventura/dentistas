@@ -1,15 +1,23 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { GroupService } from '../../services/group.service';
-import { LoggingService } from '../../services/logging.service';
-import { Group } from '../../models/group.model';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatIconModule } from '@angular/material/icon';
+import { GroupService } from './group.service';
+import { LoggingService } from '../../services/logging.service';
+
+// Add missing interface
+interface Group {
+  id: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-group-sharing',
@@ -19,9 +27,14 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule
   ]
 })
 export class GroupSharingComponent implements OnInit, OnDestroy {
@@ -34,12 +47,11 @@ export class GroupSharingComponent implements OnInit, OnDestroy {
   isLoading = false;
   selectedGroupId: string | null = null;
   private destroy$ = new Subject<void>();
-
-  constructor(
-    private groupService: GroupService,
-    private snackBar: MatSnackBar,
-    private logger: LoggingService
-  ) {}
+  
+  // Use injection pattern for services
+  private groupService = inject(GroupService);
+  private snackBar = inject(MatSnackBar);
+  private logger = inject(LoggingService);
 
   ngOnInit(): void {
     this.logger.log('GroupSharingComponent', 'Inicializando', { 

@@ -1,0 +1,54 @@
+<div class="container container_principal" [@fadeAnimation]>
+  <!-- Header with title -->
+  <div class="sticky-header">
+    <div class="header">
+      <div class="actions">
+        <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+      </div>
+      <h1 class="title">{{ titulo_da_pagina }}</h1>
+      <div class="actions">
+        <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Carregando...</p>
+  </div>
+
+  <!-- Main content -->
+  <div class="container mt-10" *ngIf="!isLoading">
+    <!-- Join requests section -->
+    <div class="join-requests-section" *ngIf="(isAdmin || isGroupAdmin) && joinRequests.length > 0">
+      <!-- Content for join requests -->
+    </div>
+
+    <!-- Groups management section -->
+    <div class="row">
+      <!-- Groups list column -->
+      <div class="col-md-4">
+        <!-- Group list here -->
+      </div>
+
+      <!-- Group form/detail column -->
+      <div class="col-md-8">
+        <!-- Group form or details -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Autocomplete components -->
+  <mat-autocomplete #adminAuto="matAutocomplete" [displayWith]="displayUserFn">
+    <mat-option *ngFor="let user of filteredAdmins | async" [value]="user">
+      {{ user.nome || user.email }}
+    </mat-option>
+  </mat-autocomplete>
+
+  <mat-autocomplete #userAuto="matAutocomplete" [displayWith]="displayUserFn">
+    <mat-option *ngFor="let user of filteredUsers | async" [value]="user">
+      {{ user.nome || user.email }}
+    </mat-option>
+  </mat-autocomplete>
+</div>

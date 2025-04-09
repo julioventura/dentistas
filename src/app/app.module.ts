@@ -1,72 +1,45 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-
-// Firebase e Firestore
+import { RouterModule } from '@angular/router';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from '../environments/environment';
+import { HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 
-// Componentes da aplicação
+// Components
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import { PerfilComponent } from './perfil/perfil.component';
 import { FooterComponent } from './footer/footer.component';
 import { MenuComponent } from './menu/menu.component';
-import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { ConfigComponent } from './config/config.component';
 import { ListComponent } from './list/list.component';
-import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
-import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
+import { PerfilComponent } from './perfil/perfil.component';
 import { FichasComponent } from './fichas/fichas.component';
-import { MenuConfigComponent } from './menu/menu-config/menu-config.component';
+import { ViewComponent } from './view/view.component';
+import { CamposRegistroComponent } from './camposRegistro/camposRegistro.component';
 import { HomeConfigComponent } from './home/home-config/home-config.component';
+import { MenuConfigComponent } from './menu/menu-config/menu-config.component';
 import { ImportarCadastroComponent } from './shared/utils/importar-cadastro/importar-cadastro.component';
-import { ErupcoesComponent } from './erupcoes/erupcoes.component';
-import { AutoFocusDirective } from './shared/directives/auto-focus.directive';
-import { GroupManagerComponent } from './shared/components/group-manager/group-manager.component';
-import { RequestJoinDialog } from './shared/dialogs/request-join-dialog/request-join-dialog.component';
 
-// Serviços
-import { FirestoreService } from './shared/services/firestore.service';
-import { GroupService } from './shared/services/group.service';
-import { GroupSharingService } from './shared/services/group-sharing.service';
-import { LoggingService } from './shared/services/logging.service';
-import { GroupSharingComponent } from './shared/components/group-sharing/group-sharing.component';
-
-// Guard
-import { AuthGuard } from './shared/guards/auth.guard';
-
-// Angular Material
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-
-// Standalone components
-import { HomepageComponent } from './homepage/homepage.component';
-import { BackupComponent } from './backup/backup.component';
-import { ChatbotWidgetComponent } from "./chatbot-widget/chatbot-widget.component";
-import { WhatsappButtonComponent } from './homepage/whatsapp-button/whatsapp-button.component';
-import { TabelaReferenciaDialogComponent } from './erupcoes/tabela-referencia-dialog.component';
-
+// Module imports
 import { AppRoutingModule } from './app-routing.module';
-import { AiHomepageService } from './homepage/chatbot-homepage/ai-homepage.service';
-import { EditModule } from './edit/edit.module';
+import { SharedModule } from './shared/shared.module';
 import { MaterialModule } from './shared/material.module';
-import { DatePipe } from '@angular/common';
+
+// Services
+import { FirestoreService } from './shared/services/firestore.service';
+import { LoggingService } from './shared/services/logging.service';
+
+// Import standalone components
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
+import { GroupSharingComponent } from './shared/components/group/group-sharing.component';
 
 @NgModule({
   declarations: [
@@ -74,64 +47,43 @@ import { DatePipe } from '@angular/common';
     HomeComponent,
     LoginComponent,
     FooterComponent,
-    MenuComponent, 
-    ResetPasswordComponent,
-    ConfigComponent,
+    MenuComponent,
     ListComponent,
-    CamposRegistroComponent,
-    ViewComponent,
     EditComponent,
     PerfilComponent,
     FichasComponent,
-    MenuConfigComponent,
+    ResetPasswordComponent,
+    ViewComponent,
+    CamposRegistroComponent,
     HomeConfigComponent,
-    ImportarCadastroComponent,
-    ErupcoesComponent,
-    AutoFocusDirective,
-    GroupManagerComponent
-  ], 
+    MenuConfigComponent,
+    ImportarCadastroComponent
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
     AppRoutingModule,
+    HttpClientModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatAutocompleteModule,
-    // Standalone components
-    BackupComponent,
-    ChatbotWidgetComponent,
-    HomepageComponent,
-    TabelaReferenciaDialogComponent,
-    WhatsappButtonComponent,
-    GroupSharingComponent, // Adicionar o novo componente standalone
-    // Feature modules
-    EditModule,
-    MaterialModule
-  ], 
+    MaterialModule,
+    
+    // Import standalone components
+    GroupSharingComponent,
+    ConfigComponent
+  ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     FirestoreService,
-    AiHomepageService,
-    GroupService,
-    GroupSharingService,
     LoggingService,
-    AuthGuard, 
-    DatePipe, 
-    provideAnimationsAsync()
+    DatePipe
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class AppModule { }

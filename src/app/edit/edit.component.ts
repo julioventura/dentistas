@@ -37,7 +37,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 import { firstValueFrom } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { GroupService } from '../shared/services/group.service';
+import { GroupService } from '../shared/components/group/group.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';

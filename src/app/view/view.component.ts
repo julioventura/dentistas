@@ -22,8 +22,8 @@ import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/services/form.service';
 import { fadeAnimation } from '../animations/fade.animation';
 import { UserService } from '../shared/services/user.service';
-import { GroupService } from '../shared/services/group.service';
-import { GroupSharingService } from '../shared/services/group-sharing.service';
+import { GroupService } from '../shared/components/group/group.service';
+import { GroupSharingService } from '../shared/components/group/group-sharing.service';
 import { LoggingService } from '../shared/services/logging.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -534,73 +534,38 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   // Método para lidar com mudanças no grupo selecionado
-  onGroupIdChanged(newGroupId: string | null): void {
-    this.logger.log('ViewComponent', 'ID do grupo alterado', {
-      previous: this.registro?.groupId,
-      new: newGroupId
-    });
-    
-    // Armazenar o novo ID do grupo, mas não aplicar até que o usuário salve
-    this.newGroupId = newGroupId;
-    this.groupChanged = true;
-  }
+  // onGroupIdChanged(event: any): void {
+  //   if (event && event.target) {
+  //     this.newGroupId = (event.target as HTMLSelectElement).value;
+  //   } else if (typeof event === 'string') {
+  //     this.newGroupId = event;
+  //   }
+  //   this.groupChanged = true;
+  // }
 
   // Método para salvar as alterações de compartilhamento
   saveGroupSharing(): void {
-    if (!this.registro || !this.collection || !this.id || !this.userId) {
-      this.snackBar.open('Dados insuficientes para salvar o compartilhamento', 'OK', { duration: 3000 });
-      return;
-    }
+    if (!this.registro || !this.collection || !this.id) return;
     
     const previousGroupId = this.registro.groupId || null;
     
-    // Build the correct document path including the userId
-    const collectionPath = `users/${this.userId}/${this.collection}`;
-    
-    // Log the path to confirm it's correct
-    console.log('Updating document at path:', collectionPath);
-    
-    // First update the record with the new groupId
-    this.firestoreService.updateRegistro(collectionPath, this.id, { 
-      groupId: this.newGroupId,
-      updatedAt: new Date(),
-      updatedBy: this.userId
-    })
-      .then(() => {
-        this.logger.log('ViewComponent', 'Registro atualizado com novo groupId');
-        
-        // Create sharing history entry
-        const sharingEntry = {
-          groupId: this.newGroupId,
-          previousGroupId: previousGroupId,
-          performedBy: this.userId,
-          timestamp: new Date(),
-          action: previousGroupId ? 'change' : 'share'
-        };
-        
-        // Update the sharing history using Firebase FieldValue
-        return this.firestoreService.updateRegistro(
-          collectionPath,
-          this.id, 
-          { 
-            sharingHistory: firebase.firestore.FieldValue.arrayUnion(sharingEntry)
-          }
-        );
-      })
-      .then(() => {
-        // Update local state
+    this.groupSharingService.handleRecordSharing(
+      this.collection,
+      this.id,
+      this.newGroupId,
+      previousGroupId
+    ).subscribe({
+      next: () => {
+        // Update the registro object with the new groupId
         this.registro.groupId = this.newGroupId;
         this.groupChanged = false;
-        
-        // Reload history
         this.loadSharingHistory();
-        
-        this.snackBar.open('Compartilhamento salvo com sucesso', 'OK', { duration: 3000 });
-      })
-      .catch(err => {
-        this.logger.error('ViewComponent', 'Erro ao atualizar compartilhamento', err);
-        this.snackBar.open(`Erro ao compartilhar: ${err.message}`, 'OK', { duration: 5000 });
-      });
+      },
+      error: (error) => {
+        console.error('Error saving group sharing:', error);
+        this.snackBar.open('Erro ao salvar compartilhamento', 'OK', { duration: 3000 });
+      }
+    });
   }
 
   // Método para cancelar alterações no compartilhamento
@@ -617,5 +582,33 @@ export class ViewComponent implements OnInit, OnDestroy {
     console.log('New Group ID:', this.newGroupId);
     console.log('Previous Group ID:', this.registro?.groupId);
     console.log('Full registro object:', this.registro);
+  }
+
+  // Keep only this version of the method
+  onGroupIdChanged(newGroupId: string | null): void {
+    this.newGroupId = newGroupId;
+    this.groupChanged = this.newGroupId !== (this.registro?.groupId || null);
+  }
+
+  // Keep only this version of the method
+  saveGroupChange(): void {
+    if (!this.groupChanged) return;
+    
+    this.groupSharingService.handleRecordSharing(
+      this.collection,
+      this.id,
+      this.newGroupId,
+      this.registro.groupId || null
+    ).subscribe({
+      next: () => {
+        this.snackBar.open('Compartilhamento atualizado com sucesso', 'OK', { duration: 3000 });
+        this.registro.groupId = this.newGroupId;
+        this.groupChanged = false;
+      },
+      error: (err) => {
+        this.snackBar.open('Erro ao atualizar compartilhamento', 'OK', { duration: 3000 });
+        console.error('Error updating sharing:', err);
+      }
+    });
   }
 }

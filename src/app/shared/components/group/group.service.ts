@@ -4,7 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of, combineLatest } from 'rxjs';
 import { map, switchMap, take, filter, catchError } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
-import { Group, SharingMetadata, GroupJoinRequest } from '../models/group.model';
+import { Group, SharingMetadata, GroupJoinRequest } from './group.model';
 
 @Injectable({
   providedIn: 'root'

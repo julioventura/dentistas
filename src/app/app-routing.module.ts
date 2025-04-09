@@ -20,7 +20,7 @@ import { EditComponent } from './edit/edit.component';
 import { FichasComponent } from './fichas/fichas.component';
 import { BackupComponent } from './backup/backup.component';
 import { HomepageComponent } from './homepage/homepage.component';
-import { GroupManagerComponent } from './shared/components/group-manager/group-manager.component';
+import { GroupManagerComponent } from './shared/components/group/group-manager.component';
 
 // Guards
 import { CanDeactivateGuard } from './shared/guards/can-deactivate.guard';

@@ -247,11 +247,11 @@
 
   </div>
 
-    <!-- <div class="group-sharing-container" *ngIf="!isLoading && registro && groups && groups.length > 0"> -->
+  <!-- For the group-sharing section -->
   <div class="group-sharing-container" *ngIf="registro">
     <h3 class="section-title">Compartilhamento</h3>
-    <app-group-sharing 
-      [recordGroupId]="registro?.groupId"
+    <app-group-sharing
+      [recordGroupId]="registro.groupId"
       [collection]="collection"
       [recordId]="id"
       (groupIdChange)="onGroupIdChanged($event)">
@@ -259,11 +259,9 @@
     
     <!-- Botão para salvar alterações de compartilhamento -->
     <div class="group-save-actions" *ngIf="groupChanged">
-      <button mat-raised-button color="primary" (click)="saveGroupSharing()">
-        <mat-icon>save</mat-icon> Salvar Compartilhamento
-      </button>
-      <button mat-button (click)="cancelGroupChange()">
-        Cancelar
+      <button mat-raised-button color="primary" (click)="saveGroupChange()">
+        <mat-icon>save</mat-icon>
+        Salvar alterações de compartilhamento
       </button>
     </div>
   </div>

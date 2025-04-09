@@ -1,24 +1,49 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatListModule } from '@angular/material/list';
+import { RouterModule, Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of } from 'rxjs';
 import { catchError, filter, take } from 'rxjs/operators';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 import { FirestoreService } from '../../services/firestore.service';
-import { GroupService } from '../../services/group.service';
+import { GroupService } from './group.service';
 import { ConfigService } from '../../services/config.service';
-import { Group, GroupJoinRequest } from '../../models/group.model';
+import { Group, GroupJoinRequest } from './group.model';
 import { RequestJoinDialog } from '../../dialogs/request-join-dialog/request-join-dialog.component';
 
 @Component({
   selector: 'app-group-manager',
   templateUrl: './group-manager.component.html',
   styleUrls: ['./group-manager.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    MatListModule,
+    RouterModule
+  ],
   animations: [
     trigger('fadeAnimation', [
       transition(':enter', [
