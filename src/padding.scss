@@ -84,3 +84,90 @@ $directions: (
     padding-bottom: var(--py);
 }
 
+
+
+// =================
+// margin
+// =================
+//   <div class="m-20">This has 20px margin on all sides</div>
+//   <div class="mt-10 mb-15">This has 10px top margin and 15px bottom margin </div>
+//   <div class="m" style="--m: 18px;">This has 18px margin on all sides</div>
+//   <div class="mt ml" style="--mt: 12px; --ml: 24px;">This has 12px top margin and 24px left margin</div>
+
+// Define the common margin values
+$margin-values: (
+    0,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    40,
+    50
+);
+$directions: (
+    't': 'top',
+    'r': 'right',
+    'b': 'bottom',
+    'l': 'left'
+);
+
+// Generate predefined utility classes
+@each $value in $margin-values {
+
+    // All sides margin
+    .m-#{$value} {
+        margin: #{$value}px;
+    }
+
+    // Individual directions
+    @each $abbr, $dir in $directions {
+        .m#{$abbr}-#{$value} {
+            margin-#{$dir}: #{$value}px;
+        }
+    }
+
+    // Horizontal margin (left and right)
+    .mx-#{$value} {
+        margin-left: #{$value}px;
+        margin-right: #{$value}px;
+    }
+
+    // Vertical margin (top and bottom)
+    .my-#{$value} {
+        margin-top: #{$value}px;
+        margin-bottom: #{$value}px;
+    }
+}
+
+// CSS variables for arbitrary values
+.m {
+    margin: var(--m);
+}
+
+.mt {
+    margin-top: var(--mt);
+}
+
+.mr {
+    margin-right: var(--mr);
+}
+
+.mb {
+    margin-bottom: var(--mb);
+}
+
+.ml {
+    margin-left: var(--ml);
+}
+
+.mx {
+    margin-left: var(--mx);
+    margin-right: var(--mx);
+}
+
+.my {
+    margin-top: var(--my);
+    margin-bottom: var(--my);
+}

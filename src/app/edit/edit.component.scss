@@ -3,6 +3,10 @@
 
 
 // styles.scss
+
+// ==================================
+// HEADER
+// ==================================
 .header {
 
   .back-btn,
@@ -23,14 +27,14 @@
   .add-btn:hover {
     background-color: $primary-hover;
   }
-}
 
-// Header com título 
-.header {
   .title {
     color: $red-dark;
   }
 }
+// ==================================
+
+
 
 // Linha com o nome do registro
 .record-header {

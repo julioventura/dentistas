@@ -1,44 +1,45 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MaterialModule } from '../../material.module';
-import { GroupService } from '../../services/group.service';
-import { MatSelectModule } from '@angular/material/select';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of } from 'rxjs';
 import { catchError, filter, take } from 'rxjs/operators';
-
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 import { FirestoreService } from '../../services/firestore.service';
+import { GroupService } from '../../services/group.service';
 import { ConfigService } from '../../services/config.service';
 import { Group, GroupJoinRequest } from '../../models/group.model';
 import { RequestJoinDialog } from '../../dialogs/request-join-dialog/request-join-dialog.component';
-
-import { MatDialog } from '@angular/material/dialog';
-import { map, startWith } from 'rxjs/operators';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { AngularFireAuth } from '@angular/fire/compat/auth'; // Corrected import
 
 @Component({
   selector: 'app-group-manager',
   templateUrl: './group-manager.component.html',
   styleUrls: ['./group-manager.component.scss'],
-  standalone: false
+  standalone: false,
+  animations: [
+    trigger('fadeAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('0.2s ease-in-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('0.2s ease-in-out', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class GroupManagerComponent implements OnInit {
   groups: Group[] = [];
   selectedGroup: Group | null = null;
   groupForm: FormGroup;
   userId: string | null = null;
+  userEmail: string | null = null;
 
-  // Substituindo isAdmin por duas propriedades distintas
-  isAdmin = false;           // Admin do site (permanece para compatibilidade)
-  isGroupAdmin = false;      // Admin de um grupo específico
+  isAdmin = false;
+  isGroupAdmin = false;
   
   isLoading = true;
   users: any[] = [];
@@ -50,7 +51,8 @@ export class GroupManagerComponent implements OnInit {
   filteredUsers: Observable<any[]> = of([]);
   filteredAdmins: Observable<any[]> = of([]);
   selectedUserToAdd: any = null;
-  userEmail: string | null = null;
+  
+  titulo_da_pagina: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -58,14 +60,17 @@ export class GroupManagerComponent implements OnInit {
     private firestoreService: FirestoreService<any>,
     private snackBar: MatSnackBar,
     private configService: ConfigService,
-    private dialog: MatDialog, 
-    private afAuth: AngularFireAuth 
+    private dialog: MatDialog,
+    private afAuth: AngularFireAuth,
+    private router: Router
   ) {
     // Obter o email do usuário atual
     this.afAuth.user.subscribe(user => {
       this.userId = user?.uid || null;
       this.userEmail = user?.email || null;
     });
+
+    this.titulo_da_pagina = "Grupos e Compartilhamento";
     
     this.groupForm = this.fb.group({
       name: ['', Validators.required],
@@ -414,5 +419,13 @@ export class GroupManagerComponent implements OnInit {
         console.error('Erro ao excluir grupo:', error);
         this.snackBar.open('Erro ao excluir grupo', 'OK', { duration: 3000 });
       });
+  }
+
+  voltar(): void {
+    this.router.navigate(['/']);
+  }
+  
+  getViewPath(): string {
+    return '/';
   }
 }

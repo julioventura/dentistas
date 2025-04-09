@@ -1,14 +1,27 @@
-<div class="container">
-  <div class="header">
-    <h1>Gerenciamento de Grupos</h1>
+<div class="container container_principal" [@fadeAnimation]>
+
+  <!-- HEADER existente -->
+  <div class="sticky-header">
+    <div class="header">
+      <div class="actions">
+        <img src="https://dentistas.com.br/assets/voltar.png" class="navegacao" (click)="voltar()">
+      </div>
+      <h1 class="title">{{ titulo_da_pagina }}</h1>
+      <div class="actions">
+        <img src="https://dentistas.com.br/assets/vazio.png" class="navegacao">
+      </div>
+    </div>
   </div>
+
 
   <div class="loading-container" *ngIf="isLoading">
     <mat-spinner diameter="40"></mat-spinner>
     <p>Carregando grupos...</p>
   </div>
 
-  <div class="group-content" *ngIf="!isLoading">
+  <div class="container mt-10" *ngIf="!isLoading">
+
+    <!-- <div class="group-content" *ngIf="!isLoading"> -->
     <div class="two-columns-grid">
       <!-- Coluna da esquerda: Lista de grupos -->
       <div class="column-half">
@@ -22,7 +35,7 @@
           <mat-card-content>
             <mat-nav-list>
               <a mat-list-item *ngFor="let group of groups" (click)="selectGroup(group)"
-                 [class.selected]="selectedGroup?.id === group.id">
+                [class.selected]="selectedGroup?.id === group.id">
                 <mat-icon mat-list-icon>group</mat-icon>
                 <div mat-line>{{ group.name }}</div>
                 <div mat-line *ngIf="group.clinica">{{ group.clinica }}</div>
@@ -67,40 +80,40 @@
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Descrição</mat-label>
                 <textarea matInput formControlName="description" rows="3"
-                         placeholder="Descrição ou observações sobre o grupo"></textarea>
+                  placeholder="Descrição ou observações sobre o grupo"></textarea>
               </mat-form-field>
 
               <!-- Substituir toda a seção de membros e administradores com o seguinte código: -->
               <div class="group-members-section">
                 <h3>Membros do Grupo</h3>
-                
+
                 <!-- Mostrar membros atuais com opção de remoção -->
                 <div class="member-chips">
                   <mat-chip-list aria-label="Membros">
-                    <mat-chip 
-                      *ngFor="let memberId of groupForm.get('memberIds')?.value || []" 
-                      removable="true" 
+                    <mat-chip *ngFor="let memberId of groupForm.get('memberIds')?.value || []" removable="true"
                       (removed)="removeMember(memberId)">
                       {{ getUserName(memberId) }}
                       <mat-icon matChipRemove>cancel</mat-icon>
                     </mat-chip>
                   </mat-chip-list>
                 </div>
-                
+
                 <!-- Adicionar membro por email -->
                 <div class="manual-entry-form">
                   <mat-form-field appearance="outline" class="user-email-input">
                     <mat-label>Email do usuário</mat-label>
-                    <input type="email" matInput [(ngModel)]="manualEmail" [ngModelOptions]="{standalone: true}" placeholder="usuario@exemplo.com">
+                    <input type="email" matInput [(ngModel)]="manualEmail" [ngModelOptions]="{standalone: true}"
+                      placeholder="usuario@exemplo.com">
                   </mat-form-field>
-                  
+
                   <div class="manual-entry-actions">
-                    <button mat-raised-button color="primary" (click)="addMemberByEmail(manualEmail)" [disabled]="!manualEmail">
+                    <button mat-raised-button color="primary" (click)="addMemberByEmail(manualEmail)"
+                      [disabled]="!manualEmail">
                       <mat-icon>person_add</mat-icon> Adicionar como membro
                     </button>
                   </div>
                 </div>
-                
+
                 <p class="membership-note">
                   <mat-icon>info</mat-icon>
                   Usuários serão adicionados pelo email mesmo que ainda não estejam cadastrados no sistema.
@@ -111,8 +124,7 @@
                 <button mat-button type="button" (click)="resetForm()">
                   Cancelar
                 </button>
-                <button mat-raised-button color="primary" type="submit"
-                        [disabled]="groupForm.invalid">
+                <button mat-raised-button color="primary" type="submit" [disabled]="groupForm.invalid">
                   {{ selectedGroup ? 'Atualizar' : 'Criar' }} Grupo
                 </button>
               </div>
@@ -168,7 +180,7 @@
             <button mat-raised-button color="primary" (click)="requestToJoinGroup(selectedGroup.id)">
               <mat-icon>person_add</mat-icon> Solicitar entrada no grupo
             </button>
-            
+
             <!-- Novo botão para sair do grupo (quando o usuário já é membro) -->
             <button mat-raised-button color="warn" *ngIf="isMember(selectedGroup)" (click)="leaveGroup(selectedGroup)">
               <mat-icon>exit_to_app</mat-icon> Sair do Grupo
@@ -192,7 +204,7 @@
             <mat-list-item *ngFor="let request of joinRequests" class="join-request-item">
               <mat-icon mat-list-icon>person</mat-icon>
               <div mat-line class="request-user">
-                <strong>{{ getUserName(request.userId) }}</strong> 
+                <strong>{{ getUserName(request.userId) }}</strong>
                 solicitou entrada em <strong>{{ getGroupName(request.groupId) }}</strong>
               </div>
               <div mat-line class="request-date">
@@ -218,8 +230,7 @@
 </div>
 
 <!-- For the admin autocomplete -->
-<mat-autocomplete #adminAuto="matAutocomplete" 
-  [displayWith]="displayUserFn"
+<mat-autocomplete #adminAuto="matAutocomplete" [displayWith]="displayUserFn"
   (optionSelected)="selectedUserToAdd = $event.option.value">
   <mat-option *ngFor="let user of filteredAdmins | async" [value]="user">
     {{ user.nome || user.email }}
@@ -227,8 +238,7 @@
 </mat-autocomplete>
 
 <!-- For the user autocomplete -->
-<mat-autocomplete #userAuto="matAutocomplete"
-  [displayWith]="displayUserFn" 
+<mat-autocomplete #userAuto="matAutocomplete" [displayWith]="displayUserFn"
   (optionSelected)="selectedUserToAdd = $event.option.value">
   <mat-option *ngFor="let user of filteredUsers | async" [value]="user">
     {{ user.nome || user.email }}
