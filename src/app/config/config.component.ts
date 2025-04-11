@@ -3,8 +3,8 @@ import { Router, RouterModule } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+// import { MatIconModule } from '@angular/material/icon';
+// import { MatButtonModule } from '@angular/material/button';
 
 import { NavegacaoService } from '../shared/services/navegacao.service';
 import { ConfigService } from '../shared/services/config.service';  
@@ -20,8 +20,8 @@ import { SubcolecaoService, Subcolecao } from '../shared/services/subcolecao.ser
     CommonModule, 
     FormsModule,
     RouterModule,
-    MatIconModule,
-    MatButtonModule
+    // MatIconModule,
+    // MatButtonModule
   ]
 })
 export class ConfigComponent implements OnInit {

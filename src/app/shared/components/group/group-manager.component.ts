@@ -16,6 +16,10 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of } from 'rxjs';
 import { catchError, filter, take } from 'rxjs/operators';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { FormControl } from '@angular/forms';
 
 import { FirestoreService } from '../../services/firestore.service';
 import { GroupService } from './group.service';
@@ -42,7 +46,10 @@ import { RequestJoinDialog } from '../../dialogs/request-join-dialog/request-joi
     MatAutocompleteModule,
     MatChipsModule,
     MatListModule,
-    RouterModule
+    RouterModule,
+    MatCardModule,
+    MatSelectModule,
+    MatTooltipModule
   ],
   animations: [
     trigger('fadeAnimation', [
@@ -64,7 +71,7 @@ export class GroupManagerComponent implements OnInit {
   userEmail: string | null = null;
 
   isAdmin = false;
-  isGroupAdmin = false;
+  isAdminOfSelectedGroup = false; // Changed from isGroupAdmin
   
   isLoading = true;
   users: any[] = [];
@@ -78,6 +85,11 @@ export class GroupManagerComponent implements OnInit {
   selectedUserToAdd: any = null;
   
   titulo_da_pagina: string = '';
+
+  adminInput = new FormControl('');
+  memberInput = new FormControl('');
+  selectedAdmins: any[] = [];
+  selectedMembers: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -104,16 +116,26 @@ export class GroupManagerComponent implements OnInit {
       adminIds: [[]],
       memberIds: [[]]
     });
+
+    this.filteredAdmins = new Observable<any[]>();
+    this.filteredUsers = new Observable<any[]>();
   }
 
   ngOnInit(): void {
-    // Verificar se é admin do site através do ConfigService
-    this.isAdmin = this.configService.is_admin;
+    this.afAuth.authState.subscribe(user => {
+      if (user && user.uid) {
+        this.userId = user.uid;
+        this.userEmail = user.email;
+        // Agora temos o usuário autenticado, então carregamos os grupos
+        this.loadGroups();
+        // Carregar outras funções que dependem do usuário
+        this.loadUsers();
+        this.loadPendingJoinRequests();
+      }
+    });
     
-    // Carregar pedidos de entrada
-    this.loadPendingJoinRequests();
-    this.loadGroups();
-    this.loadUsers();
+    // Outras inicializações não dependentes do usuário...
+    this.isAdmin = this.configService.is_admin;
   }
 
   loadGroups() {
@@ -138,10 +160,10 @@ export class GroupManagerComponent implements OnInit {
     
     // Verificar se o usuário atual é admin deste grupo específico
     this.groupService.isGroupAdmin(group.id).subscribe(isAdmin => {
-      this.isGroupAdmin = isAdmin;
+      this.isAdminOfSelectedGroup = isAdmin; // Changed from isGroupAdmin
       
       // Só preencher o formulário se for admin do grupo ou admin do site
-      if (this.isGroupAdmin || this.isAdmin) {
+      if (this.isAdminOfSelectedGroup || this.isAdmin) {
         this.groupForm.patchValue({
           name: group.name,
           description: group.description || '',
@@ -165,7 +187,7 @@ export class GroupManagerComponent implements OnInit {
 
     if (this.selectedGroup) {
       // Atualizar grupo - só é possível se for admin do grupo ou admin do site
-      if (this.isGroupAdmin || this.isAdmin) {
+      if (this.isAdminOfSelectedGroup || this.isAdmin) {
         this.groupService.updateGroup(this.selectedGroup.id, groupData)
           .then(() => {
             this.snackBar.open('Grupo atualizado com sucesso', 'OK', { duration: 3000 });
@@ -199,7 +221,9 @@ export class GroupManagerComponent implements OnInit {
       memberIds: []
     });
     this.selectedGroup = null;
-    this.isGroupAdmin = false;
+    this.isAdminOfSelectedGroup = false;
+    this.selectedAdmins = [];
+    this.selectedMembers = [];
   }
 
   getUserName(userId: string | null | undefined): string {
@@ -224,7 +248,7 @@ export class GroupManagerComponent implements OnInit {
 
   // Método para verificar se pode editar um grupo
   canEditGroup(group: Group): boolean {
-    return this.isAdmin || this.isGroupAdmin;
+    return this.isAdmin || this.isAdminOfSelectedGroup;
   }
 
   // Adicione este método para carregar os pedidos pendentes
@@ -446,11 +470,49 @@ export class GroupManagerComponent implements OnInit {
       });
   }
 
+  recarregar(): void {
+    this.loadGroups();
+    this.snackBar.open('Lista de grupos recarregada', 'OK', { duration: 3000 });
+  }
+
   voltar(): void {
     this.router.navigate(['/']);
   }
   
   getViewPath(): string {
     return '/';
+  }
+
+  addAdmin(): void {
+    if (this.adminInput.value) {
+      // Add admin from input to selectedAdmins array
+      this.selectedAdmins.push(this.adminInput.value);
+      this.adminInput.setValue('');
+    }
+  }
+  
+  removeAdmin(admin: any): void {
+    // Remove admin from selectedAdmins array
+    const index = this.selectedAdmins.indexOf(admin);
+    if (index >= 0) {
+      this.selectedAdmins.splice(index, 1);
+    }
+  }
+  
+  addMember(): void {
+    if (this.memberInput.value) {
+      // Add member from input to selectedMembers array
+      this.selectedMembers.push(this.memberInput.value);
+      this.memberInput.setValue('');
+    }
+  }
+
+  /**
+   * Check if current user is admin of a specific group
+   */
+  isGroupAdmin(group: Group): boolean {
+    if (!this.userId || !group.adminIds) return false;
+    return group.adminIds.includes(this.userId) || 
+           (!!this.userEmail && group.adminIds.includes(this.userEmail));
   }
 }
