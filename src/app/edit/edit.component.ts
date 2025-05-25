@@ -27,16 +27,16 @@ import { FirestoreService } from '../shared/services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UtilService } from '../shared/utils/util.service';
 import { FormService } from '../shared/services/form.service';
-import { CamposFichaService } from '../shared/services/campos-ficha.service';  // Serviço para carregar campos de subcollections
+import { CamposFichaService } from '../shared/services/campos-ficha.service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { CamposService } from '../shared/services/campos.service'; // Serviço para carregar campos de coleções
+import { CamposService } from '../shared/services/campos.service';
 import { KeyValue } from '@angular/common';
 import { fadeAnimation } from '../animations/fade.animation';
 import { CanComponentDeactivate } from '../shared/guards/can-deactivate.guard';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
-import { firstValueFrom } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { firstValueFrom, Subscription, interval, of, Subject } from 'rxjs'; // Adicionar 'of' aqui
+import { take, filter, takeWhile, catchError, takeUntil } from 'rxjs/operators'; // Adicionar 'catchError' aqui
 import { GroupService } from '../shared/components/group/group.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -57,12 +57,11 @@ interface Campo {
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
-  encapsulation: ViewEncapsulation.Emulated, // Sobre encapsulamento, para permitir uso global de variáveis CSS (None)
+  encapsulation: ViewEncapsulation.Emulated,
   animations: [
     trigger('fadeAnimation', [
       transition(':enter', [
         style({ opacity: 0 }),
-        // Reduzindo o tempo para 1/3
         animate('0.2s ease-in-out', style({ opacity: 1 }))
       ]),
       transition(':leave', [
@@ -91,20 +90,20 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   customLabelWidthValue: number = 200;
   customLabelWidth: string = `${this.customLabelWidthValue}px`;
   
-  // Adicione esta propriedade para controlar grupos expandidos
   gruposExpandidos: { [key: string]: boolean } = {};
-  
-  // Adicione esta propriedade para controlar subgrupos expandidos
   subgruposExpandidos: { [key: string]: boolean } = {};
   
   private boundBeforeUnloadHandler!: (event: BeforeUnloadEvent) => void;
-  
-  // Adicione esta propriedade à classe
   private dialogAlreadyShown = false;
+  private formReadySubscription?: Subscription;
+  private maxWaitTime = 5000; // 5 segundos máximo de espera
+  private checkInterval = 100; // Verificar a cada 100ms
   
-  // Propriedade para armazenar grupos
   groups: any[] = [];
   
+  // Adicionar um Subject para destruição de subscriptions
+  private destroy$ = new Subject<void>();
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -112,10 +111,10 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
     private afAuth: AngularFireAuth,
     public util: UtilService,
     public FormService: FormService,
-    private camposFichaService: CamposFichaService,  // Injeção para subcollections
-    private camposService: CamposService,              // Injeção para collections
+    private camposFichaService: CamposFichaService,
+    private camposService: CamposService,
     private dialog: MatDialog,
-    private groupService: GroupService  // This is now correctly injected
+    private groupService: GroupService
   ) { }
 
   /**
@@ -132,72 +131,111 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   ngOnInit() {
     console.log('ngOnInit()');
     
-    // Inicializa todos os grupos como colapsados
     this.gruposExpandidos = {};
     this.subgruposExpandidos = {};
     
-    this.afAuth.authState.subscribe(user => {
-      if (user && user.uid) {
-        this.userId = user.uid;
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id) { this.id = id; }
-        this.collection = this.route.snapshot.paramMap.get('collection')!;
-        this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
-        this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
+    this.afAuth.authState.pipe(
+        filter(user => !!user), // Só prosseguir se houver usuário
+        take(1)
+    ).subscribe(user => {
+        if (user?.uid) {
+            this.userId = user.uid;
+            const id = this.route.snapshot.paramMap.get('id');
+            if (id) { this.id = id; }
+            this.collection = this.route.snapshot.paramMap.get('collection')!;
+            this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
+            this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
 
-        this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection || this.collection);
+            this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection || this.collection);
 
-        console.log('userId:', this.userId);
-        console.log('collection:', this.collection);
-        console.log('id:', id);
-        console.log('titulo_da_pagina:', this.titulo_da_pagina);
-        console.log('subcollection:', this.subcollection);
-        console.log('fichaId:', this.fichaId);
+            console.log('userId:', this.userId);
+            console.log('collection:', this.collection);
+            console.log('id:', id);
+            console.log('titulo_da_pagina:', this.titulo_da_pagina);
+            console.log('subcollection:', this.subcollection);
+            console.log('fichaId:', this.fichaId);
 
-        if (!this.id) {
-          console.error('Registro não identificado.');
-          this.voltar();
+            if (!this.id) {
+                console.error('Registro não identificado.');
+                this.voltar();
+            } else {
+                if (this.subcollection) {
+                    this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
+                        .then(() => {
+                            this.inicializarGruposESubgrupos();
+                        })
+                        .catch(error => {
+                            console.error('Erro ao carregar ficha:', error);
+                        });
+                } else {
+                    this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
+                        .then(() => {
+                            this.inicializarGruposESubgrupos();
+                        })
+                        .catch(error => {
+                            console.error('Erro ao carregar registro:', error);
+                        });
+                }
+            }
+            
+            this.subtitulo_da_pagina = this.FormService.nome_in_collection;
+            if (this.subcollection) {
+                this.customLabelWidthValue = 350;
+            } else {
+                this.customLabelWidthValue = 150;
+            }
+            this.updateCustomLabelWidth();
+
+            // Só carregar grupos se necessário (verificar se a funcionalidade de grupos está sendo usada)
+            this.loadGroupsIfNeeded();
         } else {
-          if (this.subcollection) {
-            this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
-              .then(() => {
-                // Inicializar todos os grupos como fechados após carregar os dados
-                this.inicializarGruposESubgrupos();
-              });
-          } else {
-            this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
-              .then(() => {
-                // Inicializar todos os grupos como fechados após carregar os dados
-                this.inicializarGruposESubgrupos();
-              });
-          }
+            console.error('Usuário não autenticado.');
+            this.util.goHome();
         }
-        
-        this.subtitulo_da_pagina = this.FormService.nome_in_collection;
-        if (this.subcollection) {
-          this.customLabelWidthValue = 350;
-        }
-        else {
-          this.customLabelWidthValue = 150;
-        }
-        this.updateCustomLabelWidth();
-
-      } else {
-        console.error('Usuário não autenticado.');
-        this.util.goHome();
-      }
     });
 
-    // Armazena a referência para remover depois
     this.boundBeforeUnloadHandler = this.beforeUnloadHandler.bind(this);
     window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
-    
-    // Carregar grupos disponíveis para compartilhamento
-    this.groupService.getAllUserGroups().subscribe(groups => {
-      this.groups = groups;
+}
+
+private loadGroupsIfNeeded(): void {
+    // Verificar se realmente precisa carregar grupos
+    if (!this.shouldLoadGroups()) {
+        console.log('EditComponent: Carregamento de grupos não necessário');
+        return;
+    }
+
+    // Verificar se grupos já foram carregados
+    if (this.groups && this.groups.length > 0) {
+        console.log('EditComponent: Grupos já carregados');
+        return;
+    }
+
+    console.log('EditComponent: Carregando grupos...');
+    this.groupService.getAllUserGroups().pipe(
+        takeUntil(this.destroy$), // Adicione um destroy$ subject para cancelar subscriptions
+        catchError(error => {
+            console.warn('EditComponent: Não foi possível carregar grupos:', error);
+            return of([]);
+        })
+    ).subscribe((groups: any[]) => {
+        this.groups = groups;
+        console.log('EditComponent: Grupos carregados:', groups.length);
     });
-  }
-  
+}
+
+private shouldLoadGroups(): boolean {
+    // Só carregar grupos se:
+    // 1. Não é uma subcollection
+    // 2. Tem collection e id válidos
+    // 3. O usuário está na página de edição (não visualização)
+    return !this.subcollection && 
+           !!this.collection && 
+           !!this.id && 
+           !this.view_only &&
+           this.router.url.includes('/edit/');
+}
+
   // Método para inicializar todos os grupos como fechados
   inicializarGruposFechados() {
     if (this.FormService.campos) {
@@ -342,15 +380,72 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
    * - Tenta focar o campo "nome" logo após a renderização da view.
    * Retorna: void.
    */
-  ngAfterViewInit() {
-    if (this.nomeInput) {
-      setTimeout(() => {
-        this.nomeInput?.nativeElement.focus();
-      }, 0);
-    } else {
-      // O campo "nome" não foi encontrado; verificar se o template carrega corretamente..
-      console.warn('O campo "nome" não foi encontrado.');
+  ngAfterViewInit(): void {
+    console.log('EditComponent: ngAfterViewInit iniciado');
+    this.waitForFormToBeReady();
+  }
+
+  private waitForFormToBeReady(): void {
+    let elapsedTime = 0;
+    
+    this.formReadySubscription = interval(this.checkInterval).pipe(
+      takeWhile(() => {
+        const isFormReady = this.FormService.fichaForm && !this.FormService.isLoading;
+        const hasNotTimedOut = elapsedTime < this.maxWaitTime;
+        
+        elapsedTime += this.checkInterval;
+        
+        if (isFormReady) {
+          console.log('EditComponent: Formulário está pronto');
+          this.onFormReady();
+          return false;
+        }
+        
+        if (!hasNotTimedOut) {
+          console.warn('EditComponent: Timeout aguardando o formulário ficar pronto');
+          return false;
+        }
+        
+        return true;
+      }, true)
+    ).subscribe();
+  }
+
+  private onFormReady(): void {
+    try {
+      if (this.FormService.fichaForm) {
+        const nomeControl = this.FormService.fichaForm.get('nome');
+        if (nomeControl) {
+          console.log('Campo nome encontrado:', nomeControl.value);
+          this.setupFormLogic();
+        } else {
+          const possibleNameFields = ['nome', 'nomeCompleto', 'nomePaciente', 'title', 'nomeFantasia'];
+          let foundField = false;
+          
+          for (const fieldName of possibleNameFields) {
+            const field = this.FormService.fichaForm.get(fieldName);
+            if (field) {
+              console.log(`Campo ${fieldName} encontrado como substituto para nome:`, field.value);
+              foundField = true;
+              this.setupFormLogic();
+              break;
+            }
+          }
+          
+          if (!foundField) {
+            console.log('Nenhum campo de nome específico foi encontrado - formulário pode estar vazio ou ser um novo registro');
+            this.setupFormLogic();
+          }
+        }
+      }
+    } catch (error) {
+      console.error('EditComponent: Erro ao processar formulário pronto:', error);
     }
+  }
+
+  private setupFormLogic(): void {
+    console.log('EditComponent: Configurando lógica do formulário');
+    // Aqui você pode adicionar toda a lógica que depende do formulário estar pronto
   }
 
   /**
@@ -708,8 +803,14 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
   }
 
   ngOnDestroy() {
+    // Emitir sinal de destruição
+    this.destroy$.next();
+    this.destroy$.complete();
+    
+    if (this.formReadySubscription) {
+      this.formReadySubscription.unsubscribe();
+    }
     window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
-    // Seu código de destruição existente...
   }
   
   // Adicione underscore aos parâmetros não utilizados

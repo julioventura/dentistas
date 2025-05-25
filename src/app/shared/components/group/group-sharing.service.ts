@@ -120,4 +120,31 @@ export class GroupSharingService {
       })
     );
   }
+
+  /**
+   * Obtém os detalhes de um grupo específico
+   * @param groupId ID do grupo
+   * @returns Observable com os detalhes do grupo ou null se não encontrado
+   */
+  getGroupDetails(groupId: string): Observable<any> {
+    if (!groupId) {
+        return of(null);
+    }
+
+    return this.groupService.getGroup(groupId).pipe(
+      map(data => {
+        if (!data) {
+          return null;
+        }
+        // Garantir que o id seja sempre o groupId fornecido
+        return { ...data, id: groupId };
+      }),
+      catchError(error => {
+        if (error.code !== 'not-found' && error.code !== 'permission-denied') {
+          console.error('Erro ao carregar detalhes do grupo:', error);
+        }
+        return of(null);
+      })
+    );
+  }
 }

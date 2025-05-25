@@ -4,7 +4,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FirestoreService } from './firestore.service'; // Serviço para manipular o Firestore
 import firebase from 'firebase/compat/app'; // Importa firebase para usar firebase.User
 import { Observable, of, from, BehaviorSubject, firstValueFrom } from 'rxjs'; // Adicionar firstValueFrom aqui
-import { map, catchError, switchMap, tap, filter } from 'rxjs/operators'; // Remover firstValueFrom daqui
+import { map, catchError, switchMap, tap, filter, take, debounceTime } from 'rxjs/operators'; // Remover firstValueFrom daqui
 import { Router, NavigationEnd } from '@angular/router';
 
 import { AiChatService } from '../../chatbot-widget/ai-chat.service';
@@ -66,25 +66,127 @@ export class UserService {
     private firestore: AngularFirestore,
     private firestoreService: FirestoreService<any>,
     private router: Router,
-    private injector: Injector  // Remover @Inject, não é necessário para Injector no construtor
-  ) {
+    private injector: Injector
+) {
     console.log('UserService initialized');
-    // Carregar dados do usuário autenticado no inicialização do serviço
+    
+    // Aguardar autenticação antes de inicializar observables
     this.afAuth.authState.pipe(
-      tap(user => {
-        if (user?.email) {
-          this.userEmail = user.email;
-          console.log('UserService: User authenticated:', this.userEmail);
+        filter(user => !!user),
+        take(1),
+        catchError(error => {
+            console.error('Erro na autenticação:', error);
+            return of(null);
+        })
+    ).subscribe(user => {
+        if (user) {
+            console.log('UserService inicializado para usuário:', user.uid);
+            this.initializeService();
         }
-      })
+    });
+}
+
+private initializeService(): void {
+    // Carregar dados do usuário autenticado na inicialização do serviço
+    this.afAuth.authState.pipe(
+        tap(user => {
+            if (user?.email) {
+                this.userEmail = user.email;
+                console.log('UserService: User authenticated:', this.userEmail);
+            }
+        }),
+        debounceTime(300),
+        catchError(error => {
+            console.error('Erro ao processar estado de autenticação:', error);
+            return of(null);
+        })
     ).subscribe();
 
     // Monitorar mudanças de rota para atualizar o contexto
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      this.updateContextFromUrl(event.url);
+        filter(event => event instanceof NavigationEnd),
+        debounceTime(100),
+        catchError(error => {
+            console.error('Erro ao processar eventos de navegação:', error);
+            return of(null);
+        })
+    ).subscribe((event: NavigationEnd | null) => {
+        if (event) {
+            this.updateContextFromUrl(event.url);
+        }
     });
+}
+
+// Método para atualizar o contexto com base na URL
+  private updateContextFromUrl(url: string): void {
+    // Extrair os segmentos da URL
+    const segments = url.split('/').filter(Boolean);
+    const context: NavigationContext = {};
+    
+    // Se estamos navegando para uma nova URL que indica criação de novo registro
+    if (segments.length > 0 && segments[0] === 'new') {
+      console.log('Criando novo registro - limpando o contexto anterior');
+      // Limpar o contexto atual, mantendo apenas o tipo de coleção
+      if (segments.length > 1) {
+        context.collection = segments[1];
+      }
+      context.viewType = 'new';
+      
+      // Limpar registro atual
+      context.currentRecord = undefined;
+      
+      // Notificar o serviço de chat para limpar sua hierarquia
+      if (this.router) {
+        setTimeout(() => {
+          try {
+            // Use injector for safer dependency resolution
+            const aiChatService = this.injector.get(AiChatService);
+            if (aiChatService) {
+              aiChatService.resetHierarchyData();
+            }
+          } catch (e) {
+            console.error('Não foi possível obter o AiChatService:', e);
+          }
+        });
+      }
+    } else {
+      // Código existente para outras rotas...
+      if (segments.length > 0) {
+        // Determinar o tipo de view (list, view, edit, etc.)
+        context.viewType = segments[0];
+        
+        // Padrões de URL comuns
+        if (segments[0] === 'list' && segments.length > 1) {
+          context.collection = segments[1];
+        } 
+        else if (['view', 'edit', 'new'].includes(segments[0]) && segments.length > 1) {
+          context.collection = segments[1];
+          if (segments.length > 2) context.id = segments[2];
+        }
+        else if (segments[0] === 'view-ficha' && segments.length >= 3) {
+          context.collection = segments[1];
+          context.id = segments[2];
+          
+          if (segments.length >= 5 && segments[3] === 'fichas') {
+            context.subcollection = segments[4];
+            
+            if (segments.length >= 6) context.itemId = segments[6];
+          }
+        }
+        else if (segments[0] === 'edit-ficha' && segments.length >= 7) {
+          context.collection = segments[1];
+          context.id = segments[2];
+          
+          if (segments[3] === 'fichas') {
+            context.subcollection = segments[4];
+            if (segments[6]) context.itemId = segments[6];
+          }
+        }
+      }
+    }
+    
+    console.log('Contexto de navegação atualizado:', context);
+    this.navigationContextSubject.next(context);
   }
 
   // Getter para userProfile - acesso direto simplificado
@@ -293,77 +395,6 @@ export class UserService {
     );
   }
 
-  // Método para atualizar o contexto com base na URL
-  private updateContextFromUrl(url: string): void {
-    // Extrair os segmentos da URL
-    const segments = url.split('/').filter(Boolean);
-    const context: NavigationContext = {};
-    
-    // Se estamos navegando para uma nova URL que indica criação de novo registro
-    if (segments.length > 0 && segments[0] === 'new') {
-      console.log('Criando novo registro - limpando o contexto anterior');
-      // Limpar o contexto atual, mantendo apenas o tipo de coleção
-      if (segments.length > 1) {
-        context.collection = segments[1];
-      }
-      context.viewType = 'new';
-      
-      // Limpar registro atual
-      context.currentRecord = undefined;
-      
-      // Notificar o serviço de chat para limpar sua hierarquia
-      if (this.router) {
-        setTimeout(() => {
-          try {
-            // Use injector for safer dependency resolution
-            const aiChatService = this.injector.get(AiChatService);
-            if (aiChatService) {
-              aiChatService.resetHierarchyData();
-            }
-          } catch (e) {
-            console.error('Não foi possível obter o AiChatService:', e);
-          }
-        });
-      }
-    } else {
-      // Código existente para outras rotas...
-      if (segments.length > 0) {
-        // Determinar o tipo de view (list, view, edit, etc.)
-        context.viewType = segments[0];
-        
-        // Padrões de URL comuns
-        if (segments[0] === 'list' && segments.length > 1) {
-          context.collection = segments[1];
-        } 
-        else if (['view', 'edit', 'new'].includes(segments[0]) && segments.length > 1) {
-          context.collection = segments[1];
-          if (segments.length > 2) context.id = segments[2];
-        }
-        else if (segments[0] === 'view-ficha' && segments.length >= 3) {
-          context.collection = segments[1];
-          context.id = segments[2];
-          
-          if (segments.length >= 5 && segments[3] === 'fichas') {
-            context.subcollection = segments[4];
-            
-            if (segments.length >= 6) context.itemId = segments[6];
-          }
-        }
-        else if (segments[0] === 'edit-ficha' && segments.length >= 7) {
-          context.collection = segments[1];
-          context.id = segments[2];
-          
-          if (segments[3] === 'fichas') {
-            context.subcollection = segments[4];
-            if (segments[6]) context.itemId = segments[6];
-          }
-        }
-      }
-    }
-    
-    console.log('Contexto de navegação atualizado:', context);
-    this.navigationContextSubject.next(context);
-  }
 
   // Métodos para acessar o contexto de navegação
   getCurrentCollection(): string | undefined {
@@ -430,8 +461,7 @@ export class UserService {
   private getMainFieldsForCollection(collectionType?: string): string[] {
     switch(collectionType) {
       case 'pacientes':
-        return ['nome', 'email', 'telefone', 'cpf', 'rg', 'nascimento', 'endereco',
-                'bairro', 'cidade', 'estado', 'cep', 'convenio', 'codigo', 'obs'];
+        return ['nome', 'email', 'telefone', 'cpf', 'rg', 'especialidade', 'convenio', 'codigo', 'obs'];
       case 'dentistas':
         return ['nome', 'email', 'telefone', 'cpf', 'cro', 'especialidade'];
       // Adicionar outras coleções conforme necessário

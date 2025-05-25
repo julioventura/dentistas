@@ -20,6 +20,7 @@ import { CamposService } from '../services/campos.service';
 import { CamposFichaService } from '../services/campos-ficha.service';
 import { UtilService } from '../utils/util.service';
 import { switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -35,6 +36,14 @@ export class FormService {
     public subcollection: string = '';
     camposNaoAgrupados: any[] = [];
     gruposCampos: { [key: string]: any[] } = {};
+
+    // Adicionar um Observable para notificar quando o formulário está pronto
+    private formReadySubject = new BehaviorSubject<boolean>(false);
+    public formReady$ = this.formReadySubject.asObservable();
+
+    // Para monitorar mudanças em tempo real
+    private formDataSubscription: any;
+    private destroy$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private firestoreService: FirestoreService<any>,
@@ -148,6 +157,15 @@ export class FormService {
     loadRegistro(userId: string, collection: string, id: string, view_only: boolean): Promise<void> {
         return new Promise((resolve, reject) => {
             console.log('loadRegistro()');
+            
+            // Verificar se o usuário está autenticado antes de prosseguir
+            if (!userId) {
+                console.error('UserId não fornecido ou usuário não autenticado');
+                this.isLoading = false;
+                reject('Usuário não autenticado');
+                return;
+            }
+            
             this.collection = collection;
             this.isLoading = true;
 
@@ -195,6 +213,12 @@ export class FormService {
                                 this.gruposCampos[campo.grupo].push(campo);
                             });
 
+                        // Depois de configurar o formulário, notificar que está pronto
+                        if (this.fichaForm) {
+                            this.formReadySubject.next(true);
+                            console.log('FormService: Formulário está pronto e notificado');
+                        }
+                        
                         this.isLoading = false;
                         console.log('isLoading == false');
                         resolve();
@@ -292,6 +316,14 @@ export class FormService {
             console.log('fichaId:', fichaId);
             console.log('view (visualizar registro): ', view_only);
 
+            // Verificar se o usuário está autenticado antes de prosseguir
+            if (!userId) {
+                console.error('UserId não fornecido ou usuário não autenticado');
+                this.isLoading = false;
+                reject('Usuário não autenticado');
+                return;
+            }
+
             if (subcollection && fichaId) {
                 this.subcollection = subcollection;
                 const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
@@ -320,6 +352,13 @@ export class FormService {
                                 console.log("Formulário habilitado.");
                             }
                             console.log('Estado do formulário (disabled):', this.fichaForm.disabled);
+
+                            // Depois de configurar o formulário, notificar que está pronto
+                            if (this.fichaForm) {
+                                this.formReadySubject.next(true);
+                                console.log('FormService: Ficha está pronta e notificada');
+                            }
+                            
                             this.isLoading = false;
                             console.log('isLoading == false');
                             resolve();
@@ -332,6 +371,10 @@ export class FormService {
                         this.isLoading = false;
                         reject(error);
                     });
+                }, error => {
+                    console.error('Erro ao carregar campos da ficha:', error);
+                    this.isLoading = false;
+                    reject(error);
                 });
             } else {
                 console.error('subcollection ou fichaId não definidos corretamente.');
@@ -364,9 +407,11 @@ export class FormService {
             // Não aplicar capitalização para o campo email
             if (campoNome === 'email') {
                 this.fichaForm.get(campoNome)?.setValue(valorAtual);
+            } else if (campoNome === 'estado') {
+                const valorMaiusculo = valorAtual.toUpperCase();
+                this.fichaForm.get(campoNome)?.setValue(valorMaiusculo);
             } else {
                 const valorCapitalizado = this.util.capitalizar(valorAtual);
-                console.log("Valor capitalizado:", valorCapitalizado);
                 this.fichaForm.get(campoNome)?.setValue(valorCapitalizado);
             }
         } else {
@@ -440,4 +485,30 @@ export class FormService {
             console.log('Erros no formulário:', this.fichaForm.errors);
         }
     }
+
+    // Método para resetar o estado quando começar um novo carregamento
+    private resetFormReadyState(): void {
+        this.formReadySubject.next(false);
+    }
+
+    /**
+     * Método simples para limpeza de dados quando necessário
+     */
+    clearFormData(): void {
+      console.log('FormService: Limpando dados do formulário');
+      
+      // Emite no destroy$ se existir para parar subscriptions
+      if (this.destroy$) {
+        this.destroy$.next();
+      }
+    }
+    
+    /**
+     * Método para manipular exclusão de documentos
+     */
+    handleDocumentDeletion(): void {
+      console.log('FormService: Manipulando exclusão de documento');
+      this.clearFormData();
+    }
+
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
-import { AngularFireStorage } from '@angular/fire/compat/storage'; // Importa o serviço de Storage
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { UtilService } from '../../shared/utils/util.service';
@@ -14,9 +15,14 @@ export class FirestoreService<T extends { id?: string }> {
     private firestore: AngularFirestore,
     private storage: AngularFireStorage,
     private afs: AngularFirestore,
+    private auth: AngularFireAuth, // Certifique-se de que está injetado
     public util: UtilService
   ) { }
 
+  private async getCurrentUserId(): Promise<string | null> {
+    const user = await this.auth.currentUser;
+    return user ? user.uid : null;
+  }
 
   // CREATE: Adicionar um novo registro à subcoleção do usuário
   addRegistro(collectionPath: string, registro: T): Promise<void> {
@@ -87,9 +93,37 @@ export class FirestoreService<T extends { id?: string }> {
 
 
   // DELETE: Deletar um registro pelo ID na subcoleção do usuário
-  deleteRegistro(collectionPath: string, id: string): Promise<void> {
-    console.log("deleteRegistro(" + collectionPath + ', ' + id + ")" );
-    return this.firestore.collection(collectionPath).doc(id).delete();
+  async deleteRegistro(collection: string, id: string): Promise<void> {
+    if (!collection || !id) {
+      throw new Error('Collection e ID são obrigatórios para exclusão');
+    }
+
+    try {
+      const userId = await this.getCurrentUserId();
+      if (!userId) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const docPath = `users/${userId}/${collection}`;
+      console.log('FirestoreService: Deletando documento:', docPath, id);
+
+      // Verificar se o documento existe antes de tentar deletar
+      const docRef = this.firestore.collection(docPath).doc(id);
+      const docSnapshot = await docRef.get().toPromise();
+
+      if (!docSnapshot?.exists) {
+        console.warn('FirestoreService: Documento já foi deletado ou não existe');
+        return; // Não é um erro se já foi deletado
+      }
+
+      // Deletar o documento
+      await docRef.delete();
+      console.log('FirestoreService: Documento deletado com sucesso');
+
+    } catch (error) {
+      console.error('FirestoreService: Erro ao deletar registro:', error);
+      throw error;
+    }
   }
 
   // Método para criar um ID único (caso seja necessário)
@@ -124,7 +158,5 @@ export class FirestoreService<T extends { id?: string }> {
   deleteFile(fileUrl: string): Promise<void> {
     return this.storage.refFromURL(fileUrl).delete().toPromise();
   }
-
-
 
 }

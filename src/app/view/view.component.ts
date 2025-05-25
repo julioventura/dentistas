@@ -13,7 +13,7 @@
  * 9. openUrl: Abre uma URL em uma nova janela, caso o campo corresponda a um link.
  */
 
-import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy, ElementRef } from '@angular/core';
 import { KeyValue } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../shared/services/firestore.service';
@@ -26,12 +26,12 @@ import { GroupService } from '../shared/components/group/group.service';
 import { GroupSharingService } from '../shared/components/group/group-sharing.service';
 import { LoggingService } from '../shared/services/logging.service';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, EMPTY } from 'rxjs';
 import { catchError, of, throwError } from 'rxjs';
 // Adicionar importação do MatSnackBar
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take, filter, debounceTime } from 'rxjs/operators';
 // Add this import at the top of the file
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
@@ -74,6 +74,10 @@ export class ViewComponent implements OnInit, OnDestroy {
   sharingHistory: any[] = [];             // Histórico de compartilhamento
   groupDetails: { [key: string]: any } = {}; // Detalhes dos grupos
   private destroy$ = new Subject<void>(); // Subject para gerenciamento de destruição de observables
+  
+  // Adicionar as propriedades de subscription que estavam faltando
+  private subscription: any = null;
+  private authSubscription: any = null;
 
   // Propriedade utilizada no binding CSS para definir a largura dos labels
   customLabelWidthValue: number = 100;
@@ -91,8 +95,8 @@ export class ViewComponent implements OnInit, OnDestroy {
     private afAuth: AngularFireAuth,
     public util: UtilService,
     public configuracoes: ConfigService,
-    public FormService: FormService,
-    private userService: UserService, // Adicionar este serviço
+    public FormService: FormService, // Mudou de private para public
+    private userService: UserService,
     private groupService: GroupService,
     private groupSharingService: GroupSharingService,
     private logger: LoggingService,
@@ -112,19 +116,35 @@ export class ViewComponent implements OnInit, OnDestroy {
    * - Ajusta a largura dos labels via customLabelWidthValue e updateCustomLabelWidth().
    * Retorna: void.
    */
-  ngOnInit() {
+  ngOnInit(): void {
     console.log('ngOnInit()');
-    this.afAuth.authState.subscribe(user => {
-      if (user && user.uid) {
+    this.authSubscription = this.afAuth.authState.pipe(
+      take(1),
+      switchMap(user => {
+        if (!user) {
+          console.log('Usuário não autenticado.');
+          this.router.navigate(['/login']);
+          return EMPTY;
+        }
+        
         this.userId = user.uid;
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id) { this.id = id; }
-        this.collection = this.route.snapshot.paramMap.get('collection')!;
-        this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
-        this.fichaId = this.route.snapshot.paramMap.get('fichaId')!;
+        return this.route.paramMap;
+      })
+    ).subscribe(params => {
+      if (params) {
+        this.collection = params.get('collection') || '';
+        this.id = params.get('id') || '';
+        this.subcollection = params.get('subcollection') || '';
+        this.fichaId = params.get('fichaId') || '';
 
         if (!this.collection || !this.id) {
           console.warn('Collection ou ID não foram passados corretamente.');
+          return;
+        }
+
+        if (!this.userId) {
+          console.error('UserId não está definido.');
+          this.router.navigate(['/login']);
           return;
         }
 
@@ -148,24 +168,24 @@ export class ViewComponent implements OnInit, OnDestroy {
             console.log('Carregando ficha interna...');
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
               .then(() => {
-                // Após carregar os dados da ficha, salvar no UserService
                 if (this.FormService.registro) {
                   this.userService.setCurrentRecord(this.fichaId, this.FormService.registro);
                 }
                 this.registro = this.FormService.registro;
-                this.loadSharingHistory(); // Add this line to load history after record is loaded
+                // Só carregar histórico após ter todos os dados necessários
+                this.loadSharingHistory();
               });
           } else {
             console.log('Carregando registro principal...');
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
               .then(() => {
-                // Após carregar os dados do registro, salvar no UserService
                 if (this.FormService.registro) {
                   this.userService.setCurrentRecord(this.id, this.FormService.registro);
                 }
                 this.registro = this.FormService.registro;
-                this.loadSharingHistory(); // Add this line to load history after record is loaded
-                this.loadAvailableGroups(); // Make sure this is called after registro is set
+                // Só carregar histórico após ter todos os dados necessários
+                this.loadSharingHistory();
+                this.loadAvailableGroups();
               });
           }
 
@@ -179,19 +199,13 @@ export class ViewComponent implements OnInit, OnDestroy {
 
         // Ajuste da largura dos labels baseado em coleções vs subcollections
         if (this.subcollection) {
-          // Mantém a lógica existente para subcollections
-          // if (this.subcollection === 'dentesendo') {
-          //   this.customLabelWidthValue = 400;
-          // } else {
           this.customLabelWidthValue = 200;
-          // }
         } else {
-          // Para collections principais, usa a mesma largura do EditComponent
-          this.customLabelWidthValue = 100; // Ajuste este valor para corresponder ao EditComponent
+          this.customLabelWidthValue = 100;
         }
         this.updateCustomLabelWidth();
 
-        this.groupService.getSharingHistory(this.collection, this.id)
+        this.subscription = this.groupService.getSharingHistory(this.collection, this.id)
           .subscribe(history => {
             this.sharingHistory = history;
           });
@@ -201,75 +215,89 @@ export class ViewComponent implements OnInit, OnDestroy {
         this.util.goHome();
       }
     });
+    
     console.log('ViewComponent inicializado.');
-    this.loadSharingHistory();
-    this.loadAvailableGroups();
+    // Remover estas chamadas do ngOnInit - elas serão chamadas após carregar os dados
+    // this.loadSharingHistory();
+    // this.loadAvailableGroups();
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
+    console.log('ViewComponent: Destruindo componente');
+    this.stopAllSubscriptions();
     this.destroy$.complete();
   }
 
   loadSharingHistory(): void {
+    // Verificar se temos todos os parâmetros necessários antes de prosseguir
     if (!this.collection || !this.id || !this.userId) {
-      this.logger.warn('ViewComponent', 'Tentativa de carregar histórico sem collection/id/userId válidos');
-      this.sharingHistory = [];
-      return;
+        // Não fazer log de warning aqui, apenas retornar silenciosamente
+        this.sharingHistory = [];
+        return;
+    }
+
+    // Verificar se já carregamos o histórico para este registro
+    if (this.sharingHistory && this.sharingHistory.length > 0) {
+        return;
     }
 
     // Use the correct collection path with userId
     const collectionPath = `users/${this.userId}/${this.collection}`;
 
-    this.logger.log('ViewComponent', 'Carregando histórico de compartilhamento', {
-      path: collectionPath,
-      id: this.id
-    });
-
     // Pass the correct path to the groupSharingService
     this.groupSharingService.loadSharingHistory(collectionPath, this.id)
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError(err => {
-          this.logger.error('ViewComponent', 'Erro ao carregar histórico', err);
-          return of([]);
-        })
-      )
-      .subscribe(history => {
-        this.sharingHistory = history;
-        console.log('Sharing history loaded:', history);
+        .pipe(
+            takeUntil(this.destroy$),
+            debounceTime(300), // Adicionar debounce para evitar múltiplas chamadas
+            catchError(err => {
+                // Só fazer log de erros reais
+                if (err.code && err.code !== 'not-found' && err.code !== 'permission-denied') {
+                    console.error('ViewComponent: Erro ao carregar histórico', err);
+                }
+                return of([]);
+            })
+        )
+        .subscribe((history: any[]) => { // Especificar o tipo explicitamente
+            this.sharingHistory = history || []; // Garantir que seja um array
 
-        if (history && history.length > 0) {
-          // Extract group IDs from history for loading details
-          const groupIds = history
-            .map(item => [item.groupId, item.previousGroupId])
-            .flat()
-            .filter((id): id is string => !!id);
+            if (history && Array.isArray(history) && history.length > 0) {
+                // Extract group IDs from history for loading details
+                const groupIds = history
+                    .map((item: any) => [item.groupId, item.previousGroupId])
+                    .flat()
+                    .filter((id: any): id is string => !!id && typeof id === 'string');
 
-          if (groupIds.length > 0) {
-            this.loadGroupDetails([...new Set(groupIds)]);
-          }
-        }
-      });
+                if (groupIds.length > 0) {
+                    this.loadGroupDetails([...new Set(groupIds)]);
+                }
+            }
+        });
   }
 
   // First, improve the loadGroupDetails method
-  loadGroupDetails(groupIds: string[]): void {
-    // Add logging to trace the issue
-    console.log('Loading details for groups:', groupIds);
+  private loadGroupDetails(groupIds: string[]): void {
+    if (!groupIds || groupIds.length === 0) {
+        return;
+    }
 
-    this.groupSharingService.loadGroupDetails(groupIds)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (details) => {
-          this.groupDetails = details;
-          console.log('Group details loaded:', this.groupDetails);
-        },
-        error: (err) => {
-          this.logger.error('ViewComponent', 'Error loading group details', err);
-          console.error('Error loading group details:', err);
-        }
-      });
+    // Implementar carregamento dos detalhes dos grupos
+    groupIds.forEach(groupId => {
+        // Carregar detalhes do grupo se necessário
+        this.groupSharingService.getGroupDetails(groupId)
+            .pipe(
+                takeUntil(this.destroy$),
+                catchError(error => {
+                    console.warn('Erro ao carregar detalhes do grupo:', groupId, error);
+                    return of(null);
+                })
+            )
+            .subscribe(groupDetails => {
+                if (groupDetails) {
+                    // Armazenar detalhes do grupo conforme necessário
+                    console.log('Detalhes do grupo carregados:', groupDetails);
+                }
+            });
+    });
   }
 
   // Método auxiliar para formatação de datas em histórico
@@ -406,27 +434,58 @@ export class ViewComponent implements OnInit, OnDestroy {
    * - Chama firestoreService.deleteRegistro() e navega para a rota apropriada em caso de sucesso.
    * Retorna: void.
    */
-  excluir() {
-    console.log("excluir()");
-    if (confirm('Você tem certeza que deseja excluir este registro?')) {
-      let registro_id = '';
-      if (this.subcollection) {
-        this.registroPath = `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subcollection}/itens`;
-        this.routePath = `/list-fichas/${this.collection}/${this.id}/fichas/${this.subcollection}`;
-        registro_id = this.fichaId;
-      } else {
-        this.registroPath = `users/${this.userId}/${this.collection}`;
-        this.routePath = `list/${this.collection}`;
-        registro_id = this.id;
+  excluir(): void {
+    if (confirm('Tem certeza que deseja excluir este registro?')) {
+      console.log('ViewComponent: Iniciando exclusão do registro:', this.id);
+      
+      // Interromper todas as subscriptions primeiro
+      if (this.destroy$) {
+        this.destroy$.next();
       }
-      this.firestoreService.deleteRegistro(this.registroPath, registro_id)
-        .then(() => {
-          this.router.navigate([this.routePath]);
-        })
-        .catch(error => {
-          console.error('Erro ao excluir o registro:', error);
-        });
+      
+      // Navegar para a lista primeiro para evitar monitoramento de documento inexistente
+      this.router.navigate(['/list', this.collection]).then(() => {
+        // Depois deletar o registro
+        this.firestoreService.deleteRegistro(this.collection, this.id)
+          .then(() => {
+            console.log('ViewComponent: Registro deletado com sucesso');
+            this.snackBar.open('Registro excluído com sucesso!', 'OK', {
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
+          })
+          .catch(error => {
+            console.error('ViewComponent: Erro ao excluir registro:', error);
+            this.snackBar.open('Erro ao excluir registro: ' + error.message, 'OK', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          });
+      });
     }
+  }
+
+  // Adicione este método para parar todas as subscriptions:
+  private stopAllSubscriptions(): void {
+    // Parar subscription do destroy$
+    if (this.destroy$) {
+      this.destroy$.next();
+    }
+    
+    // Parar subscriptions principais se existirem
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
+    
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+      this.authSubscription = null;
+    }
+    
+    // Remova qualquer chamada para this.FormService.clearFormData();
+    // Apenas chame se necessário e se o método existir
+    console.log('ViewComponent: Subscriptions interrompidas');
   }
 
   /**

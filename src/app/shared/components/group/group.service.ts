@@ -40,7 +40,7 @@ export class GroupService {
       filter(user => !!user),
       switchMap(user => {
         const userEmail = user?.email;
-        
+
         if (!userEmail) {
           return of([]);
         }
@@ -51,12 +51,12 @@ export class GroupService {
           this.firestore.collection('groups', ref =>
             ref.where('memberIds', 'array-contains', this.userId)
           ).valueChanges({ idField: 'id' }),
-          
+
           // Groups where user is member by EMAIL
           this.firestore.collection('groups', ref =>
             ref.where('memberIds', 'array-contains', userEmail)
           ).valueChanges({ idField: 'id' }),
-          
+
           // Groups where user is admin by UID
           this.firestore.collection('groups', ref =>
             ref.where('adminIds', 'array-contains', this.userId)
@@ -84,15 +84,15 @@ export class GroupService {
    */
   createGroup(groupData: any): Promise<any> {
     if (!this.userId) return Promise.reject('Usuário não autenticado');
-    
+
     // Garantir que o criador seja adicionado como administrador do grupo
     const adminIds = groupData.adminIds || [];
-    
+
     // Se o criador não estiver na lista de admins, adicione-o
     if (!adminIds.includes(this.userId)) {
       adminIds.push(this.userId);
     }
-    
+
     return this.firestore.collection('groups').add({
       ...groupData,
       adminIds: adminIds,   // Assegura que o criador seja admin
@@ -217,7 +217,7 @@ export class GroupService {
    */
   shareRecordWithGroup(collection: string, recordId: string, groupId: string): Promise<void> {
     console.log(`GroupService: Iniciando compartilhamento do registro ${recordId} com o grupo ${groupId}`);
-    
+
     if (!this.userId) {
       console.error('GroupService: Tentativa de compartilhamento sem usuário autenticado');
       return Promise.reject('Usuário não autenticado');
@@ -278,7 +278,7 @@ export class GroupService {
    */
   removeRecordSharing(collection: string, recordId: string): Promise<void> {
     console.log(`GroupService: Iniciando remoção de compartilhamento do registro ${recordId}`);
-    
+
     if (!this.userId) {
       console.error('GroupService: Tentativa de remoção de compartilhamento sem usuário autenticado');
       return Promise.reject('Usuário não autenticado');
@@ -290,12 +290,12 @@ export class GroupService {
         switchMap(doc => {
           const currentData = doc.data() as Record<string, any> || {};
           const previousGroupId = currentData['groupId'] || null;
-          
+
           if (!previousGroupId) {
             console.warn(`GroupService: Registro ${recordId} não estava compartilhado. Nenhuma ação necessária.`);
             return Promise.resolve();
           }
-          
+
           console.log(`GroupService: Removendo compartilhamento do registro ${recordId} (grupo anterior: ${previousGroupId})`);
 
           const updateData: any = {
@@ -331,31 +331,31 @@ export class GroupService {
    * @param collection - Nome da coleção
    * @param recordId - ID do registro
    */
-  getSharingHistory(collection: string, recordId: string): Observable<any[]> {
-    console.log(`GroupService: Obtendo histórico de compartilhamento para ${recordId}`);
-    
-    return this.firestore.doc(`${collection}/${recordId}`).valueChanges().pipe(
-      map((record: any) => {
-        if (!record) {
-          console.warn(`GroupService: Registro ${recordId} não encontrado`);
-          return [];
-        }
-        
-        if (!record.sharingHistory) {
-          console.info(`GroupService: Registro ${recordId} não possui histórico de compartilhamento`);
-          return [];
-        }
-        
-        console.log(`GroupService: ${record.sharingHistory.length} entradas de histórico encontradas`);
-        
-        // Ordenar por timestamp (mais recente primeiro)
-        return [...record.sharingHistory].sort((a, b) => {
-          const timeA = a.timestamp && a.timestamp.toDate ? a.timestamp.toDate().getTime() : 0;
-          const timeB = b.timestamp && b.timestamp.toDate ? b.timestamp.toDate().getTime() : 0;
-          return timeB - timeA;
-        });
-      })
-    );
+
+  getSharingHistory(collection: string, id: string): Observable<any[]> {
+    if (!collection || !id) {
+      return of([]);
+    }
+
+    return this.firestore
+      .collection(`${collection}/${id}/sharing_history`)
+      .valueChanges({ idField: 'id' })
+      .pipe(
+        map(history => {
+          if (!history || history.length === 0) {
+            // Remover log desnecessário
+            return [];
+          }
+          return history;
+        }),
+        catchError(error => {
+          // Só fazer log de erros reais
+          if (error.code && error.code !== 'permission-denied' && error.code !== 'not-found') {
+            console.error('GroupService: Erro ao carregar histórico de compartilhamento:', error);
+          }
+          return of([]);
+        })
+      );
   }
 
   /**
@@ -365,12 +365,12 @@ export class GroupService {
    */
   requestJoinGroup(groupId: string, message?: string): Promise<void> {
     console.log(`GroupService: Solicitando entrada no grupo ${groupId}`);
-    
+
     if (!this.userId) {
       console.error('GroupService: Tentativa de solicitação sem usuário autenticado');
       return Promise.reject('Usuário não autenticado');
     }
-    
+
     // Primeiro verificar se o usuário já é membro ou admin do grupo
     return this.getGroup(groupId).pipe(
       take(1)
@@ -379,44 +379,44 @@ export class GroupService {
         console.error(`GroupService: Grupo ${groupId} não encontrado`);
         throw new Error('Grupo não encontrado');
       }
-      
+
       const isAlreadyMember = group.memberIds?.includes(this.userId || '') || group.adminIds?.includes(this.userId || '');
       if (isAlreadyMember) {
         console.warn(`GroupService: Usuário já é membro do grupo ${groupId}`);
         throw new Error('Você já é membro deste grupo');
       }
-      
+
       // Verificar se já existe uma solicitação pendente
-      return this.firestore.collection('groupJoinRequests', ref => 
+      return this.firestore.collection('groupJoinRequests', ref =>
         ref.where('userId', '==', this.userId)
-           .where('groupId', '==', groupId)
-           .where('status', '==', 'pending')
+          .where('groupId', '==', groupId)
+          .where('status', '==', 'pending')
       ).get().toPromise();
     })
-    .then(snapshot => {
-      if (!snapshot?.empty) {
-        console.warn(`GroupService: Já existe uma solicitação pendente para o grupo ${groupId}`);
-        throw new Error('Você já possui uma solicitação pendente para este grupo');
-      }
-      
-      const requestData: GroupJoinRequest = {
-        userId: this.userId!,
-        groupId: groupId,
-        requestedAt: firebase.firestore.Timestamp.now(),
-        status: 'pending',
-        message: message || ''
-      };
-      
-      console.log(`GroupService: Criando nova solicitação para o grupo ${groupId}`);
-      return this.firestore.collection('groupJoinRequests').add(requestData);
-    })
-    .then(() => {
-      console.log(`GroupService: Solicitação para grupo ${groupId} criada com sucesso`);
-    })
-    .catch(error => {
-      console.error(`GroupService: Erro ao solicitar entrada no grupo: ${error.message || error}`);
-      throw error;
-    });
+      .then(snapshot => {
+        if (!snapshot?.empty) {
+          console.warn(`GroupService: Já existe uma solicitação pendente para o grupo ${groupId}`);
+          throw new Error('Você já possui uma solicitação pendente para este grupo');
+        }
+
+        const requestData: GroupJoinRequest = {
+          userId: this.userId!,
+          groupId: groupId,
+          requestedAt: firebase.firestore.Timestamp.now(),
+          status: 'pending',
+          message: message || ''
+        };
+
+        console.log(`GroupService: Criando nova solicitação para o grupo ${groupId}`);
+        return this.firestore.collection('groupJoinRequests').add(requestData);
+      })
+      .then(() => {
+        console.log(`GroupService: Solicitação para grupo ${groupId} criada com sucesso`);
+      })
+      .catch(error => {
+        console.error(`GroupService: Erro ao solicitar entrada no grupo: ${error.message || error}`);
+        throw error;
+      });
   }
 
   /**
@@ -440,17 +440,17 @@ export class GroupService {
             if (!groups || groups.length === 0) {
               return of([]);
             }
-            
+
             // Get the group IDs where the user is an admin
             const groupIds = groups
               .map(group => group.id)
               .filter(id => id !== undefined && id !== null);
-              
+
             console.log(`Group Service: Querying join requests for groups: ${groupIds}`);
-            
+
             // Query join requests for those groups
             if (groupIds && groupIds.length > 0) {
-              return this.firestore.collection<GroupJoinRequest>('groupJoinRequests', ref => 
+              return this.firestore.collection<GroupJoinRequest>('groupJoinRequests', ref =>
                 ref.where('status', '==', 'pending')
                   .where('groupId', 'in', groupIds)
               ).valueChanges({ idField: 'id' });
@@ -475,7 +475,7 @@ export class GroupService {
    */
   approveJoinRequest(requestId: string): Promise<void> {
     console.log(`GroupService: Aprovando solicitação ${requestId}`);
-    
+
     if (!this.userId) {
       console.error('GroupService: Tentativa de aprovar solicitação sem usuário autenticado');
       return Promise.reject('Usuário não autenticado');
@@ -486,26 +486,26 @@ export class GroupService {
         take(1),
         switchMap(doc => {
           const request = doc.data() as Record<string, any>;
-          
+
           if (!request || request['status'] !== 'pending') {
             console.error(`GroupService: Solicitação ${requestId} não encontrada ou não está pendente`);
             throw new Error('Solicitação não encontrada ou já foi processada');
           }
-          
+
           console.log(`GroupService: Atualizando status da solicitação ${requestId}`);
-          
+
           // Atualizar o pedido
           const updatePromise = this.firestore.doc(`groupJoinRequests/${requestId}`).update({
             status: 'approved',
             respondedBy: this.userId,
             respondedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
-          
+
           console.log(`GroupService: Adicionando usuário ${request['userId']} ao grupo ${request['groupId']}`);
-          
+
           // Adicionar o usuário ao grupo
           const addMemberPromise = this.addGroupMember(request['groupId'], request['userId']);
-          
+
           return Promise.all([updatePromise, addMemberPromise]);
         })
       ).subscribe({
@@ -528,11 +528,11 @@ export class GroupService {
    */
   rejectJoinRequest(requestId: string, responseMessage?: string): Promise<void> {
     console.log(`GroupService: Rejeitando solicitação ${requestId}`);
-    
+
     if (!this.userId) {
       return Promise.reject('Usuário não autenticado');
     }
-    
+
     return this.firestore.doc(`groupJoinRequests/${requestId}`).get()
       .pipe(take(1))
       .toPromise()
@@ -541,13 +541,13 @@ export class GroupService {
         if (!doc || !doc.exists) {
           throw new Error('Solicitação não encontrada');
         }
-        
+
         const request = doc.data() as Record<string, any>;
-        
+
         if (!request || request['status'] !== 'pending') {
           throw new Error('Solicitação não encontrada ou já foi processada');
         }
-        
+
         return this.firestore.doc(`groupJoinRequests/${requestId}`).update({
           status: 'rejected',
           responseMessage: responseMessage || '',
@@ -562,5 +562,30 @@ export class GroupService {
         console.error(`GroupService: Erro ao rejeitar solicitação: ${error.message || error}`);
         throw error;
       });
+  }
+
+  // Novo método para obter registro por ID com verificação adicional
+  getRegistroById(collection: string, id: string): Observable<any> {
+    if (!collection || !id) {
+      return of(null);
+    }
+
+    return this.firestore.collection(collection).doc(id).valueChanges().pipe(
+      map(data => {
+        if (!data) {
+          // Remover este log para evitar spam no console
+          // console.log(`GroupService: Registro ${id} não encontrado em ${collection}`);
+          return null;
+        }
+        return { id, ...data };
+      }),
+      catchError(error => {
+        // Só fazer log de erros reais, não de documentos não encontrados
+        if (error.code && error.code !== 'not-found' && error.code !== 'permission-denied') {
+          console.error('GroupService: Erro ao buscar registro:', error);
+        }
+        return of(null);
+      })
+    );
   }
 }
