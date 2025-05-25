@@ -35,6 +35,7 @@ import { switchMap, take } from 'rxjs/operators';
 // Add this import at the top of the file
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
+import { ConfigService } from '../shared/services/config.service';
 
 @Component({
   selector: 'app-view',
@@ -73,7 +74,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   sharingHistory: any[] = [];             // Histórico de compartilhamento
   groupDetails: { [key: string]: any } = {}; // Detalhes dos grupos
   private destroy$ = new Subject<void>(); // Subject para gerenciamento de destruição de observables
-  
+
   // Propriedade utilizada no binding CSS para definir a largura dos labels
   customLabelWidthValue: number = 100;
   customLabelWidth: string = `${this.customLabelWidthValue} px`;
@@ -89,6 +90,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     private firestoreService: FirestoreService<any>,
     private afAuth: AngularFireAuth,
     public util: UtilService,
+    public configuracoes: ConfigService,
     public FormService: FormService,
     private userService: UserService, // Adicionar este serviço
     private groupService: GroupService,
@@ -130,7 +132,7 @@ export class ViewComponent implements OnInit, OnDestroy {
         this.titulo_da_pagina = this.subcollection
           ? this.util.titulo_ajuste_singular(this.subcollection)
           : this.util.titulo_ajuste_singular(this.collection);
-        
+
         console.log('userId:', this.userId);
         console.log('collection:', this.collection);
         console.log('id:', this.id);
@@ -181,7 +183,7 @@ export class ViewComponent implements OnInit, OnDestroy {
           // if (this.subcollection === 'dentesendo') {
           //   this.customLabelWidthValue = 400;
           // } else {
-            this.customLabelWidthValue = 200;
+          this.customLabelWidthValue = 200;
           // }
         } else {
           // Para collections principais, usa a mesma largura do EditComponent
@@ -215,15 +217,15 @@ export class ViewComponent implements OnInit, OnDestroy {
       this.sharingHistory = [];
       return;
     }
-    
+
     // Use the correct collection path with userId
     const collectionPath = `users/${this.userId}/${this.collection}`;
-    
+
     this.logger.log('ViewComponent', 'Carregando histórico de compartilhamento', {
       path: collectionPath,
       id: this.id
     });
-    
+
     // Pass the correct path to the groupSharingService
     this.groupSharingService.loadSharingHistory(collectionPath, this.id)
       .pipe(
@@ -236,26 +238,26 @@ export class ViewComponent implements OnInit, OnDestroy {
       .subscribe(history => {
         this.sharingHistory = history;
         console.log('Sharing history loaded:', history);
-        
+
         if (history && history.length > 0) {
           // Extract group IDs from history for loading details
           const groupIds = history
             .map(item => [item.groupId, item.previousGroupId])
             .flat()
             .filter((id): id is string => !!id);
-            
+
           if (groupIds.length > 0) {
             this.loadGroupDetails([...new Set(groupIds)]);
           }
         }
       });
   }
-  
+
   // First, improve the loadGroupDetails method
   loadGroupDetails(groupIds: string[]): void {
     // Add logging to trace the issue
     console.log('Loading details for groups:', groupIds);
-    
+
     this.groupSharingService.loadGroupDetails(groupIds)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -273,28 +275,28 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Método auxiliar para formatação de datas em histórico
   formatDate(timestamp: any): string {
     if (!timestamp) return 'Data desconhecida';
-    
+
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR');
   }
-  
+
   // Update getGroupName with better trace and error handling
   getGroupName(groupId: string): string {
     if (!groupId) {
       return 'Grupo não especificado';
     }
-    
+
     if (!this.groupDetails || Object.keys(this.groupDetails).length === 0) {
       return `Grupo ${groupId.substring(0, 5)}...`;  // Show partial ID if details not loaded yet
     }
-    
+
     const group = this.groupDetails[groupId];
-    
+
     if (!group) {
       console.log(`Group details not found for ID ${groupId}`);
       return `Grupo ${groupId.substring(0, 5)}...`;
     }
-    
+
     return group.name || 'Grupo sem nome';
   }
 
@@ -484,21 +486,21 @@ export class ViewComponent implements OnInit, OnDestroy {
    */
   hasNonEmptyField(campos: any[]): boolean {
     if (!campos || campos.length === 0) return false;
-    
+
     return campos.some(campo => {
       const valor = this.FormService.registro[campo.nome];
-      
+
       // Para campos booleanos/checkbox, só considera não vazio se o valor for true
       if (campo.tipo === 'boolean' || campo.tipo === 'checkbox') {
         return valor === true;
       }
-      
+
       // Para outros tipos, aplica a mesma lógica do template
-      return valor !== null && 
-             valor !== undefined && 
-             valor !== '' &&
-             valor !== 0 &&
-             valor !== '0';
+      return valor !== null &&
+        valor !== undefined &&
+        valor !== '' &&
+        valor !== 0 &&
+        valor !== '0';
     });
   }
 
@@ -510,7 +512,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Adicionar ao ngOnInit ou como um método separado chamado por ngOnInit
   loadAvailableGroups(): void {
     this.logger.log('ViewComponent', 'Carregando grupos disponíveis');
-    
+
     this.groupService.getAllUserGroups()
       .pipe(
         takeUntil(this.destroy$),
@@ -522,7 +524,7 @@ export class ViewComponent implements OnInit, OnDestroy {
       .subscribe(groups => {
         this.groups = groups;
         console.log('All available groups loaded:', groups);
-        
+
         // Add groups to groupDetails for reliable name lookup
         groups.forEach(group => {
           if (group.id && group.name) {
@@ -546,9 +548,9 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Método para salvar as alterações de compartilhamento
   saveGroupSharing(): void {
     if (!this.registro || !this.collection || !this.id) return;
-    
+
     const previousGroupId = this.registro.groupId || null;
-    
+
     this.groupSharingService.handleRecordSharing(
       this.collection,
       this.id,
@@ -593,7 +595,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Keep only this version of the method
   saveGroupChange(): void {
     if (!this.groupChanged) return;
-    
+
     this.groupSharingService.handleRecordSharing(
       this.collection,
       this.id,

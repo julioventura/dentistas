@@ -39,6 +39,7 @@ export class CamposService {
     { nome: 'mae', tipo: 'text', label: 'Nome da mãe' },
     { nome: 'sus', tipo: 'text', label: 'CNS/SUS' },
     { nome: 'operador', tipo: 'text', label: 'Operador' },
+    { nome: 'modulo', tipo: 'text', label: 'Módulo' },
     { nome: 'raca', tipo: 'text', label: 'Raça ou cor' },
     { nome: 'datainicio', tipo: 'date', label: 'Data início' },
     { nome: 'dataalta', tipo: 'date', label: 'Data de alta' },

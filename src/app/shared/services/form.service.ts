@@ -183,17 +183,17 @@ export class FormService {
 
                         // Separar campos por grupo
                         this.camposNaoAgrupados = this.campos.filter(campo => !campo.grupo || campo.grupo === '');
-                        
+
                         // Agrupar campos por grupo
                         this.gruposCampos = {};
                         this.campos
-                          .filter(campo => campo.grupo && campo.grupo !== '')
-                          .forEach(campo => {
-                            if (!this.gruposCampos[campo.grupo]) {
-                              this.gruposCampos[campo.grupo] = [];
-                            }
-                            this.gruposCampos[campo.grupo].push(campo);
-                          });
+                            .filter(campo => campo.grupo && campo.grupo !== '')
+                            .forEach(campo => {
+                                if (!this.gruposCampos[campo.grupo]) {
+                                    this.gruposCampos[campo.grupo] = [];
+                                }
+                                this.gruposCampos[campo.grupo].push(campo);
+                            });
 
                         this.isLoading = false;
                         console.log('isLoading == false');
@@ -360,9 +360,15 @@ export class FormService {
         }
         if (this.fichaForm && this.fichaForm.get(campoNome)) {
             const valorAtual = event.target.value;
-            const valorCapitalizado = this.util.capitalizar(valorAtual);
-            console.log("Valor capitalizado:", valorCapitalizado);
-            this.fichaForm.get(campoNome)?.setValue(valorCapitalizado);
+
+            // Não aplicar capitalização para o campo email
+            if (campoNome === 'email') {
+                this.fichaForm.get(campoNome)?.setValue(valorAtual);
+            } else {
+                const valorCapitalizado = this.util.capitalizar(valorAtual);
+                console.log("Valor capitalizado:", valorCapitalizado);
+                this.fichaForm.get(campoNome)?.setValue(valorCapitalizado);
+            }
         } else {
             console.error(`O campo ${campoNome} não foi encontrado no FormGroup ou o FormGroup não está pronto.`);
         }
