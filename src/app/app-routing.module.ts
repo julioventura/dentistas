@@ -21,6 +21,7 @@ import { FichasComponent } from './fichas/fichas.component';
 import { BackupComponent } from './backup/backup.component';
 import { HomepageComponent } from './homepage/homepage.component';
 import { GroupManagerComponent } from './shared/components/group/group-manager.component';
+import { TutfopComponent } from './tutfop/tutfop.component';
 
 // Guards
 import { CanDeactivateGuard } from './shared/guards/can-deactivate.guard';
@@ -44,6 +45,7 @@ const routes: Routes = [
   { path: 'camposRegistro', component: CamposRegistroComponent },
   { path: 'fichas', component: FichasComponent },
   { path: 'groups', component: GroupManagerComponent, canActivate: [AuthGuard] },
+  { path: 'tutfop', component: TutfopComponent },
 
   { path: 'list/:collection', component: ListComponent, data: { animation: '4' } },
   { path: 'view/:collection/:id', component: ViewComponent, data: { animation: '5' } },
