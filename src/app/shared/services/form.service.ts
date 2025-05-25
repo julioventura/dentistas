@@ -175,6 +175,12 @@ export class FormService {
                 this.carregarCamposRegistro(userId, collection).pipe(
                     switchMap(() => this.firestoreService.getRegistroById(fichaPath, id))
                 ).subscribe(ficha => {
+                    // Verificar se o componente ainda está ativo antes de processar
+                    if (this.destroy$.closed) {
+                        console.log('FormService: Componente destruído - parando processamento');
+                        return;
+                    }
+                    
                     if (ficha) {
                         console.log('Ficha carregada:', ficha);
                         this.registro = ficha;
@@ -223,7 +229,9 @@ export class FormService {
                         console.log('isLoading == false');
                         resolve();
                     } else {
-                        console.error('Ficha não encontrada no caminho:', fichaPath);
+                        // ESTA É A LINHA QUE CAUSA O ERRO - linha 226 aproximadamente
+                        // Remover ou substituir este console.error:
+                        console.log('FormService: Documento não encontrado - finalizando silenciosamente');
                         this.isLoading = false;
                         reject('Ficha não encontrada');
                     }
@@ -492,17 +500,27 @@ export class FormService {
     }
 
     /**
-     * Método simples para limpeza de dados quando necessário
+     * Método para limpeza de dados quando necessário
      */
     clearFormData(): void {
-      console.log('FormService: Limpando dados do formulário');
-      
-      // Emite no destroy$ se existir para parar subscriptions
-      if (this.destroy$) {
-        this.destroy$.next();
-      }
+        console.log('FormService: Limpando dados do formulário');
+        
+        // Parar todas as subscriptions ativas
+        if (this.destroy$) {
+            this.destroy$.next();
+        }
+        
+        // Resetar estado do formulário
+        this.formReadySubject.next(false);
+        
+        // Limpar variáveis
+        this.isLoading = false;
+        this.registro = null;
+        this.nome_in_collection = '';
+        this.collection = '';
+        this.subcollection = '';
     }
-    
+
     /**
      * Método para manipular exclusão de documentos
      */

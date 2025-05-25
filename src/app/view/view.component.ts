@@ -436,32 +436,37 @@ export class ViewComponent implements OnInit, OnDestroy {
    */
   excluir(): void {
     if (confirm('Tem certeza que deseja excluir este registro?')) {
-      console.log('ViewComponent: Iniciando exclusão do registro:', this.id);
-      
-      // Interromper todas as subscriptions primeiro
-      if (this.destroy$) {
-        this.destroy$.next();
-      }
-      
-      // Navegar para a lista primeiro para evitar monitoramento de documento inexistente
-      this.router.navigate(['/list', this.collection]).then(() => {
-        // Depois deletar o registro
-        this.firestoreService.deleteRegistro(this.collection, this.id)
-          .then(() => {
-            console.log('ViewComponent: Registro deletado com sucesso');
-            this.snackBar.open('Registro excluído com sucesso!', 'OK', {
-              duration: 3000,
-              panelClass: ['success-snackbar']
-            });
-          })
-          .catch(error => {
-            console.error('ViewComponent: Erro ao excluir registro:', error);
-            this.snackBar.open('Erro ao excluir registro: ' + error.message, 'OK', {
-              duration: 5000,
-              panelClass: ['error-snackbar']
-            });
-          });
-      });
+        console.log('ViewComponent: Iniciando exclusão do registro:', this.id);
+        
+        // Limpar dados do FormService ANTES de qualquer operação
+        if (this.FormService && typeof this.FormService.clearFormData === 'function') {
+            this.FormService.clearFormData();
+        }
+        
+        // Interromper todas as subscriptions
+        if (this.destroy$) {
+            this.destroy$.next();
+        }
+        
+        // Navegar para a lista primeiro para evitar monitoramento de documento inexistente
+        this.router.navigate(['/list', this.collection]).then(() => {
+            // Depois deletar o registro
+            this.firestoreService.deleteRegistro(this.collection, this.id)
+                .then(() => {
+                    console.log('ViewComponent: Registro deletado com sucesso');
+                    this.snackBar.open('Registro excluído com sucesso!', 'OK', {
+                        duration: 3000,
+                        panelClass: ['success-snackbar']
+                    });
+                })
+                .catch(error => {
+                    console.error('ViewComponent: Erro ao excluir registro:', error);
+                    this.snackBar.open('Erro ao excluir registro: ' + error.message, 'OK', {
+                        duration: 5000,
+                        panelClass: ['error-snackbar']
+                    });
+                });
+        });
     }
   }
 
