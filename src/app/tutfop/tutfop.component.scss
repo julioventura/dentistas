@@ -1,6 +1,5 @@
 /* TutFOP Integrado - Estilos adaptados */
 
-
 .tutfop-container {
   padding: 20px;
   max-width: 1000px;
@@ -14,82 +13,30 @@
   overflow: hidden;
 }
 
-/* Cabeçalho */
-.tutfop-header {
-  text-align: center;
-  padding: 2rem 0;
-  background: linear-gradient(135deg, #2196F3, #1976D2);
-  color: #ffffff;
-
-  h1 {
-    font-size: 2.5rem;
-    margin: 0 0 0.5rem 0;
-    font-weight: 700;
-  }
-
-  h2 {
-    font-size: 1.2rem;
-    margin: 0;
-    font-weight: 400;
-    opacity: 0.9;
-  }
-}
-
 /* Main content */
 .tutfop-main {
-  padding: 0;
+  padding: 20px;
 }
 
 .tutfop-container-section {
-  padding: 2rem;
-}
-
-/* Login Loading */
-.tutfop-login-message {
-  text-align: center;
-  padding: 3rem 0;
-
-  p {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 2rem;
-  }
-}
-
-.tutfop-loading {
-  display: flex;
-  justify-content: center;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #2196F3;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  padding: 1rem;
 }
 
 /* Chat */
 .tutfop-chat-log {
-  max-height: 60vh;
-  min-height: 400px;
-  overflow-y: auto;
-  margin-bottom: 1.5rem;
-  padding: 1.5rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fafafa;
   display: flex;
   flex-direction: column;
+  gap: 12px; /* Espaço vertical entre balões */
+  background: #fff;
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  min-height: 400px;
+  max-height: 60vh;
+  overflow-y: auto;
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track {
@@ -107,40 +54,53 @@
   }
 }
 
-:host ::ng-deep .user-message {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  color: white;
-  padding: 12px 16px;
-  border-radius: 18px 18px 4px 18px;
-  margin: 8px 0;
-  align-self: flex-end;
-  max-width: 75%;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-
-  strong {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
+/* Balão do usuário: alinhado à direita, afastado da borda direita */
+:host ::ng-deep .user-message,
+:host ::ng-deep div.user-message,
+.user-message {
+  background-color: #e6f9e6 !important;
+  color: #333333 !important;
+  padding: 15px 20px !important;
+  border-radius: 20px !important;
+  margin: 4px 0 !important;
+  align-self: flex-end !important;
+  max-width: 350px !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08) !important;
+  display: block !important;
+  text-align: left !important;
 }
 
-:host ::ng-deep .bot-message {
-  background: linear-gradient(135deg, #2196F3, #1976D2);
-  color: white;
-  padding: 12px 16px;
-  border-radius: 18px 18px 18px 4px;
-  margin: 8px 0;
-  align-self: flex-start;
-  max-width: 85%;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+/* Balão do bot: alinhado à esquerda, afastado da borda esquerda */
+:host ::ng-deep .bot-message,
+:host ::ng-deep div.bot-message,
+.bot-message {
+  background-color: #bae6fd !important;
+  color: #333333 !important;
+  padding: 15px 20px !important;
+  border-radius: 20px !important;
+  margin: 4px 0 !important;
+  align-self: flex-start !important;
+  max-width: 650px !important;
+  margin-right: auto !important;
+  margin-left: 0 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08) !important;
+  display: block !important;
+  text-align: left !important;
+}
 
-  strong {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
+/* Título em negrito */
+:host ::ng-deep .user-message strong,
+:host ::ng-deep div.user-message strong,
+.user-message strong,
+:host ::ng-deep .bot-message strong,
+:host ::ng-deep div.bot-message strong,
+.bot-message strong {
+  display: inline !important;
+  margin-bottom: 0 !important;
+  font-size: 1.1rem !important;
+  font-weight: bold !important;
 }
 
 .tutfop-chat-input-container {
@@ -157,141 +117,64 @@
 .tutfop-textarea {
   flex: 1;
   padding: 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
   font-size: 1rem;
   resize: vertical;
   min-height: 60px;
-  background-color: #f8f9fa;
+  background-color: #e6f9e6; /* Verde claro similar à imagem */
   font-family: inherit;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: border-color 0.3s;
 
   &:focus {
     outline: none;
-    border-color: #2196F3;
-    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-    background-color: white;
+    border-color: #4CAF50;
   }
 
   &::placeholder {
-    color: #999;
+    color: #666;
   }
 }
 
 .tutfop-button-container {
   display: flex;
-  gap: 8px;
-  flex-direction: column;
+  gap: 10px;
 
   @media (max-width: 768px) {
-    flex-direction: row;
-    justify-content: stretch;
+    justify-content: space-between;
   }
 }
 
 .tutfop-btn-primary {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: #4CAF50; /* Verde do botão Enviar da imagem */
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s;
-  min-width: 100px;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+  transition: all 0.2s;
 
   &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    background: #3d8b40;
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateY(1px);
   }
 
   &:disabled {
     background: #bbb;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
   }
 }
 
 .tutfop-btn-logout {
-  background: linear-gradient(135deg, #f44336, #d32f2f);
-  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+  background: #f44336; /* Vermelho do botão Sair da imagem */
 
   &:hover:not(:disabled) {
-    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
-  }
-}
-
-/* Footer */
-.tutfop-footer {
-  padding: 1.5rem 2rem;
-  background-color: #f8f9fa;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #666;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 8px;
-    text-align: center;
-  }
-}
-
-.tutfop-user-info {
-  font-weight: 600;
-  color: #2196F3;
-}
-
-.tutfop-version {
-  opacity: 0.7;
-}
-
-/* Auth Required */
-.tutfop-auth-required {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 60vh;
-  padding: 2rem;
-}
-
-.auth-message {
-  text-align: center;
-  background: white;
-  padding: 3rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-
-  i {
-    font-size: 4rem;
-    color: #ff9800;
-    margin-bottom: 1.5rem;
-  }
-
-  h3 {
-    color: #333;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-  }
-
-  p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 0.5rem;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
+    background: #d32f2f;
   }
 }
 
@@ -301,20 +184,8 @@
     padding: 10px;
   }
 
-  .tutfop-header {
-    padding: 1.5rem 1rem;
-
-    h1 {
-      font-size: 2rem;
-    }
-
-    h2 {
-      font-size: 1rem;
-    }
-  }
-
   .tutfop-container-section {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .tutfop-chat-log {
@@ -327,4 +198,19 @@
   :host ::ng-deep .bot-message {
     max-width: 90%;
   }
+}
+
+/* Estilos aplicados diretamente para sobrescrever qualquer outro estilo */
+body .user-message {
+  background-color: #e6f9e6 !important;
+  padding: 5px;
+  border: 1pt solid green;
+  border-radius: 3px;
+}
+
+body .bot-message {
+  background-color: #bae6fd !important;
+  padding: 5px;
+  border: 1pt solid dodgerblue;
+  border-radius: 3px;
 }

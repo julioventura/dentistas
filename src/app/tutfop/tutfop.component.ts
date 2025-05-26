@@ -8,15 +8,18 @@
  * - ngOnInit(): Inicializa componente e subscreve dados do usuário
  * - ngOnDestroy(): Limpa subscriptions ao destruir componente
  * - initializeTutfop(): Inicializa scripts e configurações do TutFOP
- * - injectTutfopScripts(): Injeta scripts JavaScript do TutFOP no DOM
- * - setupTutfopWithUserData(): Configura TutFOP com dados do usuário Angular
- * - getTutfopScriptContent(): Retorna conteúdo dos scripts adaptados do TutFOP
+ * - showChatInterface(): Exibe interface do chat e oculta tela de login
+ * - updateUserInfo(): Atualiza informações do usuário na interface
+ * - sendTutfopMessage(): Envia mensagem do usuário para o tutor virtual
+ * - logoutTutfop(): Limpa chat
+ * - setupEventListeners(): Configura listeners para eventos do DOM
  * 
  * Constantes:
  * - userNome: Nome do usuário autenticado
  * - userEmail: Email do usuário autenticado  
  * - userUid: UID único do usuário autenticado
  * - isUserAuthenticated: Status de autenticação do usuário
+ * - webhookURL: URL do webhook para comunicação com TutFOP
  */
 
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
@@ -42,6 +45,11 @@ export class TutfopComponent implements OnInit, OnDestroy {
   userUid: string = '';
   isUserAuthenticated: boolean = false;
 
+  private readonly webhookURLprod = 'https://jupiter.cirurgia.com.br/webhook/TutFOP3';
+  private readonly webhookURLteste = 'https://marte.cirurgia.com.br/webhook-test/TutFOP3';
+//   private webhookURL = this.webhookURLprod;
+  private webhookURL = this.webhookURLprod;
+
   constructor(
     private userService: UserService,
     public util: UtilService,
@@ -56,8 +64,10 @@ export class TutfopComponent implements OnInit, OnDestroy {
         if (user) {
           this.userUid = user.uid;
           this.userEmail = user.email || '';
-          this.userNome = user.displayName || this.userService.userProfile?.name || '';
+          this.userNome = user.displayName || this.userService.userProfile?.nome || '';
           this.isUserAuthenticated = true;
+          
+          console.log('Nome: ',this.userNome);
           
           // Inicializar o TutFOP após obter os dados do usuário
           this.initializeTutfop();
@@ -75,154 +85,128 @@ export class TutfopComponent implements OnInit, OnDestroy {
 
   // initializeTutfop(): Inicializa scripts e configurações do TutFOP
   private initializeTutfop(): void {
-    // Aguardar o DOM estar pronto e então inicializar os scripts do TutFOP
+    console.log('TutFOP inicializado com dados do usuário:', {
+      nome: this.userNome,
+      email: this.userEmail,
+      uid: this.userUid
+    });
+    
+    // Aguardar o DOM estar pronto e então inicializar
     setTimeout(() => {
-      this.injectTutfopScripts();
-      this.setupTutfopWithUserData();
+      this.showChatInterface();
+      this.updateUserInfo();
+      this.setupEventListeners();
     }, 100);
   }
 
-  // injectTutfopScripts(): Injeta scripts JavaScript do TutFOP no DOM
-  private injectTutfopScripts(): void {
-    // Injetar os scripts do TutFOP adaptados para usar dados do Angular
-    const script = document.createElement('script');
-    script.textContent = this.getTutfopScriptContent();
-    document.head.appendChild(script);
+  // showChatInterface(): Exibe interface do chat e oculta tela de login
+  private showChatInterface(): void {
+    const loginContainer = document.getElementById("tutfop-login-container");
+    const chatContainer = document.getElementById("tutfop-chat-container");
+    
+    if (loginContainer) loginContainer.style.display = "none";
+    if (chatContainer) chatContainer.style.display = "block";
   }
 
-  // setupTutfopWithUserData(): Configura TutFOP com dados do usuário Angular
-  private setupTutfopWithUserData(): void {
-    // Configurar o TutFOP com os dados do usuário do Angular
-    if ((window as any).initTutfopWithUser) {
-      (window as any).initTutfopWithUser({
-        nome: this.userNome,
-        email: this.userEmail,
-        uid: this.userUid
-      });
+  // updateUserInfo(): Atualiza informações do usuário na interface
+  private updateUserInfo(): void {
+    const userInfo = document.getElementById("tutfop-user-info");
+    if (userInfo) {
+      userInfo.innerText = `Usuário: ${this.userNome} - ${this.userEmail}`;
     }
   }
 
-  // getTutfopScriptContent(): Retorna conteúdo dos scripts adaptados do TutFOP
-  private getTutfopScriptContent(): string {
-    return `
-      // TutFOP Script adaptado para Angular
-      const webhookURLprod = 'https://jupiter.cirurgia.com.br/webhook/TutFOP_Teste';
-      const webhookURLTest = 'https://marte.cirurgia.com.br/webhook-test/TutFOP_Teste';
-      let webhookURL = webhookURLprod;
-      let tutfopUserData = null;
+  // sendTutfopMessage(): Envia mensagem do usuário para o tutor virtual
+  async sendTutfopMessage(): Promise<void> {
+    const userInput = document.getElementById("tutfop-user-input") as HTMLTextAreaElement;
+    const chatLog = document.getElementById("tutfop-chat-log");
+    const sendButton = document.getElementById("tutfop-send-button") as HTMLButtonElement;
 
-      // initTutfopWithUser(): Inicializa TutFOP com dados do usuário Angular
-      window.initTutfopWithUser = function(userData) {
-        tutfopUserData = userData;
-        console.log('TutFOP inicializado com dados do usuário:', userData);
-        showChatInterface();
-        updateUserInfo();
-      };
+    if (!userInput || !chatLog) return;
 
-      // showChatInterface(): Exibe interface do chat e oculta tela de login
-      function showChatInterface() {
-        const loginContainer = document.getElementById("tutfop-login-container");
-        const chatContainer = document.getElementById("tutfop-chat-container");
-        
-        if (loginContainer) loginContainer.style.display = "none";
-        if (chatContainer) chatContainer.style.display = "block";
-      }
+    const message = userInput.value.trim();
+    if (!message) {
+      alert('Por favor, insira uma mensagem.');
+      return;
+    }
 
-      // updateUserInfo(): Atualiza informações do usuário na interface
-      function updateUserInfo() {
-        const userInfo = document.getElementById("tutfop-user-info");
-        if (userInfo && tutfopUserData) {
-          userInfo.innerText = \`Usuário: \${tutfopUserData.nome} - \${tutfopUserData.email}\`;
-        }
-      }
+    // Adicionar mensagem do usuário
+    const userMessage = `<div class="user-message"><strong>Você:</strong> ${message}</div>`;
+    chatLog.innerHTML += userMessage;
+    userInput.value = '';
+    chatLog.scrollTop = chatLog.scrollHeight;
 
-      // sendTutfopMessage(): Envia mensagem do usuário para o tutor virtual
-      window.sendTutfopMessage = async function() {
-        const userInput = document.getElementById("tutfop-user-input");
-        const chatLog = document.getElementById("tutfop-chat-log");
-        const sendButton = document.getElementById("tutfop-send-button");
+    // Desabilitar botão durante envio
+    if (sendButton) {
+      sendButton.disabled = true;
+      sendButton.style.backgroundColor = "#bbb";
+    }
 
-        if (!userInput || !chatLog) return;
+    const data = {
+      tipo: 'mensagem',
+      mensagem: message,
+      nome: this.userNome,
+      email: this.userEmail,
+      uid: this.userUid
+    };
+    console.log('data": ', data)
+    console.log('tipo": ', data.tipo)
+    console.log('nome": ', data.nome)
+    console.log('email": ', data.email)
+    console.log('mensagem": ', data.mensagem)
+    console.log('uid": ', data.uid)
 
-        const message = userInput.value.trim();
-        if (!message) {
-          alert('Por favor, insira uma mensagem.');
-          return;
-        }
+    try {
+      const response = await fetch(this.webhookURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
 
-        // Adicionar mensagem do usuário
-        const userMessage = \`<div class="user-message"><strong>Você:</strong> \${message}</div>\`;
-        chatLog.innerHTML += userMessage;
-        userInput.value = '';
+      const responseData = await response.json();
+
+      if (responseData && responseData.response) {
+        let formattedResponse = responseData.response.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+        formattedResponse = formattedResponse.replace(/\n/g, '<br>');
+        const botResponse = `<div class="bot-message"><strong>Tutor Virtual:</strong> ${formattedResponse}</div>`;
+        chatLog.innerHTML += botResponse;
         chatLog.scrollTop = chatLog.scrollHeight;
+      } else {
+        alert('Erro ao processar mensagem. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+      alert('Erro ao enviar mensagem. Tente novamente.');
+    } finally {
+      // Reabilitar botão
+      if (sendButton) {
+        sendButton.disabled = false;
+        sendButton.style.backgroundColor = "#4CAF50";
+      }
+    }
+  }
 
-        // Desabilitar botão durante envio
-        if (sendButton) {
-          sendButton.disabled = true;
-          sendButton.style.backgroundColor = "#bbb";
-        }
+  // logoutTutfop(): Limpa chat
+  logoutTutfop(): void {
+    const confirmation = confirm("Confirma limpar a conversa?");
+    if (confirmation) {
+      const chatLog = document.getElementById("tutfop-chat-log");
+      if (chatLog) chatLog.innerHTML = "";
+    }
+  }
 
-        const data = {
-          tipo: 'mensagem',
-          mensagem: message,
-          nome: tutfopUserData.nome,
-          email: tutfopUserData.email,
-          uid: tutfopUserData.uid
-        };
-
-        try {
-          const response = await fetch(webhookURL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-          });
-
-          const responseData = await response.json();
-
-          if (responseData && responseData.response) {
-            let formattedResponse = responseData.response.replace(/\\*\\*(.*?)\\*\\*/g, '<b>$1</b>');
-            formattedResponse = formattedResponse.replace(/\\n/g, '<br>');
-            const botResponse = \`<div class="bot-message"><strong>Tutor Virtual:</strong> \${formattedResponse}</div>\`;
-            chatLog.innerHTML += botResponse;
-            chatLog.scrollTop = chatLog.scrollHeight;
-          } else {
-            alert('Erro ao processar mensagem. Tente novamente.');
-          }
-        } catch (error) {
-          console.error('Erro ao enviar mensagem:', error);
-          alert('Erro ao enviar mensagem. Tente novamente.');
-        } finally {
-          // Reabilitar botão
-          if (sendButton) {
-            sendButton.disabled = false;
-            sendButton.style.backgroundColor = "#4CAF50";
-          }
-        }
-      };
-
-      // logoutTutfop(): Limpa chat
-      window.logoutTutfop = function() {
-        const confirmation = confirm("Confirma limpar a conversa?");
-        if (confirmation) {
-          const chatLog = document.getElementById("tutfop-chat-log");
-          if (chatLog) chatLog.innerHTML = "";
-        }
-      };
-
-      // Event listener para Enter no textarea - permite envio com Enter
-      document.addEventListener('DOMContentLoaded', function() {
-        const userInput = document.getElementById("tutfop-user-input");
-        if (userInput) {
-          userInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter" && !event.shiftKey) {
-              event.preventDefault();
-              sendTutfopMessage();
-            }
-          });
+  // setupEventListeners(): Configura listeners para eventos do DOM
+  private setupEventListeners(): void {
+    const userInput = document.getElementById("tutfop-user-input") as HTMLTextAreaElement;
+    if (userInput) {
+      userInput.addEventListener("keypress", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          this.sendTutfopMessage();
         }
       });
-    `;
+    }
   }
 }
