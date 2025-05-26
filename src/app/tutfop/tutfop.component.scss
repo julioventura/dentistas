@@ -27,10 +27,10 @@
   display: flex;
   flex-direction: column;
   gap: 12px; /* Espaço vertical entre balões */
-  background: #fff;
+  background: #d7e8ff;
   border-radius: 15px;
   padding: 1.5rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #6b86a5;
   min-height: 400px;
   max-height: 60vh;
   overflow-y: auto;
@@ -107,6 +107,7 @@
   display: flex;
   gap: 12px;
   align-items: flex-end;
+  margin-top: 10px;
 
   @media (max-width: 768px) {
     flex-direction: column;

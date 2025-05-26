@@ -68,6 +68,8 @@ export class TutfopComponent implements OnInit, OnDestroy {
           this.isUserAuthenticated = true;
           
           console.log('Nome: ',this.userNome);
+          console.log('displayName: ',user.displayName);
+          console.log('userProfile.nome: ',this.userService.userProfile?.nome);
           
           // Inicializar o TutFOP após obter os dados do usuário
           this.initializeTutfop();
