@@ -33,11 +33,11 @@ export class MenuConfigComponent implements OnInit {
   todasSubcolecoes = [
     'padrao',
     'exames',
-    'documentos ',
     'planos',
+    'pagamentos',
     'atendimentos',
     'consultas',
-    'pagamentos',
+    'documentos ',
     'dentes',
     'dentesendo',
     'dentesperio',

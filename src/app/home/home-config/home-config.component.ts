@@ -17,13 +17,14 @@ export class HomeConfigComponent implements OnInit {
 
   // Ícones disponíveis e sua visibilidade
   icons = [
-    { key: 'associados', label: 'Associados' },
+    { key: 'agenda', label: 'Agenda' },
     { key: 'pacientes', label: 'Pacientes' },
     { key: 'alunos', label: 'Alunos' },
     { key: 'professores', label: 'Professores' },
     { key: 'dentistas', label: 'Dentistas' },
     { key: 'equipe', label: 'Equipe' },
     { key: 'proteticos', label: 'Protéticos' },
+    { key: 'associados', label: 'Associados' },
     { key: 'indicador', label: 'Indicador' },
     { key: 'dentais', label: 'Dentais' },
     { key: 'empresas', label: 'Empresas' },

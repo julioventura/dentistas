@@ -31,10 +31,10 @@
   </section>
 
   <!-- Exibe informações do usuário logado, se disponível -->
-  <div id="usuario_logado" *ngIf="user" class="usuario-logado">	
+  <div id="usuario_logado" *ngIf="user">	
     Usuário: <b>{{ user.email }} {{ this.configuracoes.is_admin ? ' - ADMIN' : ''}}</b><br>
     {{ambiente}}<br>
-    <span class='transparente'>{{ user.uid }}</span>
+    <!-- <span class='transparente'>{{ user.uid }}</span> -->
   </div>
 
 </footer>

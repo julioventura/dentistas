@@ -94,7 +94,7 @@ export class MenuComponent implements OnInit {
   getMenusPadraoPorCollection(colecao: string): any[] {
     const menusPadrao: { [key: string]: any[] } = {
       associados: ['pagamentos'],
-      pacientes: ['exames', 'planos', 'consultas', 'dentesendo'],
+      pacientes: ['exames', 'planos', 'pagamentos', 'atendimentos', 'dentesendo'],
       alunos: ['planos', 'atendimentos'],
       professores: ['planos', 'atendimentos'],
       dentistas: ['planos', 'atendimentos', 'pagamentos'],

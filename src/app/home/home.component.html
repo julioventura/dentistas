@@ -19,9 +19,9 @@
 
         <!-- Ícones Condicionais -->
 
-        <div class="icon-item" *ngIf="visibleIcons['associados']" (click)="go('list/associados')">
-          <img src="https://dentistas.com.br/assets/associados.png" alt="Associados">
-          <p>ASSOCIADOS</p>
+        <div class="icon-item" *ngIf="visibleIcons['agenda']" (click)="util.go_url(url_agenda)">
+          <img src="https://dentistas.com.br/assets/agenda.png" alt="Agenda">
+          <p>AGENDA</p>
         </div>
 
         <div class="icon-item" *ngIf="visibleIcons['pacientes']" (click)="go('list/pacientes')">
@@ -132,6 +132,12 @@
         <div class="IAOdonto">I.A. na Odontologia</div>
 
         <section class="services-section icon-grid">
+
+          
+        <div class="icon-item" *ngIf="visibleIcons['associados']" (click)="go('list/associados')">
+          <img src="https://dentistas.com.br/assets/associados.png" alt="Associados">
+          <p>ASSOCIADOS</p>
+        </div>
 
           <div class="icon-item" (click)="go('list/videos')">
             <img src="https://dentistas.com.br/assets/cursos.png" alt="Dicas de I.A.">

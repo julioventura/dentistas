@@ -28,16 +28,17 @@ export class HomeComponent implements OnInit {
   nome: string = '';  // Armazena o nome do usuário logado
   username: string | null = null;  // Armazena o username do usuário logado
   new_window: boolean = false;  // Controla se a navegação ocorrerá em nova janela
-
-  // Lista de ícones visíveis
+  url_agenda: string = 'https://dentistas.com.br/agenda/'
+  // Lista de ícones visíveis inicial
   visibleIcons: { [key: string]: boolean } = {
-    associados: true,
+    agenda: true,
     pacientes: true,
     alunos: true,
     professores: true,
     dentistas: true,
     equipe: true,
     proteticos: true,
+    associados: false,
     indicador: false,
     dentais: false,
     empresas: false,
