@@ -1,5 +1,14 @@
-
 RewriteOptions inherit
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,QSA]
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # EXCEÇÃO: Não reescreva nada que comece com /fastbot
+  RewriteCond %{REQUEST_URI} ^/fastbot/ [NC]
+  RewriteRule ^ - [L]
+
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
