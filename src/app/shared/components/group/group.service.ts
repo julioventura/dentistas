@@ -253,9 +253,46 @@ export class GroupService {
               // Batch de operações para garantir atomicidade
               const batch = this.firestore.firestore.batch();
 
-              // Atualizar o registro com o novo groupId
-              // Resto da implementação aqui
-              resolve();
+              // Referências para o registro e subcoleção de histórico
+              const recordRef = this.firestore.collection(collection).doc(recordId).ref;
+              const historyRef = recordRef.collection('sharing_history').doc();
+
+              // Dados de atualização do registro - implementado para concluir o compartilhamento
+              const updateData: any = {
+                groupId: groupId,
+                sharingMetadata: {
+                  groupId: groupId,
+                  previousGroupId: previousGroupId,
+                  sharedBy: this.userId,
+                  sharedAt: now,
+                  lastModifiedBy: this.userId,
+                  lastModifiedAt: now,
+                } as SharingMetadata,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedBy: this.userId,
+              };
+
+              // Entrada no histórico de compartilhamento
+              const historyData = {
+                action: previousGroupId ? 'change' : 'share',
+                groupId: groupId,
+                previousGroupId: previousGroupId,
+                performedBy: this.userId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              };
+
+              // Incluir operações no batch
+              batch.update(recordRef, updateData);
+              batch.set(historyRef, historyData);
+
+              // Executar batch e resolver/rejeitar conforme resultado
+              batch
+                .commit()
+                .then(() => resolve())
+                .catch((error) => {
+                  console.error('GroupService: Erro ao compartilhar registro:', error);
+                  reject(error);
+                });
             },
             error: (error: any) => {
               console.error(`GroupService: Erro ao ler registro ${recordId}:`, error);
