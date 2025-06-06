@@ -10,7 +10,7 @@ export class ConfigService {
 
   constructor() {
     // Define aqui suas configurações
-    this.ambiente = 'Versão 4.1.8 (de 25/05/2025)'; // Ambiente atual 
+    this.ambiente = 'Versão 4.1.9 (de 06/06/2025)'; // Ambiente atual 
   }
 
 
