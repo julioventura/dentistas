@@ -3,7 +3,9 @@
 # Meus
 /diversos
 /temp
+# Ignore all dotfiles except for .nvmrc
 .*
+!.nvmrc
 
 # Compiled output
 /dist
