@@ -28,6 +28,8 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 2. Adicione sua própria chave da API OpenAI ao arquivo `.env`
 3. Execute `npm run setup` para gerar os arquivos de ambiente
 4. Nunca comite arquivos `.env` ou `environment.ts`
+5. Certifique-se de usar a versão 18 do Node.js conforme definido em `.nvmrc`
+<!-- Adicionada instrução sobre a versão do Node -->
 
 ## Further help
 
