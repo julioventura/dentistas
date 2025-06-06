@@ -47,3 +47,4 @@ if (!fs.existsSync('./src/environments')) {
 fs.writeFileSync('./src/environments/environment.ts', envFile);
 
 console.log('✅ Arquivo environment.ts criado com sucesso!');
+// ADICIONADO: quebra de linha final garantida abaixo
