@@ -1,3 +1,0 @@
-# Example replacements file; does not contain real API keys.
-# Alteracao: conteudo atualizado para demonstrar o formato.
-EXAMPLE_KEY=YOUR_API_KEY_HERE
