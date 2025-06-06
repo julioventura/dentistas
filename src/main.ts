@@ -1,18 +1,14 @@
-// import { enableProdMode } from '@angular/core';
-// import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-// import { AppModule } from './app/app.module';
-// import { environment } from './environments/environment';
+import { enableProdMode } from '@angular/core'; // Alteração: linha descomentada para habilitar o modo de produção
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic'; // Alteração: linha descomentada
+import { AppModule } from './app/app.module'; // Alteração: linha descomentada
+import { environment } from './environments/environment'; // Alteração: linha descomentada
 
-// if (environment.production) {
-//   enableProdMode();
-// }
+// Se o ambiente estiver em produção, ativa o modo de produção do Angular
+// para desabilitar verificações extras e melhorar a performance.
+if (environment.production) {
+  enableProdMode(); // Alteração: linha descomentada para chamar enableProdMode quando em produção
+}
 
-// platformBrowserDynamic().bootstrapModule(AppModule)
-//   .catch(err => console.error(err));
-
-
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from './app/app.module';
-
+// Inicializa o módulo principal da aplicação
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
