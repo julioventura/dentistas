@@ -3,7 +3,9 @@
 # Meus
 /diversos
 /temp
+# Ignore all dotfiles except for .nvmrc
 .*
+!.nvmrc
 
 # Compiled output
 /dist
@@ -57,3 +59,4 @@ Thumbs.db
 src/environments/environment.ts
 src/environments/environment.prod.ts
 src/environments/environment.local.ts
+environment.ts

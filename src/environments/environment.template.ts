@@ -17,3 +17,4 @@ export const environment = {
   openaiApiUrl: 'https://api.openai.com/v1/chat/completions',
   openaiModel: 'gpt-4o-mini'
 };
+// ADICIONADO: quebra de linha final garantida abaixo
