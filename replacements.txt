@@ -1,3 +1,3 @@
-# This file is only an example. It does not contain real API keys.
-# Replace the sample keys below with your own values.
-OLD_KEY>YOUR_KEY_HERE_DO_NOT_COMMIT
+# Example replacements file; does not contain real API keys.
+# Alteracao: conteudo atualizado para demonstrar o formato.
+EXAMPLE_KEY=YOUR_API_KEY_HERE
