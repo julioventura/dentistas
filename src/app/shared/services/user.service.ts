@@ -508,7 +508,10 @@ private initializeService(): void {
         await this.firestore.firestore.disableNetwork();
         await this.firestore.firestore.terminate(); // encerra todas as conexões pendentes
       } catch (e) {
-        console.error('Erro ao desativar a rede do Firestore:', e);
+        // Alteração: evitar log do erro se o Firestore já estiver finalizando
+        if (!/Firestore\s+shutting\s+down/i.test((e as Error).message)) {
+          console.error('Erro ao desativar a rede do Firestore:', e);
+        }
       }
       
       // Redefinir todos os dados do usuário
