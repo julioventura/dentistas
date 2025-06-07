@@ -499,6 +499,14 @@ private initializeService(): void {
   // Método para limpar os dados do usuário no logout
   async logout(): Promise<void> {
     try {
+      // Alteração: desativar rede do Firestore e encerrar conexões antes do logout
+      try {
+        await this.firestore.firestore.disableNetwork();
+        await this.firestore.firestore.terminate(); // encerra todas as conexões pendentes
+      } catch (e) {
+        console.error('Erro ao desativar a rede do Firestore:', e);
+      }
+
       // Limpar dados de autenticação
       await this.afAuth.signOut();
       
