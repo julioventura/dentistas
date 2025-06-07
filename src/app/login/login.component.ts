@@ -1,10 +1,9 @@
 // Alteração: remoção de logs de depuração (console.log)
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/compat/auth'; // Autenticação
-import { UserService } from '../shared/services/user.service';  // Serviço de usuário
-import firebase from 'firebase/compat/app'; // Firebase
-import { MatDialog } from '@angular/material/dialog'; // MatDialog
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { UserService } from '../shared/services/user.service';
+import { MatDialog } from '@angular/material/dialog';
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component'; // Componente de diálogo
 
 @Component({
@@ -14,13 +13,26 @@ import { SignupDialogComponent } from './signup-dialog/signup-dialog.component';
   standalone: false
 })
 export class LoginComponent {
+  // Controle das abas
+  selectedTab = 0;
+
+  // Login
   email: string = '';
   password: string = '';
-  hidePassword: boolean = true; // Controla a visibilidade da senha
-  // Novo: impede múltiplos envios de login
+  hidePassword: boolean = true;
   isSubmitting: boolean = false;
-  // Novo: impede múltiplos cadastros simultâneos
+
+  // Signup
+  signupEmail: string = '';
+  signupPassword: string = '';
+  signupName: string = '';
+  signupUsername: string = '';
+  hideSignupPassword: boolean = true;
   isCreatingAccount: boolean = false;
+
+  // Reset password
+  resetEmail: string = '';
+  isResetting: boolean = false;
 
   constructor(
     private auth: AngularFireAuth,
@@ -29,147 +41,69 @@ export class LoginComponent {
     private dialog: MatDialog
   ) { }
 
-  // Alteração: função agora declara retorno Promise<void> para explicitar comportamento assíncrono
-  // Correção: verificação assíncrona com remoção de espaços
+  // LOGIN
   async onLogin(): Promise<void> {
-
-    // Novo: evita múltiplas submissões simultâneas
-    if (this.isSubmitting) {
-      return;
-    }
-
-    // Correção: remove espaços extras do email e da senha digitados
-    this.email = this.email.trim();
-    this.password = this.password.trim();
-
-    if (!this.email || !this.password) {
-      alert('Por favor, preencha o email e a senha.');
-      return;
-    }
-
-    // Verifica se o email está em um formato válido
-    if (!this.validateEmail(this.email)) {
-      alert('Por favor, insira um email válido.');
-      return;
-    }
-
-    // Novo: define envio em andamento somente após as validações
+    if (this.isSubmitting) return;
     this.isSubmitting = true;
-
     try {
-      // Chamada assíncrona ao Firebase
-      const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password);
-
-      const user: firebase.User | null = userCredential.user;
-
+      const userCredential = await this.auth.signInWithEmailAndPassword(this.email.trim(), this.password.trim());
+      const user = userCredential.user;
       if (user) {
         this.userService.loginSuccess(user);
-        this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
-      } else {
-        // Comentado para evitar log extra de erro
-        console.error('Erro: usuário retornado é null.');
+        this.router.navigate(['/']);
       }
     } catch (error: any) {
-      // Comentado: captura da exceção para evitar que o Angular emita outros logs
-      const errorCode = error.code;
-
-      // Corrigido: registrar apenas quando o usuário não existir
-      if (errorCode === 'auth/user-not-found') {
-        this.promptUserRegistration();
-      // Corrigido: tratar credencial inválida como senha incorreta
-      } else if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password') {
+      if (error.code === 'auth/user-not-found') {
+        alert('Usuário não encontrado. Crie uma conta.');
+        this.selectedTab = 1;
+        this.signupEmail = this.email;
+      } else if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
         alert('Senha incorreta.');
-      } else if (errorCode === 'auth/invalid-email') {
+      } else if (error.code === 'auth/invalid-email') {
         alert('O email fornecido é inválido.');
       } else {
         alert('Erro ao fazer login. Por favor, tente novamente.');
       }
     } finally {
-      // Novo: libera o botão de login
       this.isSubmitting = false;
     }
   }
 
-  // Atualize o método que recebe o resultado do diálogo de cadastro
-  promptUserRegistration() {
-    const dialogRef = this.dialog.open(SignupDialogComponent, {
-      width: '450px',
-      data: { email: this.email },
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.confirm) {
-        this.createAccount(result.name, result.username, result.email);
-      } else {
-      }
-    });
-  }
-
-  // Atualize o método createAccount para receber e usar nome e username
-  // Alteração: assinatura agora retorna Promise<void> para indicar processamento assíncrono
-  createAccount(name: string, username: string, email: string): Promise<void> {
-    // Novo: evita múltiplos cadastros simultâneos. Retorna promessa resolvida se já estiver criando
-    if (this.isCreatingAccount) {
-      return Promise.resolve();
-    }
+  // SIGNUP
+  async onSignup(): Promise<void> {
+    if (this.isCreatingAccount) return;
     this.isCreatingAccount = true;
-
-    return this.auth.createUserWithEmailAndPassword(email, this.password)
-      .then((userCredential) => {
-        const user: firebase.User | null = userCredential.user;
-
-        if (user) {
-          // Atualiza o perfil do usuário com o nome fornecido
-          user.updateProfile({
-            displayName: name
-          }).then(() => {
-            // Chama o método loginSuccess com nome e username
-            this.userService.loginSuccess(user, name, username);
-            // Navega para a página inicial após cadastro bem-sucedido
-            this.router.navigate(['/']);
-          }).catch(error => {
-            console.error('Erro ao atualizar o perfil do usuário:', error);
-            alert('Erro ao atualizar o perfil. Por favor, tente novamente.');
-          });
-        }
-      })
-      .catch(error => {
-        // Correção: tratamento detalhado de erros ao criar conta
-        const errorCode = error.code;
-        if (errorCode === 'auth/email-already-in-use') {
-          alert('Este email já está em uso.');
-        } else {
-          alert('Erro ao criar conta. Por favor, tente novamente.');
-        }
-      })
-      .finally(() => {
-        // Novo: libera o estado de criação
-        this.isCreatingAccount = false;
-      });
-  }
-
-  // Função para validar o formato do email
-  validateEmail(email: string): boolean {
-    // Expressão regular simples para validar o formato do email
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  }
-
-  togglePassword() {
-    const passwordInput = document.getElementById('password') as HTMLInputElement;
-    const passwordIcon = document.getElementById('password-icon');
-
-    if (passwordInput && passwordIcon) {  // Verificando se os elementos existem
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        passwordIcon.classList.remove('fa-eye');
-        passwordIcon.classList.add('fa-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        passwordIcon.classList.remove('fa-eye-slash');
-        passwordIcon.classList.add('fa-eye');
+    try {
+      const userCredential = await this.auth.createUserWithEmailAndPassword(this.signupEmail.trim(), this.signupPassword.trim());
+      const user = userCredential.user;
+      if (user) {
+        await user.updateProfile({ displayName: this.signupName });
+        this.userService.loginSuccess(user, this.signupName, this.signupUsername);
+        this.router.navigate(['/']);
       }
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-in-use') {
+        alert('Este email já está em uso.');
+      } else {
+        alert('Erro ao criar conta. Por favor, tente novamente.');
+      }
+    } finally {
+      this.isCreatingAccount = false;
+    }
+  }
+
+  // RESET PASSWORD
+  async onResetPassword(): Promise<void> {
+    if (this.isResetting) return;
+    this.isResetting = true;
+    try {
+      await this.auth.sendPasswordResetEmail(this.resetEmail.trim());
+      alert('Um email para redefinição de senha foi enviado.');
+      this.selectedTab = 0;
+    } catch (error) {
+      alert('Ocorreu um erro ao tentar enviar o email.');
+    } finally {
+      this.isResetting = false;
     }
   }
 }
