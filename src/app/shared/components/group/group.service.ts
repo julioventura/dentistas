@@ -250,6 +250,7 @@ export class GroupService {
               const record = recordDoc.data() as { groupId?: string };
               const previousGroupId = record?.groupId || null;
 
+              // [Codex] Início da implementação real do compartilhamento usando batch
               // Batch de operações para garantir atomicidade
               const batch = this.firestore.firestore.batch();
 
@@ -257,7 +258,7 @@ export class GroupService {
               const recordRef = this.firestore.collection(collection).doc(recordId).ref;
               const historyRef = recordRef.collection('sharing_history').doc();
 
-              // Dados de atualização do registro - implementado para concluir o compartilhamento
+              // Dados de atualização do registro - informações de compartilhamento
               const updateData: any = {
                 groupId: groupId,
                 sharingMetadata: {
@@ -272,7 +273,7 @@ export class GroupService {
                 updatedBy: this.userId,
               };
 
-              // Entrada no histórico de compartilhamento
+              // Entrada no histórico de compartilhamento para auditoria
               const historyData = {
                 action: previousGroupId ? 'change' : 'share',
                 groupId: groupId,
