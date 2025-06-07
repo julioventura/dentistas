@@ -5,6 +5,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth'; // Autenticação
 import { UserService } from '../shared/services/user.service';  // Serviço de usuário
 import firebase from 'firebase/compat/app'; // Firebase
 import { MatDialog } from '@angular/material/dialog'; // MatDialog
+import { AngularFirestore } from '@angular/fire/compat/firestore'; // Novo: controlar rede do Firestore
 import { SignupDialogComponent } from './signup-dialog/signup-dialog.component'; // Componente de diálogo
 
 @Component({
@@ -26,7 +27,8 @@ export class LoginComponent {
     private auth: AngularFireAuth,
     private router: Router,
     private userService: UserService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private firestore: AngularFirestore // Novo: necessário para habilitar rede
   ) { }
 
   // Alteração: função passou a ser assíncrona para capturar erros sem gerar múltiplos logs
@@ -63,6 +65,12 @@ export class LoginComponent {
       const user: firebase.User | null = userCredential.user;
 
       if (user) {
+        // Novo: reativa a rede do Firestore após login
+        try {
+          await this.firestore.firestore.enableNetwork();
+        } catch (e) {
+          console.error('Erro ao habilitar rede do Firestore:', e);
+        }
         this.userService.loginSuccess(user);
         this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
       } else {
@@ -122,7 +130,13 @@ export class LoginComponent {
           // Atualiza o perfil do usuário com o nome fornecido
           user.updateProfile({
             displayName: name
-          }).then(() => {
+          }).then(async () => {
+            // Novo: reativa a rede do Firestore após criar conta
+            try {
+              await this.firestore.firestore.enableNetwork();
+            } catch (e) {
+              console.error('Erro ao habilitar rede do Firestore:', e);
+            }
             // Chama o método loginSuccess com nome e username
             this.userService.loginSuccess(user, name, username);
             // Navega para a página inicial após cadastro bem-sucedido
