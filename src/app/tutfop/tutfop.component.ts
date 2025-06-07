@@ -87,11 +87,7 @@ export class TutfopComponent implements OnInit, OnDestroy {
 
   // initializeTutfop(): Inicializa scripts e configurações do TutFOP
   private initializeTutfop(): void {
-      nome: this.userNome,
-      email: this.userEmail,
-      uid: this.userUid
-    });
-    
+    // Alteração: removidos logs de depuração e objeto inválido
     // Aguardar o DOM estar pronto e então inicializar
     setTimeout(() => {
       this.showChatInterface();
@@ -99,6 +95,7 @@ export class TutfopComponent implements OnInit, OnDestroy {
       this.setupEventListeners();
     }, 100);
   }
+
 
   // showChatInterface(): Exibe interface do chat e oculta tela de login
   private showChatInterface(): void {
