@@ -9,6 +9,13 @@
     <h1 class="title">{{ titulo_da_pagina }}</h1>
     <div class="right">
       <img src="https://dentistas.com.br/assets/editar.png" class="navegacao_direita" (click)="editar()">
+      <!-- ADICIONAR botão de compartilhamento -->
+      <img 
+        *ngIf="canShare()" 
+        src="https://dentistas.com.br/assets/compartilhar.png" 
+        class="navegacao_direita" 
+        (click)="openSharingModal()"
+        title="Compartilhar com grupo">
       <img src="https://dentistas.com.br/assets/lixo.png" class="navegacao_direita" (click)="excluir()">
     </div>
   </div>

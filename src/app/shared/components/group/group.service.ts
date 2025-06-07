@@ -193,13 +193,40 @@ export class GroupService {
   getSharedRecords(collection: string): Observable<any[]> {
     return this.getAllUserGroups().pipe(
       switchMap(groups => {
-        if (!groups.length) return of([]);
+        if (!groups || groups.length === 0) {
+          return of([]);
+        }
 
-        const groupIds = groups.map(group => group.id);
-
-        return this.firestore.collection(collection, ref =>
-          ref.where('groupId', 'in', groupIds)
-        ).valueChanges({ idField: 'id' });
+        const groupIds = groups
+          .map(group => group?.id)
+          .filter(id => id !== undefined && id !== null);
+          
+        if (groupIds.length === 0) {
+          return of([]);
+        }
+        
+        // Buscar registros que estão compartilhados com os grupos do usuário
+        return this.firestore.collection(collection).valueChanges({ idField: 'id' }).pipe(
+          map((records: any[]) => {
+            if (!records || !Array.isArray(records)) {
+              return [];
+            }
+            
+            return records.filter(record => 
+              record && 
+              record.groupId && 
+              groupIds.includes(record.groupId)
+            );
+          }),
+          catchError(error => {
+            console.error(`Erro ao buscar registros compartilhados da coleção ${collection}:`, error);
+            return of([]);
+          })
+        );
+      }),
+      catchError(error => {
+        console.error('Erro ao obter grupos do usuário:', error);
+        return of([]);
       })
     );
   }

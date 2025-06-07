@@ -1,0 +1,62 @@
+<div class="group-sharing-modal">
+  <h2 mat-dialog-title>
+    <img src="https://dentistas.com.br/assets/compartilhar.png" class="modal-icon" alt="Compartilhar">
+    Compartilhar Paciente
+  </h2>
+
+  <mat-dialog-content>
+    <div class="patient-info">
+      <p><strong>Paciente:</strong> {{ data.recordName || 'Paciente selecionado' }}</p>
+      <p class="help-text">Escolha o grupo para compartilhar este paciente:</p>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-progress-spinner diameter="30" mode="indeterminate"></mat-progress-spinner>
+      <p>Carregando grupos...</p>
+    </div>
+
+    <form [formGroup]="sharingForm" *ngIf="!isLoading">
+      <mat-form-field appearance="outline" class="group-select">
+        <mat-label>Grupo para compartilhamento</mat-label>
+        <mat-select formControlName="selectedGroupId" [disabled]="isProcessing">
+          <mat-option [value]="null">
+            <em>Não compartilhar (apenas você terá acesso)</em>
+          </mat-option>
+          <mat-option *ngFor="let group of groups" [value]="group.id">
+            {{ getGroupDisplayName(group) }}
+          </mat-option>
+        </mat-select>
+        <mat-hint *ngIf="groups.length === 0">Você não participa de nenhum grupo</mat-hint>
+        <mat-hint *ngIf="groups.length > 0">Somente grupos dos quais você participa</mat-hint>
+      </mat-form-field>
+
+      <div class="sharing-info" *ngIf="sharingForm.get('selectedGroupId')?.value">
+        <div class="info-box">
+          <p><strong>Atenção:</strong></p>
+          <p>• Este paciente ficará visível para todos os membros do grupo selecionado</p>
+          <p>• Os administradores do grupo (professores) poderão visualizar e editar este registro</p>
+          <p>• Você pode alterar ou remover o compartilhamento a qualquer momento</p>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isProcessing">
+      Cancelar
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onShare()" 
+      [disabled]="isLoading || isProcessing || groups.length === 0">
+      <mat-progress-spinner 
+        *ngIf="isProcessing" 
+        diameter="20" 
+        mode="indeterminate" 
+        style="margin-right: 8px;">
+      </mat-progress-spinner>
+      {{ isProcessing ? 'Processando...' : 'Confirmar' }}
+    </button>
+  </mat-dialog-actions>
+</div>

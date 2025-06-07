@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, getDoc, addDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
 import { UserService } from './user.service';
 import { Observable, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, catchError } from 'rxjs/operators';
 
 // Definir a interface Group aqui se não existir o arquivo
 export interface Group {
@@ -132,5 +132,76 @@ export class GroupService {
   isGroupAdmin(groupId: string): Observable<boolean> {
     // Implementar verificação de admin do grupo
     return of(false);
+  }
+
+  // ADICIONAR método getAllUserGroups
+  getAllUserGroups(): Observable<Group[]> {
+    return this.userService.getUser().pipe(
+      switchMap(user => {
+        if (!user) {
+          return of([]);
+        }
+
+        const groupsRef = collection(this.firestore, 'groups');
+        return collectionData(groupsRef, { idField: 'id' }).pipe(
+          map((groups: any[]) => {
+            const filteredGroups = groups.filter((group: Group) => {
+              const isAdmin = group.adminIds?.includes(user.uid) || group.adminIds?.includes(user.email || '');
+              const isMember = group.memberIds?.includes(user.uid) || group.memberIds?.includes(user.email || '');
+              return isAdmin || isMember;
+            });
+            
+            return filteredGroups as Group[];
+          })
+        );
+      }),
+      catchError(error => {
+        console.error('Erro ao obter grupos do usuário:', error);
+        return of([]);
+      })
+    );
+  }
+
+  // CORRIGIR método getSharedRecords - usar collection do Firestore corretamente
+  getSharedRecords(collectionName: string): Observable<any[]> {
+    return this.getAllUserGroups().pipe(
+      switchMap(groups => {
+        if (!groups || groups.length === 0) {
+          return of([]);
+        }
+
+        const groupIds = groups
+          .map(group => group?.id)
+          .filter(id => id !== undefined && id !== null);
+          
+        if (groupIds.length === 0) {
+          return of([]);
+        }
+        
+        // CORRIGIR: usar collection() do Firestore corretamente
+        const recordsRef = collection(this.firestore, collectionName);
+        return collectionData(recordsRef, { idField: 'id' }).pipe(
+          map((records: any[]) => {
+            if (!records || !Array.isArray(records)) {
+              return [];
+            }
+            
+            return records.filter(record => 
+              record && 
+              record.groupId && 
+              groupIds.includes(record.groupId)
+            );
+          }),
+          catchError(error => {
+            console.error(`Erro ao buscar registros compartilhados da coleção ${collectionName}:`, error);
+            return of([]);
+          })
+        );
+      }),
+      catchError(error => {
+        console.error('Erro ao obter grupos do usuário:', error);
+        return of([]);
+      })
+    );
   }
 }

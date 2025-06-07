@@ -37,6 +37,8 @@ import { switchMap, take, filter, debounceTime } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { ConfigService } from '../shared/services/config.service';
+import { MatDialog } from '@angular/material/dialog';
+import { GroupSharingModalComponent } from '../shared/components/group/group-sharing-modal.component';
 
 @Component({
   selector: 'app-view',
@@ -101,7 +103,8 @@ export class ViewComponent implements OnInit, OnDestroy {
     private groupService: GroupService,
     private groupSharingService: GroupSharingService,
     private logger: LoggingService,
-    private snackBar: MatSnackBar // Adicionar esta injeção
+    private snackBar: MatSnackBar, // Adicionar esta injeção
+    private dialog: MatDialog // Adicionar esta injeção
   ) { }
 
   /**
@@ -670,5 +673,38 @@ export class ViewComponent implements OnInit, OnDestroy {
         this.snackBar.open('Erro ao atualizar compartilhamento', 'OK', { duration: 3000 });
       }
     });
+  }
+
+  // ADICIONAR método para abrir modal de compartilhamento
+  openSharingModal(): void {
+    if (!this.registro || !this.collection || !this.id) {
+      this.snackBar.open('Dados do paciente não encontrados', 'OK', { duration: 3000 });
+      return;
+    }
+
+    const dialogRef = this.dialog.open(GroupSharingModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: {
+        collection: this.collection,
+        recordId: this.id,
+        recordName: this.registro.nome || 'Paciente sem nome',
+        currentGroupId: this.registro.groupId || null
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.newGroupId !== undefined) {
+        this.registro.groupId = result.newGroupId;
+      }
+    });
+  }
+
+  // Método para verificar se pode compartilhar
+  canShare(): boolean {
+    return !this.subcollection && 
+           !!this.registro && 
+           !!this.collection && 
+           this.collection === 'pacientes';
   }
 }

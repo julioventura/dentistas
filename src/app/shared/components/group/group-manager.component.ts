@@ -15,7 +15,7 @@ import { MatListModule } from '@angular/material/list';
 import { RouterModule, Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of } from 'rxjs';
-import { catchError, filter, take } from 'rxjs/operators';
+import { catchError, filter, map, finalize, take } from 'rxjs/operators';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
@@ -101,6 +101,10 @@ export class GroupManagerComponent implements OnInit {
 
   // ADICIONAR esta propriedade para controlar a exibição do formulário de criação
   isCreatingNewGroup: boolean = false;
+
+  // ADICIONAR propriedades para pacientes compartilhados
+  sharedPatients: any[] = [];
+  isLoadingPatients = false;
 
   constructor(
     private fb: FormBuilder,
@@ -223,18 +227,16 @@ export class GroupManagerComponent implements OnInit {
     });
   }
 
-  // CORRIGIR método selectGroup - verificar se userId é null
+  // ATUALIZAR o método selectGroup existente para incluir loadSharedPatients
   selectGroup(group: Group) {
-    this.isCreatingNewGroup = false; // Fechar formulário de criação se estiver aberto
+    this.isCreatingNewGroup = false;
     this.selectedGroup = group;
     
-    // Verificar se o usuário atual é admin deste grupo específico diretamente
     const isGroupAdmin = (this.userId && group.adminIds?.includes(this.userId)) || 
                         (this.userEmail && group.adminIds?.includes(this.userEmail));
     
     this.isAdminOfSelectedGroup = isGroupAdmin || false;
     
-    // Só preencher o formulário se for admin do grupo ou admin do site
     if (this.isAdminOfSelectedGroup || this.isAdmin) {
       this.groupForm.patchValue({
         name: group.name,
@@ -244,7 +246,6 @@ export class GroupManagerComponent implements OnInit {
         memberIds: group.memberIds || []
       });
 
-      // Popular as arrays com os dados do grupo - CORRIGIR verificação de null
       this.selectedAdmins = (group.adminIds || []).map(adminId => ({
         email: adminId,
         displayValue: this.getUserName(adminId),
@@ -258,9 +259,12 @@ export class GroupManagerComponent implements OnInit {
       }));
     }
 
+    // Carregar pacientes compartilhados
+    this.loadSharedPatients(group.id);
     this.initializeDisplayValues();
   }
 
+  
   private initializeDisplayValues() {
     this.selectedAdmins.forEach(admin => {
       if (!admin.displayValue) {
@@ -324,26 +328,6 @@ export class GroupManagerComponent implements OnInit {
     this.isAdminOfSelectedGroup = false;
     this.selectedAdmins = [];
     this.selectedMembers = [];
-  }
-
-  getUserName(userId: string | null | undefined): string {
-    if (!userId) {
-      return 'Usuário desconhecido';
-    }
-
-    // Verificar se a lista de usuários está carregada
-    if (!this.users || this.users.length === 0) {
-      return `Usuário ${userId}`;
-    }
-
-    const user = this.users.find(u => u.id === userId);
-
-    if (!user) {
-      return `Usuário ${userId}`;
-    }
-
-    // Verificar múltiplas propriedades possíveis para o nome
-    return user.nome || user.name || user.displayName || user.email || `Usuário ${userId}`;
   }
 
   // Método para verificar se pode editar um grupo
@@ -765,19 +749,6 @@ export class GroupManagerComponent implements OnInit {
            (!!this.userEmail && group.adminIds.includes(this.userEmail));
   }
 
-  // ADICIONAR método de debug para verificar estado
-  getDashboardInfo() {
-    return {
-      nomeUsuario: this.userEmail || 'Não autenticado',
-      grupoSelecionado: this.selectedGroup?.name || 'Nenhum grupo selecionado',
-      quantidadeMembros: this.selectedMembers.length,
-      quantidadeAdmins: this.selectedAdmins.length,
-      quantidadePacientes: 0, // TODO: implementar quando tivermos pacientes compartilhados
-      isAdmin: this.isAdmin,
-      isAdminDoGrupo: this.isAdminOfSelectedGroup,
-      totalGrupos: this.groups.length
-    };
-  }
 
   // ADICIONAR método para mostrar formulário de novo grupo
   showNewGroupForm(): void {
@@ -791,4 +762,100 @@ export class GroupManagerComponent implements OnInit {
     this.isCreatingNewGroup = false;
     this.resetForm();
   }
+
+  // ADICIONAR método para carregar pacientes compartilhados
+  loadSharedPatients(groupId?: string): void {
+    if (!groupId) {
+      this.sharedPatients = [];
+      return;
+    }
+
+    this.isLoadingPatients = true;
+    
+    // Usar o GroupService para buscar registros compartilhados
+    this.groupService.getSharedRecords('pacientes')
+      .pipe(
+        map(patients => {
+          // Filtrar apenas pacientes do grupo atual
+          return patients.filter(patient => patient?.groupId === groupId);
+        }),
+        catchError(error => {
+          console.error('Erro ao carregar pacientes compartilhados:', error);
+          this.snackBar.open('Erro ao carregar pacientes do grupo', 'OK', { duration: 3000 });
+          return of([]);
+        }),
+        finalize(() => this.isLoadingPatients = false)
+      )
+      .subscribe(patients => {
+        this.sharedPatients = patients || [];
+      });
+  }
+
+  // Método único para track by nos loops
+  trackByPatientId(index: number, patient: any): any {
+    return patient?.id || index;
+  }
+
+  // Método único para formatar data
+  getFormattedDate(timestamp: any): string {
+    if (!timestamp) return 'N/A';
+    
+    try {
+      let date: Date;
+      
+      if (timestamp.toDate && typeof timestamp.toDate === 'function') {
+        date = timestamp.toDate();
+      } else if (timestamp instanceof Date) {
+        date = timestamp;
+      } else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+        date = new Date(timestamp);
+      } else {
+        return 'N/A';
+      }
+      
+      return date.toLocaleDateString('pt-BR');
+    } catch (error) {
+      console.error('Erro ao formatar data:', error);
+      return 'N/A';
+    }
+  }
+
+  // Método único para visualizar paciente
+  viewPatient(patient: any): void {
+    if (!patient?.id) {
+      this.snackBar.open('ID do paciente não encontrado', 'OK', { duration: 2000 });
+      return;
+    }
+    
+    this.router.navigate(['/view/pacientes', patient.id]);
+  }
+
+  // Método único para obter nome do usuário
+  getUserName(userId?: string): string {
+    if (!userId) return 'Usuário desconhecido';
+    
+    if (userId.includes('@')) {
+      return userId;
+    }
+    
+    return userId.length > 20 ? `${userId.substring(0, 20)}...` : userId;
+  }
+
+
+
+
+  // Método getDashboardInfo atualizado
+  getDashboardInfo() {
+    return {
+      nomeUsuario: this.userEmail || 'Não autenticado',
+      grupoSelecionado: this.selectedGroup?.name || 'Nenhum grupo selecionado',
+      quantidadeMembros: this.selectedMembers?.length || 0,
+      quantidadeAdmins: this.selectedAdmins?.length || 0,
+      quantidadePacientes: this.sharedPatients?.length || 0,
+      isAdmin: this.isAdmin,
+      isAdminDoGrupo: this.isAdminOfSelectedGroup,
+      totalGrupos: this.groups?.length || 0
+    };
+  }
+
 }
