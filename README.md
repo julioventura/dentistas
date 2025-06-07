@@ -25,7 +25,8 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Configuração do Ambiente
 
 1. Copie `.env.template` para `.env` na raiz do projeto
-2. Adicione sua própria chave da API OpenAI ao arquivo `.env`
+2. Adicione sua chave da API OpenAI **e** as variáveis do Firebase ao arquivo `.env`
+   - `OPENAI_API_KEY`, `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_MESSAGING_SENDER_ID`, `FIREBASE_APP_ID` e `FIREBASE_MEASUREMENT_ID`
 3. Execute `npm run setup` para gerar os arquivos de ambiente
 4. Nunca comite arquivos `.env` ou `environment.ts`
 5. Certifique-se de usar a versão 18 do Node.js conforme definido em `.nvmrc`

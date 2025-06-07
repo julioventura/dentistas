@@ -9,9 +9,21 @@ if (result.error) {
   process.exit(1);
 }
 
-// Verifica se a chave da API foi carregada
-if (!process.env.OPENAI_API_KEY) {
-  console.error('⚠️ OPENAI_API_KEY não encontrada no arquivo .env');
+// ADICIONADO: validação das variáveis necessárias
+const requiredVars = [
+  'OPENAI_API_KEY',
+  'FIREBASE_API_KEY',
+  'FIREBASE_AUTH_DOMAIN',
+  'FIREBASE_PROJECT_ID',
+  'FIREBASE_STORAGE_BUCKET',
+  'FIREBASE_MESSAGING_SENDER_ID',
+  'FIREBASE_APP_ID',
+  'FIREBASE_MEASUREMENT_ID'
+];
+
+const missingVars = requiredVars.filter((name) => !process.env[name]);
+if (missingVars.length > 0) {
+  console.error(`⚠️ Variáveis faltando no .env: ${missingVars.join(', ')}`);
   process.exit(1);
 }
 
@@ -23,13 +35,14 @@ const envFile = `// ARQUIVO DE CONFIGURAÇÃO GERADO AUTOMATICAMENTE
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: "AIzaSyD3D1Rrl4ov9wDMkjMH7BrGwSIoYbbgSyQ",
-    authDomain: "dentistas-com-br-2025.firebaseapp.com",
-    projectId: "dentistas-com-br-2025", 
-    storageBucket: "dentistas-com-br-2025.appspot.com",
-    messagingSenderId: "62096953183", 
-    appId: "1:62096953183:web:d23421cecbd0caebc2b0ea",
-    measurementId: "G-657HTS1CNX"
+    // ALTERADO: valores obtidos das variáveis de ambiente
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
   },
   aiChatApiUrl: 'https://api.dentistas.com.br/ai',
   openaiApiKey: '${process.env.OPENAI_API_KEY}',
