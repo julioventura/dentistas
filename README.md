@@ -22,6 +22,11 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
+## Linting
+
+Run `npm run lint` to check the code for formatting issues and unused variables.
+<!-- Sessao de lint adicionada ao README -->
+
 ## Configuração do Ambiente
 
 1. Copie `.env.template` para `.env` na raiz do projeto

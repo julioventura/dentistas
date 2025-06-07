@@ -6,6 +6,8 @@
 # Ignore all dotfiles except for .nvmrc
 .*
 !.nvmrc
+!.eslintrc.js
+# allow eslint config to be versioned
 
 # Compiled output
 /dist
