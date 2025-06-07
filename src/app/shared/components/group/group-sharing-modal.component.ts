@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core'; // Alteração: uso de 'inject' para dependências
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -39,11 +39,11 @@ export class GroupSharingModalComponent implements OnInit {
   groups: any[] = [];
   isLoading = true;
   isProcessing = false;
+  dialogRef = inject(MatDialogRef<GroupSharingModalComponent>); // Inclusão: injeção direta do MatDialogRef
+  data = inject(MAT_DIALOG_DATA) as GroupSharingModalData; // Inclusão: obtém dados via inject
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<GroupSharingModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: GroupSharingModalData, // This is line 46
     private groupService: GroupService,
     private snackBar: MatSnackBar
   ) {
