@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -5,6 +6,7 @@ import { UserService } from './shared/services/user.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { filter, take, switchMap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
+
 
 @Component({
   selector: 'app-root',
@@ -48,19 +50,19 @@ export class AppComponent implements OnInit {
         take(1),
         switchMap(user => {
           if (user) {
-            console.log('Usuário autenticado, inicializando serviços...', user.uid);
+            // Alteração: removido log de depuração
             
             // Inicializar serviços apenas após autenticação
             this.userService.chatbotExpanded$.subscribe(expanded => {
               this.isChatbotExpanded = expanded;
-              console.log('Chatbot expanded status:', expanded);
+              // Alteração: removido log de depuração
             });
 
             return this.router.events.pipe(
               filter(event => event instanceof NavigationEnd)
             );
           } else {
-            console.log('Usuário não autenticado, aguardando...');
+            // Alteração: removido log de depuração
             return EMPTY;
           }
         })
@@ -75,7 +77,7 @@ export class AppComponent implements OnInit {
           // Se temos uma rota não-sistema e não é a raiz
           this.isHomepageRoute = !isSystemRoute && url !== '/' && url.split('/').length === 2;
           
-          console.log(`Rota atual: ${url}, É homepage? ${this.isHomepageRoute}`);
+          // Alteração: removido log de depuração
           
           // Adicionar/remover classe ao body dependendo da rota
           if (this.isHomepageRoute) {
@@ -99,7 +101,7 @@ export class AppComponent implements OnInit {
         // Se temos uma rota não-sistema e não é a raiz
         this.isHomepageRoute = !isSystemRoute && url !== '/' && url.split('/').length === 2;
         
-        console.log(`Rota atual: ${url}, É homepage? ${this.isHomepageRoute}`);
+        // Alteração: removido log de depuração
         
         // Adicionar/remover classe ao body dependendo da rota
         if (this.isHomepageRoute) {
@@ -109,7 +111,7 @@ export class AppComponent implements OnInit {
         }
       });
 
-      console.log('AppComponent initialized');
+      // Alteração: removido log de depuração
     } catch (error) {
       console.error('Error initializing AppComponent:', error);
     }

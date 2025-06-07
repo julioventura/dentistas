@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /**
  * ListComponent
  * 
@@ -101,7 +102,6 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   ngOnInit() {
-    console.log("List - ngOnInit()");
     this.collection = this.route.snapshot.paramMap.get('collection')!;
     this.id = this.route.snapshot.paramMap.get('id')!;
     this.subcollection = this.route.snapshot.paramMap.get('subcollection')!;
@@ -129,7 +129,6 @@ export class ListComponent implements OnInit {
     // Utilize somente uma verificação com a chave normalizada:
     if (this.subcollection) {
       const normalizedKey = this.subcollection.replace(/_/g, '').toLowerCase();
-      // console.log("Subcollection normalized key:", normalizedKey);
       if (SUBCOLLECTION_FIELDS[normalizedKey]) {
         this.firstField = SUBCOLLECTION_FIELDS[normalizedKey].firstField;
         this.firstHeader = SUBCOLLECTION_FIELDS[normalizedKey].firstHeader;
@@ -151,10 +150,6 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   loadRegistros() {
-    // console.log('loadRegistros()');
-    console.log('Collection:', this.collection);
-    // console.log('ID:', this.id);
-    console.log('subcollection:', this.subcollection);
 
     if (this.userId && this.collection) {
       const collectionPath = this.id
@@ -194,12 +189,9 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   verFicha(fichaId: string) {
-    // console.log("verFicha(fichaId)");
     const fichaPath = this.subcollection ?
       `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
       `view/${this.collection}`;
-    console.log("fichaPath =", fichaPath);
-    console.log("fichaId =", fichaId);
     this.router.navigate([fichaPath, fichaId]);
   }
 
@@ -214,17 +206,14 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   incluir() {
-    console.log("incluir()");
     if (this.userId) {
       const collectionPath = this.subcollection ?
         `users/${this.userId}/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
         `users/${this.userId}/${this.collection}`;
-      console.log("collectionPath " + collectionPath);
 
       const collectionRoute = this.subcollection ?
         `/edit-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens` :
         `/edit/${this.collection}`;
-      console.log("collectionRoute ", collectionRoute);
 
       // Primeiro garantimos que os campos estão carregados
       const carregarCampos = this.subcollection ? 
@@ -244,8 +233,6 @@ export class ListComponent implements OnInit {
         const novoRegistro: any = {};
         novoRegistro.id = this.firestoreService.createId();
         novoRegistro.codigo = novoCodigo;
-        console.log("novoRegistro.id =", novoRegistro.id);
-        console.log("novoRegistro.codigo =", novoRegistro.codigo);
         
         // Valores comuns independente do tipo de coleção
         novoRegistro['data'] = this.getDataAtual(); // Data de hoje
@@ -270,7 +257,6 @@ export class ListComponent implements OnInit {
         // Adicionar o registro e navegar
         return this.firestoreService.addRegistro(collectionPath, novoRegistro)
           .then(() => {
-            console.log("Criou registro " + novoRegistro.id);
             this.router.navigate([collectionRoute, novoRegistro.id]);
           });
       })
@@ -368,7 +354,6 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   previousPage() {
-    // console.log("previousPage()");
     if (this.page > 1) {
       this.page--;
       this.atualizarRegistrosPaginados();
@@ -384,7 +369,6 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   nextPage() {
-    // console.log("nextPage()");
     if (this.page < this.totalPages) {
       this.page++;
       this.atualizarRegistrosPaginados();
@@ -401,7 +385,6 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   verificarOuCriarConfiguracao() {
-    // console.log("verificarOuCriarConfiguracao()");
     if (this.userId) {
       const configPath = `users/${this.userId}/configuracoesCampos`;
       this.firestore.collection(configPath).doc(this.collection).get()
@@ -410,7 +393,6 @@ export class ListComponent implements OnInit {
             const camposPadrao = this.getCamposPadraoPorCollection();
             this.firestore.collection(configPath).doc(this.collection).set({ campos: camposPadrao })
               .then(() => {
-                console.log(`Configuração criada para a coleção "${this.collection}".`);
                 // alert(`Configuração padrão criada para a coleção "${this.collection}". Você pode personalizar os campos em "Configurações".`);
               })
               .catch((error) => {
@@ -456,7 +438,6 @@ export class ListComponent implements OnInit {
    * Retorna: Array de objetos com os campos padrão.
    */
   getCamposPadraoPorCollection() {
-    // console.log("getCamposPadraoPorCollection()");
     return [
       { nome: 'nome', tipo: 'text', label: 'Nome' },
       { nome: 'codigo', tipo: 'text', label: 'Código' },
@@ -505,8 +486,6 @@ export class ListComponent implements OnInit {
    * Retorna: void.
    */
   voltar() {
-    // console.log("voltar()");
-    // console.log("subcollection =", this.subcollection);
     const listaPath = this.subcollection ?
       `/view/${this.collection}/${this.id}` :
       `home`;
@@ -530,7 +509,6 @@ export class ListComponent implements OnInit {
       this.dataSortOrder = this.dataSortOrder === 'asc' ? 'desc' : 'asc';
       this.sortRegistros(field, this.dataSortOrder);
     } else {
-      // console.log(`No sorting defined for field: ${field}`);
     }
   }
 

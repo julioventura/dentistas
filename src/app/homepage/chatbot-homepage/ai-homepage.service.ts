@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs'; // Removido BehaviorSubject não utilizado
@@ -30,14 +31,12 @@ export class AiHomepageService {
     private http: HttpClient,
     private firestore: AngularFirestore
   ) {
-    console.log('AiHomepageService inicializado para perfil profissional');
   }
 
   /**
    * Cria uma nova sessão de chat para o perfil profissional
    */
   createNewSession(username: string): Observable<string> {
-    console.log(`Criando nova sessão de chat para perfil: ${username}`);
     
     // Gerar ID de sessão único
     const sessionId = this.firestore.createId();
@@ -51,7 +50,6 @@ export class AiHomepageService {
    * Envia uma mensagem para a API e retorna a resposta
    */
   sendMessage(message: string, sessionId: string, username: string, profileData: any): Observable<Message> {
-    console.log(`Enviando mensagem para API: "${message}" (sessão: ${sessionId})`);
     
     const endpoint = `${this.apiUrl}/chat`;
     const payload = {
@@ -110,7 +108,6 @@ export class AiHomepageService {
    */
   setProfileData(data: any): void {
     this.profileData = data;
-    console.log('Dados do perfil definidos para contextualização:', data);
   }
 
   /**

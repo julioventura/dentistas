@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -26,7 +27,6 @@ export class ImportarCadastroComponent {
       if (user) {
         this.userId = user.uid;
       }
-      console.log("ImportarCadastroComponent");
     });
   }
 
@@ -38,7 +38,6 @@ export class ImportarCadastroComponent {
         header: true,
         complete: (result: { data: any[] }) => {
           this.importData(result.data);
-          console.log('Dados CSV carregados:', result.data);
         },
         error: (error: any) => {
           console.error('Erro ao processar o arquivo:', error);
@@ -70,7 +69,6 @@ export class ImportarCadastroComponent {
       try {
         await batch.commit();
         this.importStatus = 'Importação concluída com sucesso!';
-        console.log('Dados importados com sucesso:', data);
       } catch (error) {
         console.error('Erro ao importar dados:', error);
         this.importStatus = 'Erro ao importar os dados.';
@@ -99,7 +97,6 @@ export class ImportarCadastroComponent {
 
     batch.commit().then(() => {
       this.importStatus = `Importação concluída com sucesso para o cadastro: ${this.selectedCollection}!`;
-      console.log(this.importStatus, this.csvData);
     }).catch((error) => {
       console.error('Erro ao importar dados:', error);
       this.importStatus = 'Erro ao importar os dados.';

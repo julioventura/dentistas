@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /*
   FichasComponent
   Métodos:
@@ -48,7 +49,6 @@ export class FichasComponent implements OnInit {
     this.userService.getUser().subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;
-        console.log("User ID:", this.userId);
         // Define as coleções fixas
         this.colecoes = [
           'padrao',

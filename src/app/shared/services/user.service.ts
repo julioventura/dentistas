@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Injectable, Injector } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -68,7 +69,6 @@ export class UserService {
     private router: Router,
     private injector: Injector
 ) {
-    console.log('UserService initialized');
     
     // Aguardar autenticação antes de inicializar observables
     this.afAuth.authState.pipe(
@@ -80,7 +80,6 @@ export class UserService {
         })
     ).subscribe(user => {
         if (user) {
-            console.log('UserService inicializado para usuário:', user.uid);
             this.initializeService();
         }
     });
@@ -92,7 +91,6 @@ private initializeService(): void {
         tap(user => {
             if (user?.email) {
                 this.userEmail = user.email;
-                console.log('UserService: User authenticated:', this.userEmail);
             }
         }),
         debounceTime(300),
@@ -125,7 +123,6 @@ private initializeService(): void {
     
     // Se estamos navegando para uma nova URL que indica criação de novo registro
     if (segments.length > 0 && segments[0] === 'new') {
-      console.log('Criando novo registro - limpando o contexto anterior');
       // Limpar o contexto atual, mantendo apenas o tipo de coleção
       if (segments.length > 1) {
         context.collection = segments[1];
@@ -185,7 +182,6 @@ private initializeService(): void {
       }
     }
     
-    console.log('Contexto de navegação atualizado:', context);
     this.navigationContextSubject.next(context);
   }
 
@@ -196,7 +192,6 @@ private initializeService(): void {
 
   // Setter para userProfile - centraliza a atualização
   setUserProfile(profile: any): void {
-    console.log('UserService: Setting userProfile', profile);
     this._userProfile = profile;
     this.userProfileSubject.next(profile);
     
@@ -208,13 +203,11 @@ private initializeService(): void {
 
   // Método para recuperar perfil do usuário pelo username
   loadUserProfileByUsername(username: string): Observable<any[]> {
-    console.log('UserService: Carregando perfil de usuário por username:', username);
     
     return this.firestoreService.getRegistroByUsername<any>('usuarios/dentistascombr/users', username)
       .pipe(
         tap(userProfiles => {
           if (userProfiles && userProfiles.length > 0) {
-            console.log('UserService: Perfil encontrado:', userProfiles[0]);
             // Armazenar no userProfile para acesso dos componentes filhos
             this.setUserProfile(userProfiles[0]);
           } else {
@@ -230,7 +223,6 @@ private initializeService(): void {
 
   // Método para atualizar o perfil do usuário
   updateUserProfile(userEmail: string, profileData: any): Promise<void> {
-    console.log('UserService: Updating profile for:', userEmail);
     
     if (!userEmail) {
       console.error('UserService: Email not provided for profile update');
@@ -246,7 +238,6 @@ private initializeService(): void {
       .doc(userEmail)
       .update(profileData)
       .then(() => {
-        console.log('UserService: Profile updated successfully');
       })
       .catch(error => {
         console.error('UserService: Error updating profile:', error);
@@ -260,7 +251,6 @@ private initializeService(): void {
     this.userEmail = null;
     this.userProfileSubject.next(null);
     localStorage.removeItem('userProfileCache');
-    console.log('UserService: User data cleared');
   }
 
   // Método para pegar os dados do usuário autenticado
@@ -275,7 +265,6 @@ private initializeService(): void {
       if (userData) {
         const parsedData = JSON.parse(userData);
         this.user = parsedData;
-        console.log('User data loaded from localStorage:', this.user);
         return parsedData;
       }
       return {}; // Return empty object if no data found
@@ -330,12 +319,10 @@ private initializeService(): void {
           provider: user.providerData[0]?.providerId || 'emailAndPassword',
           createdAt: new Date(),
         }).then(() => {
-          console.log('Usuário criado na coleção usuarios/dentistascombr com email como chave.');
         }).catch((error) => {
           console.error('Erro ao criar o usuário na coleção usuarios/dentistascombr:', error);
         });
       } else {
-        console.log('Usuário já existe na coleção usuarios/dentistascombr');
         // Se o usuário existir, mas queremos atualizar nome e username
         if (name || username) {
           const updateData: any = {};
@@ -343,7 +330,6 @@ private initializeService(): void {
           if (username) updateData.username = username;
           
           userRef.update(updateData).then(() => {
-            console.log('Nome e username atualizados para o usuário existente');
           }).catch(error => {
             console.error('Erro ao atualizar nome e username:', error);
           });
@@ -441,7 +427,6 @@ private initializeService(): void {
           return obj;
         }, {} as Record<string, any>);
         
-      console.log('Dados sanitizados para novo registro:', sanitizedData);
     }
   
     const currentContext = this.navigationContextSubject.value;
@@ -453,7 +438,6 @@ private initializeService(): void {
       } 
     };
     
-    console.log('UserService: Atualizando registro atual:', updatedContext);
     this.navigationContextSubject.next(updatedContext);
   }
   
@@ -486,7 +470,6 @@ private initializeService(): void {
         .doc(user.uid)
         .set(userData, { merge: true });
         
-      console.log('Dados do usuário atualizados com sucesso');
     } catch (error) {
       console.error('Erro ao atualizar dados do usuário:', error);
       throw error;
@@ -532,7 +515,6 @@ private initializeService(): void {
         const { AiChatService } = await import('../../chatbot-widget/ai-chat.service');
         const aiChatService = this.injector.get(AiChatService);
         aiChatService.resetContext();
-        console.log('Contexto do chatbot limpo durante logout');
       } catch (error) {
         console.error('Erro ao acessar AiChatService:', error);
       }
@@ -542,7 +524,6 @@ private initializeService(): void {
         this.router.navigate(['/home']);
       }
       
-      console.log('Dados do usuário limpos no logout');
       return;
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
@@ -552,12 +533,10 @@ private initializeService(): void {
 
   // Método para buscar registro por username
   getRegistroByUsername(collection: string, username: string): Observable<any[]> {
-    console.log(`Buscando em ${collection} por username: ${username}`);
     
     return this.firestore.collection(collection, ref => 
       ref.where('username', '==', username)
     ).valueChanges({ idField: 'id' }).pipe(
-      tap(results => console.log(`Encontrados ${results.length} resultados para username ${username}`)),
       catchError(error => {
         console.error('Erro ao buscar por username:', error);
         return of([]);
@@ -568,7 +547,6 @@ private initializeService(): void {
   // Método para definir o perfil da homepage
   setHomepageProfile(profile: any): void {
     if (profile) {
-      console.log('UserService: Definindo perfil da homepage:', profile);
       this.homepageProfileSubject.next(profile);
     }
   }

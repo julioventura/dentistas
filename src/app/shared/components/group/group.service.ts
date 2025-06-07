@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -18,7 +19,6 @@ export class GroupService {
   ) {
     this.auth.authState.subscribe(user => {
       this.userId = user ? user.uid : null;
-      console.log('GroupService: Auth state changed, userId:', this.userId ? 'authenticated' : 'not authenticated');
     });
   }
 
@@ -216,7 +216,6 @@ export class GroupService {
    * @param groupId - ID do grupo para compartilhamento
    */
   shareRecordWithGroup(collection: string, recordId: string, groupId: string): Promise<void> {
-    console.log(`GroupService: Iniciando compartilhamento do registro ${recordId} com o grupo ${groupId}`);
 
     if (!this.userId) {
       console.error('GroupService: Tentativa de compartilhamento sem usuário autenticado');
@@ -277,7 +276,6 @@ export class GroupService {
    * @param recordId - ID do registro
    */
   removeRecordSharing(collection: string, recordId: string): Promise<void> {
-    console.log(`GroupService: Iniciando remoção de compartilhamento do registro ${recordId}`);
 
     if (!this.userId) {
       console.error('GroupService: Tentativa de remoção de compartilhamento sem usuário autenticado');
@@ -296,7 +294,6 @@ export class GroupService {
             return Promise.resolve();
           }
 
-          console.log(`GroupService: Removendo compartilhamento do registro ${recordId} (grupo anterior: ${previousGroupId})`);
 
           const updateData: any = {
             groupId: firebase.firestore.FieldValue.delete(),
@@ -315,7 +312,6 @@ export class GroupService {
         })
       ).subscribe({
         next: () => {
-          console.log(`GroupService: Compartilhamento removido com sucesso para o registro ${recordId}`);
           resolve();
         },
         error: (error) => {
@@ -364,7 +360,6 @@ export class GroupService {
    * @param message - Mensagem opcional do solicitante
    */
   requestJoinGroup(groupId: string, message?: string): Promise<void> {
-    console.log(`GroupService: Solicitando entrada no grupo ${groupId}`);
 
     if (!this.userId) {
       console.error('GroupService: Tentativa de solicitação sem usuário autenticado');
@@ -407,11 +402,9 @@ export class GroupService {
           message: message || ''
         };
 
-        console.log(`GroupService: Criando nova solicitação para o grupo ${groupId}`);
         return this.firestore.collection('groupJoinRequests').add(requestData);
       })
       .then(() => {
-        console.log(`GroupService: Solicitação para grupo ${groupId} criada com sucesso`);
       })
       .catch(error => {
         console.error(`GroupService: Erro ao solicitar entrada no grupo: ${error.message || error}`);
@@ -427,15 +420,12 @@ export class GroupService {
       filter(user => !!user),
       switchMap(user => {
         if (!user || !user.uid) {
-          console.log('Group Service: No user ID available');
           return of([]);
         }
 
-        console.log(`Group Service: Getting admin groups for user ${user.uid}`);
         // First get groups where user is an admin
         return this.getAdminGroups().pipe(
           switchMap(groups => {
-            console.log(`Group Service: Found ${groups.length} admin groups`);
             // If user is not admin of any group, return empty array
             if (!groups || groups.length === 0) {
               return of([]);
@@ -446,7 +436,6 @@ export class GroupService {
               .map(group => group.id)
               .filter(id => id !== undefined && id !== null);
 
-            console.log(`Group Service: Querying join requests for groups: ${groupIds}`);
 
             // Query join requests for those groups
             if (groupIds && groupIds.length > 0) {
@@ -456,7 +445,6 @@ export class GroupService {
               ).valueChanges({ idField: 'id' });
             } else {
               // If no valid group IDs, return empty array
-              console.log('Group Service: No valid group IDs found');
               return of([]);
             }
           })
@@ -474,7 +462,6 @@ export class GroupService {
    * @param requestId - ID da solicitação
    */
   approveJoinRequest(requestId: string): Promise<void> {
-    console.log(`GroupService: Aprovando solicitação ${requestId}`);
 
     if (!this.userId) {
       console.error('GroupService: Tentativa de aprovar solicitação sem usuário autenticado');
@@ -492,7 +479,6 @@ export class GroupService {
             throw new Error('Solicitação não encontrada ou já foi processada');
           }
 
-          console.log(`GroupService: Atualizando status da solicitação ${requestId}`);
 
           // Atualizar o pedido
           const updatePromise = this.firestore.doc(`groupJoinRequests/${requestId}`).update({
@@ -501,7 +487,6 @@ export class GroupService {
             respondedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
 
-          console.log(`GroupService: Adicionando usuário ${request['userId']} ao grupo ${request['groupId']}`);
 
           // Adicionar o usuário ao grupo
           const addMemberPromise = this.addGroupMember(request['groupId'], request['userId']);
@@ -510,7 +495,6 @@ export class GroupService {
         })
       ).subscribe({
         next: () => {
-          console.log(`GroupService: Solicitação ${requestId} aprovada com sucesso`);
           resolve();
         },
         error: (error) => {
@@ -527,7 +511,6 @@ export class GroupService {
    * @param responseMessage - Mensagem opcional de resposta
    */
   rejectJoinRequest(requestId: string, responseMessage?: string): Promise<void> {
-    console.log(`GroupService: Rejeitando solicitação ${requestId}`);
 
     if (!this.userId) {
       return Promise.reject('Usuário não autenticado');
@@ -556,7 +539,6 @@ export class GroupService {
         });
       })
       .then(() => {
-        console.log(`GroupService: Solicitação ${requestId} rejeitada com sucesso`);
       })
       .catch(error => {
         console.error(`GroupService: Erro ao rejeitar solicitação: ${error.message || error}`);
@@ -574,7 +556,6 @@ export class GroupService {
       map(data => {
         if (!data) {
           // Remover este log para evitar spam no console
-          // console.log(`GroupService: Registro ${id} não encontrado em ${collection}`);
           return null;
         }
         return { id, ...data };

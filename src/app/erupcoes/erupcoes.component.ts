@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -40,7 +41,6 @@ export class ErupcoesComponent implements OnInit {
 
 
   ngOnInit(): void {
-    console.log("ngOnInit()");
 
     // Obtém o ID do usuário autenticado e carrega os dados dos pacientes
     this.afAuth.authState.subscribe(user => {
@@ -80,7 +80,6 @@ export class ErupcoesComponent implements OnInit {
   
 
   carregarPacientes(): void {
-    console.log("carregarPacientes()");
 
     if (!this.userId) return;
     this.isLoading = true;
@@ -129,7 +128,6 @@ export class ErupcoesComponent implements OnInit {
 
 
   verificarErupcoes(): void {
-    console.log("Início da verificação de erupções");
 
     this.pacientesComErupcao = this.pacientes
       .map(paciente => {
@@ -148,7 +146,6 @@ export class ErupcoesComponent implements OnInit {
               !denteJaErupcionado;
 
             if (denteDentroFaixa) {
-              console.log(`SELECIONADO: Dente ${dente.Dente} para ${paciente.nome}: erupciona aos ${inicioErupcao} meses (dentro da faixa ${pacienteMeses}-${faixaMaxima} meses)`);
             }
             
             return denteDentroFaixa;
@@ -166,13 +163,11 @@ export class ErupcoesComponent implements OnInit {
       .filter(paciente => paciente.dentesEmErupcao.length > 0)
       .sort((a, b) => a.nome.localeCompare(b.nome));  // Ordena alfabeticamente pelo nome
 
-    console.log("Pacientes com dentes em erupção:", this.pacientesComErupcao);
     this.isLoading = false;
   }
 
 
   enviar_whatsapp(nome: string, telefone: string) {
-    console.log("paciente = "), nome;
 
     if (!telefone || !nome) {
       console.error("Telefone ou nome do paciente não fornecido.");
@@ -222,7 +217,6 @@ export class ErupcoesComponent implements OnInit {
 
 
   voltar() {
-    console.log("voltar()");
     const listaPath = `list/pacientes`;
     this.router.navigate([listaPath]);
   }

@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, of } from 'rxjs';
@@ -164,11 +165,9 @@ export class CrmService {
       .pipe(
         map(config => {
           if (!config) {
-            console.log('No config found, using default');
             return this.defaultPipelineConfig;
           }
           
-          console.log('Config found in Firestore', config);
           return config;
         }),
         catchError(error => {
@@ -228,7 +227,6 @@ export class CrmService {
   // Add this method to create test data
   async createTestData(): Promise<void> {
     try {
-      console.log('Creating test data...');
       
       // Definir o pipeline config
       const pipelineConfig = {
@@ -263,9 +261,7 @@ export class CrmService {
       };
       
       // First, ensure pipeline config exists
-      console.log('Writing pipeline config...');
       await this.firestore.doc('config/pipeline').set(pipelineConfig);
-      console.log('Pipeline config written successfully');
       
       // Create test pacientes with CRM data
       const testLeads = [
@@ -336,11 +332,9 @@ export class CrmService {
       ];
       
       // Add test leads to Firestore using individual writes instead of batch
-      console.log('Creating test leads...');
       for (const lead of testLeads) {
         await this.firestore.collection('pacientes').add(lead);
       }
-      console.log('Test leads created successfully');
       
       // Also add a few test dentists with CRM data
       const testDentists = [
@@ -373,11 +367,9 @@ export class CrmService {
         }
       ];
       
-      console.log('Creating test dentists...');
       for (const dentist of testDentists) {
         await this.firestore.collection('dentistas').add(dentist);
       }
-      console.log('Test dentists created successfully');
       
       return Promise.resolve();
     } catch (error) {

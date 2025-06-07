@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Injectable } from '@angular/core';
 import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
@@ -51,15 +52,12 @@ export class FirestoreService<T extends { id?: string }> {
 
   // Método para buscar registro por username
   getRegistroByUsername<T = any>(collection: string, username: string): Observable<T[]> {
-    console.log(`FirestoreService: Buscando em ${collection} por username: ${username}`);
     
     return this.firestore.collection<T>(collection, ref => 
       ref.where('username', '==', username)
     ).valueChanges({ idField: 'id' }).pipe(
       tap(results => {
-        console.log(`FirestoreService: Encontrados ${results.length} resultados para username ${username}`);
         if (results.length > 0) {
-          console.log('FirestoreService: Primeiro resultado:', results[0]);
         }
       }),
       catchError(error => {
@@ -77,12 +75,9 @@ export class FirestoreService<T extends { id?: string }> {
       return Promise.reject(new Error('ID do registro é indefinido.'));
     }
 
-    console.log(`Atualizando registro no caminho: ${collectionPath}, com ID: ${id}`);
-    console.log('Dados do registro a serem atualizados:', registro);
 
     return this.firestore.collection(collectionPath).doc(id).update(registro)
       .then(() => {
-        console.log('Registro atualizado com sucesso.');
       })
       .catch((error) => {
         console.error('Erro ao atualizar o registro:', error);
@@ -105,7 +100,6 @@ export class FirestoreService<T extends { id?: string }> {
       }
 
       const docPath = `users/${userId}/${collection}`;
-      console.log('FirestoreService: Deletando documento:', docPath, id);
 
       // Verificar se o documento existe antes de tentar deletar
       const docRef = this.firestore.collection(docPath).doc(id);
@@ -118,7 +112,6 @@ export class FirestoreService<T extends { id?: string }> {
 
       // Deletar o documento
       await docRef.delete();
-      console.log('FirestoreService: Documento deletado com sucesso');
 
     } catch (error) {
       console.error('FirestoreService: Erro ao deletar registro:', error);

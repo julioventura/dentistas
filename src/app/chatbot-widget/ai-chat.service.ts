@@ -9,6 +9,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { SubcolecaoService } from '../shared/services/subcolecao.service';
 import { FirestoreService } from '../shared/services/firestore.service';
 
+
 // Interface para Navegação
 export interface NavigationContext {
   viewType?: string;
@@ -223,13 +224,10 @@ export class AiChatService {
         if (history.length > 0) {
           this.messageHistory = history;
           this.messageHistorySubject.next([...this.messageHistory]);
-          console.log(`Carregadas ${this.messageHistory.length} mensagens do histórico`);
         } else {
           // Se carregamos um histórico vazio, não fazer nada - startNewChat será chamado depois
-          console.log('Histórico vazio no localStorage');
         }
       } else {
-        console.log('Nenhum histórico encontrado no localStorage');
         // Não iniciar nova conversa aqui - isso será feito pelo restoreOrStartChat
       }
     } catch (error) {
@@ -256,7 +254,6 @@ export class AiChatService {
    * Limpa completamente o contexto e a conversa do chatbot
    */
   public resetContext(): void {
-    console.log('Limpando contexto e conversa do chatbot');
     
     // Limpar contexto
     this.currentContext = {
@@ -273,7 +270,6 @@ export class AiChatService {
     this.mainRecordData = null;
     this.contextSubject.next({...this.currentContext});
     
-    console.log('Contexto e conversa do chatbot limpos com sucesso');
   }
 
 
@@ -281,8 +277,6 @@ export class AiChatService {
 
   // Este é o método sendMessage correto a ser mantido
   sendMessage(message: string, sessionId: string, dentistId: string, context?: any): Observable<Message> {
-    console.log('Enviando mensagem para OpenAI:', message);
-    console.log('Session ID:', sessionId);
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -336,12 +330,9 @@ export class AiChatService {
           max_tokens: 1000
         };
 
-        console.log('%c Payload para OpenAI: ', 'background: #4b0082; color: white; padding: 2px;');
-        console.log(payload);
 
         return this.http.post<OpenAIResponse>(this.openaiApiUrl, payload, { headers }).pipe(
           map(response => {
-            console.log('Resposta da OpenAI:', response);
     
             // Verificar se a resposta tem a estrutura esperada
             if (!response.choices || !response.choices[0] || !response.choices[0].message) {
@@ -408,7 +399,6 @@ export class AiChatService {
     this.userService.getUser().subscribe(user => {
       if (user) {
         this.userId = user.uid;  // Usar SOMENTE o UID
-        console.log('🔑 UID do usuário definido:', this.userId);
         
         // Carregar histórico depois de definir o userId
         this.loadHistoryFromLocalStorage();
@@ -446,7 +436,6 @@ export class AiChatService {
         // Emitir atualização após adicionar o registro
         this.contextSubject.next({...this.currentContext});
         
-        console.log('Contexto atualizado com dados do registro:', this.currentContext);
       }
     });
     
@@ -455,7 +444,6 @@ export class AiChatService {
     //   filter(event => event instanceof NavigationEnd),
     //   tap((event: NavigationEnd) => {
     //     // Apenas para logging e casos especiais não capturados pelo UserService
-    //     console.log('Navegação detectada pelo AiChatService:', event.url);
     //   })
     // ).subscribe();
 
@@ -463,7 +451,6 @@ export class AiChatService {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       tap((event: NavigationEnd) => {
-        console.log('Navegação detectada pelo AiChatService:', event.url);
         // Call updateContextFromUrl when navigation happens
         this.updateContextFromUrl(event.url);
       })
@@ -512,7 +499,6 @@ export class AiChatService {
           
           // Se estamos em list-fichas, mantemos os dados do registro principal
           if (isListFichas && this.mainRecordData) {
-            console.log('Mantendo dados do registro principal em list-fichas', this.mainRecordData);
             
             // Garantir que o registro principal está no contexto atual
             if (!this.currentContext.currentRecord || this.currentContext.currentRecord.id !== navContext.id) {
@@ -604,14 +590,12 @@ export class AiChatService {
     // CORREÇÃO: Verificar se o caminho está usando email em vez de UID
     registroPath = this.verificarECorrigirCaminho(registroPath);
 
-    console.log(`🔍 Buscando documento em: ${registroPath}/${id}`);
 
     this.firestoreService.getRegistroById(registroPath, id)
       .pipe(take(1))
       .subscribe({
         next: (entityData) => {
           if (entityData) {
-            console.log(`✅ Dados carregados para ${collectionType}/${id}:`, entityData);
 
             // Armazenar para uso em outros componentes e visualizações
             this.mainRecordData = entityData;
@@ -682,14 +666,12 @@ export class AiChatService {
     // CORREÇÃO: Verificar se o caminho está usando email em vez de UID
     fichaPath = this.verificarECorrigirCaminho(fichaPath);
 
-    console.log(`🔍 Buscando ficha em: ${fichaPath}/${fichaId}`);
 
     this.firestoreService.getRegistroById(fichaPath, fichaId)
       .pipe(take(1))
       .subscribe({
         next: (fichaData) => {
           if (fichaData) {
-            console.log(`✅ Dados carregados para ficha ${subcollection}/${fichaId}:`, fichaData);
 
             // Atualizar o nome na visualização atual
             if (this.currentContext.currentView && this.currentContext.currentView.type !== 'list-fichas') {
@@ -759,7 +741,6 @@ export class AiChatService {
     possibleSubcollections.forEach(subcollection => {
       // CORREÇÃO: Usar this.userId diretamente
       const subcollectionPath = `users/${this.userId}/${collectionType}/${id}/fichas/${subcollection}/itens`;
-      console.log(`Verificando subcoleção em: ${subcollectionPath}`);
 
       this.firestore.collection(subcollectionPath).get().subscribe(snapshot => {
         if (!snapshot.empty) {
@@ -808,7 +789,6 @@ export class AiChatService {
     this.currentContext.navigationHistory.lastCollection = collection;
     this.currentContext.navigationHistory.lastId = id;
     
-    console.log('Hierarquia atualizada com registro principal:', collection, id);
   }
 
   // Método para atualizar registro de subcollection na hierarquia
@@ -853,23 +833,16 @@ export class AiChatService {
     this.currentContext.navigationHistory.lastSubcollection = subcollection;
     this.currentContext.navigationHistory.lastItemId = itemId;
     
-    console.log('Hierarquia atualizada com registro de subcollection:', collection, id, subcollection, itemId);
   }
 
 
   // Log visual do contexto atual
   private logContextUpdate(): void {
-    console.log('%c Contexto Atual do Chatbot ', 'background: #4b0082; color: white; padding: 2px;');
-    console.log(`👤 Usuário: ${this.userService.userProfile?.name || this.userService.userEmail || 'Anônimo'}`);
-    console.log(`📍 Visualizando: ${this.currentContext.currentView?.type || 'Home'}${this.currentContext.currentView?.name ? ` - ${this.currentContext.currentView.name}` : ''}`);
-    console.log(`📋 Coleção: ${this.currentContext.activeCollection || 'N/A'}`);
     
     if (this.currentContext.activeSubcollections?.length) {
-      console.log(`📂 Subcoleções: ${this.currentContext.activeSubcollections.join(', ')}`);
     }
     
     if (this.currentContext.pageData) {
-      console.log('📄 Dados da página:', this.currentContext.pageData);
     }
   }
   // Adicionar após o logContextUpdate()
@@ -881,34 +854,21 @@ export class AiChatService {
     console.group('%c CONTEXTO DETALHADO DO CHATBOT ', 'background: #4b0082; color: white; padding: 4px; font-weight: bold;');
     
     console.group('📊 Visão Geral:');
-    console.log('Tipo de visualização:', this.currentContext.currentView?.type || 'N/A');
-    console.log('Nome da visualização:', this.currentContext.currentView?.name || 'N/A');
-    console.log('Coleção ativa:', this.currentContext.activeCollection || 'N/A');
-    console.log('Subcoleções disponíveis:', this.currentContext.activeSubcollections || 'N/A');
     console.groupEnd();
     
     console.group('🧑 Registro Principal (Collection):');
     if (this.currentContext.patientRecord) {
-      console.log('ID:', this.currentContext.patientRecord.id);
-      console.log('Nome:', this.currentContext.patientRecord.nome || 'N/A');
-      console.log('Dados completos:', this.currentContext.patientRecord);
     } else {
-      console.log('Nenhum registro principal carregado');
     }
     console.groupEnd();
     
     console.group('📋 Registro de Ficha (Subcollection):');
     if (this.currentContext.clinicalRecord) {
-      console.log('ID:', this.currentContext.clinicalRecord.id);
-      console.log('Tipo:', this.currentContext.clinicalRecord.tipo);
-      console.log('Dados completos:', this.currentContext.clinicalRecord);
     } else {
-      console.log('Nenhuma ficha clínica carregada');
     }
     console.groupEnd();
     
     console.group('🧠 Estado Completo do Contexto:');
-    console.log(JSON.stringify(this.currentContext, null, 2));
     console.groupEnd();
     
     console.groupEnd();
@@ -923,30 +883,14 @@ export class AiChatService {
     // Collection (Paciente)
     console.group('🧑 DADOS DA COLLECTION:');
     if (this.currentContext.patientRecord) {
-      console.log('ID:', this.currentContext.patientRecord.id);
-      console.log('Nome:', this.currentContext.patientRecord.nome || 'N/A');
-      console.log('Email:', this.currentContext.patientRecord.email || 'N/A');
-      console.log('Telefone:', this.currentContext.patientRecord.telefone || 'N/A');
-      console.log('Data de nascimento:', this.currentContext.patientRecord.nascimento || 'N/A');
-      console.log('Gênero:', this.currentContext.patientRecord['genero'] || 'N/A');
-      console.log('Dados completos:', this.currentContext.patientRecord);
     } else {
-      console.log('Nenhum registro principal carregado');
     }
     console.groupEnd();
     
     // Subcollection (Ficha)
     console.group('📋 DADOS DA SUBCOLLECTION:');
     if (this.currentContext.clinicalRecord) {
-      console.log('ID:', this.currentContext.clinicalRecord.id);
-      console.log('Tipo:', this.currentContext.clinicalRecord.tipo);
-      console.log('Data:', this.currentContext.clinicalRecord.data || 'N/A');
-      console.log('Procedimento:', this.currentContext.clinicalRecord.procedimento || 'N/A');
-      console.log('Dente:', this.currentContext.clinicalRecord.dente || 'N/A');
-      console.log('Observações:', this.currentContext.clinicalRecord.observacoes || 'N/A');
-      console.log('Dados completos:', this.currentContext.clinicalRecord);
     } else {
-      console.log('Nenhuma ficha clínica carregada');
     }
     console.groupEnd();
     
@@ -965,7 +909,6 @@ export class AiChatService {
       // Se temos um userId válido, substituir
       if (this.userId) {
         const caminhoCorrigido = caminho.replace(/users\/[^\/]+\//, `users/${this.userId}/`);
-        console.log(`🔧 Caminho corrigido: ${caminhoCorrigido}`);
         return caminhoCorrigido;
       } else {
         console.error('❌ Não foi possível corrigir o caminho: userId não disponível');
@@ -1066,7 +1009,6 @@ export class AiChatService {
   createNewSession(dentistId: string): Observable<string> {
     // sessionId é retornado para ser usado pelo componente chamador
     const sessionId = 'session_' + dentistId + '_' + Math.random().toString(36).substring(2, 15);
-    console.log(`Criando nova sessão para dentista: ${dentistId} com ID: ${sessionId}`);
     return of(sessionId);
   }
 
@@ -1140,7 +1082,6 @@ export class AiChatService {
   private updateContextFromUrl(url: string): void {
     // Verifica se estamos na Home (página raiz ou rota específica da home)
     if (url === '/' || url === '/home' || url.startsWith('/?') || url.startsWith('/home?')) {
-      console.log('Navegação para Home detectada. Limpando contexto do chatbot.');
       this.resetContext();
       return;
     }
@@ -1153,7 +1094,6 @@ export class AiChatService {
     // Ou usar o resultado imediatamente:
     if (url.match(urlPattern)) {
       // Processar a URL que não seja da página inicial
-      console.log('URL corresponde ao padrão de navegação específica');
     }
     
     // Resto do seu código para outras rotas...
@@ -1175,7 +1115,6 @@ export class AiChatService {
   public clearConversation(): void {
     // Emite evento de limpeza para todos os componentes inscritos
     this.clearConversationSubject.next();
-    console.log('Evento de limpeza de conversa do chatbot emitido');
   }
 
   /**
@@ -1200,7 +1139,6 @@ export class AiChatService {
     
     // Emite o contexto limpo
     this.contextSubject.next({...this.currentContext});
-    console.log('Hierarquia de dados do contexto resetada.');
   }
 
   /**
@@ -1225,14 +1163,11 @@ export class AiChatService {
    * Processa dados clínicos para uso no chatbot
    */
   private processClinicalContext(patientId: string, clinicalData: any, clinicalType: string): void {
-    console.log(`Processando contexto clínico: ${clinicalType} para paciente ${patientId}`);
-    console.log('Dados clínicos:', clinicalData);
     
     if (!this.currentContext.patientRecord) {
       // Usar patientId para carregar dados do paciente
       this.loadPatientData(patientId).then(patient => {
         if (patient) {
-          console.log(`Dados do paciente ${patientId} carregados com sucesso`);
           this.currentContext.patientRecord = patient;
           this.buildClinicalContext();
         }
@@ -1343,7 +1278,6 @@ export class AiChatService {
     };
     
     // Antes de retornar o contexto:
-    console.log('🤖 Contexto enviado ao chatbot:', context);
     
     return context;
   }
@@ -1393,7 +1327,6 @@ export class AiChatService {
    * Processa dados do paciente para enriquecer o contexto
    */
   private processPatientContext(patientId: string, patientData: any): void {
-    console.log(`Processando contexto do paciente: ${patientId}`);
     
     // Usar o ID do paciente em alguma operação
     this.contextData = {
@@ -1579,7 +1512,6 @@ export class AiChatService {
     this.addMessageToHistory(welcomeMessage);
     
     // Log para debug
-    console.log('Nova sessão de chat iniciada com mensagem de boas-vindas');
   }
 
   /**
@@ -1593,7 +1525,6 @@ export class AiChatService {
     if (this.messageHistory.length === 0) {
       this.startNewChat();
     } else {
-      console.log('Sessão de chat restaurada com histórico existente');
     }
   }
 }

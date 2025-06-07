@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../shared/services/user.service';
@@ -21,7 +22,6 @@ interface Endereco {
 export class EnderecoComponent {
   
   constructor(public userService: UserService) {
-    console.log('EnderecoComponent initialized');
   }
   
   // Método para obter os endereços do userProfile

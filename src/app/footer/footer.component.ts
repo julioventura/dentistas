@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Importa a autenticação do Firebase
@@ -26,21 +27,16 @@ export class FooterComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("ngOnInit()");
 
     // Verifica se há um usuário logado e armazena as informações
     this.auth.authState.subscribe((user) => {
       this.user = user;
-      console.log('%c' + ' USUARIO: ', 'background-color: orange; color: black; padding: 2px 5px; border-radius: 2px;');
-      console.log(user);
       if(user?.email=='julio@dentistas.com.br'){
         this.configuracoes.is_admin = true;
       }
       else {
         this.configuracoes.is_admin = false;
       }
-      console.log("this.configuracoes.is_admin = " + this.configuracoes.is_admin);
-      console.log(user);
 
       this.ambiente = this.configuracoes.getAmbiente();
       this.show_footer = true;
@@ -49,12 +45,10 @@ export class FooterComponent implements OnInit {
 
   
   chat_whatsapp() {
-    console.log("chat_whatsapp");
     
     // Se o chatbot estiver aberto, fechar antes de abrir o WhatsApp
     if (this.aiChatService) {
       // Exemplo de uso do aiChatService para não gerar warning
-      console.log('Estado do contexto do chatbot:', this.aiChatService.getCurrentContext());
     }
     
     let nome: string = 'Dentistas.com.br';
@@ -79,14 +73,12 @@ export class FooterComponent implements OnInit {
 
   // Método para logout
   logout(): void {
-    console.log('Iniciando processo de logout');
     
     // Limpar o contexto do chatbot
     this.aiChatService.resetContext();
     
     // Usar o userService para fazer logout
     this.userService.logout().then(() => {
-      console.log('Logout realizado com sucesso');
       this.router.navigate(['/login']);
     }).catch(error => {
       console.error('Erro ao fazer logout:', error);

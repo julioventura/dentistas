@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /* 
   Métodos do serviço CamposService:
   1. getCamposRegistro(userId: string, colecao: string): Observable<any[]>
@@ -57,9 +58,7 @@ export class CamposService {
   // Se "colecao" é "padrao", retorna uma cópia dos camposPadrao;
   // para outros casos, tenta buscar a configuração salva no Firestore e, se não existir, reverte para os padrões.
   getCamposRegistro(userId: string, colecao: string): Observable<any[]> {
-    console.log('getCamposRegistro called with', { userId, colecao });
     this.configPath = 'users/' + userId + '/configuracoesCampos';
-    console.log("configPath = ", this.configPath);
 
     if (colecao === 'padrao') {
       return of([...this.camposPadrao]);
@@ -86,7 +85,6 @@ export class CamposService {
   // Para "padrao" atualiza os campos padrão localmente; para outros, salva no Firestore.
   setCamposRegistro(userId: string, colecao: string, campos: any[]): Promise<void> {
     this.configPath = 'users/' + userId + '/configuracoesCampos';
-    console.log("configPath = ", this.configPath);
 
     if (colecao === 'padrao') {
       this.camposPadrao = campos;
@@ -100,7 +98,6 @@ export class CamposService {
   // Utiliza snapshotChanges para capturar as mudanças e extrair os IDs dos documentos.
   getColecoes(userId: string): Observable<any[]> {
     this.configPath = 'users/' + userId + '/configuracoesCampos';
-    console.log("configPath = ", this.configPath);
 
     return this.firestore.collection(this.configPath).snapshotChanges().pipe(
       switchMap(actions => {

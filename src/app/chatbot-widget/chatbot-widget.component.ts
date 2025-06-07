@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+
 import { ConfigService } from '../shared/services/config.service';
 
 @Component({
@@ -118,7 +119,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     this.aiChatService.context$
       .pipe(takeUntil(this.destroy$))
       .subscribe(context => {
-        console.log('Chatbot atualizou contexto:', context);
         this.currentContext = context;
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       });
@@ -128,9 +128,7 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       .pipe(takeUntil(this.destroy$))
       .subscribe(messages => {
         // Log de diagnóstico integrado na única inscrição
-        console.log(`Atualizando conversation com ${messages.length} mensagens do histórico`);
         if (messages.length > 0) {
-          console.log('Primeiro item:', messages[0]?.content, 'Último item:', messages[messages.length-1]?.content);
         }
         
         // Substituir completamente o array local pelo histórico do serviço
@@ -152,7 +150,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
           // Verificar se a restauração adicionou mensagens (em um timeout para garantir que a operação assíncrona terminou)
           setTimeout(() => {
             if (this.conversation.length === 0) {
-              console.log('Nenhuma mensagem após restauração, adicionando primeira mensagem');
               this.addFirstMessage();
             }
           }, 100);
@@ -167,7 +164,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     this.aiChatService.clearConversation$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        console.log('Limpando conversa do chatbot após evento de logout');
         // Não precisamos limpar manualmente - o service já vai fazer isso
         // e emitir via messageHistory$
         this.userInput = '';
@@ -199,7 +195,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       
       // Adicionar via serviço para garantir consistência
       this.aiChatService.addMessageToHistory(welcomeMessage);
-      console.log('Primeira mensagem adicionada ao chatbot');
     }
   }
   
@@ -223,7 +218,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
       
       // Código existente para mensagem de boas-vindas...
       if (this.conversation.length === 0 && this.isInitialized) {
-        console.log('Fallback: Adicionando mensagem de boas-vindas');
         this.addFirstMessage();
       }
     }, 500);
@@ -275,7 +269,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     this.aiChatService.sendMessage(messageText, this.sessionId, this.dentistId, context)
       .subscribe({
         next: (response) => {
-          console.log('Resposta recebida do serviço AI:', response);
           // O serviço já adiciona a resposta ao histórico via addMessageToHistory
           this.isLoading = false;
         },
@@ -590,7 +583,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
 
   // Método para mostrar/esconder o popup de detalhes da collection
   toggleCollectionDetails(): void {
-    console.log('this.currentContext = ', this.currentContext);
 
     // Se já estiver mostrando detalhes da subcollection, feche
     if (this.showDetailsPopup && this.detailsType === 'subcollection') {
@@ -673,7 +665,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   showPatientDetails(): void {
     const patient = this.aiChatService.getCurrentCollectionRecord();
     if (patient) {
-      console.log('🧑 DETALHES DO PACIENTE/REGISTRO PRINCIPAL:');
       console.table(patient);
 
       // Agora que calculateAge é público, isso funcionará
@@ -691,7 +682,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
   showClinicalDetails(): void {
     const clinical = this.aiChatService.getCurrentSubcollectionRecord();
     if (clinical) {
-      console.log('📋 DETALHES DA FICHA CLÍNICA/SUBCOLEÇÃO:');
       console.table(clinical);
 
       // Construir uma string mais informativa para o alerta
@@ -826,7 +816,6 @@ export class ChatbotWidgetComponent implements OnInit, AfterViewChecked, AfterVi
     if (!chatElement) return;
     
     const rect = chatElement.getBoundingClientRect();
-    console.log(`${message} - Position: right=${this.chatPosition.right}, bottom=${this.chatPosition.bottom}, rect:`, rect);
   }
 
   // Método para salvar a posição

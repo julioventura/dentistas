@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /**
  * EditComponent
  * 
@@ -129,7 +130,6 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
    * Retorna: void.
    */
   ngOnInit() {
-    console.log('ngOnInit()');
     
     this.gruposExpandidos = {};
     this.subgruposExpandidos = {};
@@ -148,12 +148,6 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
 
             this.titulo_da_pagina = this.util.titulo_ajuste_singular(this.subcollection || this.collection);
 
-            console.log('userId:', this.userId);
-            console.log('collection:', this.collection);
-            console.log('id:', id);
-            console.log('titulo_da_pagina:', this.titulo_da_pagina);
-            console.log('subcollection:', this.subcollection);
-            console.log('fichaId:', this.fichaId);
 
             if (!this.id) {
                 console.error('Registro não identificado.');
@@ -201,17 +195,14 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy, CanCompo
 private loadGroupsIfNeeded(): void {
     // Verificar se realmente precisa carregar grupos
     if (!this.shouldLoadGroups()) {
-        console.log('EditComponent: Carregamento de grupos não necessário');
         return;
     }
 
     // Verificar se grupos já foram carregados
     if (this.groups && this.groups.length > 0) {
-        console.log('EditComponent: Grupos já carregados');
         return;
     }
 
-    console.log('EditComponent: Carregando grupos...');
     this.groupService.getAllUserGroups().pipe(
         takeUntil(this.destroy$), // Adicione um destroy$ subject para cancelar subscriptions
         catchError(error => {
@@ -220,7 +211,6 @@ private loadGroupsIfNeeded(): void {
         })
     ).subscribe((groups: any[]) => {
         this.groups = groups;
-        console.log('EditComponent: Grupos carregados:', groups.length);
     });
 }
 
@@ -256,7 +246,6 @@ private shouldLoadGroups(): boolean {
         }
       });
     }
-    console.log('Grupos e subgrupos inicializados como fechados');
   }
   
   // Método para inicializar grupos e subgrupos
@@ -281,7 +270,6 @@ private shouldLoadGroups(): boolean {
         }
       });
     }
-    console.log('Grupos e subgrupos inicializados como expandidos');
   }
   
   // Inicializar grupos expandidos e subgrupos colapsados
@@ -315,18 +303,15 @@ private shouldLoadGroups(): boolean {
         }
       });
     }
-    console.log('Grupos e subgrupos inicializados com base na propriedade expandido');
   }
   
   // Método para alternar a visibilidade de um grupo
   toggleGrupo(grupoNome: string): void {
-    // console.log(`Alternando grupo ${grupoNome} de ${this.gruposExpandidos[grupoNome]} para ${!this.gruposExpandidos[grupoNome]}`);
     this.gruposExpandidos[grupoNome] = !this.gruposExpandidos[grupoNome];
   }
 
   // Método para alternar a visibilidade de um subgrupo
   toggleSubgrupo(subgrupoKey: string): void {
-    // console.log(`Alternando subgrupo ${subgrupoKey} de ${this.subgruposExpandidos[subgrupoKey]} para ${!this.subgruposExpandidos[subgrupoKey]}`);
     this.subgruposExpandidos[subgrupoKey] = !this.subgruposExpandidos[subgrupoKey];
   }
   
@@ -381,7 +366,6 @@ private shouldLoadGroups(): boolean {
    * Retorna: void.
    */
   ngAfterViewInit(): void {
-    console.log('EditComponent: ngAfterViewInit iniciado');
     this.waitForFormToBeReady();
   }
 
@@ -396,7 +380,6 @@ private shouldLoadGroups(): boolean {
         elapsedTime += this.checkInterval;
         
         if (isFormReady) {
-          console.log('EditComponent: Formulário está pronto');
           this.onFormReady();
           return false;
         }
@@ -416,7 +399,6 @@ private shouldLoadGroups(): boolean {
       if (this.FormService.fichaForm) {
         const nomeControl = this.FormService.fichaForm.get('nome');
         if (nomeControl) {
-          console.log('Campo nome encontrado:', nomeControl.value);
           this.setupFormLogic();
         } else {
           const possibleNameFields = ['nome', 'nomeCompleto', 'nomePaciente', 'title', 'nomeFantasia'];
@@ -425,7 +407,6 @@ private shouldLoadGroups(): boolean {
           for (const fieldName of possibleNameFields) {
             const field = this.FormService.fichaForm.get(fieldName);
             if (field) {
-              console.log(`Campo ${fieldName} encontrado como substituto para nome:`, field.value);
               foundField = true;
               this.setupFormLogic();
               break;
@@ -433,7 +414,6 @@ private shouldLoadGroups(): boolean {
           }
           
           if (!foundField) {
-            console.log('Nenhum campo de nome específico foi encontrado - formulário pode estar vazio ou ser um novo registro');
             this.setupFormLogic();
           }
         }
@@ -444,7 +424,6 @@ private shouldLoadGroups(): boolean {
   }
 
   private setupFormLogic(): void {
-    console.log('EditComponent: Configurando lógica do formulário');
     // Aqui você pode adicionar toda a lógica que depende do formulário estar pronto
   }
 
@@ -461,21 +440,13 @@ private shouldLoadGroups(): boolean {
    * - Navega para a visualização do registro sem passar pelo diálogo.
    */
   salvar() {
-    console.log('salvar()');
     if (this.userId) {
-      console.log('userId:', this.userId);
-      console.log('collection:', this.collection);
-      console.log('id:', this.id);
-      console.log('subcollection:', this.subcollection);
-      console.log('fichaId:', this.fichaId);
       
       if (this.subcollection) {
-        console.log("Salvar uma subcollection: ", this.subcollection);
         if (this.fichaId) {
           this.FormService.salvarSubcollection(this.userId, this.collection, this.id, this.subcollection, this.fichaId);
         }
       } else {
-        console.log("Salvar uma collection: ", this.collection);
         this.salvar_collection_anterior();
       }
       
@@ -519,10 +490,6 @@ private shouldLoadGroups(): boolean {
         return;
       }
       const registroPath = `users/${this.userId}/${this.collection}`;
-      console.log('registroPath =', registroPath);
-      console.log('Tentando salvar o registro:');
-      console.log('Atualizando registro no caminho:', registroPath, 'com ID:', this.FormService.registro.id);
-      console.log('Dados do registro a serem atualizados:', registroAtualizado);
       const uploadPromises = Object.keys(this.arquivos).map(campoNome => {
         const file = this.arquivos[campoNome];
         const url = prompt('Insira a URL do arquivo ou imagem:');
@@ -557,7 +524,6 @@ private shouldLoadGroups(): boolean {
    * Retorna: void.
    */
   verFicha() {
-    console.log("verFicha()");
     const fichaPath = this.subcollection ?
       `/view-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens/${this.fichaId}` :
       `view/${this.collection}/${this.id}`;
@@ -598,15 +564,10 @@ private shouldLoadGroups(): boolean {
    * Retorna: void.
    */
   loadCustomFields() {
-    console.log("loadCustomFields()");
-    console.log("this.userId =", this.userId);
-    console.log("this.collection =", this.collection);
-    console.log("this.subcollection =", this.subcollection);
     if (this.userId) {
       // Recria o FormGroup para evitar conflitos
       this.FormService.fichaForm = new FormGroup({});
       if (this.subcollection) {
-        console.log("Carregando campos personalizados (subcollection)...", this.subcollection);
         // Se estiver criando nova ficha, limpar registros armazenados
         if (!this.fichaId) {
           this.FormService.registro = {};
@@ -630,7 +591,6 @@ private shouldLoadGroups(): boolean {
           }
         );
       } else {
-        console.log("Carregando campos personalizados (collection)...", this.collection);
         this.camposService.getCamposRegistro(this.userId, this.collection).subscribe(
           (campos: any[]) => {
             campos.forEach(campo => {
@@ -643,7 +603,6 @@ private shouldLoadGroups(): boolean {
                   ? this.FormService.registro[campo.nome] : '';
               }
               this.FormService.fichaForm.addControl(campo.nome, new FormControl(defaultValue));
-              console.log(`Controle customizado adicionado (collection) para o campo: ${campo.nome}`);
             });
             this.FormService.fichaForm.patchValue(this.FormService.registro);
             this.formReady = true;
@@ -715,7 +674,6 @@ private shouldLoadGroups(): boolean {
    */
   onSubmit() {
     if (this.FormService.fichaForm.valid) {
-      console.log('Dados do formulário:', this.FormService.fichaForm.value);
       // Continuação do fluxo para salvar o registro (pode ser expandido conforme necessidade)
     }
   }

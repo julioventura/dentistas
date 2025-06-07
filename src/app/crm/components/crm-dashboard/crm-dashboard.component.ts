@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
@@ -82,9 +83,7 @@ export class CrmDashboardComponent implements OnInit {
     // Verificar se já existem dados no pipeline
     this.crmService.getPipelineConfig().subscribe(config => {
       if (config) {
-        console.log('Pipeline config exists:', config);
       } else {
-        console.log('No pipeline config found');
       }
     });
   }
@@ -136,7 +135,6 @@ export class CrmDashboardComponent implements OnInit {
   }
   
   abrirLeadsPorStatus(status: string): void {
-    console.log(`Abrindo leads com status: ${status}`);
     this.router.navigate(['/crm/pipeline'], { queryParams: { status } });
   }
   
@@ -145,7 +143,6 @@ export class CrmDashboardComponent implements OnInit {
   }
   
   marcarLembreteComoConcluido(lembrete: any): void {
-    console.log('Marcando lembrete como concluído:', lembrete);
     // Implementação futura com Firestore
   }
 
