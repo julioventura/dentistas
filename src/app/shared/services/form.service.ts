@@ -365,23 +365,25 @@ export class FormService {
     }
 
     /**
-     * onFieldChange(event: any, campoNome: string): void
+     * onFieldChange(event: Event, campoNome: string): void // Alteração: tipagem explícita do parâmetro event
      * 
      * Parâmetros:
-     * - event: any - Evento de mudança de valor no campo.
+     * - event: Event - Evento de mudança de valor no campo. // Alteração: atualizado tipo na documentação
      * - campoNome: string - Nome do campo.
      * Funcionalidade:
      * - Processa a mudança de valor em um campo do formulário.
      * - Aplica transformações (como capitalização) e atualiza o controle.
      * Retorna: void.
      */
-    onFieldChange(event: any, campoNome: string): void {
-        if (event.target && event.target.type === 'checkbox') {
-            this.fichaForm.get(campoNome)?.setValue(event.target.checked);
+    onFieldChange(event: Event, campoNome: string): void {
+        // Alteração: tipagem explícita do parâmetro event
+        const target = event.target as HTMLInputElement | null; // Cast para acessar propriedades de input
+        if (target && target.type === 'checkbox') {
+            this.fichaForm.get(campoNome)?.setValue(target.checked);
             return;
         }
-        if (this.fichaForm && this.fichaForm.get(campoNome)) {
-            const valorAtual = event.target.value;
+        if (this.fichaForm && this.fichaForm.get(campoNome) && target) {
+            const valorAtual = target.value;
 
             // Não aplicar capitalização para o campo email
             if (campoNome === 'email') {

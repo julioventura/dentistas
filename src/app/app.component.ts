@@ -1,6 +1,6 @@
 // Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd, Event as RouterEvent } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { UserService } from './shared/services/user.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -34,7 +34,8 @@ export class AppComponent implements OnInit {
     private afAuth: AngularFireAuth // Adicionar AngularFireAuth
   ) {
     this.router.events.subscribe({
-      next: (event) => {
+      next: (event: RouterEvent) => {
+        // Alteração: tipagem explícita do parâmetro event
         // Your navigation handling code
       },
       error: (err) => {

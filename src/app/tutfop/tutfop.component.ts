@@ -226,7 +226,8 @@ export class TutfopComponent implements OnInit, OnDestroy {
   private setupEventListeners(): void {
     const userInput = document.getElementById("tutfop-user-input") as HTMLTextAreaElement;
     if (userInput) {
-      userInput.addEventListener("keypress", (event) => {
+      userInput.addEventListener("keypress", (event: KeyboardEvent) => {
+        // Alteração: tipagem explícita do parâmetro event
         if (event.key === "Enter" && !event.shiftKey) {
           event.preventDefault();
           this.sendTutfopMessage();

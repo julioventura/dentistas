@@ -288,10 +288,12 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   // Método auxiliar para formatação de datas em histórico
-  formatDate(timestamp: any): string {
+  formatDate(timestamp: firebase.firestore.Timestamp | Date | number): string {
+    // Alteração: tipagem explícita do parâmetro timestamp
     if (!timestamp) return 'Data desconhecida';
 
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const ts: any = timestamp; // Cast para permitir chamada de toDate()
+    const date = ts.toDate ? ts.toDate() : new Date(ts);
     return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR');
   }
 
@@ -349,7 +351,8 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   // Agrupa campos pelo atributo "grupo"
-  groupByGrupo(campos: any[]): { [key: string]: any[] } {
+  groupByGrupo(campos: Array<{ grupo?: string }>): { [key: string]: any[] } {
+    // Alteração: tipagem explícita do parâmetro campos
     return campos.reduce((groups, campo) => {
       const grupo = campo.grupo || 'Sem Agrupamento';
       if (!groups[grupo]) {
@@ -361,7 +364,8 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   // Group campos by their subgrupo property
-  groupBySubgrupo(campos: any[]): { [key: string]: any[] } {
+  groupBySubgrupo(campos: Array<{ subgrupo?: string }>): { [key: string]: any[] } {
+    // Alteração: tipagem explícita do parâmetro campos
     return campos.reduce((subgroups, campo) => {
       const subgrupo = campo.subgrupo || '';
       if (!subgroups[subgrupo]) {
@@ -377,7 +381,8 @@ export class ViewComponent implements OnInit, OnDestroy {
     return item.key;
   }
 
-  trackByCampo(index: number, campo: any): string {
+  trackByCampo(index: number, campo: { nome: string }): string {
+    // Alteração: tipagem explícita do parâmetro campo
     return campo.nome;
   }
 
@@ -524,7 +529,8 @@ export class ViewComponent implements OnInit, OnDestroy {
    * Considera como vazios: null, undefined, string vazia, 0 (número), '0' (string)
    * Para campos booleanos/checkbox, só considera não vazio se for true
    */
-  hasNonEmptyField(campos: any[]): boolean {
+  hasNonEmptyField(campos: Array<{ nome: string; tipo: string }>): boolean {
+    // Alteração: tipagem explícita do parâmetro campos
     if (!campos || campos.length === 0) return false;
 
     return campos.some(campo => {
