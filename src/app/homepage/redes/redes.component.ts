@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../shared/services/user.service';
@@ -16,7 +17,6 @@ export class RedesComponent {
   constructor(
     private util: UtilService,
     public userService: UserService) {
-    console.log('RedesComponent initialized');
   }
 
   // Verificar se o usuário tem pelo menos uma rede social configurada

@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -30,9 +31,6 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log("NgOnInit()");
-    console.log("MenuComponent -> Collection:", this.collection);
-    console.log("MenuComponent -> ID:", this.id);
 
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
@@ -74,7 +72,6 @@ export class MenuComponent implements OnInit {
 
           this.firestore.collection(configPath).doc(this.collection).set({ subcolecoes: subcolecoesPadrao })
             .then(() => {
-              console.log(`Configuração padrão criada para a coleção "${this.collection}".`);
               this.subcolecoes = subcolecoesPadrao.map(nome => ({
                 nome,
                 rota: `/list-fichas/${this.collection}/${this.id}/fichas/${nome}`
@@ -109,13 +106,9 @@ export class MenuComponent implements OnInit {
 
   // Função para navegar para a rota da subcoleção selecionada
   navegarPara(subcolecao: Subcolecao) {
-    console.log("navegarPara()");
-    console.log("subcolecao =", subcolecao);
-    console.log("subcolecao.nome =", subcolecao.nome);
 
     // Navega para a rota da subcoleção configurada
     this.router.navigate([subcolecao.rota]);
-    console.log(`Navegando para a subcoleção: ${subcolecao.nome} na rota: ${subcolecao.rota}`);
   }
 
   ajustar(str: string): string {

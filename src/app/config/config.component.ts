@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -7,9 +8,10 @@ import { FormsModule } from '@angular/forms';
 // import { MatButtonModule } from '@angular/material/button';
 
 import { NavegacaoService } from '../shared/services/navegacao.service';
-import { ConfigService } from '../shared/services/config.service';  
+import { ConfigService } from '../shared/services/config.service';
 import { UtilService } from '../shared/utils/util.service';
 import { SubcolecaoService, Subcolecao } from '../shared/services/subcolecao.service';
+
 
 @Component({
   selector: 'app-config',
@@ -51,7 +53,7 @@ export class ConfigComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log("ngOnInit()");
+    // Alteração: log de depuração removido
     // Pegando as configurações do ConfigService
 
     this.ambiente = this.configuracoes.getAmbiente();

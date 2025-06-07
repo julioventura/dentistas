@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -35,14 +36,12 @@ export class LeadDetailComponent implements OnInit {
         this.collectionPath = this.route.snapshot.params['collection'];
         this.leadId = this.route.snapshot.params['id'];
 
-        console.log(`Loading lead details for ${this.collectionPath}/${this.leadId}`);
 
         // Para teste: usar dados de teste em vez de buscar do Firestore
         if (this.leadId.startsWith('test')) {
             // Criar dados de teste
             const testLead = this.getTestLeadById(this.leadId);
             this.crmData$ = of(testLead?.crmData || null);
-            console.log('Using test data:', testLead);
         } else {
             // Buscar dados reais (quando implementado)
             this.crmData$ = this.crmService.getCrmData(this.collectionPath, this.leadId);
@@ -53,7 +52,6 @@ export class LeadDetailComponent implements OnInit {
 
     addInteraction() {
         // Implement your interaction adding logic here
-        console.log('Adding new interaction');
     }
 
     // Helper para obter dados de teste
@@ -108,7 +106,6 @@ export class LeadDetailComponent implements OnInit {
 
     updateLeadStatus(status: string): void {
         // Para teste, apenas simular a atualização
-        console.log(`Updating lead status to ${status}`);
         this.crmData$.subscribe(crmData => {
             if (crmData) {
                 const updatedData = {

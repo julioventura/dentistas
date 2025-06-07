@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -14,7 +15,6 @@ export class WhatsappButtonComponent {
   @Input() isChatbotExpanded: boolean = false; // Para verificar se o chatbot está expandido
 
   openWhatsapp(): void {
-    console.log('Opening WhatsApp with phone:', this.phoneNumber);
     
     // Verifica se há um número de telefone
     if (!this.phoneNumber || this.phoneNumber.trim() === '') {

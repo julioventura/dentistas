@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /* 
   Métodos do componente HomepageComponent:
   1. ngOnInit() - Inicializa o componente, verificando se o usuário está logado e, caso haja um username na URL, carrega o perfil público.
@@ -56,12 +57,10 @@ export class HomepageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log('HomepageComponent: Inicializando');
     
     // Capturar parâmetros da URL
     this.route.params.subscribe(params => {
       const usernameParam = params['username'];
-      console.log('HomepageComponent: Parâmetro username da URL:', usernameParam);
       
       if (usernameParam) {
         this.username = usernameParam;
@@ -75,7 +74,6 @@ export class HomepageComponent implements OnInit {
   }
 
   loadUserProfile(username: string): void {
-    console.log(`HomepageComponent: Carregando perfil para username: ${username}`);
     this.isLoading = true;
     this.errorMessage = '';
     
@@ -83,11 +81,9 @@ export class HomepageComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (userProfiles: any[]) => {
-          console.log('HomepageComponent: Perfis retornados:', userProfiles);
           
           if (userProfiles && userProfiles.length > 0) {
             this.userProfile = userProfiles[0];
-            console.log('HomepageComponent: Perfil carregado com sucesso:', this.userProfile);
             
             // Configurar dados para exibição nos componentes filhos
             this.userService.setHomepageProfile(this.userProfile);

@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /**
  * ViewComponent
  * 
@@ -117,12 +118,10 @@ export class ViewComponent implements OnInit, OnDestroy {
    * Retorna: void.
    */
   ngOnInit(): void {
-    console.log('ngOnInit()');
     this.authSubscription = this.afAuth.authState.pipe(
       take(1),
       switchMap(user => {
         if (!user) {
-          console.log('Usuário não autenticado.');
           this.router.navigate(['/login']);
           return EMPTY;
         }
@@ -153,19 +152,12 @@ export class ViewComponent implements OnInit, OnDestroy {
           ? this.util.titulo_ajuste_singular(this.subcollection)
           : this.util.titulo_ajuste_singular(this.collection);
 
-        console.log('userId:', this.userId);
-        console.log('collection:', this.collection);
-        console.log('id:', this.id);
-        console.log('titulo_da_pagina:', this.titulo_da_pagina);
-        console.log('subcollection:', this.subcollection);
-        console.log('fichaId:', this.fichaId);
 
         if (!this.id) {
           console.error('Registro não identificado.');
           this.voltar();
         } else {
           if (this.subcollection) {
-            console.log('Carregando ficha interna...');
             this.FormService.loadFicha(this.userId, this.collection, this.id, this.subcollection, this.fichaId, this.view_only)
               .then(() => {
                 if (this.FormService.registro) {
@@ -176,7 +168,6 @@ export class ViewComponent implements OnInit, OnDestroy {
                 this.loadSharingHistory();
               });
           } else {
-            console.log('Carregando registro principal...');
             this.FormService.loadRegistro(this.userId, this.collection, this.id, this.view_only)
               .then(() => {
                 if (this.FormService.registro) {
@@ -191,7 +182,6 @@ export class ViewComponent implements OnInit, OnDestroy {
 
           // Define o subtítulo com base no nome do registro (obtido via FormService)
           this.subtitulo_da_pagina = this.FormService.nome_in_collection;
-          console.log('subtitulo_da_pagina:', this.subtitulo_da_pagina);
 
           // Exibe o menu se estiver na visualização do registro principal
           this.show_menu = !!(this.collection && this.id && !this.subcollection);
@@ -216,14 +206,12 @@ export class ViewComponent implements OnInit, OnDestroy {
       }
     });
     
-    console.log('ViewComponent inicializado.');
     // Remover estas chamadas do ngOnInit - elas serão chamadas após carregar os dados
     // this.loadSharingHistory();
     // this.loadAvailableGroups();
   }
 
   ngOnDestroy(): void {
-    console.log('ViewComponent: Destruindo componente');
     this.stopAllSubscriptions();
     this.destroy$.complete();
   }
@@ -294,7 +282,6 @@ export class ViewComponent implements OnInit, OnDestroy {
             .subscribe(groupDetails => {
                 if (groupDetails) {
                     // Armazenar detalhes do grupo conforme necessário
-                    console.log('Detalhes do grupo carregados:', groupDetails);
                 }
             });
     });
@@ -321,7 +308,6 @@ export class ViewComponent implements OnInit, OnDestroy {
     const group = this.groupDetails[groupId];
 
     if (!group) {
-      console.log(`Group details not found for ID ${groupId}`);
       return `Grupo ${groupId.substring(0, 5)}...`;
     }
 
@@ -410,16 +396,11 @@ export class ViewComponent implements OnInit, OnDestroy {
    * Retorna: void.
    */
   editar() {
-    console.log('editar()');
     if (this.subcollection) {
       const editPath = `/edit-ficha/${this.collection}/${this.id}/fichas/${this.subcollection}/itens`;
-      console.log("editPath =", editPath);
-      console.log("fichaId =", this.fichaId);
       this.router.navigate([editPath, this.fichaId]);
     } else {
       const editPath = `/edit/${this.collection}`;
-      console.log("editPath =", editPath);
-      console.log("id =", this.id);
       this.router.navigate([editPath, this.id]);
     }
   }
@@ -436,7 +417,6 @@ export class ViewComponent implements OnInit, OnDestroy {
    */
   excluir(): void {
     if (confirm('Tem certeza que deseja excluir este registro?')) {
-        console.log('ViewComponent: Iniciando exclusão do registro:', this.id);
         
         // Limpar dados do FormService ANTES de qualquer operação
         if (this.FormService && typeof this.FormService.clearFormData === 'function') {
@@ -453,7 +433,6 @@ export class ViewComponent implements OnInit, OnDestroy {
             // Depois deletar o registro
             this.firestoreService.deleteRegistro(this.collection, this.id)
                 .then(() => {
-                    console.log('ViewComponent: Registro deletado com sucesso');
                     this.snackBar.open('Registro excluído com sucesso!', 'OK', {
                         duration: 3000,
                         panelClass: ['success-snackbar']
@@ -490,7 +469,6 @@ export class ViewComponent implements OnInit, OnDestroy {
     
     // Remova qualquer chamada para this.FormService.clearFormData();
     // Apenas chame se necessário e se o método existir
-    console.log('ViewComponent: Subscriptions interrompidas');
   }
 
   /**
@@ -503,7 +481,6 @@ export class ViewComponent implements OnInit, OnDestroy {
    * Retorna: void.
    */
   voltar() {
-    console.log("voltar()");
     const listaPath = this.subcollection ?
       `/list-fichas/${this.collection}/${this.id}/fichas/${this.subcollection}` :
       `list/${this.collection}`;
@@ -536,7 +513,6 @@ export class ViewComponent implements OnInit, OnDestroy {
    * Retorna: void.
    */
   openUrl(url: string): void {
-    console.log("openUrl()");
     if (url && url.trim().length > 0) {
       window.open(url, '_blank');
     }
@@ -587,7 +563,6 @@ export class ViewComponent implements OnInit, OnDestroy {
       )
       .subscribe(groups => {
         this.groups = groups;
-        console.log('All available groups loaded:', groups);
 
         // Add groups to groupDetails for reliable name lookup
         groups.forEach(group => {
@@ -642,12 +617,6 @@ export class ViewComponent implements OnInit, OnDestroy {
 
   // Add this debug method to ViewComponent
   private logDebugInfo(): void {
-    console.log('Debug info for record sharing:');
-    console.log('Collection:', this.collection);
-    console.log('Record ID:', this.id);
-    console.log('New Group ID:', this.newGroupId);
-    console.log('Previous Group ID:', this.registro?.groupId);
-    console.log('Full registro object:', this.registro);
   }
 
   // Keep only this version of the method

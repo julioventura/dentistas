@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth'; // Autenticação
@@ -25,7 +26,6 @@ export class LoginComponent {
   ) { }
 
   onLogin() {
-    console.log("Tentando fazer login com email:", this.email);
 
     if (!this.email || !this.password) {
       alert('Por favor, preencha o email e a senha.');
@@ -43,7 +43,6 @@ export class LoginComponent {
         const user: firebase.User | null = userCredential.user;
 
         if (user) {
-          console.log("Usuário autenticado com sucesso:", user.email);
           this.userService.loginSuccess(user);
           this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
         } else {
@@ -56,7 +55,6 @@ export class LoginComponent {
         const errorCode = error.code;
 
         if (errorCode === 'auth/user-not-found' || errorCode === 'auth/invalid-credential') {
-          console.log("Usuário não encontrado ou credenciais inválidas, iniciando criação de conta...");
           this.promptUserRegistration();
         } else if (errorCode === 'auth/wrong-password') {
           alert('Senha incorreta.');
@@ -78,30 +76,25 @@ export class LoginComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.confirm) {
-        console.log("Usuário confirmou a criação de conta:", result);
         this.createAccount(result.name, result.username, result.email);
       } else {
-        console.log("Criação de conta cancelada pelo usuário.");
       }
     });
   }
 
   // Atualize o método createAccount para receber e usar nome e username
   createAccount(name: string, username: string, email: string) {
-    console.log("Criando conta para o email:", email);
 
     this.auth.createUserWithEmailAndPassword(email, this.password)
       .then((userCredential) => {
         const user: firebase.User | null = userCredential.user;
 
         if (user) {
-          console.log("Conta criada com sucesso para o email:", user.email);
           
           // Atualiza o perfil do usuário com o nome fornecido
           user.updateProfile({ 
             displayName: name
           }).then(() => {
-            console.log("Perfil do usuário atualizado com o nome:", name);
             
             // Chama o método loginSuccess com nome e username
             this.userService.loginSuccess(user, name, username);

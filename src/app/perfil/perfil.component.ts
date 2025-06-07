@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../shared/services/user.service';
@@ -96,7 +97,6 @@ export class PerfilComponent implements OnInit, OnDestroy, CanComponentDeactivat
   ngOnInit() {
     this.auth.authState.subscribe(user => {
       if (user && user.email) {
-        console.log('User authenticated with email:', user.email);
         this.userEmail = user.email;
         this.loadUserProfile();
       } else {
@@ -140,19 +140,16 @@ export class PerfilComponent implements OnInit, OnDestroy, CanComponentDeactivat
       return;
     }
 
-    console.log('Loading profile for email:', this.userEmail);
 
     this.firestoreService.getRegistroById('usuarios/dentistascombr/users', this.userEmail).subscribe(
       (userData: any) => {
         if (userData) {
-          console.log('User profile data retrieved:', userData);
           this.userProfileData = userData;
           this.originalUsername = userData.username || '';
 
           localStorage.setItem('userData', JSON.stringify(userData));
           this.updateFormWithProfileData();
         } else {
-          console.log('No profile data found, creating new profile');
           this.userProfileData = { email: this.userEmail };
         }
         this.isLoading = false;
@@ -301,7 +298,6 @@ export class PerfilComponent implements OnInit, OnDestroy, CanComponentDeactivat
 
   onFieldChanged(event: { field: string; value: any }) {
     // Handle the field change
-    console.log(`Field ${event.field} changed to ${event.value}`);
     // Your implementation...
   }
 
@@ -320,7 +316,6 @@ export class PerfilComponent implements OnInit, OnDestroy, CanComponentDeactivat
       convenios: this.convenios
     };
 
-    console.log('Salvando dados do perfil:', dataToSave);
 
     // Prosseguir com o salvamento...
     const userId = this.userProfileData.id || this.userEmail;

@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../shared/services/user.service';
@@ -18,11 +19,9 @@ export class TitulacoesComponent {
   constructor(
     public userService: UserService
   ) {
-    console.log('TitulacoesComponent constructor');
   }
 
   ngOnInit() {
-    console.log('TitulacoesComponent initialized');
   }
 
 }

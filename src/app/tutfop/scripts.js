@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /*
 Arquivo: scripts.js
 Funcionalidade: Controla a lógica do frontend do TutFOP, incluindo login, chat, logout, alternância de ambiente e manipulação de interface.
@@ -42,7 +43,6 @@ function checkTestMode() {
 function toggleWebhookURL() {
     const testMode = document.getElementById('testMode').checked;
     webhookURL = testMode ? webhookURLTest : webhookURLprod;
-    console.log('Webhook URL configurada para:', webhookURL);  // Depuração
 }
 
 // login(): Realiza o login do usuário, valida dados e inicializa sessão.
@@ -92,11 +92,9 @@ async function login() {
         });
 
         const data = await response.json();
-        console.log('Dados recebidos do webhook:', data);
 
         if (data && data.uuid) {
             const uuid = data.uuid;
-            console.log('UUID recebido:', uuid);
             localStorage.setItem('uuidSecao', uuid);
 
             // Armazenar o nome e email no localStorage
@@ -137,7 +135,6 @@ function logout() {
   // Mostra a confirmação apenas se o usuário estiver logado
   if (uuidSecao) {
       if ( document.getElementById("login-container").style.display !== "none") {
-          console.log("Tela de login")
           sair();
       }
       else {
@@ -146,7 +143,6 @@ function logout() {
             sair();
         } else {
             // Se o usuário não confirmar, mantém o chat visível
-            console.log("Usuário optou por continuar na conversa.");
             document.getElementById("chat-container").style.display = "block";
             document.getElementById("login-container").style.display = "none";
         }
@@ -197,7 +193,6 @@ function sendMessage() {
     const chatLog = document.getElementById("chat-log");
 
     const uuidSecao = localStorage.getItem('uuidSecao');
-    console.log('UUID recuperado antes de enviar mensagem:', uuidSecao);
 
     if (!uuidSecao) {
       alert('Sessão expirada ou inválida. Faça login novamente.');
@@ -210,7 +205,6 @@ function sendMessage() {
         return;
     }
 
-     console.log('Enviando mensagem:', userInput);  // Depuração
 
     const userMessage = `<div class="user-message"><strong>Você:</strong> ${userInput}</div>`;
     chatLog.innerHTML += userMessage;
@@ -240,7 +234,6 @@ function sendMessage() {
         sendButton.disabled = false;
         sendButton.style.backgroundColor = "#4CAF50"; // Retorna à cor original
 
-        console.log('Resposta do bot recebida:', data);  // Depuração
 
         if (data && data.response) {
             let formattedResponse = data.response.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');

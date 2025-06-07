@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /**
  * HomepageIntroComponent
  * 
@@ -52,24 +53,20 @@ export class HomepageIntroComponent implements OnInit {
    * @returns void
    */
   ngOnInit(): void {
-    console.log("HomepageIntroComponent ngOnInit()");
     this.isLoading = true;
     
     // First, get the authenticated user
     this.auth.authState.subscribe(user => {
       if (user) {
         this.loggedInUser = user;
-        console.log("Authenticated user:", user);
         
         // Then get the user profile data that contains the username
         this.userService.getUserProfileData().subscribe(
           profileData => {
-            console.log("User profile data:", profileData);
             
             if (profileData && profileData.username) {
               this.userProfile = profileData;
               this.username = profileData.username;
-              console.log("Username found:", this.username);
               
               // Now load the profile for display
               if (this.username) {
@@ -111,7 +108,6 @@ export class HomepageIntroComponent implements OnInit {
    * @returns void
    */
   loadUserProfile(username: string): void {
-    console.log("Loading user profile for username:", username);
     
     // Let's make sure we have a valid username
     if (!username) {
@@ -124,7 +120,6 @@ export class HomepageIntroComponent implements OnInit {
       (userProfiles) => {
         if (userProfiles && userProfiles.length > 0) {
           this.userProfile = userProfiles[0];
-          console.log('Profile loaded:', this.userProfile);
           this.errorMessage = '';
           
           // Check if this is the current user's profile
@@ -159,12 +154,10 @@ export class HomepageIntroComponent implements OnInit {
    * @returns void
    */
   openHomepage(): void {
-    console.log("Opening homepage for username:", this.username);
     
     if (this.username) {
       // Use the current origin to build the URL
       const homepageUrl = `${window.location.origin}/${this.username}`;
-      console.log("Opening URL:", homepageUrl);
       window.open(homepageUrl, '_blank', 'noopener,noreferrer');
     } else {
       console.error("Cannot open homepage: No username defined");

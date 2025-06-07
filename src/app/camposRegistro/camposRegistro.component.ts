@@ -1,8 +1,10 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, HostListener, OnInit } from '@angular/core';
 import { NavegacaoService } from '../shared/services/navegacao.service';
 import { CamposService } from '../shared/services/campos.service';
-import { UserService } from '../shared/services/user.service'; // 
+import { UserService } from '../shared/services/user.service'; //
 import { UtilService } from '../shared/utils/util.service';
+
 
 @Component({
   selector: 'app-camposRegistro',
@@ -30,7 +32,7 @@ export class CamposRegistroComponent implements OnInit {
     this.userService.getUser().subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid; // Armazena o uid do usuário logado
-        console.log("User ID:", this.userId);
+        // Alteração: log de depuração removido
 
         // Após recuperar o userId, carregar coleções e campos
         this.carregarColecoes();

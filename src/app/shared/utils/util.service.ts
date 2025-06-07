@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /*
   Métodos do arquivo UtilService:
   1. formata_email(email: string): string - Formata o email removendo espaços extras e convertendo para minúsculas.
@@ -173,13 +174,11 @@ export class UtilService {
  * @description Essa função utiliza expressão regular para capitalizar a primeira letra de cada palavra.
  */
   capitalize(text: string): string {
-    console.log("capitalize(" + text + ")");
     return text.replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
 
   public capitalizar(str: string): string {
-    console.log("capitalizar(" + str + ")");
 
     if (!str || typeof str !== 'string') {
       return '';

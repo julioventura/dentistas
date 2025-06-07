@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /* 
   Métodos do componente HomeComponent:
   1. ngOnInit() - Inicializa o componente, autenticando o usuário, carregando dados do usuário (username) e configuração de ícones.
@@ -69,7 +70,6 @@ export class HomeComponent implements OnInit {
    *  - Caso nenhum usuário esteja logado, redireciona para a página de login.
    */
   ngOnInit(): void {
-    console.log('HomeComponent ngOnInit started');
     try {
       // Clear chat context
       this.aiChatService.resetContext();
@@ -77,7 +77,6 @@ export class HomeComponent implements OnInit {
       // Auth subscription
       this.auth.user.subscribe({
         next: (user) => {
-          console.log('Auth user received:', user ? 'logged in' : 'not logged in');
           if (user && user.email) {
             // Define o nome do usuário utilizando a função capitalize para deixar a primeira letra de cada palavra em maiúsculo.
             this.nome = this.util.capitalizar(user.displayName || user.email || 'Usuário');
@@ -94,7 +93,6 @@ export class HomeComponent implements OnInit {
             this.loadIconConfig();
 
           } else {
-            console.log('No user logged in, navigating to login');
             this.router.navigate(['/login']);
           }
         },
@@ -121,7 +119,6 @@ export class HomeComponent implements OnInit {
       if (doc.exists) {
         this.visibleIcons = doc.data() as { [key: string]: boolean };
       } else {
-        console.log("Nenhuma configuração personalizada encontrada. Usando configurações padrão.");
       }
     });
   }
@@ -134,7 +131,6 @@ export class HomeComponent implements OnInit {
   saveIconConfig(): void {
     if (this.userId) {
       this.firestore.doc(`/users/${this.userId}/settings/HomeConfig`).set(this.visibleIcons)
-        .then(() => console.log("Configurações salvas com sucesso!"))
         .catch(error => console.error("Erro ao salvar configurações:", error));
     }
   }
@@ -148,9 +144,7 @@ export class HomeComponent implements OnInit {
     this.firestoreService.getRegistroById('usuarios/dentistascombr/users', email).subscribe(userData => {
       if (userData && userData.username) {
         this.username = userData.username;
-        console.log('Username carregado:', this.username);
       } else {
-        console.log('Nenhum username encontrado para este usuário.');
       }
     });
   }
@@ -170,7 +164,6 @@ export class HomeComponent implements OnInit {
    * @description Navega para o componente especificado. Caso new_window seja true, navega para uma rota de introdução usando o template "/{component}/intro".
    */
   go(component: string, new_window: boolean = false): void {
-    console.log('go(' + component + ') - Navegando para:', component);
 
     this.new_window = new_window;
     if (new_window) {

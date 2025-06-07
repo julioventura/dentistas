@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit, TemplateRef, ViewChild, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -56,7 +57,6 @@ export class PipelineViewComponent implements OnInit {
   }
 
   loadPipelineData(): void {
-    console.log('Loading pipeline data with test data...');
     
     // Usar dados de teste direto, sem depender do Firestore
     const testStages: Record<string, {label: string, order: number, color: string}> = {
@@ -145,7 +145,6 @@ export class PipelineViewComponent implements OnInit {
       }
     });
     
-    console.log('Loaded test pipeline data:', this.pipeline);
     this.isLoading = false;
   }
 
@@ -184,7 +183,6 @@ export class PipelineViewComponent implements OnInit {
   }
 
   viewRegistro(collection: string, id: string): void {
-    console.log(`Navigating to lead details: ${collection}/${id}`);
     this.router.navigate(['/crm/lead', collection, id]);
   }
 

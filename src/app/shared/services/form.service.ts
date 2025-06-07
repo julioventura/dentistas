@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /**
  * FormService
  * 
@@ -69,8 +70,6 @@ export class FormService {
         return this.camposFichaService.getCamposFichaRegistro(userId, subcollection).pipe(
             tap((campos: any[]) => {
                 this.campos = campos || [];
-                console.log('Ficha carregada. Subcollection =', subcollection);
-                console.log('Campos carregados:', this.campos);
                 this.createForm();
             })
         );
@@ -91,8 +90,6 @@ export class FormService {
         return this.camposService.getCamposRegistro(userId, collection).pipe(
             tap((campos: any[]) => {
                 this.campos = campos || [];
-                console.log('Ficha carregada. Collection =', collection);
-                console.log('Campos carregados:', this.campos);
                 this.createForm();
             })
         );
@@ -108,7 +105,6 @@ export class FormService {
      * Retorna: void.
      */
     createForm() {
-        console.log('createForm()');
         if (!this.fichaForm) {
             const formControls = this.campos.reduce((acc, campo) => {
                 let defaultValue;
@@ -122,7 +118,6 @@ export class FormService {
             }, {} as { [key: string]: any });
             if (Object.keys(formControls).length > 0) {
                 this.fichaForm = this.fb.group(formControls);
-                console.log('FormGroup criado com sucesso:', this.fichaForm);
             } else {
                 console.error('Nenhum campo foi adicionado ao FormGroup.');
             }
@@ -156,7 +151,6 @@ export class FormService {
      */
     loadRegistro(userId: string, collection: string, id: string, view_only: boolean): Promise<void> {
         return new Promise((resolve, reject) => {
-            console.log('loadRegistro()');
             
             // Verificar se o usuário está autenticado antes de prosseguir
             if (!userId) {
@@ -171,18 +165,15 @@ export class FormService {
 
             if (userId && collection && id) {
                 const fichaPath = `users/${userId}/${collection}`;
-                console.log('Caminho para carregar ficha:', fichaPath);
                 this.carregarCamposRegistro(userId, collection).pipe(
                     switchMap(() => this.firestoreService.getRegistroById(fichaPath, id))
                 ).subscribe(ficha => {
                     // Verificar se o componente ainda está ativo antes de processar
                     if (this.destroy$.closed) {
-                        console.log('FormService: Componente destruído - parando processamento');
                         return;
                     }
                     
                     if (ficha) {
-                        console.log('Ficha carregada:', ficha);
                         this.registro = ficha;
                         this.nome_in_collection = this.registro.nome;
 
@@ -199,10 +190,8 @@ export class FormService {
 
                         if (view_only) {
                             this.fichaForm.disable();
-                            console.log("Formulário desabilitado.");
                         } else {
                             this.fichaForm.enable();
-                            console.log("Formulário habilitado.");
                         }
 
                         // Separar campos por grupo
@@ -222,16 +211,13 @@ export class FormService {
                         // Depois de configurar o formulário, notificar que está pronto
                         if (this.fichaForm) {
                             this.formReadySubject.next(true);
-                            console.log('FormService: Formulário está pronto e notificado');
                         }
                         
                         this.isLoading = false;
-                        console.log('isLoading == false');
                         resolve();
                     } else {
                         // ESTA É A LINHA QUE CAUSA O ERRO - linha 226 aproximadamente
                         // Remover ou substituir este console.error:
-                        console.log('FormService: Documento não encontrado - finalizando silenciosamente');
                         this.isLoading = false;
                         reject('Ficha não encontrada');
                     }
@@ -316,13 +302,6 @@ export class FormService {
      */
     loadFicha(userId: string, collection: string, id: string, subcollection: string, fichaId: string, view_only: boolean): Promise<void> {
         return new Promise((resolve, reject) => {
-            console.log('loadFicha()');
-            console.log('userId: ', userId);
-            console.log('collection:', collection);
-            console.log('id:', id);
-            console.log('subcollection:', subcollection);
-            console.log('fichaId:', fichaId);
-            console.log('view (visualizar registro): ', view_only);
 
             // Verificar se o usuário está autenticado antes de prosseguir
             if (!userId) {
@@ -335,12 +314,10 @@ export class FormService {
             if (subcollection && fichaId) {
                 this.subcollection = subcollection;
                 const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
-                console.log('Caminho para carregar ficha:', fichaPath);
                 this.isLoading = true;
                 this.carregarCamposFichas(userId, subcollection).subscribe(() => {
                     this.firestoreService.getRegistroById(fichaPath, fichaId).subscribe(ficha => {
                         if (ficha) {
-                            console.log('Ficha carregada:', ficha);
                             this.registro = ficha;
                             const formattedData = { ...ficha };
                             for (const key in formattedData) {
@@ -354,21 +331,16 @@ export class FormService {
 
                             if (view_only) {
                                 this.fichaForm.disable();
-                                console.log("Formulário desabilitado.");
                             } else {
                                 this.fichaForm.enable();
-                                console.log("Formulário habilitado.");
                             }
-                            console.log('Estado do formulário (disabled):', this.fichaForm.disabled);
 
                             // Depois de configurar o formulário, notificar que está pronto
                             if (this.fichaForm) {
                                 this.formReadySubject.next(true);
-                                console.log('FormService: Ficha está pronta e notificada');
                             }
                             
                             this.isLoading = false;
-                            console.log('isLoading == false');
                             resolve();
                         } else {
                             this.isLoading = false;
@@ -404,7 +376,6 @@ export class FormService {
      * Retorna: void.
      */
     onFieldChange(event: any, campoNome: string): void {
-        console.log(`onFieldChange(event, campoNome = ${campoNome})`);
         if (event.target && event.target.type === 'checkbox') {
             this.fichaForm.get(campoNome)?.setValue(event.target.checked);
             return;
@@ -443,12 +414,8 @@ export class FormService {
             const fichaAtualizada = this.fichaForm.value;
             const fichaPath = `users/${userId}/${collection}`;
             const fichaRoute = `/view/${collection}`;
-            console.log('Caminho para salvar a ficha:', fichaPath);
-            console.log('id da coleção:', id);
-            console.log('Dados da ficha a serem salvos:', fichaAtualizada);
             if (id) {
                 this.firestoreService.updateRegistro(fichaPath, id, fichaAtualizada).then(() => {
-                    console.log('Ficha atualizada com sucesso');
                     this.router.navigate([`fichaRoute/${id}`]);
                 }).catch(error => {
                     console.error('Erro ao atualizar a ficha:', error);
@@ -475,13 +442,8 @@ export class FormService {
             const fichaAtualizada = this.fichaForm.value;
             const fichaPath = `users/${userId}/${collection}/${id}/fichas/${subcollection}/itens`;
             const fichaRoute = `/view-ficha/${collection}/${id}/fichas/${subcollection}/itens`;
-            console.log('fichaPath - Caminho para salvar a ficha:', fichaPath);
-            console.log('fichaRoute - Caminho para acessar a ficha:', fichaRoute);
-            console.log('ID da ficha:', fichaId);
-            console.log('Dados da ficha a serem salvos:', fichaAtualizada);
             if (fichaId) {
                 this.firestoreService.updateRegistro(fichaPath, fichaId, fichaAtualizada).then(() => {
-                    console.log('Ficha atualizada com sucesso');
                     this.router.navigate([`${fichaRoute}/${fichaId}`]);
                 }).catch(error => {
                     console.error('Erro ao atualizar a ficha:', error);
@@ -489,8 +451,6 @@ export class FormService {
             }
         } else {
             console.error('Formulário inválido. Verifique os campos obrigatórios.');
-            console.log('Estado atual do formulário:', this.fichaForm.status);
-            console.log('Erros no formulário:', this.fichaForm.errors);
         }
     }
 
@@ -503,7 +463,6 @@ export class FormService {
      * Método para limpeza de dados quando necessário
      */
     clearFormData(): void {
-        console.log('FormService: Limpando dados do formulário');
         
         // Parar todas as subscriptions ativas
         if (this.destroy$) {
@@ -525,7 +484,6 @@ export class FormService {
      * Método para manipular exclusão de documentos
      */
     handleDocumentDeletion(): void {
-      console.log('FormService: Manipulando exclusão de documento');
       this.clearFormData();
     }
 

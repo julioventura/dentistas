@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../shared/services/user.service';
@@ -24,7 +25,6 @@ export class CapaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(profile => {
         if (profile) {
-          console.log('CapaComponent: Recebendo dados do perfil', profile);
           this.userProfile = profile;
         }
       });

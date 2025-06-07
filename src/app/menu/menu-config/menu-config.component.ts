@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -67,7 +68,6 @@ export class MenuConfigComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log("ngOnInit()");
     this.afAuth.authState.subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid;

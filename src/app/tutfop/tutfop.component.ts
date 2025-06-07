@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 /**
  * Componente TutFOP - Tutor Virtual de Casos Clínicos
  * 
@@ -55,12 +56,10 @@ export class TutfopComponent implements OnInit, OnDestroy {
     private userService: UserService,
     public util: UtilService,
   ) {
-    console.log("TutfopComponent.constructor()");
   }
 
   // ngOnInit(): Inicializa componente e subscreve dados do usuário
   ngOnInit(): void {
-    console.log("TutfopComponent.ngOnInit()");
     // Subscrever aos dados do usuário
     this.userService.getUser()
       .pipe(takeUntil(this.destroy$))
@@ -71,9 +70,6 @@ export class TutfopComponent implements OnInit, OnDestroy {
           this.userNome = user.displayName || this.userService.userProfile?.nome || '';
           this.isUserAuthenticated = true;
           
-          console.log('Nome: ',this.userNome);
-          console.log('displayName: ',user.displayName);
-          console.log('userProfile.nome: ',this.userService.userProfile?.nome);
           
           // Inicializar o TutFOP após obter os dados do usuário
           this.initializeTutfop();
@@ -85,15 +81,12 @@ export class TutfopComponent implements OnInit, OnDestroy {
 
   // ngOnDestroy(): Limpa subscriptions ao destruir componente
   ngOnDestroy(): void {
-    console.log("TutfopComponent.ngOnDestroy()");
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   // initializeTutfop(): Inicializa scripts e configurações do TutFOP
   private initializeTutfop(): void {
-    console.log("TutfopComponent.initializeTutfop()");
-    console.log('TutFOP inicializado com dados do usuário:', {
       nome: this.userNome,
       email: this.userEmail,
       uid: this.userUid
@@ -109,7 +102,6 @@ export class TutfopComponent implements OnInit, OnDestroy {
 
   // showChatInterface(): Exibe interface do chat e oculta tela de login
   private showChatInterface(): void {
-    console.log("TutfopComponent.showChatInterface()");
     const loginContainer = document.getElementById("tutfop-login-container");
     const chatContainer = document.getElementById("tutfop-chat-container");
     
@@ -119,7 +111,6 @@ export class TutfopComponent implements OnInit, OnDestroy {
 
   // updateUserInfo(): Atualiza informações do usuário na interface
   private updateUserInfo(): void {
-    console.log("TutfopComponent.updateUserInfo()");
     const userInfo = document.getElementById("tutfop-user-info");
     if (userInfo) {
       userInfo.innerText = `Usuário: ${this.userNome} - ${this.userEmail}`;
@@ -128,7 +119,6 @@ export class TutfopComponent implements OnInit, OnDestroy {
 
   // sendTutfopMessage(): Envia mensagem do usuário para o tutor virtual
   async sendTutfopMessage(): Promise<void> {
-    console.log("TutfopComponent.sendTutfopMessage()");
     const userInput = document.getElementById("tutfop-user-input") as HTMLTextAreaElement;
     const chatLog = document.getElementById("tutfop-chat-log");
     const sendButton = document.getElementById("tutfop-send-button") as HTMLButtonElement;
@@ -142,8 +132,6 @@ export class TutfopComponent implements OnInit, OnDestroy {
     }
 
     // LOG: Clique no botão Enviar - início do envio da mensagem
-    console.log('[TutFOP][Webhook][FASE 0][CLICK] Botão "Enviar" clicado.');
-    console.log('[TutFOP][Webhook][FASE 0][CLICK] Mensagem digitada:', message);
 
     // Adicionar mensagem do usuário
     const userMessage = `<div class="user-message"><strong>Você:</strong> ${message}</div>`;
@@ -167,16 +155,10 @@ export class TutfopComponent implements OnInit, OnDestroy {
     };
 
     // LOG: Fase 1 - Preparação dos dados para envio ao webhook
-    console.log('[TutFOP][Webhook][FASE 1][PREPARO] Dados preparados para envio:', data);
-    console.log('[TutFOP][Webhook][FASE 1][PREPARO] Lista de campos e valores:');
     Object.keys(data).forEach((campo) => {
-      console.log(`  ${campo}:`, (data as any)[campo]);
     });
 
     // LOG: Fase 2 - Envio da requisição para o webhook
-    console.log('[TutFOP][Webhook][FASE 2][ENVIO] Enviando requisição POST para:', this.webhookURL);
-    console.log('[TutFOP][Webhook][FASE 2][ENVIO] Payload JSON:', JSON.stringify(data));
-    console.log('[TutFOP][Webhook][FASE 2][ENVIO] Formato do envio: application/json');
 
     try {
       const response = await fetch(this.webhookURL, {
@@ -188,20 +170,17 @@ export class TutfopComponent implements OnInit, OnDestroy {
       });
 
       // LOG: Fase 3 - Resposta recebida do webhook
-      console.log('[TutFOP][Webhook][FASE 3][RESPOSTA] Status HTTP:', response.status);
 
       let responseData: any = null;
       const contentType = response.headers.get('content-type');
       const responseText = await response.text();
 
       // LOG: Fase 3 - Conteúdo bruto recebido
-      console.log('[TutFOP][Webhook][FASE 3][RESPOSTA] Conteúdo bruto recebido:', responseText);
 
       if (contentType && contentType.includes('application/json') && responseText) {
         try {
           responseData = JSON.parse(responseText);
           // LOG: Fase 3 - JSON parse OK
-          console.log('[TutFOP][Webhook][FASE 3][RESPOSTA] JSON parse bem-sucedido:', responseData);
         } catch (e) {
           // LOG: Fase 3 - Erro ao fazer parse do JSON
           console.error('[TutFOP][Webhook][FASE 3][ERRO] Falha ao fazer parse do JSON:', e, responseText);
@@ -212,8 +191,6 @@ export class TutfopComponent implements OnInit, OnDestroy {
       }
 
       // LOG: Fase 4 - Conferência dos campos esperados na resposta
-      console.log('[TutFOP][Webhook][FASE 4][CONFERENCIA] Campos esperados na resposta: ["response"]');
-      console.log('[TutFOP][Webhook][FASE 4][CONFERENCIA] Dados recebidos:', responseData);
 
       if (responseData && responseData.response) {
         let formattedResponse = responseData.response.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
@@ -241,7 +218,6 @@ export class TutfopComponent implements OnInit, OnDestroy {
 
   // logoutTutfop(): Limpa chat
   logoutTutfop(): void {
-    console.log("TutfopComponent.logoutTutfop()");
     const confirmation = confirm("Confirma limpar a conversa?");
     if (confirmation) {
       const chatLog = document.getElementById("tutfop-chat-log");
@@ -251,7 +227,6 @@ export class TutfopComponent implements OnInit, OnDestroy {
 
   // setupEventListeners(): Configura listeners para eventos do DOM
   private setupEventListeners(): void {
-    console.log("TutfopComponent.setupEventListeners()");
     const userInput = document.getElementById("tutfop-user-input") as HTMLTextAreaElement;
     if (userInput) {
       userInput.addEventListener("keypress", (event) => {

@@ -1,3 +1,4 @@
+// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -6,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { UtilService } from '../shared/utils/util.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { QueryDocumentSnapshot, DocumentData } from '@angular/fire/firestore';
+
 
 @Component({
 	selector: 'app-backup',
@@ -24,9 +26,9 @@ export class BackupComponent implements OnInit {
 		this.util = util;
 	}
 
-	ngOnInit(): void {
-		// Initialization logic here"
-		console.log('BackupComponent iniciado');
+        ngOnInit(): void {
+                // Initialization logic here
+                // Alteração: log de depuração removido
 	}
 
 	async gerarBackup(tipo: string) {
