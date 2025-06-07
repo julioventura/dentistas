@@ -17,6 +17,10 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   hidePassword: boolean = true; // Controla a visibilidade da senha
+  // Novo: impede múltiplos envios de login
+  isSubmitting: boolean = false;
+  // Novo: impede múltiplos cadastros simultâneos
+  isCreatingAccount: boolean = false;
 
   constructor(
     private auth: AngularFireAuth,
@@ -28,6 +32,11 @@ export class LoginComponent {
   // Alteração: função passou a ser assíncrona para capturar erros sem gerar múltiplos logs
   // Correção: verificação assíncrona com remoção de espaços
   async onLogin() {
+
+    // Novo: evita múltiplas submissões simultâneas
+    if (this.isSubmitting) {
+      return;
+    }
 
     // Correção: remove espaços extras do email e da senha digitados
     this.email = this.email.trim();
@@ -43,6 +52,9 @@ export class LoginComponent {
       alert('Por favor, insira um email válido.');
       return;
     }
+
+    // Novo: define envio em andamento somente após as validações
+    this.isSubmitting = true;
 
     try {
       // Chamada assíncrona ao Firebase
@@ -72,6 +84,9 @@ export class LoginComponent {
       } else {
         alert('Erro ao fazer login. Por favor, tente novamente.');
       }
+    } finally {
+      // Novo: libera o botão de login
+      this.isSubmitting = false;
     }
   }
 
@@ -93,29 +108,31 @@ export class LoginComponent {
 
   // Atualize o método createAccount para receber e usar nome e username
   createAccount(name: string, username: string, email: string) {
+    // Novo: evita múltiplos cadastros simultâneos
+    if (this.isCreatingAccount) {
+      return;
+    }
+    this.isCreatingAccount = true;
 
     this.auth.createUserWithEmailAndPassword(email, this.password)
       .then((userCredential) => {
         const user: firebase.User | null = userCredential.user;
 
         if (user) {
-          
           // Atualiza o perfil do usuário com o nome fornecido
-          user.updateProfile({ 
+          user.updateProfile({
             displayName: name
           }).then(() => {
-            
             // Chama o método loginSuccess com nome e username
             this.userService.loginSuccess(user, name, username);
-            
             // Navega para a página inicial após cadastro bem-sucedido
             this.router.navigate(['/']);
-      }).catch(error => {
-        console.error('Erro ao atualizar o perfil do usuário:', error);
-        alert('Erro ao atualizar o perfil. Por favor, tente novamente.');
-      });
-      }
-    })
+          }).catch(error => {
+            console.error('Erro ao atualizar o perfil do usuário:', error);
+            alert('Erro ao atualizar o perfil. Por favor, tente novamente.');
+          });
+        }
+      })
       .catch(error => {
         // Correção: tratamento detalhado de erros ao criar conta
         const errorCode = error.code;
@@ -124,6 +141,10 @@ export class LoginComponent {
         } else {
           alert('Erro ao criar conta. Por favor, tente novamente.');
         }
+      })
+      .finally(() => {
+        // Novo: libera o estado de criação
+        this.isCreatingAccount = false;
       });
   }
 
