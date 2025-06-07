@@ -49,6 +49,17 @@ export class LoginComponent {
       const userCredential = await this.auth.signInWithEmailAndPassword(this.email.trim(), this.password.trim());
       const user = userCredential.user;
       if (user) {
+        // ADICIONAR: Console log dos dados de autenticação
+        console.log('=== DADOS DE AUTENTICAÇÃO - LOGIN ===');
+        console.log('Email:', user.email);
+        console.log('UID:', user.uid);
+        console.log('Display Name:', user.displayName);
+        console.log('Email Verified:', user.emailVerified);
+        console.log('Creation Time:', user.metadata.creationTime);
+        console.log('Last Sign In Time:', user.metadata.lastSignInTime);
+        console.log('Provider Data:', user.providerData);
+        console.log('=== FIM DADOS DE AUTENTICAÇÃO ===');
+        
         this.userService.loginSuccess(user);
         this.router.navigate(['/']);
       }
@@ -78,6 +89,20 @@ export class LoginComponent {
       const user = userCredential.user;
       if (user) {
         await user.updateProfile({ displayName: this.signupName });
+        
+        // ADICIONAR: Console log dos dados de autenticação
+        console.log('=== DADOS DE AUTENTICAÇÃO - SIGNUP ===');
+        console.log('Email:', user.email);
+        console.log('UID:', user.uid);
+        console.log('Display Name:', user.displayName);
+        console.log('Email Verified:', user.emailVerified);
+        console.log('Creation Time:', user.metadata.creationTime);
+        console.log('Last Sign In Time:', user.metadata.lastSignInTime);
+        console.log('Provider Data:', user.providerData);
+        console.log('Nome fornecido:', this.signupName);
+        console.log('Username fornecido:', this.signupUsername);
+        console.log('=== FIM DADOS DE AUTENTICAÇÃO ===');
+        
         this.userService.loginSuccess(user, this.signupName, this.signupUsername);
         this.router.navigate(['/']);
       }

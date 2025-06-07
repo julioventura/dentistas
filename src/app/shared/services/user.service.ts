@@ -340,6 +340,15 @@ private initializeService(): void {
 
   // Método para chamar após o login bem-sucedido
   loginSuccess(user: firebase.User, name?: string, username?: string) {
+    // ADICIONAR: Console log adicional no serviço
+    console.log('=== USER SERVICE - LOGIN SUCCESS ===');
+    console.log('Firebase User Object:', user);
+    console.log('Email:', user.email);
+    console.log('UID:', user.uid);
+    console.log('Nome adicional:', name);
+    console.log('Username adicional:', username);
+    console.log('=== FIM USER SERVICE LOG ===');
+    
     this.createUserInFirestore(user, name, username); // Passa os parâmetros adicionais
   }
 

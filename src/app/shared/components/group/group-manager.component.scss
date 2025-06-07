@@ -1,10 +1,5 @@
 @import '../../../../styles.scss';
 
-
-// body {
-//   padding-top: 0px;
-// }
-
 h2 {
   font-size: 22px;
   font-weight: 600;
@@ -27,7 +22,6 @@ h3 {
 // HEADER
 // ==================================
 .header {
-
   margin-top: 5px;
   margin-bottom: 0px;
   
@@ -55,8 +49,6 @@ h3 {
   }
 }
 
-// ==================================
-
 .sticky-header {
   position: sticky;
   top: 0;
@@ -66,15 +58,6 @@ h3 {
   border: $primary-color solid 1px;
   border-radius: 8px;
   padding: 0px 10px;
-}
-
-.dynamic-form-container {
-  border: 1px solid $primary-color;
-
-  &.focus {
-    outline: none;
-    border: 1px solid $primary-color-dark;
-  }
 }
 
 .loading-container {
@@ -89,74 +72,20 @@ h3 {
   }
 }
 
-.two-columns-grid {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 32px;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-  }
-}
-
-.column-half {
-  flex: 1;
-  min-width: 0;
-
-  mat-card {
-    height: 100%;
-  }
-}
-
 .selected {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-.add-button {
-  margin-top: 16px;
-  width: 100%;
-}
-
 .empty-list {
-  padding: 16px;
+  padding: 20px;
   text-align: center;
-  color: rgba(0, 0, 0, 0.5);
+  color: #666;
   font-style: italic;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.group-members-section {
-  margin-top: 16px;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 16px;
 }
 
 .header-icon {
   vertical-align: middle;
   margin-right: 8px;
-}
-
-.members-section {
-  margin-top: 16px;
-
-  mat-chip-list {
-    margin-bottom: 8px;
-  }
-}
-
-.group-details {
-  p {
-    margin-bottom: 16px;
-    white-space: pre-line;
-  }
 }
 
 // Estilos para indicar grupos onde o usuário é admin
@@ -168,7 +97,6 @@ h3 {
   border-left: 4px solid #2196f3;
 }
 
-// Adicionar badge para indicar status de administrador 
 .admin-badge {
   font-size: 12px;
   background-color: #4caf50;
@@ -178,171 +106,23 @@ h3 {
   margin-left: 8px;
 }
 
-// Adicione estes estilos ao final do arquivo
-.join-requests-section {
-  margin-top: 32px;
-  margin-bottom: 24px;
-}
-
-.join-request-item {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 16px 0;
-  height: auto !important;
-  min-height: 72px;
-
-  .request-user {
-    font-weight: 400;
-    margin-bottom: 4px;
-  }
-
-  .request-date {
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.6);
-  }
-
-  .request-message {
-    margin-top: 8px;
-    font-style: italic;
-    color: rgba(0, 0, 0, 0.7);
-    white-space: normal;
-    padding-left: 8px;
-    border-left: 3px solid #e0e0e0;
-  }
-}
-
-.request-actions {
-  position: absolute;
-  right: 16px;
-  display: flex;
-  gap: 8px;
-}
-
-// Override para corrigir o mat-list-item
-::ng-deep .mat-list-item-content {
-  height: auto !important;
-  min-height: 48px;
-  padding: 8px 16px !important;
-}
-
-// Add these styles to your existing styles
-.member-chips {
-  margin-bottom: 16px;
-
-  mat-chip-list {
-    width: 100%;
-    display: block;
-  }
-}
-
-.add-member-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-
-  .user-autocomplete {
-    flex: 1;
-    margin-right: 8px;
-  }
-
-  button {
-    flex-shrink: 0;
-  }
-}
-
-// Add these styles to your existing styles
-.manual-entry-section {
-  margin-top: 8px;
-  margin-bottom: 16px;
-}
-
-// Simplificar a seção de entrada manual que já existe
-.manual-entry-form {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  margin-top: 12px;
-
-  .user-email-input {
-    width: 100%;
-  }
-
-  .manual-entry-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 8px;
-  }
-}
-
-// Adicionar este estilo
-.membership-note {
-  margin-top: 16px;
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-
-  mat-icon {
-    font-size: 18px;
-    margin-right: 8px;
-    color: #2196F3;
-    height: 18px;
-    width: 18px;
-    line-height: 18px;
-  }
-}
-
-// Adicione estes estilos ao seu arquivo SCSS existente
-.members-list-container {
-  margin-bottom: 16px;
-  padding: 12px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-
-  .members-title {
-    margin-top: 0;
-    margin-bottom: 12px;
-    font-weight: 500;
-    color: #333;
-    font-size: 16px;
-  }
-
-  .empty-members-message {
-    color: #888;
-    font-style: italic;
-    padding: 8px 0;
-  }
-}
-
-.member-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-
-  mat-chip {
-    margin-bottom: 4px;
-  }
-}
-
-/* Additional styles for traditional list approach */
-
+/* Section cards */
 .section-card {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-  padding: 10px;
   text-align: left;
 }
 
 .section-header {
   border-bottom: 1px solid #eee;
+  padding: 16px;
 
   h2 {
     margin: 0;
     font-size: 18px;
-    // display: flex;
+    display: flex;
     align-items: center;
     color: $primary-color;
 
@@ -366,7 +146,7 @@ h3 {
   padding: 16px;
 }
 
-/* Table styles similar to ListComponent */
+/* Table styles */
 .registros-table {
   width: 100%;
 
@@ -405,50 +185,30 @@ h3 {
     margin: 0;
     text-align: right;
   }
-
-  .grupo-clinica {
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
-  }
-}
-
-td {
-  padding-right: 0 0 0 10px;
 }
 
 .badge {
   display: inline-block;
-  // padding: 3px 10px;
-  // border-radius: 4px;
-  // font-size: 12px;
   font-weight: bold;
-  // width: 80px;
 
   &.admin {
-    // background-color: #4caf50;
-    // color: white;
     color: #4caf50;
   }
 
   &.member {
-    // background-color: #2196f3;
-    // color: white;
     color: #2196f3;
   }
-}
-
-.empty-list {
-  padding: 20px;
-  text-align: center;
-  color: #666;
-  font-style: italic;
 }
 
 .action-buttons {
   margin-top: 16px;
   display: flex;
   justify-content: center;
+  gap: 10px;
+
+  .espacador {
+    width: 10px;
+  }
 }
 
 /* Form styles */
@@ -468,6 +228,7 @@ td {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
+    box-sizing: border-box;
 
     &:focus {
       border-color: $primary-color;
@@ -487,50 +248,6 @@ td {
   }
 }
 
-.input-with-button {
-  display: flex;
-  margin-bottom: 8px;
-
-  .form-control {
-    flex: 1;
-    margin-right: 8px;
-  }
-}
-
-.chips-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-
-  .chip {
-    display: flex;
-    align-items: center;
-    background-color: #e1e1e1;
-    border-radius: 16px;
-    padding: 4px 12px;
-    font-size: 14px;
-
-    &.readonly {
-      background-color: #f0f0f0;
-    }
-
-    .chip-remove {
-      cursor: pointer;
-      margin-left: 6px;
-      font-size: 18px;
-      line-height: 18px;
-      height: 18px;
-      width: 18px;
-      text-align: center;
-
-      &:hover {
-        color: #d32f2f;
-      }
-    }
-  }
-}
-
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -538,15 +255,21 @@ td {
   margin-top: 24px;
 }
 
-/* Button styles */
-.btn {
+/* Action buttons - CLEAN VERSION */
+.action-button {
   cursor: pointer;
-  border: none;
   border-radius: 4px;
   padding: 8px 16px;
   font-weight: bold;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  border: none;
+  text-align: center;
+  min-height: 36px;
+  text-decoration: none;
+  user-select: none;
 
   img {
     width: 20px;
@@ -554,21 +277,21 @@ td {
     margin-right: 6px;
   }
 
-  &.btn-primary {
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &.primary-button {
     background-color: $primary-color;
     color: white;
 
     &:hover {
       background-color: darken($primary-color, 10%);
     }
-
-    &:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
   }
 
-  &.btn-secondary {
+  &.secondary-button {
     background-color: #f0f0f0;
     color: #333;
 
@@ -577,34 +300,7 @@ td {
     }
   }
 
-  &.btn-success {
-    background-color: #4caf50;
-    color: white;
-
-    &:hover {
-      background-color: darken(#4caf50, 10%);
-    }
-  }
-
-  &.btn-danger {
-    background-color: #f44336;
-    color: white;
-
-    &:hover {
-      background-color: darken(#f44336, 10%);
-    }
-  }
-
-  &.btn-add {
-    padding: 8px;
-    min-width: 36px;
-
-    img {
-      margin: 0;
-    }
-  }
-
-  &.btn-delete {
+  &.danger-button {
     background-color: #F6646B;
     color: white;
 
@@ -613,17 +309,232 @@ td {
     }
   }
 
-  &.btn-delete {
-    background-color: #F6646B !important;
-    color: white;
+  &.confirm-button {
+    background-color: #4caf50 !important;
+    color: white !important;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-width: 40px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover:not(.disabled) {
+      background-color: #45a049 !important;
+    }
+    
+    &.disabled {
+      background-color: #ccc !important;
+      cursor: not-allowed !important;
+    }
 
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &.cancel-button {
+    background-color: #757575 !important;
+    color: white !important;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-width: 40px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
     &:hover {
-      background-color: darken(#F6646B, 10%) !important;
+      background-color: #616161 !important;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &.approve-button {
+    background-color: #4caf50 !important;
+    color: white !important;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-width: 40px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      background-color: #45a049 !important;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &.reject-button {
+    background-color: #f44336 !important;
+    color: white !important;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-width: 40px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      background-color: #d32f2f !important;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &.remove-button {
+    background-color: #f44336 !important;
+    color: white !important;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-width: 40px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      background-color: #d32f2f !important;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &.add-header-button {
+    background-color: $primary-color;
+    color: white;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  &.approve-button {
+    background-color: #28a745;
+    color: white;
+    min-width: 40px;
+    height: 36px;
+    padding: 8px 12px;
+    
+    &:hover {
+      background-color: #218838;
+    }
+  }
+
+  &.reject-button {
+    background-color: #dc3545;
+    color: white;
+    min-width: 40px;
+    height: 36px;
+    padding: 8px 12px;
+    
+    &:hover {
+      background-color: #c82333;
+    }
+  }
+
+  &.disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed !important;
+    
+    &:hover {
+      background-color: #ccc !important;
     }
   }
 }
 
+/* Members management */
+.group-members-section {
+  margin-top: 16px;
+}
+
+.members-category {
+  margin-bottom: 24px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: $primary-color;
+  }
+}
+
+.member-fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.member-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .member-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+  }
+
+  &.new-member-row {
+    background-color: #f8f9fa;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px dashed #dee2e6;
+  }
+}
+
 /* Join requests styling */
+.join-requests-section {
+  margin-bottom: 24px;
+}
+
 .requests-list {
   .request-item {
     display: flex;
@@ -668,3 +579,158 @@ td {
     }
   }
 }
+
+/* Chips for read-only display */
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .chip {
+    display: flex;
+    align-items: center;
+    background-color: #e1e1e1;
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-size: 14px;
+
+    &.readonly {
+      background-color: #f0f0f0;
+    }
+
+    .chip-remove {
+      cursor: pointer;
+      margin-left: 6px;
+      font-size: 18px;
+      line-height: 18px;
+      height: 18px;
+      width: 18px;
+      text-align: center;
+
+      &:hover {
+        color: #d32f2f;
+      }
+    }
+  }
+}
+
+.group-details {
+  p {
+    margin-bottom: 16px;
+    white-space: pre-line;
+  }
+}
+
+.members-section {
+  margin-top: 16px;
+}
+
+/* Console específico - destaque especial */
+.console-card {
+  background-color: #f5f5f5; /* Fundo mais escuro */
+  border: 2px solid $primary-color; /* Borda mais destacada */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada */
+  
+  .section-header {
+    background-color: rgba($primary-color, 0.1);
+    
+    h2 {
+      font-weight: 700; /* Título mais destacado */
+    }
+  }
+}
+
+/* Dashboard styles - ajustes para o console */
+.dashboard-section {
+  margin-top: 20px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.dashboard-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  background-color: #ffffff; /* Fundo branco para contrastar com o console */
+  border-radius: 6px;
+  border-left: 4px solid $primary-color;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra sutil nos itens */
+  
+  .dashboard-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  
+  .dashboard-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    
+    &.highlight {
+      font-size: 18px;
+      font-weight: bold;
+      color: $primary-color;
+    }
+  }
+
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); /* Sombra mais intensa no hover */
+  }
+
+  &[data-status="active"] {
+    border-left-color: #4caf50;
+  }
+
+  &[data-status="warning"] {
+    border-left-color: #ff9800;
+  }
+
+  &[data-status="info"] {
+    border-left-color: #2196f3;
+  }
+}
+
+/* Badge refinements for dashboard */
+.dashboard-value .badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  
+  &.admin {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  &.member {
+    background-color: #2196f3;
+    color: white;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .dashboard-item {
+    padding: 10px 12px;
+  }
+}
+
+/* Remove all conflicting and duplicate rules */
+/* Clean slate approach - no ::ng-deep overrides needed */

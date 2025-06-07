@@ -44,12 +44,16 @@
                 </div>
               </div>
               <div class="request-actions">
-                <button class="btn btn-success" title="Aprovar" (click)="approveJoinRequest(request.id)">
-                  <img src="https://dentistas.com.br/assets/check.png" alt="Aprovar">
-                </button>
-                <button class="btn btn-danger" title="Rejeitar" (click)="rejectJoinRequest(request.id)">
-                  <img src="https://dentistas.com.br/assets/cancel.png" alt="Rejeitar">
-                </button>
+                <div class="action-button approve-button" title="Aprovar" (click)="approveJoinRequest(request.id)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>
+                  </svg>
+                </div>
+                <div class="action-button reject-button" title="Rejeitar" (click)="rejectJoinRequest(request.id)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="#ffffff"/>
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
@@ -98,17 +102,15 @@
 
             <!-- Buttons: Novo Grupo e Recarregar -->
             <div class="action-buttons">
-
-              <button class="btn btn-primary" (click)="recarregar()">
+              <div class="action-button primary-button" (click)="showNewGroupForm()">
+                <img src="https://dentistas.com.br/assets/novo.png" alt="Novo Grupo">
+                Novo Grupo
+              </div>
+              <div class="espacador"></div>
+              <div class="action-button secondary-button" (click)="recarregar()">
                 <img src="https://dentistas.com.br/assets/refresh.png" alt="Recarregar">
                 Recarregar
-              </button>
-              <span class="espacador"></span>
-              <button class="btn btn-primary" (click)="resetForm()">
-                <img src="https://dentistas.com.br/assets/novo.png" alt="Novo">
-                Novo Grupo
-              </button>
-
+              </div>
             </div>
           </div>
         </div>
@@ -141,48 +143,132 @@
               </div>
 
               <div class="group-members-section">
-                <h3>Administradores</h3>
-                <div class="input-with-button">
-                  <input type="text" [formControl]="adminInput" placeholder="Adicionar administrador" class="form-control">
-                  <button type="button" class="btn btn-add" (click)="addAdmin()" [disabled]="!adminInput.value">
-                    <img src="https://dentistas.com.br/assets/novo.png" alt="Adicionar">
-                  </button>
-                </div>
-                <div class="chips-container">
-                  <div *ngFor="let admin of selectedAdmins" class="chip">
-                    {{ admin.nome || admin.email }}
-                    <span class="chip-remove" (click)="removeAdmin(admin)">×</span>
+                <div class="members-category">
+                  <div class="category-header">
+                    <h3>Administradores</h3>
+                    <div class="action-button add-header-button" (click)="startAddingAdmin()" title="Adicionar administrador">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="#ffffff"/>
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  <!-- Campos de administradores existentes -->
+                  <div class="member-fields-container">
+                    <div *ngFor="let admin of selectedAdmins; let i = index" class="member-field-row">
+                      <input 
+                        type="text" 
+                        [(ngModel)]="admin.displayValue" 
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="Email do administrador" 
+                        class="form-control member-input">
+                   
+                      <div class="action-button remove-button" (click)="removeAdmin(admin)" title="Remover administrador">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="#ffffff"/>
+                        </svg>
+                      </div>
+
+                    </div>
+                    
+                    <!-- Campo para novo administrador (só aparece quando ativado) -->
+                    <div *ngIf="showNewAdminField" class="member-field-row new-member-row">
+                      <input 
+                        type="text" 
+                        [formControl]="adminInput" 
+                        placeholder="Email do novo administrador" 
+                        class="form-control member-input"
+                        (keyup.enter)="confirmAddAdmin()"
+                        #newAdminInput>
+                        
+                      <div class="action-button confirm-button" 
+                           (click)="confirmAddAdmin()" 
+                           [class.disabled]="!adminInput.value" 
+                           title="Confirmar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>
+                        </svg>
+                      </div>
+
+                      <div class="action-button cancel-button" (click)="cancelAddAdmin()" title="Cancelar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#ffffff"/>
+                        </svg>
+                      </div>
+
+                    </div>
                   </div>
                 </div>
 
-                <h3>Membros</h3>
-                <div class="input-with-button">
-                  <input type="text" [formControl]="memberInput" placeholder="Adicionar membro" class="form-control">
-                  <button type="button" class="btn btn-add" (click)="addMember()" [disabled]="!memberInput.value">
-                    <img src="https://dentistas.com.br/assets/novo.png" alt="Adicionar">
-                  </button>
-                </div>
-                <div class="chips-container">
-                  <div *ngFor="let member of selectedMembers" class="chip">
-                    {{ member.nome || member.email }}
-                    <span class="chip-remove" (click)="removeMember(member)">×</span>
+                <div class="members-category">
+
+                  <div class="category-header">
+                    <h3>Membros</h3>
+                    <div class="action-button add-header-button" (click)="startAddingMember()" title="Adicionar membro">
+                      <svg width="17" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="#ffffff"/>
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  <!-- Campos de membros existentes -->
+                  <div class="member-fields-container">
+                    <div *ngFor="let member of selectedMembers; let i = index" class="member-field-row">
+                      <input 
+                        type="text" 
+                        [(ngModel)]="member.displayValue" 
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="Email do membro" 
+                        class="form-control member-input">
+
+                      <div class="action-button remove-button" (click)="removeMember(member)" title="Remover membro">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="#ffffff"/>
+                        </svg>
+                      </div>
+
+                    </div>
+                    
+                    <!-- Campo para novo membro (só aparece quando ativado) -->
+                    <div *ngIf="showNewMemberField" class="member-field-row new-member-row">
+                      <input 
+                        type="text" 
+                        [formControl]="memberInput" 
+                        placeholder="Email do novo membro" 
+                        class="form-control member-input"
+                        (keyup.enter)="confirmAddMember()"
+                        #newMemberInput>
+                      <div class="action-button confirm-button" 
+                           (click)="confirmAddMember()" 
+                           [class.disabled]="!memberInput.value" 
+                           title="Confirmar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>
+                        </svg>
+                      </div>
+                      <div class="action-button cancel-button" (click)="cancelAddMember()" title="Cancelar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#ffffff"/>
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-secondary" (click)="resetForm()">
+                <div class="action-button secondary-button" (click)="resetForm()">
                   Cancelar
-                </button>
+                </div>
 
                 <!-- Botão Excluir Grupo - visível apenas quando estiver editando um grupo existente -->
-                <button *ngIf="selectedGroup" type="button" class="btn btn-delete" (click)="deleteGroup()">
+                <div *ngIf="selectedGroup" class="action-button danger-button" (click)="deleteGroup()">
                   Excluir Grupo
-                </button>
+                </div>
 
-                <button type="submit" class="btn btn-primary" [disabled]="groupForm.invalid">
+                <div class="action-button primary-button" (click)="createOrUpdateGroup()" [class.disabled]="groupForm.invalid">
                   {{ selectedGroup ? 'Atualizar' : 'Criar' }} Grupo
-                </button>
+                </div>
               </div>
               
             </form>
@@ -222,14 +308,242 @@
             </div>
             <!-- Button to request joining the group -->
             <div class="form-actions">
-              <button class="btn btn-primary" (click)="requestToJoinGroup(selectedGroup.id)">
+              <div class="action-button primary-button" (click)="requestToJoinGroup(selectedGroup.id)">
                 <img src="https://dentistas.com.br/assets/novo.png" alt="Solicitar entrada">
                 Solicitar entrada no grupo
-              </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Formulário de CRIAÇÃO - só aparece quando clicar "Novo Grupo" -->
+    <div class="section-card" *ngIf="isCreatingNewGroup">
+      <div class="section-header">
+        <h2>
+          <img src="https://dentistas.com.br/assets/novo.png" class="header-icon" alt="Novo">
+          Criar Novo Grupo
+        </h2>
+      </div>
+      <div class="section-content">
+        <!-- Todo o formulário de criação aqui -->
+        <form [formGroup]="groupForm" (ngSubmit)="createOrUpdateGroup()">
+          <div class="form-group">
+            <label for="name">Nome do Grupo</label>
+            <input type="text" id="name" formControlName="name" placeholder="Ex: Turma Ortodontia 2025" class="form-control">
+            <div *ngIf="groupForm.get('name')?.hasError('required') && groupForm.get('name')?.touched" class="error-message">
+              Nome é obrigatório
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea id="description" formControlName="description" rows="3" 
+                     placeholder="Descrição ou observações sobre o grupo" class="form-control"></textarea>
+          </div>
+
+          <div class="group-members-section">
+            <div class="members-category">
+              <div class="category-header">
+                <h3>Administradores</h3>
+                <div class="action-button add-header-button" (click)="startAddingAdmin()" title="Adicionar administrador">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="#ffffff"/>
+                  </svg>
+                </div>
+              </div>
+              
+              <!-- Campos de administradores existentes -->
+              <div class="member-fields-container">
+                <div *ngFor="let admin of selectedAdmins; let i = index" class="member-field-row">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="admin.displayValue" 
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="Email do administrador" 
+                    class="form-control member-input">
+               
+                  <div class="action-button remove-button" (click)="removeAdmin(admin)" title="Remover administrador">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="#ffffff"/>
+                    </svg>
+                  </div>
+
+                </div>
+                
+                <!-- Campo para novo administrador (só aparece quando ativado) -->
+                <div *ngIf="showNewAdminField" class="member-field-row new-member-row">
+                  <input 
+                    type="text" 
+                    [formControl]="adminInput" 
+                    placeholder="Email do novo administrador" 
+                    class="form-control member-input"
+                    (keyup.enter)="confirmAddAdmin()"
+                    #newAdminInput>
+                    
+                  <div class="action-button confirm-button" 
+                       (click)="confirmAddAdmin()" 
+                       [class.disabled]="!adminInput.value" 
+                       title="Confirmar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>
+                    </svg>
+                  </div>
+
+                  <div class="action-button cancel-button" (click)="cancelAddAdmin()" title="Cancelar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#ffffff"/>
+                    </svg>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="members-category">
+
+              <div class="category-header">
+                <h3>Membros</h3>
+                <div class="action-button add-header-button" (click)="startAddingMember()" title="Adicionar membro">
+                  <svg width="17" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="#ffffff"/>
+                  </svg>
+                </div>
+              </div>
+              
+              <!-- Campos de membros existentes -->
+              <div class="member-fields-container">
+                <div *ngFor="let member of selectedMembers; let i = index" class="member-field-row">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="member.displayValue" 
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="Email do membro" 
+                    class="form-control member-input">
+
+                  <div class="action-button remove-button" (click)="removeMember(member)" title="Remover membro">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="#ffffff"/>
+                    </svg>
+                  </div>
+
+                </div>
+                
+                <!-- Campo para novo membro (só aparece quando ativado) -->
+                <div *ngIf="showNewMemberField" class="member-field-row new-member-row">
+                  <input 
+                    type="text" 
+                    [formControl]="memberInput" 
+                    placeholder="Email do novo membro" 
+                    class="form-control member-input"
+                    (keyup.enter)="confirmAddMember()"
+                    #newMemberInput>
+                  <div class="action-button confirm-button" 
+                       (click)="confirmAddMember()" 
+                       [class.disabled]="!memberInput.value" 
+                       title="Confirmar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>
+                    </svg>
+                  </div>
+                  <div class="action-button cancel-button" (click)="cancelAddMember()" title="Cancelar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#ffffff"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <div class="action-button secondary-button" (click)="resetForm()">
+              Cancelar
+            </div>
+
+            <!-- Botão Excluir Grupo - visível apenas quando estiver editando um grupo existente -->
+            <div *ngIf="selectedGroup" class="action-button danger-button" (click)="deleteGroup()">
+              Excluir Grupo
+            </div>
+
+            <div class="action-button primary-button" (click)="createOrUpdateGroup()" [class.disabled]="groupForm.invalid">
+              {{ selectedGroup ? 'Atualizar' : 'Criar' }} Grupo
+            </div>
+          </div>
+          
+        </form>
+      </div>
+    </div>
+
+    <!-- Console de Informações -->
+    <div class="dashboard-section">
+      <div class="section-card console-card">
+        <div class="section-header">
+          <h2>
+            <img src="https://dentistas.com.br/assets/dashboard.png" class="header-icon" alt="Console">
+            Console
+          </h2>
+        </div>
+        <div class="section-content">
+          <div class="dashboard-grid">
+            <div class="dashboard-item">
+              <div class="dashboard-label">Usuário:</div>
+              <div class="dashboard-value">{{ getDashboardInfo().nomeUsuario }}</div>
+            </div>
+            
+            <div class="dashboard-item">
+              <div class="dashboard-label">Perfil:</div>
+              <div class="dashboard-value">
+                <span class="badge admin" *ngIf="getDashboardInfo().isAdmin">Admin do Site</span>
+                <span class="badge member" *ngIf="!getDashboardInfo().isAdmin">Usuário</span>
+              </div>
+            </div>
+            
+            <div class="dashboard-item">
+              <div class="dashboard-label">Total de Grupos:</div>
+              <div class="dashboard-value highlight">{{ getDashboardInfo().totalGrupos }}</div>
+            </div>
+            
+            <div class="dashboard-item">
+              <div class="dashboard-label">Grupo Selecionado:</div>
+              <div class="dashboard-value">{{ getDashboardInfo().grupoSelecionado }}</div>
+            </div>
+            
+            <div class="dashboard-item" *ngIf="selectedGroup">
+              <div class="dashboard-label">Administradores:</div>
+              <div class="dashboard-value highlight">{{ getDashboardInfo().quantidadeAdmins }}</div>
+            </div>
+            
+            <div class="dashboard-item" *ngIf="selectedGroup">
+              <div class="dashboard-label">Membros:</div>
+              <div class="dashboard-value highlight">{{ getDashboardInfo().quantidadeMembros }}</div>
+            </div>
+            
+            <div class="dashboard-item" *ngIf="selectedGroup">
+              <div class="dashboard-label">Pacientes Compartilhados:</div>
+              <div class="dashboard-value highlight">{{ getDashboardInfo().quantidadePacientes }}</div>
+            </div>
+            
+            <div class="dashboard-item" *ngIf="selectedGroup">
+              <div class="dashboard-label">Suas Permissões:</div>
+              <div class="dashboard-value">
+                <span class="badge admin" *ngIf="getDashboardInfo().isAdminDoGrupo">Admin do Grupo</span>
+                <span class="badge member" *ngIf="!getDashboardInfo().isAdminDoGrupo">Membro</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Botão para atualizar informações -->
+          <div class="dashboard-actions">
+            <div class="action-button secondary-button" (click)="loadGroups()">
+              <img src="https://dentistas.com.br/assets/refresh.png" alt="Atualizar">
+              Atualizar Informações
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

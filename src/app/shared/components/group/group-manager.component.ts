@@ -25,8 +25,12 @@ import { FormControl } from '@angular/forms';
 import { FirestoreService } from '../../services/firestore.service';
 import { GroupService } from './group.service';
 import { ConfigService } from '../../services/config.service';
-import { Group, GroupJoinRequest } from './group.model';
+import { Group, GroupJoinRequest } from './group.model'; // Usar apenas este import
 import { RequestJoinDialog } from '../../dialogs/request-join-dialog/request-join-dialog.component';
+import { UserService } from '../../services/user.service';
+
+// REMOVER este import duplicado:
+// import { Group } from '../../services/group.service';
 
 @Component({
   selector: 'app-group-manager',
@@ -72,7 +76,7 @@ export class GroupManagerComponent implements OnInit {
   userEmail: string | null = null;
 
   isAdmin = false;
-  isAdminOfSelectedGroup = false; // Changed from isGroupAdmin
+  isAdminOfSelectedGroup = false;
   
   isLoading = true;
   users: any[] = [];
@@ -92,6 +96,12 @@ export class GroupManagerComponent implements OnInit {
   selectedAdmins: any[] = [];
   selectedMembers: any[] = [];
 
+  showNewAdminField: boolean = false;
+  showNewMemberField: boolean = false;
+
+  // ADICIONAR esta propriedade para controlar a exibição do formulário de criação
+  isCreatingNewGroup: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private groupService: GroupService,
@@ -100,7 +110,8 @@ export class GroupManagerComponent implements OnInit {
     private configService: ConfigService,
     private dialog: MatDialog,
     private afAuth: AngularFireAuth,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {
     // Obter o email do usuário atual
     this.afAuth.user.subscribe(user => {
@@ -122,56 +133,144 @@ export class GroupManagerComponent implements OnInit {
     this.filteredUsers = new Observable<any[]>();
   }
 
-  ngOnInit(): void {
-    this.afAuth.authState.subscribe(user => {
-      if (user && user.uid) {
+  ngOnInit() {
+    console.log('=== GROUP MANAGER INIT ===');
+    
+    this.userService.getUser().subscribe(user => {
+      if (user) {
         this.userId = user.uid;
         this.userEmail = user.email;
-        // Agora temos o usuário autenticado, então carregamos os grupos
-        this.loadGroups();
-        // Carregar outras funções que dependem do usuário
-        this.loadUsers();
-        this.loadPendingJoinRequests();
+        
+        console.log('User data no GroupManager:');
+        console.log('UID:', this.userId);
+        console.log('Email:', this.userEmail);
+        
+        // CORRIGIR: Verificar se é admin do site
+        if (user.email) {
+          // CRIAR método isAdminUser para retornar Observable<boolean>
+          this.isAdminUser(user.email).subscribe(isAdmin => {
+            this.isAdmin = isAdmin;
+            console.log('Is Admin:', this.isAdmin);
+            
+            // Carregar grupos
+            this.loadGroups();
+          });
+        } else {
+          this.isAdmin = false;
+          this.loadGroups();
+        }
+      } else {
+        console.log('Usuário não autenticado no GroupManager');
       }
     });
-    
-    // Outras inicializações não dependentes do usuário...
-    this.isAdmin = this.configService.is_admin;
+  }
+
+  // ADICIONAR método para verificar se é admin
+  private isAdminUser(email: string): Observable<boolean> {
+    // Implementar verificação de admin ou usar um método do GroupService
+    return of(false); // Por enquanto retorna false, você pode implementar a lógica real
   }
 
   loadGroups() {
+    console.log('=== CARREGANDO GRUPOS ===');
+    console.log('UserId:', this.userId);
+    console.log('UserEmail:', this.userEmail);
+    
     this.isLoading = true;
-    this.groupService.getAllUserGroups().subscribe(groups => {
-      this.groups = groups;
-      this.isLoading = false;
-      
-      // Não precisamos mais verificar se é admin para mostrar o formulário
-      // A criação de grupos agora é permitida para todos
+    
+    // CORRIGIR: Usar método getAllGroups ao invés de getGroups
+    this.groupService.getAllGroups().subscribe({
+      next: (allGroups) => {
+        console.log('Todos os grupos retornados:', allGroups);
+        
+        // Filtrar apenas grupos onde o usuário é admin ou membro
+        const userGroups = allGroups.filter(group => {
+          if (!this.userId && !this.userEmail) return false;
+          
+          const isAdmin = (this.userId && group.adminIds?.includes(this.userId)) || 
+                         (this.userEmail && group.adminIds?.includes(this.userEmail));
+          const isMember = (this.userId && group.memberIds?.includes(this.userId)) || 
+                          (this.userEmail && group.memberIds?.includes(this.userEmail));
+          
+          console.log(`Grupo "${group.name}":`, {
+            adminIds: group.adminIds,
+            memberIds: group.memberIds,
+            isAdmin,
+            isMember,
+            hasAccess: isAdmin || isMember
+          });
+          
+          return isAdmin || isMember;
+        });
+        
+        console.log('Grupos filtrados para o usuário:', userGroups);
+        console.log('Quantidade de grupos do usuário:', userGroups.length);
+        
+        this.groups = userGroups;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar grupos:', error);
+        this.isLoading = false;
+      }
     });
   }
 
   loadUsers() {
+    // Carregar usuários independente de userId para popular a lista
     this.firestoreService.getRegistros('usuarios').subscribe(users => {
       this.users = users;
     });
   }
 
+  // CORRIGIR método selectGroup - verificar se userId é null
   selectGroup(group: Group) {
+    this.isCreatingNewGroup = false; // Fechar formulário de criação se estiver aberto
     this.selectedGroup = group;
     
-    // Verificar se o usuário atual é admin deste grupo específico
-    this.groupService.isGroupAdmin(group.id).subscribe(isAdmin => {
-      this.isAdminOfSelectedGroup = isAdmin; // Changed from isGroupAdmin
-      
-      // Só preencher o formulário se for admin do grupo ou admin do site
-      if (this.isAdminOfSelectedGroup || this.isAdmin) {
-        this.groupForm.patchValue({
-          name: group.name,
-          description: group.description || '',
-          clinica: group.clinica || '',
-          adminIds: group.adminIds || [],
-          memberIds: group.memberIds || []
-        });
+    // Verificar se o usuário atual é admin deste grupo específico diretamente
+    const isGroupAdmin = (this.userId && group.adminIds?.includes(this.userId)) || 
+                        (this.userEmail && group.adminIds?.includes(this.userEmail));
+    
+    this.isAdminOfSelectedGroup = isGroupAdmin || false;
+    
+    // Só preencher o formulário se for admin do grupo ou admin do site
+    if (this.isAdminOfSelectedGroup || this.isAdmin) {
+      this.groupForm.patchValue({
+        name: group.name,
+        description: group.description || '',
+        clinica: group.clinica || '',
+        adminIds: group.adminIds || [],
+        memberIds: group.memberIds || []
+      });
+
+      // Popular as arrays com os dados do grupo - CORRIGIR verificação de null
+      this.selectedAdmins = (group.adminIds || []).map(adminId => ({
+        email: adminId,
+        displayValue: this.getUserName(adminId),
+        nome: this.getUserName(adminId)
+      }));
+
+      this.selectedMembers = (group.memberIds || []).map(memberId => ({
+        email: memberId,
+        displayValue: this.getUserName(memberId),
+        nome: this.getUserName(memberId)
+      }));
+    }
+
+    this.initializeDisplayValues();
+  }
+
+  private initializeDisplayValues() {
+    this.selectedAdmins.forEach(admin => {
+      if (!admin.displayValue) {
+        admin.displayValue = admin.nome || admin.email || '';
+      }
+    });
+    
+    this.selectedMembers.forEach(member => {
+      if (!member.displayValue) {
+        member.displayValue = member.nome || member.email || '';
       }
     });
   }
@@ -374,23 +473,34 @@ export class GroupManagerComponent implements OnInit {
   }
 
   // Atualize o método removeMember para salvar após remover
-  removeMember(userIdOrEmail: string): void {
-    const currentMembers = this.groupForm.get('memberIds')?.value || [];
-    this.groupForm.get('memberIds')?.setValue(currentMembers.filter((id: string) => id !== userIdOrEmail));
+  removeMember(memberToRemove: any): void {
+    // Determinar o email do membro
+    const emailToRemove = typeof memberToRemove === 'string' ? memberToRemove : memberToRemove.email;
     
-    // Salvar as mudanças automaticamente
+    // Remover da array visual
+    this.selectedMembers = this.selectedMembers.filter(m => 
+      m.email !== emailToRemove && m.displayValue !== emailToRemove
+    );
+    
+    // Atualizar o formulário
+    const currentMembers = this.groupForm.get('memberIds')?.value || [];
+    this.groupForm.get('memberIds')?.setValue(currentMembers.filter((id: string) => id !== emailToRemove));
+    
+    // Salvar se estivermos editando um grupo
     if (this.selectedGroup) {
       this.groupService.updateGroup(this.selectedGroup.id, this.groupForm.value)
         .then(() => {
-          this.snackBar.open('Membro removido do grupo', 'OK', { duration: 3000 });
-          this.loadGroups(); // Recarregar a lista
+          this.snackBar.open('Membro removido com sucesso', 'OK', { duration: 3000 });
+          // REMOVER: this.loadGroups();
         })
         .catch(error => {
-          console.error('Erro ao atualizar grupo:', error);
+          console.error('Erro ao remover membro:', error);
           this.snackBar.open('Erro ao remover membro', 'OK', { duration: 3000 });
+          // REVERTER em caso de erro
+          this.selectedMembers.push(memberToRemove);
+          const revertedMembers = this.groupForm.get('memberIds')?.value || [];
+          this.groupForm.get('memberIds')?.setValue([...revertedMembers, emailToRemove]);
         });
-    } else {
-      this.snackBar.open('Membro removido', 'OK', { duration: 3000 });
     }
   }
 
@@ -492,10 +602,26 @@ export class GroupManagerComponent implements OnInit {
   }
   
   removeAdmin(admin: any): void {
-    // Remove admin from selectedAdmins array
-    const index = this.selectedAdmins.indexOf(admin);
-    if (index >= 0) {
-      this.selectedAdmins.splice(index, 1);
+    // Remover da array visual
+    this.selectedAdmins = this.selectedAdmins.filter(a => a.email !== admin.email);
+    
+    // Atualizar o formulário
+    const currentAdmins = this.groupForm.get('adminIds')?.value || [];
+    this.groupForm.get('adminIds')?.setValue(currentAdmins.filter((id: string) => id !== admin.email));
+    
+    // Salvar se estivermos editando um grupo
+    if (this.selectedGroup) {
+      this.groupService.updateGroup(this.selectedGroup.id, this.groupForm.value)
+        .then(() => {
+          this.snackBar.open('Administrador removido com sucesso', 'OK', { duration: 3000 });
+          // REMOVER: this.loadGroups();
+        })
+        .catch(error => {
+          console.error('Erro ao remover administrador:', error);
+          this.snackBar.open('Erro ao remover administrador', 'OK', { duration: 3000 });
+          // REVERTER em caso de erro
+          this.selectedAdmins.push(admin);
+        });
     }
   }
   
@@ -507,6 +633,129 @@ export class GroupManagerComponent implements OnInit {
     }
   }
 
+  startAddingAdmin() {
+    this.showNewAdminField = true;
+    this.adminInput.setValue('');
+    // Focar no campo após um pequeno delay para garantir que o elemento foi renderizado
+    setTimeout(() => {
+      const input = document.querySelector('.new-member-row input') as HTMLInputElement;
+      if (input) input.focus();
+    }, 100);
+  }
+
+  startAddingMember() {
+    this.showNewMemberField = true;
+    this.memberInput.setValue('');
+    // Focar no campo após um pequeno delay para garantir que o elemento foi renderizado
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('.new-member-row input') as NodeListOf<HTMLInputElement>;
+      const memberInput = inputs[inputs.length - 1]; // Pegar o último input (do membro)
+      if (memberInput) memberInput.focus();
+    }, 100);
+  }
+
+  confirmAddAdmin() {
+    const email = this.adminInput.value?.trim();
+    if (email) {
+      // Verificar se o email já existe
+      const exists = this.selectedAdmins.some(admin => 
+        admin.email === email || admin.displayValue === email
+      );
+      
+      if (!exists) {
+        // ADICIONAR PRIMEIRO à array visual
+        this.selectedAdmins.push({
+          email: email,
+          displayValue: email,
+          nome: email
+        });
+
+        // DEPOIS atualizar o formulário
+        const currentAdmins = this.groupForm.get('adminIds')?.value || [];
+        this.groupForm.get('adminIds')?.setValue([...currentAdmins, email]);
+
+        // Salvar se estivermos editando um grupo
+        if (this.selectedGroup) {
+          this.groupService.updateGroup(this.selectedGroup.id, this.groupForm.value)
+            .then(() => {
+              this.snackBar.open('Administrador adicionado com sucesso', 'OK', { duration: 3000 });
+              // REMOVER esta linha que estava causando o problema:
+              // this.loadGroups();
+            })
+            .catch(error => {
+              console.error('Erro ao adicionar administrador:', error);
+              this.snackBar.open('Erro ao adicionar administrador', 'OK', { duration: 3000 });
+              // REVERTER em caso de erro
+              this.selectedAdmins = this.selectedAdmins.filter(admin => admin.email !== email);
+            });
+        }
+
+        this.showNewAdminField = false;
+        this.adminInput.setValue('');
+      } else {
+        this.snackBar.open('Este administrador já foi adicionado', 'Fechar', { duration: 3000 });
+      }
+    }
+  }
+
+  confirmAddMember() {
+    const email = this.memberInput.value?.trim();
+    if (email) {
+      // Verificar se o email já existe nas arrays visuais
+      const existsInVisual = this.selectedMembers.some(member => 
+        member.email === email || member.displayValue === email
+      );
+      
+      // Verificar se já existe no formulário
+      const currentMembers = this.groupForm.get('memberIds')?.value || [];
+      const existsInForm = currentMembers.includes(email);
+      
+      if (!existsInVisual && !existsInForm) {
+        // ADICIONAR PRIMEIRO à array visual
+        this.selectedMembers.push({
+          email: email,
+          displayValue: email,
+          nome: email
+        });
+
+        // DEPOIS atualizar o formulário
+        this.groupForm.get('memberIds')?.setValue([...currentMembers, email]);
+
+        // Salvar se estivermos editando um grupo
+        if (this.selectedGroup) {
+          this.groupService.updateGroup(this.selectedGroup.id, this.groupForm.value)
+            .then(() => {
+              this.snackBar.open('Membro adicionado com sucesso', 'OK', { duration: 3000 });
+              // REMOVER esta linha que estava causando o problema:
+              // this.loadGroups();
+            })
+            .catch(error => {
+              console.error('Erro ao adicionar membro:', error);
+              this.snackBar.open('Erro ao adicionar membro', 'OK', { duration: 3000 });
+              // REVERTER em caso de erro
+              this.selectedMembers = this.selectedMembers.filter(member => member.email !== email);
+              this.groupForm.get('memberIds')?.setValue(currentMembers);
+            });
+        }
+
+        this.showNewMemberField = false;
+        this.memberInput.setValue('');
+      } else {
+        this.snackBar.open('Este membro já foi adicionado', 'Fechar', { duration: 3000 });
+      }
+    }
+  }
+
+  cancelAddAdmin() {
+    this.showNewAdminField = false;
+    this.adminInput.setValue('');
+  }
+
+  cancelAddMember() {
+    this.showNewMemberField = false;
+    this.memberInput.setValue('');
+  }
+
   /**
    * Check if current user is admin of a specific group
    */
@@ -514,5 +763,32 @@ export class GroupManagerComponent implements OnInit {
     if (!this.userId || !group.adminIds) return false;
     return group.adminIds.includes(this.userId) || 
            (!!this.userEmail && group.adminIds.includes(this.userEmail));
+  }
+
+  // ADICIONAR método de debug para verificar estado
+  getDashboardInfo() {
+    return {
+      nomeUsuario: this.userEmail || 'Não autenticado',
+      grupoSelecionado: this.selectedGroup?.name || 'Nenhum grupo selecionado',
+      quantidadeMembros: this.selectedMembers.length,
+      quantidadeAdmins: this.selectedAdmins.length,
+      quantidadePacientes: 0, // TODO: implementar quando tivermos pacientes compartilhados
+      isAdmin: this.isAdmin,
+      isAdminDoGrupo: this.isAdminOfSelectedGroup,
+      totalGrupos: this.groups.length
+    };
+  }
+
+  // ADICIONAR método para mostrar formulário de novo grupo
+  showNewGroupForm(): void {
+    this.isCreatingNewGroup = true;
+    this.selectedGroup = null; // Limpar seleção
+    this.resetForm();
+  }
+
+  // ADICIONAR método para cancelar criação
+  cancelNewGroup(): void {
+    this.isCreatingNewGroup = false;
+    this.resetForm();
   }
 }
