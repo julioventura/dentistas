@@ -635,20 +635,39 @@ export class ViewComponent implements OnInit, OnDestroy {
   saveGroupChange(): void {
     if (!this.groupChanged) return;
 
+    console.log('=== SALVANDO COMPARTILHAMENTO ===');
+    console.log('Collection final:', this.collection);
+    console.log('Record ID final:', this.id);
+    console.log('Novo Group ID final:', this.newGroupId);
+    console.log('Group ID anterior final:', this.registro?.groupId || null);
+    
+    // Verificação adicional antes de salvar
+    if (!this.collection || !this.id) {
+      console.error('ERRO: Collection ou ID não definidos!');
+      this.snackBar.open('Erro: Dados do registro não encontrados', 'OK', { duration: 3000 });
+      return;
+    }
+
     this.groupSharingService.handleRecordSharing(
       this.collection,
       this.id,
       this.newGroupId,
-      this.registro.groupId || null
+      this.registro?.groupId || null
     ).subscribe({
       next: () => {
         this.snackBar.open('Compartilhamento atualizado com sucesso', 'OK', { duration: 3000 });
         this.registro.groupId = this.newGroupId;
         this.groupChanged = false;
+        // Recarregar histórico após salvar
+        this.loadSharingHistory();
       },
       error: (err) => {
+        console.error('=== ERRO AO SALVAR COMPARTILHAMENTO ===');
+        console.error('Erro completo:', err);
+        console.error('Collection que causou erro:', this.collection);
+        console.error('Record ID que causou erro:', this.id);
+        
         this.snackBar.open('Erro ao atualizar compartilhamento', 'OK', { duration: 3000 });
-        console.error('Error updating sharing:', err);
       }
     });
   }

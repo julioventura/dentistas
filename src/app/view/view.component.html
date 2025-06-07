@@ -249,54 +249,52 @@
   </div>
 
 
-  <div *ngIf="configuracoes.is_admin">
 
-    <!-- For the group-sharing section -->
-    <div class="group-sharing-container" *ngIf="registro">
-      <h3 class="section-title">Compartilhamento</h3>
-      <app-group-sharing [recordGroupId]="registro.groupId" [collection]="collection" [recordId]="id"
-        (groupIdChange)="onGroupIdChanged($event)">
-      </app-group-sharing>
-      <!-- Botão para salvar alterações de compartilhamento -->
-      <div class="group-save-actions" *ngIf="groupChanged">
-        <button mat-raised-button color="primary" (click)="saveGroupChange()">
-          <mat-icon>save</mat-icon>
-          Salvar alterações de compartilhamento
-        </button>
-      </div>
+  <!-- For the group-sharing section -->
+  <div class="group-sharing-container" *ngIf="registro">
+    <h3 class="section-title">Compartilhamento</h3>
+    <app-group-sharing [recordGroupId]="registro.groupId" [collection]="collection" [recordId]="id"
+      (groupIdChange)="onGroupIdChanged($event)">
+    </app-group-sharing>
+    <!-- Botão para salvar alterações de compartilhamento -->
+    <div class="group-save-actions" *ngIf="groupChanged">
+      <button mat-raised-button color="primary" (click)="saveGroupChange()">
+        <mat-icon>save</mat-icon>
+        Salvar alterações de compartilhamento
+      </button>
     </div>
-    <div class="sharing-history-section" *ngIf="sharingHistory && sharingHistory.length > 0">
-      <h3>Histórico de Compartilhamento</h3>
-      <mat-list>
-        <mat-list-item *ngFor="let entry of sharingHistory">
-          <mat-icon mat-list-icon [ngClass]="{
+  </div>
+  <div class="sharing-history-section" *ngIf="sharingHistory && sharingHistory.length > 0">
+    <h3>Histórico de Compartilhamento</h3>
+    <mat-list>
+      <mat-list-item *ngFor="let entry of sharingHistory">
+        <mat-icon mat-list-icon [ngClass]="{
           'share-icon': !entry.previousGroupId && entry.groupId,
           'unshare-icon': entry.previousGroupId && !entry.groupId,
           'change-icon': entry.previousGroupId && entry.groupId
         }">
-            {{ !entry.previousGroupId && entry.groupId ? 'share' :
-            (entry.previousGroupId && !entry.groupId ? 'link_off' : 'swap_horiz') }}
-          </mat-icon>
-          <div mat-line>
-            <ng-container *ngIf="!entry.previousGroupId && entry.groupId">
-              Compartilhado com <strong>{{ getGroupName(entry.groupId) }}</strong>
-            </ng-container>
-            <ng-container *ngIf="entry.previousGroupId && !entry.groupId">
-              Removido compartilhamento com <strong>{{ getGroupName(entry.previousGroupId) }}</strong>
-            </ng-container>
-            <ng-container *ngIf="entry.previousGroupId && entry.groupId">
-              Alterado compartilhamento de <strong>{{ getGroupName(entry.previousGroupId) }}</strong>
-              para <strong>{{ getGroupName(entry.groupId) }}</strong>
-            </ng-container>
-          </div>
-          <div mat-line class="history-metadata">
-            {{ formatDate(entry.timestamp) }} por {{ entry.userName || entry.userId || 'Usuário desconhecido' }}
-          </div>
-        </mat-list-item>
-      </mat-list>
-    </div>
-
+          {{ !entry.previousGroupId && entry.groupId ? 'share' :
+          (entry.previousGroupId && !entry.groupId ? 'link_off' : 'swap_horiz') }}
+        </mat-icon>
+        <div mat-line>
+          <ng-container *ngIf="!entry.previousGroupId && entry.groupId">
+            Compartilhado com <strong>{{ getGroupName(entry.groupId) }}</strong>
+          </ng-container>
+          <ng-container *ngIf="entry.previousGroupId && !entry.groupId">
+            Removido compartilhamento com <strong>{{ getGroupName(entry.previousGroupId) }}</strong>
+          </ng-container>
+          <ng-container *ngIf="entry.previousGroupId && entry.groupId">
+            Alterado compartilhamento de <strong>{{ getGroupName(entry.previousGroupId) }}</strong>
+            para <strong>{{ getGroupName(entry.groupId) }}</strong>
+          </ng-container>
+        </div>
+        <div mat-line class="history-metadata">
+          {{ formatDate(entry.timestamp) }} por {{ entry.userName || entry.userId || 'Usuário desconhecido' }}
+        </div>
+      </mat-list-item>
+    </mat-list>
   </div>
+
 
 
 </div>

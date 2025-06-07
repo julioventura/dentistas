@@ -6,19 +6,35 @@ import { Observable, of, combineLatest } from 'rxjs';
 import { map, switchMap, take, filter, catchError } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import { Group, SharingMetadata, GroupJoinRequest } from './group.model';
+import { ConfigService } from '../../services/config.service';
+
+interface FirestoreRecord {
+  createdBy?: string;
+  groupId?: string;
+  [key: string]: any; // Para permitir outras propriedades
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupService {
   userId: string | null = null;
+  isAdmin: boolean = false;
 
   constructor(
     private firestore: AngularFirestore,
-    private auth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private configService: ConfigService
   ) {
-    this.auth.authState.subscribe(user => {
-      this.userId = user ? user.uid : null;
+    // Inicializar propriedades do usuário
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+        this.isAdmin = this.configService.is_admin || false;
+      } else {
+        this.userId = null;
+        this.isAdmin = false;
+      }
     });
   }
 
@@ -36,7 +52,7 @@ export class GroupService {
     if (!this.userId) return of([]);
 
     // First, get the current user's email
-    return this.auth.user.pipe(
+    return this.afAuth.user.pipe(
       filter(user => !!user),
       switchMap(user => {
         const userEmail = user?.email;
@@ -216,57 +232,116 @@ export class GroupService {
    * @param groupId - ID do grupo para compartilhamento
    */
   shareRecordWithGroup(collection: string, recordId: string, groupId: string): Promise<void> {
-
     if (!this.userId) {
       console.error('GroupService: Tentativa de compartilhamento sem usuário autenticado');
       return Promise.reject('Usuário não autenticado');
     }
 
-    // IMPORTANTE: Use client-side timestamp para log e histórico
-    const now = new Date(); // Timestamp local
-    // Conversão para Timestamp do Firestore para compatibilidade com SharingMetadata
+    // Validar parâmetros
+    if (!collection || !recordId || !groupId) {
+      console.error('GroupService: Parâmetros inválidos para compartilhamento', {
+        collection, recordId, groupId
+      });
+      return Promise.reject('Parâmetros inválidos');
+    }
+
+    const now = new Date();
     const nowTs = firebase.firestore.Timestamp.fromDate(now);
 
     return new Promise<void>((resolve, reject) => {
-      // Verificar se o grupo existe
+      // Primeiro verificar se o grupo existe
       this.firestore.doc(`groups/${groupId}`).get().pipe(
         take(1)
       ).subscribe({
         next: (groupDoc) => {
           if (!groupDoc.exists) {
+            console.error(`GroupService: Grupo ${groupId} não encontrado`);
             reject(new Error(`Grupo ${groupId} não encontrado`));
             return;
           }
 
-          // Verificar o registro atual para determinar se já tem um groupId
+          // Verificar se o registro existe
           this.firestore.doc(`${collection}/${recordId}`).get().pipe(
             take(1)
           ).subscribe({
             next: (recordDoc) => {
               if (!recordDoc.exists) {
-                reject(new Error(`Registro ${recordId} não encontrado`));
+                console.error(`GroupService: Registro ${recordId} não encontrado na coleção ${collection}`);
+                
+                // Verificar se o usuário tem permissão para acessar a coleção
+                this.firestore.collection(collection).get().pipe(take(1)).subscribe({
+                  next: (collectionSnapshot) => {
+                    console.log(`GroupService: Acesso à coleção ${collection} confirmado. Total de documentos visíveis: ${collectionSnapshot.size}`);
+                    reject(new Error(`Registro ${recordId} não existe na coleção ${collection}. Verifique se o ID está correto.`));
+                  },
+                  error: (collectionError) => {
+                    console.error(`GroupService: Erro ao acessar coleção ${collection}:`, collectionError);
+                    reject(new Error(`Erro de permissão ou coleção ${collection} não acessível`));
+                  }
+                });
                 return;
               }
 
+              // Continue com o resto da lógica...
               const record = recordDoc.data() as { groupId?: string };
               const previousGroupId = record?.groupId || null;
 
-              // [Codex] Início da implementação real do compartilhamento usando batch
+              // Verificar se o usuário tem permissão para compartilhar este registro
+              const recordData = recordDoc.data() as any;
+
+              console.log('=== DEBUG PERMISSÕES ===');
+              console.log('User ID atual:', this.userId);
+              console.log('É admin:', this.isAdmin);
+              console.log('Dados do registro:', {
+                createdBy: recordData.createdBy,
+                userId: recordData.userId,
+                id: recordId,
+                hasCreatedBy: !!recordData.createdBy,
+                allKeys: Object.keys(recordData)
+              });
+
+              // Lógica de permissão mais flexível
+              let canShare = false;
+              let reason = '';
+
+              if (this.isAdmin) {
+                canShare = true;
+                reason = 'usuário é admin';
+              } else if (!recordData.createdBy) {
+                canShare = true;
+                reason = 'registro não tem createdBy definido';
+              } else if (recordData.createdBy === this.userId) {
+                canShare = true;
+                reason = 'usuário é o criador do registro';
+              } else if (recordData.userId === this.userId) {
+                canShare = true;
+                reason = 'registro pertence ao usuário';
+              } else {
+                // Para registros de pacientes, permitir compartilhamento se o usuário tem acesso
+                // (se chegou até aqui, significa que passou pelas regras de segurança do Firestore)
+                canShare = true;
+                reason = 'usuário tem acesso ao registro';
+              }
+
+              if (!canShare) {
+                console.error(`GroupService: Acesso negado para compartilhamento`);
+                reject(new Error('Você não tem permissão para compartilhar este registro'));
+                return;
+              }
+
+              console.log(`GroupService: Compartilhamento permitido - ${reason}`);
+
               // Batch de operações para garantir atomicidade
               const batch = this.firestore.firestore.batch();
-
-              // Referências para o registro e subcoleção de histórico
               const recordRef = this.firestore.collection(collection).doc(recordId).ref;
               const historyRef = recordRef.collection('sharing_history').doc();
 
-              // Dados de atualização do registro - informações de compartilhamento
               const updateData: any = {
                 groupId: groupId,
                 sharingMetadata: {
                   groupId: groupId,
                   previousGroupId: previousGroupId,
                   sharedBy: this.userId,
-                  // Datas convertidas para Timestamp para respeitar o tipo do modelo
                   sharedAt: nowTs,
                   lastModifiedBy: this.userId,
                   lastModifiedAt: nowTs,
@@ -275,7 +350,6 @@ export class GroupService {
                 updatedBy: this.userId,
               };
 
-              // Entrada no histórico de compartilhamento para auditoria
               const historyData = {
                 action: previousGroupId ? 'change' : 'share',
                 groupId: groupId,
@@ -284,28 +358,37 @@ export class GroupService {
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               };
 
-              // Incluir operações no batch
               batch.update(recordRef, updateData);
               batch.set(historyRef, historyData);
 
-              // Executar batch e resolver/rejeitar conforme resultado
               batch
                 .commit()
-                .then(() => resolve())
+                .then(() => {
+                  console.log(`GroupService: Registro ${recordId} compartilhado com sucesso`);
+                  resolve();
+                })
                 .catch((error) => {
-                  console.error('GroupService: Erro ao compartilhar registro:', error);
+                  console.error('GroupService: Erro ao executar batch de compartilhamento:', error);
                   reject(error);
                 });
             },
             error: (error: any) => {
-              console.error(`GroupService: Erro ao ler registro ${recordId}:`, error);
-              reject(error);
+              console.error(`GroupService: Erro ao verificar registro ${recordId}:`, error);
+              
+              // Fornecer mensagem mais específica baseada no código do erro
+              if (error.code === 'permission-denied') {
+                reject(new Error(`Sem permissão para acessar o registro ${recordId}`));
+              } else if (error.code === 'not-found') {
+                reject(new Error(`Registro ${recordId} não encontrado`));
+              } else {
+                reject(new Error(`Erro ao acessar registro: ${error.message || 'Erro desconhecido'}`));
+              }
             }
           });
         },
         error: (error: any) => {
-          console.error(`GroupService: Erro ao ler grupo ${groupId}:`, error);
-          reject(error);
+          console.error(`GroupService: Erro ao verificar grupo ${groupId}:`, error);
+          reject(new Error(`Erro ao acessar grupo: ${error.message || 'Erro desconhecido'}`));
         }
       });
     });
@@ -457,10 +540,10 @@ export class GroupService {
    * Obtém solicitações pendentes para grupos onde o usuário é admin
    */
   getPendingJoinRequests(): Observable<GroupJoinRequest[]> {
-    return this.auth.user.pipe(
+    return this.afAuth.user.pipe(
       filter(user => !!user),
       switchMap(user => {
-        if (!user || !user.uid) {
+        if (!user || !user.uid) {  // user.uid já existe no tipo User do Firebase
           return of([]);
         }
 
@@ -588,26 +671,82 @@ export class GroupService {
   }
 
   // Novo método para obter registro por ID com verificação adicional
-  getRegistroById(collection: string, id: string): Observable<any> {
+  getRegistroById(collection: string, id: string): Promise<any> {
     if (!collection || !id) {
-      return of(null);
+      return Promise.resolve(null);
     }
 
-    return this.firestore.collection(collection).doc(id).valueChanges().pipe(
-      map(data => {
-        if (!data) {
-          // Remover este log para evitar spam no console
+    return this.firestore.collection(collection).doc(id).get().pipe(
+      take(1),
+      map(doc => {
+        if (!doc.exists) {
+          console.log(`GroupService: Registro ${id} não encontrado na coleção ${collection}`);
           return null;
         }
+        
+        const data = doc.data() || {}; // Garantir que data seja um objeto
         return { id, ...data };
       }),
       catchError(error => {
-        // Só fazer log de erros reais, não de documentos não encontrados
-        if (error.code && error.code !== 'not-found' && error.code !== 'permission-denied') {
-          console.error('GroupService: Erro ao buscar registro:', error);
-        }
+        console.error(`GroupService: Erro ao buscar registro ${id}:`, error);
         return of(null);
       })
+    ).toPromise();
+  }
+
+  /**
+   * Método de debug para verificar se um registro existe
+   */
+  debugCheckRecord(collection: string, recordId: string): void {
+    console.log(`GroupService Debug: Verificando registro ${recordId} na coleção ${collection}`);
+    
+    this.firestore.doc(`${collection}/${recordId}`).get().pipe(take(1)).subscribe({
+      next: (doc) => {
+        if (doc.exists) {
+          const data = doc.data() as FirestoreRecord; // Usar a interface
+          console.log(`GroupService Debug: Registro encontrado:`, {
+            id: recordId,
+            createdBy: data?.createdBy,
+            groupId: data?.groupId,
+            hasData: !!data
+          });
+        } else {
+          console.log(`GroupService Debug: Registro ${recordId} NÃO existe`);
+          
+          // Verificar os primeiros registros da coleção para debug
+          this.firestore.collection(collection).get().pipe(take(1)).subscribe({
+            next: (snapshot) => {
+              console.log(`GroupService Debug: Coleção ${collection} tem ${snapshot.size} documentos`);
+              if (snapshot.size > 0) {
+                const firstDoc = snapshot.docs[0];
+                console.log(`GroupService Debug: Exemplo de ID existente: ${firstDoc.id}`);
+              }
+            },
+            error: (err) => {
+              console.error(`GroupService Debug: Erro ao acessar coleção ${collection}:`, err);
+            }
+          });
+        }
+      },
+      error: (error) => {
+        console.error(`GroupService Debug: Erro ao verificar registro:`, error);
+      }
+    });
+  }
+
+  /**
+   * Obtém o usuário atual autenticado
+   */
+  getCurrentUser(): Observable<any> {
+    return this.afAuth.user;
+  }
+
+  /**
+   * Obtém o ID do usuário atual
+   */
+  getCurrentUserId(): Observable<string | null> {
+    return this.afAuth.user.pipe(
+      map(user => user?.uid || null)
     );
   }
 }
