@@ -119,10 +119,7 @@
         <!-- Group form or details -->
         <div class="section-card" *ngIf="!selectedGroup || isAdminOfSelectedGroup || isAdmin">
           <div class="section-header">
-            <h2>
-              <img src="https://dentistas.com.br/assets/{{ selectedGroup ? 'editar' : 'novo' }}.png" class="header-icon">
-              {{ selectedGroup ? 'Editar Grupo' : 'Novo Grupo' }}
-            </h2>
+            <h2> {{ selectedGroup ? 'Editar' : 'Incluir' }} </h2>
             <div *ngIf="selectedGroup && isAdminOfSelectedGroup" class="admin-subtitle">
               Você é administrador deste grupo
             </div>
