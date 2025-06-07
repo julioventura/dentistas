@@ -54,9 +54,11 @@ export class LoginComponent {
 
         const errorCode = error.code;
 
-        if (errorCode === 'auth/user-not-found' || errorCode === 'auth/invalid-credential') {
+        // Corrigido: registrar apenas quando o usuário não existir
+        if (errorCode === 'auth/user-not-found') {
           this.promptUserRegistration();
-        } else if (errorCode === 'auth/wrong-password') {
+        // Corrigido: tratar credencial inválida como senha incorreta
+        } else if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password') {
           alert('Senha incorreta.');
         } else if (errorCode === 'auth/invalid-email') {
           alert('O email fornecido é inválido.');
