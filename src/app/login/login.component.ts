@@ -29,9 +29,9 @@ export class LoginComponent {
     private dialog: MatDialog
   ) { }
 
-  // Alteração: função passou a ser assíncrona para capturar erros sem gerar múltiplos logs
+  // Alteração: função agora declara retorno Promise<void> para explicitar comportamento assíncrono
   // Correção: verificação assíncrona com remoção de espaços
-  async onLogin() {
+  async onLogin(): Promise<void> {
 
     // Novo: evita múltiplas submissões simultâneas
     if (this.isSubmitting) {
@@ -107,14 +107,15 @@ export class LoginComponent {
   }
 
   // Atualize o método createAccount para receber e usar nome e username
-  createAccount(name: string, username: string, email: string) {
-    // Novo: evita múltiplos cadastros simultâneos
+  // Alteração: assinatura agora retorna Promise<void> para indicar processamento assíncrono
+  createAccount(name: string, username: string, email: string): Promise<void> {
+    // Novo: evita múltiplos cadastros simultâneos. Retorna promessa resolvida se já estiver criando
     if (this.isCreatingAccount) {
-      return;
+      return Promise.resolve();
     }
     this.isCreatingAccount = true;
 
-    this.auth.createUserWithEmailAndPassword(email, this.password)
+    return this.auth.createUserWithEmailAndPassword(email, this.password)
       .then((userCredential) => {
         const user: firebase.User | null = userCredential.user;
 
