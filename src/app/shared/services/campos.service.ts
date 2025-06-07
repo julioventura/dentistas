@@ -1,5 +1,4 @@
-// Alteração: remoção de logs de depuração (console.log)
-/* 
+/*
   Métodos do serviço CamposService:
   1. getCamposRegistro(userId: string, colecao: string): Observable<any[]>
      - Retorna os campos de configuração para uma coleção específica a partir do Firestore. 

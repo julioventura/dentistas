@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs'; // Removido BehaviorSubject não utilizado

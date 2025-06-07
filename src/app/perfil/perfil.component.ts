@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../shared/services/user.service';

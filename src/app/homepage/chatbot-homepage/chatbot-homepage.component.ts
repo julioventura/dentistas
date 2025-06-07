@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewChecked, Output, EventEmitter } from '@angular/core';
 import { AiHomepageService, Message } from './ai-homepage.service';
 import { CommonModule } from '@angular/common';

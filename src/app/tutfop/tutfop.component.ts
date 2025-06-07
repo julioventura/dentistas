@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 /**
  * Componente TutFOP - Tutor Virtual de Casos Clínicos
  * 

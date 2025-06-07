@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';

@@ -1,5 +1,4 @@
-// Alteração: remoção de logs de depuração (console.log)
-/* 
+/*
   Métodos do componente HomepageComponent:
   1. ngOnInit() - Inicializa o componente, verificando se o usuário está logado e, caso haja um username na URL, carrega o perfil público.
   2. loadUserProfile(username: string): void - Busca e carrega o perfil público do usuário com base no username.

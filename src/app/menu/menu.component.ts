@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';

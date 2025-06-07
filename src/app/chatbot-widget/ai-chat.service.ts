@@ -8,6 +8,8 @@ import { UserService } from '../shared/services/user.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { SubcolecaoService } from '../shared/services/subcolecao.service';
 import { FirestoreService } from '../shared/services/firestore.service';
+// Alteração: inclusão do serviço de logging
+import { LoggingService } from '../shared/services/logging.service';
 
 
 // Interface para Navegação
@@ -254,7 +256,9 @@ export class AiChatService {
    * Limpa completamente o contexto e a conversa do chatbot
    */
   public resetContext(): void {
-    
+    // Alteração: substituído console.log por LoggingService.log
+    this.logger.log('AiChatService', 'Limpando contexto e conversa do chatbot');
+
     // Limpar contexto
     this.currentContext = {
       currentView: {
@@ -269,7 +273,10 @@ export class AiChatService {
     // Limpar dados armazenados
     this.mainRecordData = null;
     this.contextSubject.next({...this.currentContext});
-    
+
+    // Alteração: substituído console.log por LoggingService.log
+    this.logger.log('AiChatService', 'Contexto e conversa do chatbot limpos com sucesso');
+
   }
 
 
@@ -393,13 +400,16 @@ export class AiChatService {
     private firestoreService: FirestoreService<any>, // Adicionar FirestoreService
     private userService: UserService,
     private router: Router,
-    private subcolecaoService: SubcolecaoService
+    private subcolecaoService: SubcolecaoService,
+    private logger: LoggingService
   ) {
     // Obter o ID do usuário do UserService
     this.userService.getUser().subscribe(user => {
       if (user) {
         this.userId = user.uid;  // Usar SOMENTE o UID
-        
+        // Alteração: substituído console.log por LoggingService.log
+        this.logger.log('AiChatService', 'UID do usuário definido', this.userId);
+
         // Carregar histórico depois de definir o userId
         this.loadHistoryFromLocalStorage();
       } else {

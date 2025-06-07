@@ -1,9 +1,10 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Component, HostListener, OnInit } from '@angular/core';
 import { NavegacaoService } from '../shared/services/navegacao.service';
 import { CamposService } from '../shared/services/campos.service';
 import { UserService } from '../shared/services/user.service'; //
 import { UtilService } from '../shared/utils/util.service';
+// Alteração: inclusão do serviço de logging
+import { LoggingService } from '../shared/services/logging.service';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class CamposRegistroComponent implements OnInit {
     private navegacaoService: NavegacaoService,
     private userService: UserService,
     public util: UtilService,
+    private logger: LoggingService,
   ) { }
 
   ngOnInit(): void {
@@ -32,7 +34,8 @@ export class CamposRegistroComponent implements OnInit {
     this.userService.getUser().subscribe(user => {
       if (user && user.uid) {
         this.userId = user.uid; // Armazena o uid do usuário logado
-        // Alteração: log de depuração removido
+        // Alteração: substituído console.log por LoggingService.log
+        this.logger.log('CamposRegistroComponent', 'User ID:', this.userId);
 
         // Após recuperar o userId, carregar coleções e campos
         this.carregarColecoes();

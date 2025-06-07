@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Injectable } from '@angular/core';
 import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';

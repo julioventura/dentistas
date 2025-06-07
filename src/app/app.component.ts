@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -6,6 +5,8 @@ import { UserService } from './shared/services/user.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { filter, take, switchMap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
+// Alteração: inclusão do serviço de logging
+import { LoggingService } from './shared/services/logging.service';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class AppComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private afAuth: AngularFireAuth // Adicionar AngularFireAuth
+    private afAuth: AngularFireAuth, // Adicionar AngularFireAuth
+    private logger: LoggingService
   ) {
     this.router.events.subscribe({
       next: (event) => {
@@ -50,19 +52,20 @@ export class AppComponent implements OnInit {
         take(1),
         switchMap(user => {
           if (user) {
-            // Alteração: removido log de depuração
-            
+            // Alteração: substituído console.log por LoggingService.log
+
             // Inicializar serviços apenas após autenticação
             this.userService.chatbotExpanded$.subscribe(expanded => {
               this.isChatbotExpanded = expanded;
-              // Alteração: removido log de depuração
+              this.logger.log('AppComponent', 'Chatbot expanded state', expanded);
             });
 
             return this.router.events.pipe(
               filter(event => event instanceof NavigationEnd)
             );
           } else {
-            // Alteração: removido log de depuração
+            // Alteração: substituído console.log por LoggingService.log
+            this.logger.log('AppComponent', 'Usuário não autenticado');
             return EMPTY;
           }
         })
@@ -76,8 +79,9 @@ export class AppComponent implements OnInit {
           
           // Se temos uma rota não-sistema e não é a raiz
           this.isHomepageRoute = !isSystemRoute && url !== '/' && url.split('/').length === 2;
-          
-          // Alteração: removido log de depuração
+
+          // Alteração: substituído console.log por LoggingService.log
+          this.logger.log('AppComponent', 'Homepage route', this.isHomepageRoute);
           
           // Adicionar/remover classe ao body dependendo da rota
           if (this.isHomepageRoute) {
@@ -100,8 +104,9 @@ export class AppComponent implements OnInit {
         
         // Se temos uma rota não-sistema e não é a raiz
         this.isHomepageRoute = !isSystemRoute && url !== '/' && url.split('/').length === 2;
-        
-        // Alteração: removido log de depuração
+
+        // Alteração: substituído console.log por LoggingService.log
+        this.logger.log('AppComponent', 'Homepage route', this.isHomepageRoute);
         
         // Adicionar/remover classe ao body dependendo da rota
         if (this.isHomepageRoute) {
@@ -111,7 +116,8 @@ export class AppComponent implements OnInit {
         }
       });
 
-      // Alteração: removido log de depuração
+      // Alteração: substituído console.log por LoggingService.log
+      this.logger.log('AppComponent', 'Router events subscription initialized');
     } catch (error) {
       console.error('Error initializing AppComponent:', error);
     }

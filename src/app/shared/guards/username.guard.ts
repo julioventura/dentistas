@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';

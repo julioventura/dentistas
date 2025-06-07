@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 /*
   Métodos do arquivo UtilService:
   1. formata_email(email: string): string - Formata o email removendo espaços extras e convertendo para minúsculas.

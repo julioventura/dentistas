@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 /**
  * ListComponent
  * 

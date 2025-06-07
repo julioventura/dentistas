@@ -1,4 +1,3 @@
-// Alteração: remoção de logs de depuração (console.log)
 /*
 Arquivo: scripts.js
 Funcionalidade: Controla a lógica do frontend do TutFOP, incluindo login, chat, logout, alternância de ambiente e manipulação de interface.

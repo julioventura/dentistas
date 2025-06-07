@@ -1,5 +1,4 @@
-// Alteração: remoção de logs de depuração (console.log)
-/* 
+/*
   Métodos do componente HomeComponent:
   1. ngOnInit() - Inicializa o componente, autenticando o usuário, carregando dados do usuário (username) e configuração de ícones.
   2. loadIconConfig() - Carrega as configurações de ícones personalizadas do usuário a partir do Firestore.
