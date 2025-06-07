@@ -1,4 +1,12 @@
-@import '../../styles.scss';
+@import '/src/styles.scss';
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
 
 footer {
   font-family: 'Roboto', sans-serif;
@@ -63,17 +71,92 @@ section {
 
 .logout-btn {
   min-width: 120px;
-  padding: 8px 24px;
+  padding: 6px 24px;
   border-radius: 30px;
   font-weight: 500;
   letter-spacing: 0.5px;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
+  margin-bottom: 10px;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 8px rgba(0, 0, 0, 0.8);
     background-color: $red;
     color: $white;
+  }
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 20px;
+  background-color: transparent; // Mantém fundo transparente
+  border-top: none; // Remove borda se houver
+
+  // Usa a mesma largura máxima do container_principal
+  max-width: min($max-width, calc(100% - 60px));
+  margin: 0 auto; // Centraliza o conteúdo
+}
+
+.footer-left,
+.footer-center,
+.footer-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.footer-left {
+  justify-content: flex-start;
+
+  .user-info {
+    font-weight: 500;
+    color: lightgray; 
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+}
+
+.footer-center {
+  justify-content: center;
+
+  .logout-btn {
+    min-width: 100px;
+  }
+}
+
+.footer-right {
+  justify-content: flex-end;
+
+  .version-info {
+    font-size: 14px;
+    color: lightgray; 
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+}
+
+/* Responsividade para telas menores */
+@media screen and (max-width: $medium-width) {
+  .footer-content {
+    padding: 8px 15px;
+    min-height: 50px;
+  }
+
+  .footer-left .user-info {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+
+  .footer-right .version-info {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+
+  .logout-btn {
+    min-width: 80px;
+    padding: 6px 12px;
   }
 }

@@ -27,9 +27,12 @@
         Entrar
       </button>
     </form>
-    <a (click)="selectedTab = 2" class="forgot-password-link" style="cursor:pointer;">Esqueci minha senha</a>
+
     <div class="novaconta">
-      <b>Criar conta?</b>&nbsp; <a (click)="selectedTab = 1" style="cursor:pointer;">Clique aqui</a>
+      <a (click)="selectedTab = 2" class="forgot-password-link" style="cursor:pointer;">Esqueci minha senha</a>
+    </div>
+    <div class="novaconta">
+      <a (click)="selectedTab = 1" class="forgot-password-link" style="cursor:pointer;">Não tem conta? Criar conta gratuita.</a>
     </div>
   </div>
 
@@ -39,7 +42,8 @@
     <form (ngSubmit)="onSignup()" #signupForm="ngForm">
       <mat-form-field appearance="fill">
         <mat-label>Email</mat-label>
-        <input matInput type="email" id="signup-email" name="signupEmail" [(ngModel)]="signupEmail" required #signupEmailInput="ngModel" />
+        <input matInput type="email" id="signup-email" name="signupEmail" [(ngModel)]="signupEmail" required
+          #signupEmailInput="ngModel" />
         <mat-error *ngIf="signupEmailInput.invalid && signupEmailInput.touched">
           O email é obrigatório.
         </mat-error>
@@ -47,8 +51,8 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Senha</mat-label>
-        <input matInput [type]="hideSignupPassword ? 'password' : 'text'" id="signup-password" name="signupPassword" [(ngModel)]="signupPassword"
-          required #signupPasswordInput="ngModel" />
+        <input matInput [type]="hideSignupPassword ? 'password' : 'text'" id="signup-password" name="signupPassword"
+          [(ngModel)]="signupPassword" required #signupPasswordInput="ngModel" />
         <button mat-icon-button matSuffix (click)="hideSignupPassword = !hideSignupPassword" type="button">
           <mat-icon>{{ hideSignupPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
@@ -59,7 +63,8 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Nome</mat-label>
-        <input matInput type="text" id="signup-name" name="signupName" [(ngModel)]="signupName" required #signupNameInput="ngModel" />
+        <input matInput type="text" id="signup-name" name="signupName" [(ngModel)]="signupName" required
+          #signupNameInput="ngModel" />
         <mat-error *ngIf="signupNameInput.invalid && signupNameInput.touched">
           O nome é necessário.
         </mat-error>
@@ -80,7 +85,8 @@
     <form (ngSubmit)="onResetPassword()" #resetForm="ngForm">
       <mat-form-field appearance="fill">
         <mat-label>Digite seu email:</mat-label>
-        <input matInput type="email" id="reset-email" name="resetEmail" [(ngModel)]="resetEmail" required #resetEmailInput="ngModel" />
+        <input matInput type="email" id="reset-email" name="resetEmail" [(ngModel)]="resetEmail" required
+          #resetEmailInput="ngModel" />
         <mat-error *ngIf="resetEmailInput.invalid && resetEmailInput.touched">
           O email é obrigatório.
         </mat-error>
