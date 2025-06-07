@@ -223,8 +223,10 @@ export class GroupService {
       return Promise.reject('Usuário não autenticado');
     }
 
-    // IMPORTANTE: Use client-side timestamp instead of server timestamp for array operations
-    const now = new Date(); // Client-side timestamp
+    // IMPORTANTE: Use client-side timestamp para log e histórico
+    const now = new Date(); // Timestamp local
+    // Conversão para Timestamp do Firestore para compatibilidade com SharingMetadata
+    const nowTs = firebase.firestore.Timestamp.fromDate(now);
 
     return new Promise<void>((resolve, reject) => {
       // Verificar se o grupo existe
@@ -250,6 +252,7 @@ export class GroupService {
               const record = recordDoc.data() as { groupId?: string };
               const previousGroupId = record?.groupId || null;
 
+              // [Codex] Início da implementação real do compartilhamento usando batch
               // Batch de operações para garantir atomicidade
               const batch = this.firestore.firestore.batch();
 
@@ -257,22 +260,23 @@ export class GroupService {
               const recordRef = this.firestore.collection(collection).doc(recordId).ref;
               const historyRef = recordRef.collection('sharing_history').doc();
 
-              // Dados de atualização do registro - implementado para concluir o compartilhamento
+              // Dados de atualização do registro - informações de compartilhamento
               const updateData: any = {
                 groupId: groupId,
                 sharingMetadata: {
                   groupId: groupId,
                   previousGroupId: previousGroupId,
                   sharedBy: this.userId,
-                  sharedAt: now,
+                  // Datas convertidas para Timestamp para respeitar o tipo do modelo
+                  sharedAt: nowTs,
                   lastModifiedBy: this.userId,
-                  lastModifiedAt: now,
+                  lastModifiedAt: nowTs,
                 } as SharingMetadata,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedBy: this.userId,
               };
 
-              // Entrada no histórico de compartilhamento
+              // Entrada no histórico de compartilhamento para auditoria
               const historyData = {
                 action: previousGroupId ? 'change' : 'share',
                 groupId: groupId,
