@@ -305,7 +305,7 @@ export class UtilService {
       case 'dentes':
         return 'Dentes';
       case 'dentesendo':
-        return 'Endodontia';;
+        return 'Endodontia'; // Correção: removido ponto e vírgula duplicado
       case 'dentesperio':
         return 'Periodontia';
       case 'anamnese':
@@ -364,7 +364,7 @@ export class UtilService {
       case 'dentes':
         return 'Dente';
       case 'dentesendo':
-        return 'Endodontia';;
+        return 'Endodontia'; // Correção: removido ponto e vírgula duplicado
       case 'dentesperio':
         return 'Periodontia';
       case 'anamnese':
