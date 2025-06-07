@@ -17,6 +17,10 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   hidePassword: boolean = true; // Controla a visibilidade da senha
+  // Novo: impede múltiplos envios de login
+  isSubmitting: boolean = false;
+  // Novo: impede múltiplos cadastros simultâneos
+  isCreatingAccount: boolean = false;
 
   constructor(
     private auth: AngularFireAuth,
@@ -25,7 +29,18 @@ export class LoginComponent {
     private dialog: MatDialog
   ) { }
 
-  onLogin() {
+  // Alteração: função passou a ser assíncrona para capturar erros sem gerar múltiplos logs
+  // Correção: verificação assíncrona com remoção de espaços
+  async onLogin() {
+
+    // Novo: evita múltiplas submissões simultâneas
+    if (this.isSubmitting) {
+      return;
+    }
+
+    // Correção: remove espaços extras do email e da senha digitados
+    this.email = this.email.trim();
+    this.password = this.password.trim();
 
     if (!this.email || !this.password) {
       alert('Por favor, preencha o email e a senha.');
@@ -38,34 +53,41 @@ export class LoginComponent {
       return;
     }
 
-    this.auth.signInWithEmailAndPassword(this.email, this.password)
-      .then((userCredential) => {
-        const user: firebase.User | null = userCredential.user;
+    // Novo: define envio em andamento somente após as validações
+    this.isSubmitting = true;
 
-        if (user) {
-          this.userService.loginSuccess(user);
-          this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
-        } else {
-          console.error('Erro: usuário retornado é null.');
-        }
-      })
-      .catch(error => {
-        console.error("Erro ao fazer login:", error); // Log detalhado do erro
+    try {
+      // Chamada assíncrona ao Firebase
+      const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password);
 
-        const errorCode = error.code;
+      const user: firebase.User | null = userCredential.user;
 
-        // Corrigido: registrar apenas quando o usuário não existir
-        if (errorCode === 'auth/user-not-found') {
-          this.promptUserRegistration();
-        // Corrigido: tratar credencial inválida como senha incorreta
-        } else if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password') {
-          alert('Senha incorreta.');
-        } else if (errorCode === 'auth/invalid-email') {
-          alert('O email fornecido é inválido.');
-        } else {
-          alert('Erro ao fazer login. Por favor, tente novamente.');
-        }
-      });
+      if (user) {
+        this.userService.loginSuccess(user);
+        this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
+      } else {
+        // Comentado para evitar log extra de erro
+        console.error('Erro: usuário retornado é null.');
+      }
+    } catch (error: any) {
+      // Comentado: captura da exceção para evitar que o Angular emita outros logs
+      const errorCode = error.code;
+
+      // Corrigido: registrar apenas quando o usuário não existir
+      if (errorCode === 'auth/user-not-found') {
+        this.promptUserRegistration();
+      // Corrigido: tratar credencial inválida como senha incorreta
+      } else if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password') {
+        alert('Senha incorreta.');
+      } else if (errorCode === 'auth/invalid-email') {
+        alert('O email fornecido é inválido.');
+      } else {
+        alert('Erro ao fazer login. Por favor, tente novamente.');
+      }
+    } finally {
+      // Novo: libera o botão de login
+      this.isSubmitting = false;
+    }
   }
 
   // Atualize o método que recebe o resultado do diálogo de cadastro
@@ -86,21 +108,23 @@ export class LoginComponent {
 
   // Atualize o método createAccount para receber e usar nome e username
   createAccount(name: string, username: string, email: string) {
+    // Novo: evita múltiplos cadastros simultâneos
+    if (this.isCreatingAccount) {
+      return;
+    }
+    this.isCreatingAccount = true;
 
     this.auth.createUserWithEmailAndPassword(email, this.password)
       .then((userCredential) => {
         const user: firebase.User | null = userCredential.user;
 
         if (user) {
-          
           // Atualiza o perfil do usuário com o nome fornecido
-          user.updateProfile({ 
+          user.updateProfile({
             displayName: name
           }).then(() => {
-            
             // Chama o método loginSuccess com nome e username
             this.userService.loginSuccess(user, name, username);
-            
             // Navega para a página inicial após cadastro bem-sucedido
             this.router.navigate(['/']);
           }).catch(error => {
@@ -110,7 +134,17 @@ export class LoginComponent {
         }
       })
       .catch(error => {
-        // Tratamento de erro existente...
+        // Correção: tratamento detalhado de erros ao criar conta
+        const errorCode = error.code;
+        if (errorCode === 'auth/email-already-in-use') {
+          alert('Este email já está em uso.');
+        } else {
+          alert('Erro ao criar conta. Por favor, tente novamente.');
+        }
+      })
+      .finally(() => {
+        // Novo: libera o estado de criação
+        this.isCreatingAccount = false;
       });
   }
 

@@ -21,7 +21,7 @@
       </mat-error>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
+    <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isSubmitting">
       Entrar
     </button>
   </form>
