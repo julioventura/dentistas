@@ -25,7 +25,13 @@ export class LoginComponent {
     private dialog: MatDialog
   ) { }
 
-  onLogin() {
+  // Alteração: função passou a ser assíncrona para capturar erros sem gerar múltiplos logs
+  // Correção: verificação assíncrona com remoção de espaços
+  async onLogin() {
+
+    // Correção: remove espaços extras do email e da senha digitados
+    this.email = this.email.trim();
+    this.password = this.password.trim();
 
     if (!this.email || !this.password) {
       alert('Por favor, preencha o email e a senha.');
@@ -38,32 +44,35 @@ export class LoginComponent {
       return;
     }
 
-    this.auth.signInWithEmailAndPassword(this.email, this.password)
-      .then((userCredential) => {
-        const user: firebase.User | null = userCredential.user;
+    try {
+      // Chamada assíncrona ao Firebase
+      const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password);
 
-        if (user) {
-          this.userService.loginSuccess(user);
-          this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
-        } else {
-          console.error('Erro: usuário retornado é null.');
-        }
-      })
-      .catch(error => {
-        console.error("Erro ao fazer login:", error); // Log detalhado do erro
+      const user: firebase.User | null = userCredential.user;
 
-        const errorCode = error.code;
+      if (user) {
+        this.userService.loginSuccess(user);
+        this.router.navigate(['/']); // Alterado para redirecionar para a página inicial
+      } else {
+        // Comentado para evitar log extra de erro
+        console.error('Erro: usuário retornado é null.');
+      }
+    } catch (error: any) {
+      // Comentado: captura da exceção para evitar que o Angular emita outros logs
+      const errorCode = error.code;
 
-        if (errorCode === 'auth/user-not-found' || errorCode === 'auth/invalid-credential') {
-          this.promptUserRegistration();
-        } else if (errorCode === 'auth/wrong-password') {
-          alert('Senha incorreta.');
-        } else if (errorCode === 'auth/invalid-email') {
-          alert('O email fornecido é inválido.');
-        } else {
-          alert('Erro ao fazer login. Por favor, tente novamente.');
-        }
-      });
+      // Corrigido: registrar apenas quando o usuário não existir
+      if (errorCode === 'auth/user-not-found') {
+        this.promptUserRegistration();
+      // Corrigido: tratar credencial inválida como senha incorreta
+      } else if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password') {
+        alert('Senha incorreta.');
+      } else if (errorCode === 'auth/invalid-email') {
+        alert('O email fornecido é inválido.');
+      } else {
+        alert('Erro ao fazer login. Por favor, tente novamente.');
+      }
+    }
   }
 
   // Atualize o método que recebe o resultado do diálogo de cadastro
@@ -101,14 +110,20 @@ export class LoginComponent {
             
             // Navega para a página inicial após cadastro bem-sucedido
             this.router.navigate(['/']);
-          }).catch(error => {
-            console.error('Erro ao atualizar o perfil do usuário:', error);
-            alert('Erro ao atualizar o perfil. Por favor, tente novamente.');
-          });
-        }
-      })
+      }).catch(error => {
+        console.error('Erro ao atualizar o perfil do usuário:', error);
+        alert('Erro ao atualizar o perfil. Por favor, tente novamente.');
+      });
+      }
+    })
       .catch(error => {
-        // Tratamento de erro existente...
+        // Correção: tratamento detalhado de erros ao criar conta
+        const errorCode = error.code;
+        if (errorCode === 'auth/email-already-in-use') {
+          alert('Este email já está em uso.');
+        } else {
+          alert('Erro ao criar conta. Por favor, tente novamente.');
+        }
       });
   }
 
