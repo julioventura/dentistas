@@ -4,6 +4,7 @@ import Hero from './components/Hero/Hero';
 import AccessoRapido from './components/AccessoRapido/AccessoRapido';
 import Details from './components/Details/Details';
 import Footer from './components/Footer/Footer';
+import ChatbotModal from "./components/ChatbotModal";
 
 function App() {
   return (
@@ -14,7 +15,12 @@ function App() {
         <AccessoRapido />
         <Details />
       </main>
+
+
       <Footer />
+
+      <ChatbotModal />
+
     </div>
   );
 }
