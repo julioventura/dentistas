@@ -58,10 +58,10 @@ const Aplicativos: React.FC = () => {
     },
     {
       title: "WhatsApp Transcriptor",
-      description: "Transcritor de áudios do WhatApp",
-      description2: "Automação do N8N",
+      description: "Transcritor de áudios com registro das conversas",
+      description2: "Automação do N8N (Entre em contato)",
       icon: <MessageSquare size={32} />,
-      url: "#whatsapp-monitor"
+      url: ""
     }
   ];
 

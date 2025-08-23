@@ -33,32 +33,32 @@ const OurChatbots: React.FC = () => {
   const apps = [
 
     {
-      title: "LGPD-BOT",
-      description: "Lei Geral de Proteção de Dados",
+      title: "LGPD",
+      description: "Assistente para a Lei Geral de Proteção de Dados",
       description2: "Chatbot especializado",
       icon: <Bot size={32} />,
-      url: "fastbot/chat/lgpdbot"
+      url: "https://dentistas.com.br/fastbot/chat/lgpd"
     },
     {
       title: "TutFOP 5",
-      description: "Tutor Clínico (FO-UPE)",
-      description2: "Versão 5 pública",
+      description: "Tutor clínico para o ensino (FO-UPE)",
+      description2: "Versão 5 (de acesso público)",
       icon: <Bot size={32} />,
-      url: "fastbot/chat/tutfop5"
+      url: "https://dentistas.com.br/fastbot/chat/tutfop"
     },
     {
       title: "Gerador de Slides",
       description: "Apostila e Prova no Google Forms",
       description2: "",
       icon: <Bot size={32} />,
-      url: "fastbot/chat/slides"
+      url: "https://dentistas.com.br/fastbot/chat/slides"
     },
     {
       title: "Formatador de Referências",
       description: "Referências Bibliográficas",
       description2: "",
       icon: <Bot size={32} />,
-      url: "fastbot/chat/referencias"
+      url: "https://dentistas.com.br/fastbot/chat/referencias"
     },
   ];
 
