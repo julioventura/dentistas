@@ -13,6 +13,8 @@ const AppCard: React.FC<AppCardProps> = ({ title, description, description2, ico
   return (
     <a
       href={url}
+      target="_blank"
+      rel="noopener noreferrer"
       className="glass-card p-6 flex flex-col items-center text-center h-full"
     >
       <div className="icon mb-4 text-white text-4xl raised p-4 rounded-full bg-white/10">
@@ -38,26 +40,26 @@ const AccessoRapido: React.FC = () => {
       description: "Clínica versão 2",
       description2: "Em uso contínuo desde 2017",
       icon: <Bot size={32} />,
-      url: "#clinica-integrada"
+      url: "https://dentistas.com.br/clinicaintegrada"
     },
     {
       title: "Acompanhamento de Erupcões Dentárias - UFC",
       description: "Projeto de Doutorado",
       description2: "Em uso desde 2024",
       icon: <Bot size={32} />,
-      url: "#clinica-4"
+      url: "https://dentistas.com.br/clinica"
     },
     {
       title: "Clínica de Endodontia - UPE",
       description: "FOP / FOR / Fernando de Noronha",
       description2: "Em uso desde 2024",
       icon: <Bot size={32} />,
-      url: "#clinica"
+      url: "https://dentistas.com.br/clinica"
     }
   ];
 
   return (
-    <section id="clinica" className="py-12 px-4 mt-24">
+    <section id="clinica" className="py-12 px-4">
       <div className="glass max-w-6xl mx-auto p-8">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-4 gradient-text">Clínica Odontológica</h2>

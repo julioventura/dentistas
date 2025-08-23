@@ -13,7 +13,9 @@ const AppCard: React.FC<AppCardProps> = ({ title, description, description2, ico
   return (
     <a
       href={url}
-      className="glass-card p-6 flex flex-col items-center text-center h-full"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="glass-card p-6 flex flex-col items-center text-center"
     >
       <div className="icon mb-4 text-white text-4xl raised p-4 rounded-full bg-white/10">
         {icon}
@@ -38,40 +40,33 @@ const Aplicativos: React.FC = () => {
       description: "Crie seu chatbot em 3 minutos",
       description2: "Gratuito e Open Source",
       icon: <Bot size={32} />,
-      url: "#fastbot"
+      url: "https://dentistas.com.br/fastbot"
     },
     {
-      title: "LGPD-BOT",
-      description: "Chatbot especializado em LGPD",
-      description2: "Conformidade e Privacidade",
-      icon: <Shield size={32} />,
-      url: "#lgpd-bot"
-    },
-    {
-      title: "Calendar Monitor",
+      title: "Agenda Google",
       description: "Monitore calendários facilmente",
       description2: "Integração completa",
       icon: <Monitor size={32} />,
-      url: "#calendar-monitor"
+      url: "https://dentistas.com.br/agenda"
     },
     {
       title: "Gmail Monitor",
       description: "Monitoramento de emails",
       description2: "Alertas em tempo real",
       icon: <Mail size={32} />,
-      url: "#gmail-monitor"
+      url: "https://dentistas.com.br/gmail"
     },
     {
-      title: "WhatsApp Monitor",
-      description: "Monitore conversas WhatsApp",
-      description2: "Business automation",
+      title: "WhatsApp Transcriptor",
+      description: "Transcritor de áudios do WhatApp",
+      description2: "Automação do N8N",
       icon: <MessageSquare size={32} />,
       url: "#whatsapp-monitor"
     }
   ];
 
   return (
-    <section id="aplicativos" className="py-12 px-4 mt-24">
+    <section id="aplicativos" className="py-12 px-4">
       <div className="glass max-w-6xl mx-auto p-8">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-4 gradient-text">Aplicativos Web</h2>
