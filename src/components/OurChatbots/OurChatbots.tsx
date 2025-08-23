@@ -31,39 +31,11 @@ const OurChatbots: React.FC = () => {
   const apps = [
 
     {
-      title: "FASTBOT",
-      description: "Crie seu chatbot em 3 minutos",
-      description2: "Com site, QR-Code e Link",
-      icon: <Bot size={32} />,
-      url: "./fastbot/"
-    },
-    {
       title: "LGPD-BOT",
       description: "Lei Geral de Proteção de Dados",
       description2: "Chatbot especializado",
       icon: <Bot size={32} />,
       url: "#clinica"
-    },
-    {
-      title: "Calendar Monitor",
-      description: "Monitoramento de agenda",
-      description2: "",
-      icon: "📅",
-      url: "#calendar"
-    },
-    {
-      title: "Gmail Monitor",
-      description: "Monitoramento de e-mails",
-      description2: "",
-      icon: <Bot size={32} />,
-      url: "#gmail"
-    },
-    {
-      title: "Whatsapp Monitor",
-      description: "FO-UFC",
-      description2: "",
-      icon: <Bot size={32} />,
-      url: "#whatsapp"
     },
     {
       title: "TutFOP",
@@ -86,13 +58,6 @@ const OurChatbots: React.FC = () => {
       icon: <Bot size={32} />,
       url: "#referencias"
     },
-    {
-      title: "Software de Erupções Dentárias",
-      description: "Doutorado FO-UFC",
-      description2: "",
-      icon: <Bot size={32} />,
-      url: "#erupcoes"
-    }
   ];
 
   return (
