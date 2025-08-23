@@ -1,10 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Settings from '../Settings/Settings';
 import MobileMenu from '../MobileMenu/MobileMenu';
 
 const Header: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Função para controlar a visibilidade do header baseado no scroll
+  useEffect(() => {
+    const controlNavbar = () => {
+      const currentScrollY = window.scrollY;
+
+      // Se estiver no topo da página, sempre mostra o header
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+      }
+      // Se rolou para baixo, esconde o header
+      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false);
+      }
+      // Se rolou para cima, mostra o header
+      else if (currentScrollY < lastScrollY) {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    // Adiciona o event listener
+    window.addEventListener('scroll', controlNavbar);
+
+    // Cleanup do event listener
+    return () => {
+      window.removeEventListener('scroll', controlNavbar);
+    };
+  }, [lastScrollY]);
 
   // Função para alternar o estado do menu mobile
   const toggleMobileMenu = () => {
@@ -13,22 +45,25 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="glass fixed top-0 left-0 right-0 z-50 px-6 py-4 mx-4 mt-4 flex justify-between items-center">
+      <header
+        className={`glass fixed top-0 left-0 right-0 z-50 px-6 py-4 mx-4 mt-4 flex justify-between items-center transition-transform duration-300 ease-in-out ${isVisible ? 'transform translate-y-0' : 'transform -translate-y-full'
+          }`}
+      >
         <div>
           <h1 className="text-2xl font-bold text-white">Dentistas.com.br</h1>
         </div>
         <nav className="hidden md:flex space-x-6 items-center">
           {['Início', 'Aplicativos', 'Detalhes', 'Contato'].map((item, index) => (
-            <a 
+            <a
               key={index}
-              href={`#${item.toLowerCase()}`} 
+              href={`#${item.toLowerCase()}`}
               className="text-white hover:text-blue-100 transition-colors relative group"
             >
               {item}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-violet-400 transition-all duration-300 group-hover:w-full"></span>
             </a>
           ))}
-          <button 
+          <button
             onClick={() => setIsSettingsOpen(true)}
             className="text-white hover:text-blue-100 transition-colors p-2 raised rounded-full ml-2"
             title="Configurações"
@@ -41,7 +76,7 @@ const Header: React.FC = () => {
         </nav>
         <div className="md:hidden flex items-center">
           {/* Botão de configurações removido da versão mobile */}
-          <button 
+          <button
             onClick={toggleMobileMenu}
             className="text-white raised p-2 rounded-lg"
             aria-label="Menu"
@@ -53,11 +88,11 @@ const Header: React.FC = () => {
           </button>
         </div>
       </header>
-      
+
       <Settings isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
-      <MobileMenu 
-        isOpen={isMobileMenuOpen} 
-        onClose={() => setIsMobileMenuOpen(false)} 
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
         onOpenSettings={() => setIsSettingsOpen(true)}
       />
     </>

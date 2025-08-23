@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bot } from "lucide-react";
+import { Bot, Monitor, Mail, MessageSquare, Shield } from "lucide-react";
 
 interface AppCardProps {
   title: string;
@@ -31,40 +31,54 @@ const AppCard: React.FC<AppCardProps> = ({ title, description, description2, ico
   );
 };
 
-const AccessoRapido: React.FC = () => {
+const Aplicativos: React.FC = () => {
   const apps = [
     {
-      title: "Clínica Integrada - UFRJ",
-      description: "Clínica versão 2",
-      description2: "Em uso contínuo desde 2017",
+      title: "FASTBOT",
+      description: "Crie seu chatbot em 3 minutos",
+      description2: "Gratuito e Open Source",
       icon: <Bot size={32} />,
-      url: "#clinica-integrada"
+      url: "#fastbot"
     },
     {
-      title: "Acompanhamento de Erupcões Dentárias - UFC",
-      description: "Projeto de Doutorado",
-      description2: "Em uso desde 2024",
-      icon: <Bot size={32} />,
-      url: "#clinica-4"
+      title: "LGPD-BOT",
+      description: "Chatbot especializado em LGPD",
+      description2: "Conformidade e Privacidade",
+      icon: <Shield size={32} />,
+      url: "#lgpd-bot"
     },
     {
-      title: "Clínica de Endodontia - UPE",
-      description: "FOP / FOR / Fernando de Noronha",
-      description2: "Em uso desde 2024",
-      icon: <Bot size={32} />,
-      url: "#clinica"
+      title: "Calendar Monitor",
+      description: "Monitore calendários facilmente",
+      description2: "Integração completa",
+      icon: <Monitor size={32} />,
+      url: "#calendar-monitor"
+    },
+    {
+      title: "Gmail Monitor",
+      description: "Monitoramento de emails",
+      description2: "Alertas em tempo real",
+      icon: <Mail size={32} />,
+      url: "#gmail-monitor"
+    },
+    {
+      title: "WhatsApp Monitor",
+      description: "Monitore conversas WhatsApp",
+      description2: "Business automation",
+      icon: <MessageSquare size={32} />,
+      url: "#whatsapp-monitor"
     }
   ];
 
   return (
-    <section id="clinica" className="py-12 px-4 mt-24">
+    <section id="aplicativos" className="py-12 px-4 mt-24">
       <div className="glass max-w-6xl mx-auto p-8">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-4 gradient-text">Clínica Odontológica</h2>
+          <h2 className="text-3xl font-bold mb-4 gradient-text">Aplicativos Web</h2>
           <div className="divider"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {apps.map((app, index) => (
             <AppCard
               key={index}
@@ -82,4 +96,4 @@ const AccessoRapido: React.FC = () => {
   );
 };
 
-export default AccessoRapido;
+export default Aplicativos;
