@@ -46,20 +46,27 @@ const OurChatbots: React.FC = () => {
       icon: <Bot size={32} />,
       url: "https://dentistas.com.br/fastbot/chat/tutfop5"
     },
-    {
-      title: "Gerador de Slides",
-      description: "Apostila e Prova no Google Forms",
-      description2: "",
-      icon: <Bot size={32} />,
-      url: "https://dentistas.com.br/fastbot/chat/slides"
-    },
-    {
-      title: "Formatador de Referências",
-      description: "Referências Bibliográficas",
-      description2: "",
-      icon: <Bot size={32} />,
-      url: "https://dentistas.com.br/fastbot/chat/referencias"
-    },
+    // {
+    //   title: "Gerador de Apostilas",
+    //   description: "Apostila ",
+    //   description2: "",
+    //   icon: <Bot size={32} />,
+    //   url: "https://dentistas.com.br/fastbot/chat/apostila"
+    // },
+    // {
+    //   title: "Gerador de Provas",
+    //   description: "Prova no Google Forms",
+    //   description2: "",
+    //   icon: <Bot size={32} />,
+    //   url: "https://dentistas.com.br/fastbot/chat/prova"
+    // },
+    // {
+    //   title: "Formatador de Referências",
+    //   description: "Referências Bibliográficas",
+    //   description2: "",
+    //   icon: <Bot size={32} />,
+    //   url: "https://dentistas.com.br/fastbot/chat/referencias"
+    // },
   ];
 
   return (
