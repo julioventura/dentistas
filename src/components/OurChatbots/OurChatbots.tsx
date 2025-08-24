@@ -37,14 +37,14 @@ const OurChatbots: React.FC = () => {
       description: "Assistente para a Lei Geral de Proteção de Dados",
       description2: "Chatbot especializado",
       icon: <Bot size={32} />,
-      url: "https://dentistas.com.br/fastbot/chat/lgpd"
+      url: "https://dentistas.com.br/fastbot/chat/lgpdbot"
     },
     {
       title: "TutFOP 5",
       description: "Tutor clínico para o ensino (FO-UPE)",
       description2: "Versão 5 (de acesso público)",
       icon: <Bot size={32} />,
-      url: "https://dentistas.com.br/fastbot/chat/tutfop"
+      url: "https://dentistas.com.br/fastbot/chat/tutfop5"
     },
     {
       title: "Gerador de Slides",
