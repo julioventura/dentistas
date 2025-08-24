@@ -125,7 +125,7 @@ const Header: React.FC = () => {
           }`}
       >
         <div>
-          <a href="#início">
+          <a href="/">
             <h1 className="text-2xl font-bold text-white">Dentistas.com.br</h1>
           </a>
         </div>
@@ -133,7 +133,11 @@ const Header: React.FC = () => {
           {['Início', 'Clínica', 'Aplicativos', 'Chatbots', 'Contato'].map((item, index) => (
             <a
               key={index}
-              href={`#${item.toLowerCase()}`}
+              href={`#${item
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+                }`}
               className="text-white hover:text-white transition-colors relative group"
             >
               {item}
@@ -216,6 +220,8 @@ const Header: React.FC = () => {
               </div>
             )}
           </div>
+
+
         </nav>
         <div className="md:hidden flex items-center">
           <button

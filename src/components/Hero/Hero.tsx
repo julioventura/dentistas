@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section id="início" className="min-h-screen flex items-center justify-center px-4 py-20">
+    <section id="inicio" className="min-h-screen flex items-center justify-center px-4 py-20">
       <div className="glass max-w-5xl mx-auto p-8 md:p-12 text-center">
 
         {/* <div className="raised inline-block px-4 py-2 mb-6 rounded-full bg-gradient-to-r from-white/10 to-white/20">
