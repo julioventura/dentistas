@@ -28,6 +28,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Bot, Maximize2, Minimize2, X, Send, User } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useIsMobile } from '../hooks/use-mobile';
 
 type ChatState = 'minimized' | 'normal' | 'maximized';
 interface Message {
@@ -48,6 +49,7 @@ const ChatbotModal = () => {
   const [isElevated] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   // Constantes de estilo para o chatbot
   const chatbotBgColor = '#1a1b3a';
@@ -293,8 +295,9 @@ const ChatbotModal = () => {
           return {
             ...commonChatbotStyles,
             bottom: '20px',
-            right: '20px',
-            width: 'clamp(300px, 33vw, 450px)',
+            right: isMobile ? '10px' : '20px',
+            left: isMobile ? '10px' : 'auto',
+            width: isMobile ? 'calc(100vw - 20px)' : 'clamp(300px, 33vw, 450px)',
             height: '80vh',
             maxHeight: '650px',
             background: chatbotBgColor,
@@ -335,8 +338,9 @@ const ChatbotModal = () => {
           return {
             ...commonChatbotStyles,
             bottom: '20px',
-            right: '20px',
-            width: 'clamp(300px, 33vw, 450px)',
+            right: isMobile ? '10px' : '20px',
+            left: isMobile ? '10px' : 'auto',
+            width: isMobile ? 'calc(100vw - 20px)' : 'clamp(300px, 33vw, 450px)',
             height: '80vh',
             maxHeight: '650px',
             background: chatbotBgColor,
