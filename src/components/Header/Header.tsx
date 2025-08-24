@@ -142,13 +142,13 @@ const Header: React.FC = () => {
 
             {/* Menu Dropdown de Temas */}
             {isThemeDropdownOpen && (
-              <div className="absolute top-full right-0 mt-2 w-56 glass rounded-xl p-2 shadow-2xl backdrop-blur-lg border border-white/20 z-50">
-                <div className="max-h-64 overflow-y-auto">
+              <div className="absolute top-full right-0 mt-2 w-56 rounded-xl p-2 shadow-2xl backdrop-blur-lg border border-white/40 z-50 bg-black/40">
+                <div className="max-h-64 overflow-y-auto scrollbar-hide">
                   {themes.map((theme) => (
                     <button
                       key={theme.id}
                       onClick={() => changeTheme(theme.id)}
-                      className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-all duration-200 group"
+                      className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-all duration-200 group"
                     >
                       {/* Preview do Tema */}
                       <div
@@ -189,7 +189,6 @@ const Header: React.FC = () => {
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        onOpenSettings={() => console.log('Settings removido')} // Função temporária já que removemos Settings
       />
     </>
   );
