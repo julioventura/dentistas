@@ -59,7 +59,7 @@ const AccessoRapido: React.FC = () => {
   ];
 
   return (
-    <section id="clinica" className="py-12 px-4">
+    <section id="clínica" className="py-12 px-4">
       <div className="glass max-w-6xl mx-auto p-8">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-4 gradient-text">Clínica Odontológica</h2>

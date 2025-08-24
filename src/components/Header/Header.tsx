@@ -125,10 +125,12 @@ const Header: React.FC = () => {
           }`}
       >
         <div>
-          <h1 className="text-2xl font-bold text-white">Dentistas.com.br</h1>
+          <a href="#início">
+            <h1 className="text-2xl font-bold text-white">Dentistas.com.br</h1>
+          </a>
         </div>
         <nav className="hidden md:flex space-x-6 items-center">
-          {['Início', 'Aplicativos', 'Detalhes', 'Contato'].map((item, index) => (
+          {['Início', 'Clínica', 'Aplicativos', 'Chatbots', 'Contato'].map((item, index) => (
             <a
               key={index}
               href={`#${item.toLowerCase()}`}
