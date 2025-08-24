@@ -27,24 +27,12 @@ const Hero: React.FC = () => {
 
         <div className="emboss p-4 rounded-xl mb-8 max-w-3xl mx-auto bg-white/5">
           <p className="text-xl md:text-2xl text-white/90">
-            Tecnologia e Aplicativos para Dentistas
+            Aplicativos para Dentistas
           </p>
           <div className="divider"></div>
           <p className="text-lg md:text-lg text-white/60">
             Software de Código Aberto
           </p>
-
-          {/* <div className="flex justify-center mt-4">
-            <a
-              href="https://github.com/dentistascombr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/70 hover:text-white transition-colors duration-300 p-2 rounded-full hover:bg-white/10"
-              title="Ver no GitHub"
-            >
-              <Github size={24} />
-            </a>
-          </div> */}
         </div>
 
         <div className="divider"></div>
@@ -52,7 +40,7 @@ const Hero: React.FC = () => {
         <div className="flex flex-col md:flex-row gap-4 justify-center">
 
           <button
-            onClick={() => scrollToSection('clinica')}
+            onClick={() => scrollToSection('clínica')}
             className="btn-primary"
           >
             Clínica
