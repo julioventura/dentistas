@@ -109,8 +109,10 @@ const ChatbotModal = () => {
 
       const webhookUrl: string | undefined = import.meta.env.VITE_WEBHOOK_N8N_URL as string | undefined;
 
-      if (!webhookUrl) {
-        throw new Error('URL do webhook N8N não configurada');
+      // Se a URL do webhook não estiver configurada, usar resposta local sem erro
+      if (!webhookUrl || webhookUrl.trim() === '') {
+        console.info('Webhook N8N não configurado - usando respostas locais');
+        return getBotResponseLocal(userMessage);
       }
 
       const payload = {

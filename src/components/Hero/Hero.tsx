@@ -39,7 +39,7 @@ const Hero: React.FC = () => {
         <div className="flex flex-col md:flex-row gap-4 justify-center">
 
           <button
-            onClick={() => scrollToSection('clínica')}
+            onClick={() => scrollToSection('clinica')}
             className="btn-primary"
           >
             Clínica

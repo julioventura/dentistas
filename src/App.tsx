@@ -5,7 +5,7 @@ import AccessoRapido from './components/AccessoRapido/AccessoRapido';
 import Aplicativos from './components/Aplicativos/Aplicativos';
 import OurChatbots from './components/OurChatbots/OurChatbots';
 import Footer from './components/Footer/Footer';
-import ChatbotModal from "./components/ChatbotModal";
+// import ChatbotModal from "./components/ChatbotModal";
 
 function App() {
   return (
@@ -20,7 +20,7 @@ function App() {
       </main>
       <Footer />
 
-      <ChatbotModal />
+      {/* <ChatbotModal /> */}
 
     </div>
   );
