@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Palette, ChevronDown, Check } from 'lucide-react';
-import Settings from '../Settings/Settings';
 import MobileMenu from '../MobileMenu/MobileMenu';
 
 type Theme = 'blue' | 'green' | 'red' | 'dark' | 'purple' | 'teal' | 'orange' | 'pink' | 'indigo' | 'brown';
@@ -12,7 +11,6 @@ interface ThemeOption {
 }
 
 const Header: React.FC = () => {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -173,19 +171,8 @@ const Header: React.FC = () => {
               </div>
             )}
           </div>
-          <button
-            onClick={() => setIsSettingsOpen(true)}
-            className="text-white hover:text-blue-100 transition-colors p-2 raised rounded-full ml-2"
-            title="Configurações"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </button>
         </nav>
         <div className="md:hidden flex items-center">
-          {/* Botão de configurações removido da versão mobile */}
           <button
             onClick={toggleMobileMenu}
             className="text-white raised p-2 rounded-lg"
@@ -199,11 +186,10 @@ const Header: React.FC = () => {
         </div>
       </header>
 
-      <Settings isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenSettings={() => console.log('Settings removido')} // Função temporária já que removemos Settings
       />
     </>
   );
