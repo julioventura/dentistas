@@ -88,6 +88,20 @@ const Header: React.FC = () => {
     };
   }, []);
 
+  // Prevenir scroll da página quando dropdown está aberto
+  useEffect(() => {
+    if (isThemeDropdownOpen) {
+      // Desabilitar scroll da página
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        // Restaurar scroll da página ao fechar
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isThemeDropdownOpen]);
+
   const changeTheme = (theme: Theme) => {
     setCurrentTheme(theme);
     document.documentElement.setAttribute('data-theme', theme);
@@ -142,8 +156,37 @@ const Header: React.FC = () => {
 
             {/* Menu Dropdown de Temas */}
             {isThemeDropdownOpen && (
-              <div className="absolute top-full right-0 mt-2 w-56 rounded-xl p-2 shadow-2xl backdrop-blur-lg border border-white/40 z-50 bg-black/40">
-                <div className="max-h-64 overflow-y-auto scrollbar-hide">
+              <div
+                className="absolute top-full right-0 mt-2 w-56 rounded-xl p-2 shadow-2xl backdrop-blur-lg border border-white/40 z-50 bg-black/40"
+                onWheel={(e) => {
+                  // Sempre impede a propagação do scroll para a página
+                  e.stopPropagation();
+                }}
+              >
+                <div
+                  className="max-h-64 overflow-y-auto scrollbar-hide"
+                  onWheel={(e) => {
+                    // Impede propagação e comportamento padrão
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    const element = e.currentTarget;
+                    const { scrollTop, scrollHeight, clientHeight } = element;
+                    const scrollAmount = e.deltaY;
+
+                    // Calcular nova posição de scroll
+                    const newScrollTop = scrollTop + scrollAmount;
+
+                    // Aplicar scroll manual com limites
+                    if (newScrollTop >= 0 && newScrollTop <= scrollHeight - clientHeight) {
+                      element.scrollTop = newScrollTop;
+                    } else if (newScrollTop < 0) {
+                      element.scrollTop = 0;
+                    } else {
+                      element.scrollTop = scrollHeight - clientHeight;
+                    }
+                  }}
+                >
                   {themes.map((theme) => (
                     <button
                       key={theme.id}
