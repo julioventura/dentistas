@@ -36,7 +36,7 @@ const AppCard: React.FC<AppProps> = ({ title, description, description2, icon, u
   );
 };
 
-const OurChatbots: React.FC = () => {
+const Chatbots: React.FC = () => {
   const apps = [
 
     {
@@ -104,4 +104,4 @@ const OurChatbots: React.FC = () => {
   );
 };
 
-export default OurChatbots;
+export default Chatbots;

@@ -1,9 +1,9 @@
 // Componentes da aplicação
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
-import AccessoRapido from './components/AccessoRapido/AccessoRapido';
+import Clinicas from './components/Clinicas/Clinicas';
 import Aplicativos from './components/Aplicativos/Aplicativos';
-import OurChatbots from './components/OurChatbots/OurChatbots';
+import Chatbots from './components/Chatbots/Chatbots';
 import Footer from './components/Footer/Footer';
 // import ChatbotModal from "./components/ChatbotModal";
 
@@ -14,9 +14,9 @@ function App() {
       <Header />
       <main>
         <Hero />
-        <AccessoRapido />
+        <Clinicas />
         <Aplicativos />
-        <OurChatbots />
+        <Chatbots />
       </main>
       <Footer />
 

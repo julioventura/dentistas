@@ -11,13 +11,8 @@ interface AppCardProps {
 
 // const AppCard: React.FC<AppCardProps> = ({ title, description2, icon, url }) => {
 const AppCard: React.FC<AppCardProps> = ({ title, description, description2, icon, url }) => {
-  return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="glass-card p-6 flex flex-col items-center text-center h-full"
-    >
+  const content = (
+    <>
       <div className="icon mb-4 text-white text-4xl raised p-4 rounded-full bg-white/10">
         {icon}
       </div>
@@ -32,11 +27,30 @@ const AppCard: React.FC<AppCardProps> = ({ title, description, description2, ico
           <p className="text-white/80 text-sm inset py-2 px-4 rounded-lg w-full bg-black/20 shadow-inner">{description2}</p>
         )}
       </div>
-    </a>
+    </>
+  );
+
+  if (url && url.trim() !== '') {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="glass-card p-6 flex flex-col items-center text-center h-full"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="glass-card p-6 flex flex-col items-center text-center h-full">
+      {content}
+    </div>
   );
 };
 
-const AccessoRapido: React.FC = () => {
+const Clinicas: React.FC = () => {
   const apps = [
     {
       title: "Clínica Integrada - UFRJ",
@@ -48,9 +62,9 @@ const AccessoRapido: React.FC = () => {
     {
       title: "Acompanhamento de Erupcões Dentárias - UFC",
       description: "",
-      description2: "Em uso desde 2024",
+      description2: "USO RESTRITO DE PROJETO",
       icon: <Bot size={32} />,
-      url: "https://dentistas.com.br/clinica"
+      url: ""
     },
     {
       title: "Clínica de Endodontia - UPE",
@@ -87,4 +101,4 @@ const AccessoRapido: React.FC = () => {
   );
 };
 
-export default AccessoRapido;
+export default Clinicas;
