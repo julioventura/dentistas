@@ -1,5 +1,4 @@
 import React from 'react';
-import { Github } from 'lucide-react';
 
 const Hero: React.FC = () => {
   // Função para scroll suave programático

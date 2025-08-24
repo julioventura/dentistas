@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bot } from "lucide-react";
+import { Bot, Shield } from "lucide-react";
 
 interface AppProps {
   title: string;
@@ -21,10 +21,17 @@ const AppCard: React.FC<AppProps> = ({ title, description, description2, icon, u
         {icon}
       </div>
       <h3 className="text-xl font-bold mb-2 gradient-text">{title}</h3>
-      <div className="emboss p-2 rounded-lg bg-white/5 mb-2">
-        <p className="text-white/80 text-sm">{description}</p>
-      </div>
-      <span className="text-xs text-white/60 raised px-3 py-1 rounded-full bg-white/10">{description2}</span>
+
+      {description && (
+        <div className="emboss p-2 px-6 rounded-lg bg-white/5 mb-2">
+          <p className="text-white/80 text-sl">{description}</p>
+        </div>
+      )}
+
+      {description2 && (
+        <span className="text-sl text-white/60 raised px-3 py-1 rounded-full bg-white/10">{description2}</span>
+      )}
+
     </a>
   );
 };
@@ -35,14 +42,14 @@ const OurChatbots: React.FC = () => {
     {
       title: "LGPD",
       description: "Assistente para a Lei Geral de Proteção de Dados",
-      description2: "Chatbot especializado",
-      icon: <Bot size={32} />,
+      description2: "",
+      icon: <Shield size={32} />,
       url: "https://dentistas.com.br/fastbot/chat/lgpdbot"
     },
     {
       title: "TutFOP 5",
       description: "Tutor clínico para o ensino (FO-UPE)",
-      description2: "Versão 5 (de acesso público)",
+      description2: "",
       icon: <Bot size={32} />,
       url: "https://dentistas.com.br/fastbot/chat/tutfop5"
     },
@@ -75,7 +82,7 @@ const OurChatbots: React.FC = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 gradient-text">Chatbots Públicos</h2>
           <div className="divider"></div>
-          <p className="text-white/80 max-w-2xl mx-auto emboss p-4 rounded-lg bg-white/5">
+          <p className="text-white/60 text-xl max-w-2xl mx-auto emboss p-4 rounded-lg bg-white/5">
             Chatbots especializados para professores, alunos e dentistas
           </p>
         </div>

@@ -9,6 +9,7 @@ interface AppCardProps {
   url: string;
 }
 
+// const AppCard: React.FC<AppCardProps> = ({ title, description2, icon, url }) => {
 const AppCard: React.FC<AppCardProps> = ({ title, description, description2, icon, url }) => {
   return (
     <a
@@ -24,7 +25,9 @@ const AppCard: React.FC<AppCardProps> = ({ title, description, description2, ico
 
       {/* Container flex para empurrar descriptions para baixo */}
       <div className="flex flex-col justify-end items-center mt-auto space-y-3 w-full">
-        <p className="text-white/80 text-sm backdrop-blur-sm py-2 px-4 rounded-lg bg-white/10 border border-white/20 shadow-inner">{description}</p>
+        {description && (
+          <p className="text-white/80 text-sm backdrop-blur-sm py-2 px-4 rounded-lg bg-white/10 border border-white/20 shadow-inner">{description}</p>
+        )}
         {description2 && (
           <p className="text-white/80 text-sm inset py-2 px-4 rounded-lg w-full bg-black/20 shadow-inner">{description2}</p>
         )}
@@ -37,21 +40,21 @@ const AccessoRapido: React.FC = () => {
   const apps = [
     {
       title: "Clínica Integrada - UFRJ",
-      description: "Clínica versão 2",
-      description2: "Em uso contínuo desde 2017",
+      description: "",
+      description2: "Em uso desde 2017",
       icon: <Bot size={32} />,
       url: "https://dentistas.com.br/clinicaintegrada"
     },
     {
       title: "Acompanhamento de Erupcões Dentárias - UFC",
-      description: "Projeto de Doutorado",
+      description: "",
       description2: "Em uso desde 2024",
       icon: <Bot size={32} />,
       url: "https://dentistas.com.br/clinica"
     },
     {
       title: "Clínica de Endodontia - UPE",
-      description: "FOP / FOR / Fernando de Noronha",
+      description: "",
       description2: "Em uso desde 2024",
       icon: <Bot size={32} />,
       url: "https://dentistas.com.br/clinica"

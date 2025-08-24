@@ -134,10 +134,10 @@ const Header: React.FC = () => {
             <a
               key={index}
               href={`#${item.toLowerCase()}`}
-              className="text-white hover:text-blue-100 transition-colors relative group"
+              className="text-white hover:text-white transition-colors relative group"
             >
               {item}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-violet-400 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-yellow-500 to-white transition-all duration-300 group-hover:w-full"></span>
             </a>
           ))}
 
@@ -153,7 +153,7 @@ const Header: React.FC = () => {
                 size={14}
                 className={`transition-transform duration-200 ${isThemeDropdownOpen ? 'rotate-180' : ''}`}
               />
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-violet-400 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-yellow-500 to-white transition-all duration-300 group-hover:w-full"></span>
             </button>
 
             {/* Menu Dropdown de Temas */}

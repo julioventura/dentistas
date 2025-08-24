@@ -63,15 +63,15 @@ const ChatbotModal = () => {
   const getPageContext = useCallback(() => {
     switch (location.pathname) {
       case '/':
-        return 'página inicial do Dentistas Labs com informações sobre as aplicações disponíveis';
+        return 'página inicial do Dentistas.com.br com informações sobre as aplicações disponíveis';
       case '/terms':
-        return 'página de Termos de Uso do Dentistas Labs';
+        return 'página de Termos de Uso do Dentistas.com.br';
       case '/privacy':
-        return 'página de Política de Privacidade do Dentistas Labs';
+        return 'página de Política de Privacidade do Dentistas.com.br';
       case '/license':
-        return 'página de Licença MIT do Dentistas Labs';
+        return 'página de Licença MIT do Dentistas.com.br';
       default:
-        return 'uma página do Dentistas Labs';
+        return 'uma página do Dentistas.com.br';
     }
   }, [location.pathname]);
 
@@ -82,7 +82,7 @@ const ChatbotModal = () => {
    */
   const getInitialMessage = useCallback(() => {
     const pageContext = getPageContext();
-    return `Olá! 👋 Bem-vindo à ${pageContext}. Sou o assistente do Dentistas Labs e estou aqui para ajudar você!`;
+    return `Olá! 👋 Bem-vindo à ${pageContext}. Sou o assistente do Dentistas.com.br e estou aqui para ajudar você!`;
   }, [getPageContext]);
 
   /**
@@ -158,7 +158,7 @@ const ChatbotModal = () => {
     // Respostas contextualizadas baseadas na página
     if (location.pathname === '/') {
       if (userMessage.toLowerCase().includes('aplicação') || userMessage.toLowerCase().includes('app')) {
-        return 'Aqui no Dentistas Labs temos várias aplicações disponíveis: Calendar Monitor, Gmail Monitor, Fastbot e WhatsApp Monitor. Todas são gratuitas e de código aberto! Qual te interessa?';
+        return 'Aqui no Dentistas.com.br temos várias aplicações disponíveis: Calendar Monitor, Gmail Monitor, Fastbot e WhatsApp Monitor. Todas são gratuitas e de código aberto! Qual te interessa?';
       }
       if (userMessage.toLowerCase().includes('fastbot')) {
         return 'O Fastbot é perfeito para você! Permite criar um chatbot profissional para seu consultório em apenas 3 minutos. É rápido, fácil e está disponível agora mesmo!';
@@ -184,7 +184,7 @@ const ChatbotModal = () => {
     const responses = [
       `Estou aqui na ${pageContext} para ajudar. Como posso auxiliar você hoje?`,
       `Vejo que você está na ${pageContext}. Em que posso ajudar?`,
-      'Sou o assistente do Dentistas Labs! Posso esclarecer dúvidas sobre nossas aplicações e serviços.',
+      'Sou o assistente do Dentistas.com.br! Posso esclarecer dúvidas sobre nossas aplicações e serviços.',
       'Precisa de ajuda com alguma de nossas ferramentas? Estou aqui para isso!',
     ];
 

@@ -9,9 +9,10 @@ const Footer: React.FC = () => {
           <div className="divider"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
           <div className="emboss p-6 rounded-xl bg-white/5">
-            <h3 className="text-xl font-bold text-white mb-4 raised px-4 py-2 rounded-lg bg-violet-600/50 w-full">Dentistas.com.br</h3>
+            <h3 className="text-xl font-bold text-white mb-8 raised px-4 py-2 rounded-lg bg-white/20 w-full">Dentistas.com.br</h3>
             <p className="text-white/80 pb-3">
               Aplicações e serviços para dentistas, professores e estudantes.
             </p>
@@ -20,8 +21,10 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          <div className="emboss p-6 rounded-xl bg-white/5">
-            <h3 className="text-xl font-bold text-white mb-4 raised px-4 py-2 rounded-lg bg-violet-600/50 w-full">Contato</h3>
+          <div className="emboss p-6 text-lg rounded-xl bg-white/5">
+
+            <h3 className="text-xl font-bold text-white mb-8 raised px-4 py-2 rounded-lg bg-white/20 w-full">Contato</h3>
+
             <ul className="space-y-4">
               <li className="flex items-center">
                 <span className="mr-3 raised p-2 rounded-lg bg-white/10">Email</span>
@@ -36,9 +39,10 @@ const Footer: React.FC = () => {
                 </a>
               </li>
             </ul>
+
           </div>
 
-          <div className="emboss p-6 rounded-xl bg-white/5">
+          {/* <div className="emboss p-6 rounded-xl bg-white/5">
             <h3 className="text-xl font-bold text-white mb-4 raised px-4 py-2 rounded-lg bg-violet-600/50 w-full">Parceiros</h3>
             <ul className="space-y-2">
               {['FO-UFRJ', 'FO-UPE', 'FOR', 'FO-UFC', 'UFB'].map((partner, index) => (
@@ -47,13 +51,14 @@ const Footer: React.FC = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
+
         </div>
 
         <div className="divider mt-10"></div>
 
         <div className="text-center text-white/60">
-          <p className="emboss py-2 px-4 rounded-full bg-white/5 inline-block">
+          <p className="emboss py-2 px-12 rounded-full bg-white/5 inline-block">
             &copy; 1997 - Dentistas.com.br
           </p>
         </div>

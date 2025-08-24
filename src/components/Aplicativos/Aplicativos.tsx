@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bot, Monitor, Mail, MessageSquare, Shield } from "lucide-react";
+import { Bot, Monitor, Mail, MessageSquare } from "lucide-react";
 
 interface AppCardProps {
   title: string;
@@ -24,9 +24,11 @@ const AppCard: React.FC<AppCardProps> = ({ title, description, description2, ico
 
       {/* Container flex para empurrar descriptions para baixo */}
       <div className="flex flex-col justify-end items-center mt-auto space-y-3 w-full">
-        <p className="text-white/80 text-sm backdrop-blur-sm py-2 px-4 rounded-lg bg-white/10 border border-white/20 shadow-inner">{description}</p>
+        {description && (
+          <p className="text-white/80 text-sl backdrop-blur-sm py-2 px-4 rounded-lg bg-white/10 border border-white/20 shadow-inner">{description}</p>
+        )}
         {description2 && (
-          <p className="text-white/80 text-sm inset py-2 px-4 rounded-lg w-full bg-black/20 shadow-inner">{description2}</p>
+          <p className="text-white/80 text-sl inset py-2 px-4 rounded-lg w-full bg-black/20 shadow-inner">{description2}</p>
         )}
       </div>
     </a>
