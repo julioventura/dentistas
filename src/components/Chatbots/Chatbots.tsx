@@ -18,13 +18,13 @@ const AppCard: React.FC<AppProps> = ({ title, description, description2, icon, u
       <h3 className="text-xl font-bold mb-2 gradient-text">{title}</h3>
 
       {description && (
-        <div className="emboss p-2 px-6 rounded-lg bg-white/5 mb-2">
-          <p className="text-white/80 text-sl">{description}</p>
+        <div>
+          <p className="text-white/80 text-sl inset py-2 px-4 rounded-lg w-full bg-black/20 shadow-inner">{description}</p>
         </div>
       )}
 
       {description2 && (
-        <span className="text-sl text-white/70 raised px-3 py-1 rounded-full bg-white/10">{description2}</span>
+        <span className="mt-4 text-sl text-white/70 raised px-3 py-1 rounded-full bg-white/10">{description2}</span>
       )}
     </>
   );
