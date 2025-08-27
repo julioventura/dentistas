@@ -1,5 +1,5 @@
 // Componentes da aplicação
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header/Header';
 import ScrollToTop from './components/ui/ScrollToTop';
 import Hero from './components/Hero/Hero';
