@@ -62,7 +62,7 @@ const Header: React.FC = () => {
     return () => {
       window.removeEventListener('scroll', controlNavbar);
     };
-  }, [lastScrollY]);
+  }, [lastScrollY, isVisible]);
 
   // Gerenciar tema
   useEffect(() => {

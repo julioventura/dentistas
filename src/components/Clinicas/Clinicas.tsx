@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bot } from "lucide-react";
+import { Smile, Hospital } from "lucide-react";
 
 interface AppCardProps {
   title: string;
@@ -56,21 +56,21 @@ const Clinicas: React.FC = () => {
       title: "Clínica Integrada - UFRJ",
       description: "",
       description2: "Em uso desde 2017",
-      icon: <Bot size={32} />,
+      icon: <Hospital size={32} />,
       url: "https://dentistas.com.br/clinicaintegrada"
     },
     {
       title: "Acompanhamento de Erupcões Dentárias - UFC",
       description: "",
       description2: "USO RESTRITO DE PROJETO",
-      icon: <Bot size={32} />,
+      icon: <Smile size={32} />,
       url: ""
     },
     {
       title: "Clínica de Endodontia - UPE",
       description: "",
       description2: "Em uso desde 2024",
-      icon: <Bot size={32} />,
+      icon: <Hospital size={32} />,
       url: "https://dentistas.com.br/clinica"
     }
   ];

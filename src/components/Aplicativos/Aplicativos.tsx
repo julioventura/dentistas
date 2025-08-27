@@ -45,6 +45,13 @@ const Aplicativos: React.FC = () => {
       url: "https://dentistas.com.br/fastbot"
     },
     {
+      title: "WhatsApp Transcriptor",
+      description: "Transcritor de áudios com registro das conversas",
+      description2: "Automação do N8N (Entre em contato)",
+      icon: <MessageSquare size={32} />,
+      url: ""
+    },
+    {
       title: "Agenda Google",
       description: "Monitore calendários facilmente",
       description2: "Integração completa",
@@ -57,13 +64,6 @@ const Aplicativos: React.FC = () => {
       description2: "Alertas em tempo real",
       icon: <Mail size={32} />,
       url: "https://dentistas.com.br/gmail"
-    },
-    {
-      title: "WhatsApp Transcriptor",
-      description: "Transcritor de áudios com registro das conversas",
-      description2: "Automação do N8N (Entre em contato)",
-      icon: <MessageSquare size={32} />,
-      url: ""
     }
   ];
 
