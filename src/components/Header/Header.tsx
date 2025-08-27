@@ -35,21 +35,24 @@ const Header: React.FC = () => {
   useEffect(() => {
     const controlNavbar = () => {
       const currentScrollY = window.scrollY;
-
+      let visible = isVisible;
       // Se estiver no topo da página, sempre mostra o header
       if (currentScrollY < 10) {
+        visible = true;
         setIsVisible(true);
       }
       // Se rolou para baixo, esconde o header
       else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        visible = false;
         setIsVisible(false);
       }
       // Se rolou para cima, mostra o header
       else if (currentScrollY < lastScrollY) {
+        visible = true;
         setIsVisible(true);
       }
-
       setLastScrollY(currentScrollY);
+      window.dispatchEvent(new CustomEvent('header-visibility', { detail: { visible } }));
     };
 
     // Adiciona o event listener
@@ -129,7 +132,7 @@ const Header: React.FC = () => {
             <h1 className="text-2xl font-bold text-white">Dentistas.com.br</h1>
           </a>
         </div>
-        <nav className="hidden md:flex space-x-6 items-center">
+        <nav className="hidden md:flex space-x-6 items-center pr-12">
           {['Início', 'Clínica', 'Aplicativos', 'Chatbots', 'Contato'].map((item, index) => (
             <a
               key={index}
@@ -170,7 +173,11 @@ const Header: React.FC = () => {
                 }}
               >
                 <div
-                  className="max-h-64 overflow-y-auto scrollbar-hide"
+                  className="max-h-64 overflow-y-auto"
+                  style={{
+                    msOverflowStyle: 'none', // IE and Edge
+                    scrollbarWidth: 'none',  // Firefox
+                  }}
                   onWheel={(e) => {
                     // Impede propagação e comportamento padrão
                     e.stopPropagation();
@@ -193,6 +200,11 @@ const Header: React.FC = () => {
                     }
                   }}
                 >
+                  <style>{`
+                    .dropdown-scroll::-webkit-scrollbar {
+                      display: none !important;
+                    }
+                  `}</style>
                   {themes.map((theme) => (
                     <button
                       key={theme.id}
