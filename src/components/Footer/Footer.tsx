@@ -11,14 +11,19 @@ const Footer: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-          <div className="emboss p-6 rounded-xl bg-white/5">
+          <div className="emboss p-6 text-lg rounded-xl bg-white/5">
             <h3 className="text-xl font-bold text-white mb-8 raised px-4 py-2 rounded-lg bg-white/20 w-full">Dentistas.com.br</h3>
-            <p className="text-white/80 pb-3">
-              Aplicações e serviços para dentistas, professores e estudantes.
+
+            <p className="text-white/80">
+              Aplicativos e Chatbots para dentistas.
             </p>
             <p className="text-white/80">
-              Inovando desde 1996, e lançado oficialmente no CIORJ 1997.
+              Lançado oficialmente no CIORJ 1997.
             </p>
+            <p className="text-white/80">
+              Inovando há {new Date().getFullYear() - 1997} anos.
+            </p>
+
           </div>
 
           <div className="emboss p-6 text-lg rounded-xl bg-white/5">
@@ -27,13 +32,13 @@ const Footer: React.FC = () => {
 
             <ul className="space-y-4">
               <li className="flex items-center">
-                <span className="mr-3 raised p-2 rounded-lg bg-white/10">Email</span>
+                <span className="mr-3 p-2 px-3 rounded-lg bg-white/10">Email</span>
                 <a href="mailto:contato@dentistas.com.br" className="text-white/80 hover:text-white transition-colors">
                   contato@dentistas.com.br
                 </a>
               </li>
               <li className="flex items-center">
-                <span className="mr-3 raised p-2 rounded-lg bg-white/10">WhatApp </span>
+                <span className="mr-3 p-2 rounded-lg bg-white/10">WhatApp com IA</span>
                 <a href="tel:+552124346931" className="text-white/80 hover:text-white transition-colors">
                   (21) 2434-6931
                 </a>

@@ -5,18 +5,13 @@ interface AppProps {
   title: string;
   description: string;
   description2: string;
-  icon: string | React.ReactElement;
-  url: string;
+  icon: React.ReactNode;
+  url?: string;
 }
 
-const AppCard: React.FC<AppProps> = ({ title, description, description2, icon, url }) => {
-  return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="glass-card p-6 flex flex-col items-center text-center hover:scale-105 transition-transform"
-    >
+const AppCard: React.FC<AppProps> = ({ title, description, description2, icon, url = "" }) => {
+  const content = (
+    <>
       <div className="icon mb-4 text-white text-4xl raised p-4 rounded-full bg-white/10">
         {icon}
       </div>
@@ -29,10 +24,28 @@ const AppCard: React.FC<AppProps> = ({ title, description, description2, icon, u
       )}
 
       {description2 && (
-        <span className="text-sl text-white/60 raised px-3 py-1 rounded-full bg-white/10">{description2}</span>
+        <span className="text-sl text-white/70 raised px-3 py-1 rounded-full bg-white/10">{description2}</span>
       )}
+    </>
+  );
 
-    </a>
+  if (url && url.trim() !== '') {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="glass-card p-6 flex flex-col items-center text-center hover:scale-105 transition-transform"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="glass-card p-6 flex flex-col items-center text-center">
+      {content}
+    </div>
   );
 };
 
@@ -44,14 +57,13 @@ const Chatbots: React.FC = () => {
       description: "Assistente para a Lei Geral de Proteção de Dados",
       description2: "",
       icon: <Shield size={32} />,
-      url: "https://dentistas.com.br/fastbot/chat/lgpdbot"
+      url: "https://dentistas.com.br/fastbot/lgpdbot"
     },
     {
-      title: "TutFOP 5",
-      description: "Tutor clínico para o ensino (FO-UPE)",
-      description2: "",
+      title: "TutFOP",
+      description: "Tutor clínico de apoio ao ensino (FOP-UPE)",
+      description2: "RESTRITO",
       icon: <Bot size={32} />,
-      url: "https://dentistas.com.br/fastbot/chat/tutfop5"
     },
     // {
     //   title: "Gerador de Apostilas",
@@ -80,7 +92,7 @@ const Chatbots: React.FC = () => {
     <section id="chatbots" className="py-12 px-4">
       <div className="glass max-w-6xl mx-auto p-8 md:p-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4 gradient-text">Chatbots Públicos</h2>
+          <h2 className="text-3xl font-bold mb-4 gradient-text">Chatbots</h2>
           <div className="divider"></div>
           <p className="text-white/60 text-xl max-w-2xl mx-auto emboss p-4 rounded-lg bg-white/5">
             Chatbots especializados para professores, alunos e dentistas

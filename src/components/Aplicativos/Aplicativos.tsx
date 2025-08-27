@@ -6,17 +6,12 @@ interface AppCardProps {
   description: string;
   description2: string;
   icon: React.ReactNode;
-  url: string;
+  url?: string;
 }
 
-const AppCard: React.FC<AppCardProps> = ({ title, description, description2, icon, url }) => {
-  return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="glass-card p-6 flex flex-col items-center text-center"
-    >
+const AppCard: React.FC<AppCardProps> = ({ title, description, description2, icon, url = "" }) => {
+  const content = (
+    <>
       <div className="icon mb-4 text-white text-4xl raised p-4 rounded-full bg-white/10">
         {icon}
       </div>
@@ -25,13 +20,32 @@ const AppCard: React.FC<AppCardProps> = ({ title, description, description2, ico
       {/* Container flex para empurrar descriptions para baixo */}
       <div className="flex flex-col justify-end items-center mt-auto space-y-3 w-full">
         {description && (
-          <p className="text-white/80 text-sl backdrop-blur-sm py-2 px-4 rounded-lg bg-white/10 border border-white/20 shadow-inner">{description}</p>
+          <p className="text-white/80 text-sl inset py-2 px-4 rounded-lg w-full bg-black/20 shadow-inner">{description}</p>
         )}
         {description2 && (
-          <p className="text-white/80 text-sl inset py-2 px-4 rounded-lg w-full bg-black/20 shadow-inner">{description2}</p>
+          <p className="text-white/80 text-sl backdrop-blur-sm py-2 px-4 rounded-lg bg-white/10 border border-white/20 shadow-inner">{description2}</p>
         )}
       </div>
-    </a>
+    </>
+  );
+
+  if (url && url.trim() !== '') {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="glass-card p-6 flex flex-col items-center text-center"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="glass-card p-6 flex flex-col items-center text-center">
+      {content}
+    </div>
   );
 };
 
@@ -40,28 +54,28 @@ const Aplicativos: React.FC = () => {
     {
       title: "FASTBOT",
       description: "Crie seu chatbot em 3 minutos",
-      description2: "Gratuito e Open Source",
+      description2: "",
       icon: <Bot size={32} />,
       url: "https://dentistas.com.br/fastbot"
     },
     {
       title: "WhatsApp Transcriptor",
       description: "Transcritor de áudios com registro das conversas",
-      description2: "Automação do N8N (Entre em contato)",
+      description2: "",
       icon: <MessageSquare size={32} />,
       url: ""
     },
     {
       title: "Agenda Google",
-      description: "Monitore calendários facilmente",
-      description2: "Integração completa",
+      description: "Converse com sua Agenda",
+      description2: "",
       icon: <Monitor size={32} />,
       url: "https://dentistas.com.br/agenda"
     },
     {
       title: "Gmail Monitor",
       description: "Monitoramento de emails",
-      description2: "Alertas em tempo real",
+      description2: "",
       icon: <Mail size={32} />,
       url: "https://dentistas.com.br/gmail"
     }
