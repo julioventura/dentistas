@@ -336,15 +336,14 @@
     color: transparent;
   }
 
-  /* Ocultar scrollbar */
-  .scrollbar-hide {
+  /* Ocultar scrollbar globalmente */
+  html, body {
     /* IE and Edge */
     -ms-overflow-style: none;
     /* Firefox */
     scrollbar-width: none;
   }
-  
-  .scrollbar-hide::-webkit-scrollbar {
+  html::-webkit-scrollbar, body::-webkit-scrollbar {
     /* Chrome, Safari and Opera */
     display: none;
   }

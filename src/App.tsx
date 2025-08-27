@@ -9,8 +9,7 @@ import Footer from './components/Footer/Footer';
 
 function App() {
   return (
-    <div className="min-h-screen">
-
+    <div className="min-h-screen scrollbar-hide">
       <Header />
       <main>
         <Hero />
@@ -19,9 +18,7 @@ function App() {
         <Chatbots />
       </main>
       <Footer />
-
       {/* <ChatbotModal /> */}
-
     </div>
   );
 }
