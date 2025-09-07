@@ -52,32 +52,32 @@ const AppCard: React.FC<AppCardProps> = ({ title, description, description2, ico
 const Aplicativos: React.FC = () => {
   const apps = [
     {
-      title: "FASTBOT",
-      description: "Crie seu chatbot em 3 minutos",
+      title: "FaleComigo.biz",
+      description: "Crie seu chatbot de IA em 3 minutos",
       description2: "",
       icon: <Bot size={32} />,
-      url: "https://dentistas.com.br/fastbot"
+      url: "https://FaleComigo.biz"
     },
     {
       title: "WhatsApp Transcriptor",
       description: "Transcritor de áudios com registro das conversas",
-      description2: "",
+      description2: "CONSULTE SOBRE INSTALAÇÃO",
       icon: <MessageSquare size={32} />,
       url: ""
     },
     {
       title: "Agenda Google",
       description: "Converse com sua Agenda",
-      description2: "",
+      description2: "CONSULTE SOBRE INSTALAÇÃO",
       icon: <Monitor size={32} />,
-      url: "https://dentistas.com.br/agenda"
+      url: ""
     },
     {
       title: "Gmail Monitor",
       description: "Monitoramento de emails",
-      description2: "",
+      description2: "CONSULTE SOBRE INSTALAÇÃO",
       icon: <Mail size={32} />,
-      url: "https://dentistas.com.br/gmail"
+      url: ""
     }
   ];
 
