@@ -57,7 +57,14 @@ const Chatbots: React.FC = () => {
       description: "Assistente para a Lei Geral de Proteção de Dados",
       description2: "",
       icon: <Shield size={32} />,
-      url: "https://dentistas.com.br/fastbot/lgpdbot"
+      url: "https://falecomigo.biz/lgpd"
+    },
+    {
+      title: "Eventos de Odontologia",
+      description: "Divulgação de Eventos Odontológicos",
+      description2: "",
+      icon: <Shield size={32} />,
+      url: "https://falecomigo.biz/eventosdeodontologia"
     },
     {
       title: "TutFOP",
@@ -79,13 +86,12 @@ const Chatbots: React.FC = () => {
     //   icon: <Bot size={32} />,
     //   url: "https://dentistas.com.br/fastbot/chat/prova"
     // },
-    // {
-    //   title: "Formatador de Referências",
-    //   description: "Referências Bibliográficas",
-    //   description2: "",
-    //   icon: <Bot size={32} />,
-    //   url: "https://dentistas.com.br/fastbot/chat/referencias"
-    // },
+    {
+      title: "Especialização de Saúde Coletiva FO-UFRJ",
+      description: "Chatbot administrativo do curso",
+      description2: "RESTRITO",
+      icon: <Bot size={32} />,
+    },
   ];
 
   return (
